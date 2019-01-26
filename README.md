@@ -1,23 +1,12 @@
-# Dezinated's Rust Map Editor + Extended SDK + a few of Kilgoar's tools
-
-Send me a donation, and it will be hugely appreciated. I am actively developing both tools & maps.
-https://www.patreon.com/kilgoar
-
-https://www.patreon.com/dezinated
-However, Dezinated no longer is developing this editor.
-
+# Rust Map Making Unity Editor
 
 **Make sure you're using a Unity 2018 version. 2018.2.0b7 is confirmed working, not sure about 2018.1.**
 
 DOWNLOAD LINK:
 https://unity3d.com/unity/beta/unity2018.2.0b7
 
-
 Set your Unity .NET version to 4.0.
 Edit > Project Settings > Player > Other Settings > Configuration > Scripting Runtime Version
-
-### Custom Map World Discord
-https://discord.gg/CjgvsjM
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
