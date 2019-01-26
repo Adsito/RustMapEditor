@@ -11,6 +11,9 @@ Edit > Project Settings > Player > Other Settings > Configuration > Scripting Ru
 ### Rust Map Making
 https://discord.gg/VQruSpk
 
+### Contribute
+Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord.
+
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files
 - Importing and exporting .map files
