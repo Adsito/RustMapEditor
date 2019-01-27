@@ -2213,7 +2213,8 @@ public class MapIO : MonoBehaviour {
         loadMapInfo(WorldConverter.emptyWorld((int)size.x));
     }
         
-
+    /* This currently conflicts with the backend asset bundle and removing the function allows prefabs to be loading from Rust Asset Bundle Directory. 
+     * I'm going to have to rewrite the current method for spawning prefabs on the map.
     public void Awake()
     {
         
@@ -2242,7 +2243,7 @@ public class MapIO : MonoBehaviour {
             Destroy(pdh.gameObject);
         }
         
-    }
+    } */
 
     void OnApplicationQuit()
     {
