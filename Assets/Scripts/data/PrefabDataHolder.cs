@@ -14,13 +14,14 @@ public class PrefabDataHolder : MonoBehaviour {
 
     void Update ()
     {
+        if (prefabData == null)
+            Debug.LogError("Prefabdata may not be tagged with serialize in SDK");
+
         prefabData.position = gameObject.transform.position - MapIO.getMapOffset();
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
 
-	
-	
     public void snapToGround()
     {
         Vector3 newPos = transform.position;

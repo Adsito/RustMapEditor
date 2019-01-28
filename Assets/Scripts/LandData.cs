@@ -30,7 +30,6 @@ public class LandData : MonoBehaviour {
         layerName = name;
     }
 
-		
     public void getTextures()
     {
         switch (layerName)
