@@ -15,25 +15,17 @@ https://discord.gg/VQruSpk
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord.
 
 ## Features
-- Extended SDK that allows Prefab loading direct from game content files
-- Importing and exporting .map files
+- Extended SDK that allows Prefab loading direct from game content files.
+- Importing and exporting .map files.
 - Ability to edit
   - Terrain Map
   - Ground Textures
   - Biomes
   - Topology
   - Alpha Map
-- Simple painting tools to easily edit map features
-- Spawn in prefabs such as monuments and decor
-
-- advanced editing tools 
-  - automatically draw ground textures and topologies within height ranges
-  - outline topologies
-  - copy topologies
-  - paste whole maps from file
-  - paste parts of maps from file
-  - erase topologies to avoid conflicts
-  - paste custom monuments and blend terrain based on biome mask
+- Simple painting tools to easily edit map features.
+- Spawn in prefabs such as monuments and decor.
+- Paint terrain based on height and slopes.
   
 ## Notes
 
@@ -74,29 +66,12 @@ Prefabs also have an option to load them from the game files on play. If you pre
 - Extended SDK to allow loading prefabs from bundle files
 	- Warning: Unity will use alot RAM if you load prefabs from the game files. So don't press play if you have unsaved changes.
 	- The prefab loading is really basic, it works but its not the best
-	- Prefabs don't have any materials and appear black
-	
-### 5) Pasting a Custom Monument
-	-custom monuments including heightmaps, alpha, topology, and terrain textures can be loaded and will be blended using the 'arid' biome. other biomes will be masked
-	-warning: map MUST be the same size as the monument file. (all are 4096)
-	-specify the monument's dimension in 'length' (this is the number on the filename)
-	-specify location in x, y
-	-load from file
-	-don't use paths in monuments yet
+	- Prefabs from core/building won't load.
 
-### 6) pasting map portions
-	- portions of maps can be imported
-	-warning: maps must be the same size
-	-specify the source location in x1, y1 and dimension in length and width boxes
-	-select map file
 	
-### 7) pasting whole maps
-	-for use in making collab maps. will import 1k and 2k maps into a 4k map
-	
-### 8) Rotating Maps
+### 5) Rotating Maps
 	- Rotate Clockwise or Counterclockwise.
 	- Rotate All Splatmaps (Ground, Biome, Alpha, Topology), Prefabs and Heightmaps (Land and Water).
-	- To rotate Heightmap,prefabs and paths go to MapIO and at the bottom click either 'CW' or 'CCW'.
-	- To rotate Splatmaps, go to land, select land layer (Ground, Biome, Alpha, Topology) and at the bottom click either 'CW' or 'CCW'.
-	- For Topologies each topology layer will need to be rotated seperately for now.
+	- To rotate map, select MapIO and select either 'Rotate 90° or Rotate 270°'
+	- For Topologies each topology layer will need to be rotated seperately for now. Should be fixed shortly.
 	
