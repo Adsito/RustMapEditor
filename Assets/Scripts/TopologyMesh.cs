@@ -33,8 +33,6 @@ public class TopologyMesh : MonoBehaviour {
         return splatMap;
     }
 	
-	
-		
     public void InitMesh(TerrainMap<int> topology)
     {
         top = topology.ToByteArray();

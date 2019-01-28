@@ -37,16 +37,16 @@ public class UpdateTerrainValues : MonoBehaviour {
 
             if (oldTerrainSize.x != terrain.terrainData.size.x)
             {
-                mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.x, terrain.terrainData.size.y, terrain.terrainData.size.x));
+                //mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.x, terrain.terrainData.size.y, terrain.terrainData.size.x));
             }
             else if (oldTerrainSize.z != terrain.terrainData.size.z)
             {
-                mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.z, terrain.terrainData.size.y, terrain.terrainData.size.z));
+                //mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.z, terrain.terrainData.size.y, terrain.terrainData.size.z));
             }
 
             if (terrain.terrainData.size.y != 1000)
             {
-                mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.x, 1000, terrain.terrainData.size.z));
+                //mapIO.resizeTerrain(new Vector3(terrain.terrainData.size.x, 1000, terrain.terrainData.size.z));
             }
             oldTerrainSize = terrain.terrainData.size;
         }

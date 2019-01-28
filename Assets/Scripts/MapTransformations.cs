@@ -89,38 +89,11 @@ public class MapTransformations {
         {
             for (int j = 0; j < array.GetLength(1); j++)
             {
-                tempArray[i, j] = (array[i, j] * scale);
+                tempArray[i, j] = array[i, j] * scale;
             }
         }
 
         return array = tempArray;
     }
-	
-	public static float[,] overwrite(float[,] array, float[,] target, int x, int y)
-	{
-			for (int i = 0; i < array.GetLength(0); i++)
-			{
-				for (int j = 0; j < array.GetLength(1); j++)
-				{
-					target[i + x, j + y] = array[i, j];
-				}
-			}
-			return target;
-	}
-	
-		public static float[,] overwrite(float[,] array, float[,] target, int x, int y, int x1, int y1, int w, int l)
-	{
-			for (int i = x1; i < l + x1; i++)
-			{
-				for (int j = y1; j < w + y1; j++)
-				{
-					target[i + x - x1, j + y - y1] = array[i, j];
-				}
-			}
-			return target;
-	}
-	
-		
-	
-	
+
 }

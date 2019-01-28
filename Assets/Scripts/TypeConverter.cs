@@ -17,7 +17,7 @@ public static class TypeConverter {
         }
         return heights;
     }
-	
+
     public static byte[] floatArrayToByteArray(float[,] floatArray)
     {
         short[] shortArray = new short[floatArray.GetLength(0) * floatArray.GetLength(1)];
