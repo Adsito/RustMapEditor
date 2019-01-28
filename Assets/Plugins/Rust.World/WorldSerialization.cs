@@ -56,7 +56,6 @@ public class WorldSerialization
 		[ProtoMember(5)] public VectorData scale;
 	}
 
-
     [Serializable]
     [ProtoContract]
 	public class PathData
@@ -127,20 +126,7 @@ public class WorldSerialization
 		return null;
 	}
 
-    private void Spawn(WorldSerialization.PrefabData prefab)
-    {
-        this.Spawn(prefab.category, prefab.id, (Vector3)prefab.position, (Quaternion)prefab.rotation, (Vector3)prefab.scale);
-    }
-
-    private void Spawn(string category, uint id, Vector3 position, Quaternion rotation, Vector3 scale)
-    {
-        //GameObject prefab = Prefab.DefaultManager.CreatePrefab(StringPool.Get(id), position, rotation, scale, true);
-        //if (!(bool)((UnityEngine.Object)prefab))
-        //    return;
-        //prefab.SetHierarchyGroup(category, true, false);
-    }
-
-    public void AddMap(string name, byte[] data)
+	public void AddMap(string name, byte[] data)
 	{
 		var map = new MapData();
 
@@ -222,8 +208,7 @@ public class WorldSerialization
 		}
 	}
 
-
-    public void Load(string fileName)
+	public void Load(string fileName)
 	{
 		try
 		{
@@ -263,19 +248,13 @@ public class WorldSerialization
 		var heights = GetMap("terrain");
 		if (heights != null)
 		{
-            //StreamWriter writer = new StreamWriter("Assets/test.txt", false);
-
-            for (int i = 0; i < heights.data.Length; i++)
+			for (int i = 0; i < heights.data.Length; i++)
 			{
 				checksum.Add(heights.data[i]);
-                //writer.Write((char)heights.data[i]);
-            }
+			}
+		}
 
-            
-            //writer.Close();
-        }
-        
-        var prefabs = world.prefabs;
+		var prefabs = world.prefabs;
 		if (prefabs != null)
 		{
 			for (int i = 0; i < prefabs.Count; i++)
@@ -284,8 +263,8 @@ public class WorldSerialization
 
 				checksum.Add(prefab.id);
 
-                // Include the 3 most significant bytes as an approximation
-                checksum.Add(prefab.position.x, 3);
+				// Include the 3 most significant bytes as an approximation
+				checksum.Add(prefab.position.x, 3);
 				checksum.Add(prefab.position.y, 3);
 				checksum.Add(prefab.position.z, 3);
 				checksum.Add(prefab.scale.x, 3);
@@ -293,7 +272,7 @@ public class WorldSerialization
 				checksum.Add(prefab.scale.z, 3);
 			}
 		}
-        
-        return checksum.MD5();
+
+		return checksum.MD5();
 	}
 }
