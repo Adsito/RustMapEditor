@@ -2,6 +2,7 @@
 
 **Make sure you're using a Unity 2018 version. 2018.2.0b7 is confirmed working, not sure about 2018.1.**
 
+
 DOWNLOAD LINK:
 https://unity3d.com/unity/beta/unity2018.2.0b7
 
@@ -13,6 +14,10 @@ https://discord.gg/VQruSpk
 
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord.
+
+### Credits
+Roughly 90% of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
+https://www.patreon.com/dezinated
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
@@ -37,7 +42,6 @@ Anyone experienced in C# or Unity is welcome to help contribute and update the e
 - !Important! Water needs to be at 500. It can go over but if it's under 500 it will still count as water but look like land. Use the flatten option from the terrain editor to set it to 500.
 - If you get a `NullReferenceException: Object reference not set to an instance of an object` error message you probably have water disabled. Select the `Water` object from the Hierarchy and in the Inspector select the checkbox by its name to enable it.
 - Rust's alphamaps resolution can only go upto 2048, so maps made over 4096 in size will have less detail per tile as the heightmap will be twice the resolution.
-
 
 ## How to use the Editor
 
