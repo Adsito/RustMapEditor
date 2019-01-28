@@ -125,3 +125,8 @@ Library/assetDatabase3
 *.txt
 Assets/land.asset
 *.backup
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.sln
