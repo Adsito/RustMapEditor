@@ -171,8 +171,10 @@ public class WorldConverter {
         MapInfo terrains = new MapInfo();
 
         // Puts prefabs object in middle of map for any size up to 6000.
-        var worldCentre = GameObject.FindGameObjectWithTag("Prefabs");
-        worldCentre.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
+        var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
+        worldCentrePrefab.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
+        var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
+        worldCentrePath.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
 
         if (blob.GetMap("terrain") == null)
             Debug.LogError("Old map file");

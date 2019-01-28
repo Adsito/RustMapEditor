@@ -13,6 +13,7 @@ TagManager:
   - Topology
   - LoadedPrefab
   - NotLoadedPrefab
+  - Node
   layers:
   - Default
   - TransparentFX

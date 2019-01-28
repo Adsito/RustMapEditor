@@ -146,12 +146,13 @@ public class MapIO : MonoBehaviour {
     }
     
     #region RotateMap Methods
-    public void rotateHeightmap(bool CW) //Rotates Terrain Map, Water Map and Paths 90.
+    public void rotateHeightmap(bool CW) //Rotates Terrain Map, Water Map and Paths 90°.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         var pathData = GameObject.FindGameObjectWithTag("Paths").GetComponentsInChildren<PathDataHolder>();
         var oldpathData = 0f;
+        Vector3 pathDataPos;
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
 
@@ -159,41 +160,26 @@ public class MapIO : MonoBehaviour {
         {
             land.terrainData.SetHeights(0, 0, MapTransformations.rotateCW(heightMap));
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCW(waterMap));
-            for (int i = 0; i < pathData.Length; i++)
-            {
-                for (int j = 0; j < pathData[i].pathData.nodes.Length; j++)
-                {
-                    oldpathData = pathData[i].pathData.nodes[j].x;
-                    pathData[i].pathData.nodes[j].x = pathData[i].pathData.nodes[j].z;
-                    pathData[i].pathData.nodes[j].z = oldpathData * -1;
-                }
-            }
         }
         else
         {
             land.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(heightMap));
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(waterMap));
-            for (int i = 0; i < pathData.Length; i++)
-            {
-                for (int j = 0; j < pathData[i].pathData.nodes.Length; j++)
-                {
-                    oldpathData = pathData[i].pathData.nodes[j].z;
-                    pathData[i].pathData.nodes[j].z = pathData[i].pathData.nodes[j].x;
-                    pathData[i].pathData.nodes[j].x = oldpathData * -1;
-                }
-            }
         }
     }
     public void rotateObjects(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
+        var pathRotate = GameObject.FindGameObjectWithTag("Paths");
         if (CW)
         {
             prefabRotate.transform.Rotate(0, 90, 0, Space.World);
+            pathRotate.transform.Rotate(0, 90, 0, Space.World);
         }
         else
         {
             prefabRotate.transform.Rotate(0, -90, 0, Space.World);
+            pathRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
     public void rotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
@@ -420,7 +406,7 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < 4096; j++)
                 {
-                    if (baseMap[i / 2, j / 2] * 1000f > z1 && baseMap[i / 2, j / 2] * 1000f < z2)
+                    if (baseMap[i, j] * 1000f > z1 && baseMap[i, j] * 1000f < z2)
                     {
                         splatMap[i / 2, j / 2, 0] = 0;
                         splatMap[i / 2, j / 2, 1] = 0;
@@ -674,9 +660,7 @@ public class MapIO : MonoBehaviour {
                 newNode.transform.position = terrains.pathData[i].nodes[j] + terrainPosition;
                 pathNodes.Add(newNode);
             }
-            
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
-            
         }
     }
 
