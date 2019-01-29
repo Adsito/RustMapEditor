@@ -135,13 +135,17 @@ public class MapIOEditor : Editor
             script.transposeHeightmap();
         }
         EditorGUILayout.EndHorizontal();
-        if (GUILayout.Button("Generate Default Topologies"))
+        if (GUILayout.Button("Paint Default Topologies"))
         {
             script.autoGenerateTopology(false);
         }
-        if (GUILayout.Button("Wipe Layers then Auto Generate"))
+        if (GUILayout.Button("Wipe Layers & Paint Default Topologies"))
         {
             script.autoGenerateTopology(true);
+        }
+        if (GUILayout.Button("Paint Default Ground Textures"))
+        {
+            script.autoGenerateGround();
         }
     }
 }
