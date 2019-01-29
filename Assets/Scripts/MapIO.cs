@@ -620,12 +620,11 @@ public class MapIO : MonoBehaviour {
             changeLandLayer();
         }
     }
-        
-    public void autoGenerateGround() // Assigns terrain splats to these values. Also include option to paint based biome.
+    public void autoGenerateGround() // Assigns terrain splats to these values. 
     {
-        /* Sand = 0 - 502
-         * 
-         */
+        changeLayer("Ground");
+        terrainLayer = TerrainSplat.Enum.Sand;
+        paintHeight(0, 502, float.MaxValue, "Ground", 2);
     } 
     #endregion
 
