@@ -148,8 +148,8 @@ public class LayerOptionEditor : Editor
             mapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", mapIO.topologyLayer);
             if (mapIO.topologyLayer != mapIO.oldTopologyLayer)
             {
-                    mapIO.changeLandLayer();
-                    Repaint();
+                mapIO.changeLandLayer();
+                Repaint();
             }
             GUILayout.Label("Each Topology layer rotates independent of each other");
             EditorGUILayout.BeginHorizontal();
