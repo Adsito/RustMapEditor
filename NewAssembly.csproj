@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{734A53B6-A349-C6A0-E2B3-294917BF59E1}</ProjectGuid>
+    <ProjectGuid>{A323F4C9-F759-15BE-6994-5A9C5DD66BAB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>NewAssembly</AssemblyName>
@@ -285,13 +285,13 @@
  <HintPath>E:/Unity/2018.2.0b7/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="LZ4">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/LZ4/LZ4.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/LZ4/LZ4.dll</HintPath>
  </Reference>
  <Reference Include="LZ4pn">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/LZ4/LZ4pn.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/LZ4/LZ4pn.dll</HintPath>
  </Reference>
  <Reference Include="protobuf-net">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/Protobuf/protobuf-net.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/Protobuf/protobuf-net.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Users/Adsito-PC/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
@@ -653,7 +653,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Facepunch.System.csproj">
-      <Project>{417B88EF-751E-1134-CFC3-7A5763DE09BF}</Project>      <Name>Facepunch.System</Name>    </ProjectReference>
+      <Project>{C65E3ABE-47DB-6163-FC2E-2494C9EC1F63}</Project>      <Name>Facepunch.System</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

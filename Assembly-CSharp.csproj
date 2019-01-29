@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{F2A2823D-C354-6DE9-6B2C-A662C42D221B}</ProjectGuid>
+    <ProjectGuid>{50B76936-22D2-6F1E-0B35-8DDE19C924DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -73,16 +73,16 @@
      <None Include="Assets\StreamingAssets\Protobuf.txt" />
      <None Include="Assets\StreamingAssets\Facepunch.txt" />
  <Reference Include="UnityEditor.StandardEvents">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>E:/Unity/2018.2.0b7/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -283,13 +283,13 @@
  <HintPath>E:/Unity/2018.2.0b7/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="LZ4">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/LZ4/LZ4.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/LZ4/LZ4.dll</HintPath>
  </Reference>
  <Reference Include="LZ4pn">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/LZ4/LZ4pn.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/LZ4/LZ4pn.dll</HintPath>
  </Reference>
  <Reference Include="protobuf-net">
- <HintPath>F:/Documents/Dezinated's Rust Map Editor/Assets/Plugins/Protobuf/protobuf-net.dll</HintPath>
+ <HintPath>F:/Documents/GitHub/unity-editor/Assets/Plugins/Protobuf/protobuf-net.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
  <HintPath>C:/Users/Adsito-PC/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
@@ -642,11 +642,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Rust.World.csproj">
-      <Project>{16781FAE-F09A-9092-5D69-8F927C39793C}</Project>      <Name>Rust.World</Name>    </ProjectReference>
+      <Project>{5E2BF25A-1524-06B7-8614-0806D4835E14}</Project>      <Name>Rust.World</Name>    </ProjectReference>
     <ProjectReference Include="Facepunch.System.csproj">
-      <Project>{417B88EF-751E-1134-CFC3-7A5763DE09BF}</Project>      <Name>Facepunch.System</Name>    </ProjectReference>
+      <Project>{C65E3ABE-47DB-6163-FC2E-2494C9EC1F63}</Project>      <Name>Facepunch.System</Name>    </ProjectReference>
     <ProjectReference Include="NewAssembly.csproj">
-      <Project>{734A53B6-A349-C6A0-E2B3-294917BF59E1}</Project>      <Name>NewAssembly</Name>    </ProjectReference>
+      <Project>{A323F4C9-F759-15BE-6994-5A9C5DD66BAB}</Project>      <Name>NewAssembly</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

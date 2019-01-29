@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float z1 = 0f, z2 = 500f, opacity = 0.50f, slope = 0f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0f;
     #region All Layers
     public override void OnInspectorGUI()
     {
@@ -53,16 +53,16 @@ public class LayerOptionEditor : Editor
                 mapIO.paintSlope("Ground", slope, 0);
             }
             GUILayout.Label("Custom height range");
-            z1 = EditorGUILayout.FloatField("bottom", z1);
-            z2 = EditorGUILayout.FloatField("top", z2);
+            y1 = EditorGUILayout.FloatField("bottom", y1);
+            y2 = EditorGUILayout.FloatField("top", y2);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(z1, z2, opacity, "Ground", 0);
+                mapIO.paintHeight(y1, y2, opacity, "Ground", 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(z1, z2, opacity, "Ground", 1);
+                mapIO.paintHeight(y1, y2, opacity, "Ground", 1);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -90,16 +90,16 @@ public class LayerOptionEditor : Editor
                 mapIO.paintSlope("Biome", slope, 0);
             }
             GUILayout.Label("Custom height range");
-            z1 = EditorGUILayout.FloatField("bottom", z1);
-            z2 = EditorGUILayout.FloatField("top", z2);
+            y1 = EditorGUILayout.FloatField("bottom", y1);
+            y1 = EditorGUILayout.FloatField("top", y1);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue, "Biome", 0);
+                mapIO.paintHeight(y1, y2, float.MaxValue, "Biome", 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue, "Biome", 1);
+                mapIO.paintHeight(y1, y2, float.MaxValue, "Biome", 1);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -120,16 +120,16 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Custom height range");
-            z1 = EditorGUILayout.FloatField("bottom", z1);
-            z2 = EditorGUILayout.FloatField("top", z2);
+            y1 = EditorGUILayout.FloatField("bottom", y1);
+            y2 = EditorGUILayout.FloatField("top", y2);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue, "Alpha", 0);
+                mapIO.paintHeight(y1, y2, float.MaxValue, "Alpha", 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue, "Alpha", 1);
+                mapIO.paintHeight(y1, y2, float.MaxValue, "Alpha", 1);
             }
             EditorGUILayout.EndHorizontal();
             
@@ -145,11 +145,11 @@ public class LayerOptionEditor : Editor
         {
             GUILayout.Label("Topology Layer Paint", EditorStyles.boldLabel);
             mapIO.oldTopologyLayer = mapIO.topologyLayer;
-            mapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", mapIO.topologyLayer); 
-            if (mapIO.topologyLayer != mapIO.oldTopologyLayer) 
+            mapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", mapIO.topologyLayer);
+            if (mapIO.topologyLayer != mapIO.oldTopologyLayer)
             {
-                mapIO.changeLandLayer();
-                Repaint();
+                    mapIO.changeLandLayer();
+                    Repaint();
             }
             GUILayout.Label("Each Topology layer rotates independent of each other");
             EditorGUILayout.BeginHorizontal();
@@ -169,16 +169,16 @@ public class LayerOptionEditor : Editor
                 mapIO.paintSlope("Topology", slope, 0);
             }
             GUILayout.Label("Custom height range");
-            z1 = EditorGUILayout.FloatField("bottom", z1);
-            z2 = EditorGUILayout.FloatField("top", z2);
+            y1 = EditorGUILayout.FloatField("bottom", y1);
+            y2 = EditorGUILayout.FloatField("top", y2);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue,"Topology", 0); 
+                mapIO.paintHeight(y1, y2, float.MaxValue,"Topology", 0); 
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(z1, z2, float.MaxValue, "Topology", 1);
+                mapIO.paintHeight(y1, y2, float.MaxValue, "Topology", 1);
             }
             EditorGUILayout.EndHorizontal();
             if (GUILayout.Button("Clear topology layer"))

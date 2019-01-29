@@ -135,5 +135,13 @@ public class MapIOEditor : Editor
             script.transposeHeightmap();
         }
         EditorGUILayout.EndHorizontal();
+        /*if (GUILayout.Button("Generate Default Topologies"))
+        {
+            script.autoGenerateTopology(false);
+        }*/
+        if (GUILayout.Button("Wipe Layers then Auto Generate"))
+        {
+            script.autoGenerateTopology(true);
+        }
     }
 }
