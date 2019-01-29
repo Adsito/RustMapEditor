@@ -12,13 +12,12 @@ using static WorldSerialization;
 public class MapIO : MonoBehaviour {
     
     public TerrainTopology.Enum topologyLayer;
-    public TerrainTopology.Enum topologyLayerClone;
     public TerrainTopology.Enum oldTopologyLayer;
+    public TerrainTopology.Enum oldTopologyLayer2;
     public TerrainBiome.Enum biomeLayer;
     public TerrainSplat.Enum terrainLayer;
     public int landSelectIndex = 0;
     public string landLayer = "ground";
-    public bool calculating = false;
     LandData selectedLandLayer;
 
     private PrefabLookup prefabLookup;
@@ -69,8 +68,6 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
-
-
         topology.top = topologyMap.ToByteArray();
     }
     
@@ -569,51 +566,58 @@ public class MapIO : MonoBehaviour {
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
             oldTopologyLayer = TerrainTopology.Enum.Offshore;
-            changeLandLayer();
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(0, 475, float.MaxValue, "Topology", 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
-            changeLandLayer();
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(0, 498, float.MaxValue, "Topology", 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            changeLandLayer();
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(500, 502, float.MaxValue, "Topology", 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            changeLandLayer();
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(500, 502, float.MaxValue, "Topology", 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
-            changeLandLayer();
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(500, 1000, float.MaxValue, "Topology", 0);
+
+            changeLandLayer();
         }
         else
         {
-            oldTopologyLayer = TerrainTopology.Enum.Offshore;
+            oldTopologyLayer2 = topologyLayer;
+
+            topologyLayer = TerrainTopology.Enum.Offshore;
             changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Offshore;
             paintHeight(0, 475, float.MaxValue, "Topology", 0);
 
-            oldTopologyLayer = TerrainTopology.Enum.Ocean;
+            topologyLayer = TerrainTopology.Enum.Ocean;
             changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Ocean;
             paintHeight(0, 498, float.MaxValue, "Topology", 0);
 
+            topologyLayer = TerrainTopology.Enum.Beach;
+            changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            changeLandLayer();
             paintHeight(500, 502, float.MaxValue, "Topology", 0);
 
+            topologyLayer = TerrainTopology.Enum.Oceanside;
+            changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            changeLandLayer();
             paintHeight(500, 502, float.MaxValue, "Topology", 0);
 
-            oldTopologyLayer = TerrainTopology.Enum.Mainland;
+            topologyLayer = TerrainTopology.Enum.Mainland;
             changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight(500, 1000, float.MaxValue, "Topology", 0);
+
+            topologyLayer = oldTopologyLayer2;
+            changeLandLayer();
         }
     }
         
