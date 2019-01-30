@@ -9,6 +9,7 @@ using static WorldConverter;
 using static WorldSerialization;
 
 [Serializable]
+
 public class MapIO : MonoBehaviour {
     
     public TerrainTopology.Enum topologyLayer;
@@ -19,9 +20,7 @@ public class MapIO : MonoBehaviour {
     public int landSelectIndex = 0;
     public string landLayer = "ground";
     LandData selectedLandLayer;
-
     private PrefabLookup prefabLookup;
-
     static TopologyMesh topology;
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
@@ -777,6 +776,8 @@ public class MapIO : MonoBehaviour {
     }
     public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. Also include option to wipe layers before calling method.
     {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
@@ -803,6 +804,18 @@ public class MapIO : MonoBehaviour {
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintSlope("Topology", 0.995f, 0);
+
+            oldTopologyLayer = TerrainTopology.Enum.Tier0;
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0);
+
+            oldTopologyLayer = TerrainTopology.Enum.Tier1;
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
+
+            oldTopologyLayer = TerrainTopology.Enum.Tier2;
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
 
             changeLandLayer();
         }
@@ -840,6 +853,21 @@ public class MapIO : MonoBehaviour {
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintSlope("Topology", 0.995f, 0);
 
+            topologyLayer = TerrainTopology.Enum.Tier0;
+            changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Tier0;
+            paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0);
+
+            topologyLayer = TerrainTopology.Enum.Tier1;
+            changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Tier1;
+            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
+
+            topologyLayer = TerrainTopology.Enum.Tier2;
+            changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Tier2;
+            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
+
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
         }
@@ -864,7 +892,22 @@ public class MapIO : MonoBehaviour {
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, float.MaxValue, 0);
     }
+    public void generateTwoLayersNoise(string landLayer, int t)
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j <= splatMap.GetLength(1); j++)
+            {
+                // Put noise generation here. If float closer to 0 make 0, else convert to 1.
+            }
+        }
+    }
     #endregion
+
+
 
     private void loadMapInfo(MapInfo terrains)
     {
