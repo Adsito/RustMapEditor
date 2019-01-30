@@ -227,6 +227,10 @@ public class LayerOptionEditor : Editor
             {
                 mapIO.clearLayer("Topology");
             }
+            /*if (GUILayout.Button("Generate noise topology layer"))
+            {
+                mapIO.generateTwoLayersNoise("Topology", 0);
+            }*/
         }
         #endregion
     }
