@@ -369,7 +369,7 @@ public class MapIO : MonoBehaviour {
         {
             return TerrainBiome.TypeToIndex((int)biomeLayer); // Layer texture to paint from Biome Textures.
         }
-        return 0;
+        return 2;
     }
     public int textureCount(string landLayer)
     {
@@ -383,7 +383,7 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public void paintHeight(float y1, float y2, float opacity, string landLayer, int t ) // Paints height between 2 floats.
+    public void paintHeight(string landLayer, float y1, float y2, float opacity, int t ) // Paints height between 2 floats.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -461,7 +461,7 @@ public class MapIO : MonoBehaviour {
     public void clearLayer(string landLayer) // Sets whole layer to the inactive texture. Alpha and Topology only.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textures(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -560,65 +560,112 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
+    public void paintArea(string landLayer, int z1, int z2, int x1, int x2, int t)
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        if (landLayer == "Ground")
+        {
+            t = textures(landLayer); // Active texture to paint on layer.
+        }
+        else if (landLayer == "Biome")
+        {
+            t = textures(landLayer); // Active texture to paint on layer.
+        }
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                if (i >= z1 && i <= z2)
+                {
+                    if (j >= x1 && j <= x2)
+                    {
+                            splatMap[i, j, 0] = 0;
+                            splatMap[i, j, 1] = 0;
+                            if (textureCount(landLayer) > 2)
+                            {
+                                splatMap[i, j, 2] = 0;
+                                splatMap[i, j, 3] = 0;
+                                if (textureCount(landLayer) > 4)
+                                {
+                                    splatMap[i, j, 4] = 0;
+                                    splatMap[i, j, 5] = 0;
+                                    splatMap[i, j, 6] = 0;
+                                    splatMap[i, j, 7] = 0;
+                                }
+                        }
+                        splatMap[i, j, t] = 1;
+                    }
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+        if (landLayer == "Topology")
+        {
+            saveTopologyLayer();
+        }
+    }
     public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. Also include option to wipe layers before calling method.
     {
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
             oldTopologyLayer = TerrainTopology.Enum.Offshore;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
-            paintHeight(0, 475, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
-            paintHeight(0, 498, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 498, float.MaxValue, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
-            paintHeight(500, 502, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 1000, float.MaxValue,  1);
+            paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
-            paintHeight(500, 502, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
-            paintHeight(500, 1000, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 500, 1000, float.MaxValue, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
-            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
+            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintSlope("Topology", 0.995f, 0);
 
             changeLandLayer();
         }
-        else
+        else  
         {
             oldTopologyLayer2 = topologyLayer;
 
             topologyLayer = TerrainTopology.Enum.Offshore;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Offshore;
-            paintHeight(0, 475, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Ocean;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
-            paintHeight(0, 498, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 0, 498, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Beach;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            paintHeight(500, 502, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Oceanside;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            paintHeight(500, 502, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Mainland;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
-            paintHeight(500, 1000, float.MaxValue, "Topology", 0);
+            paintHeight("Topology", 500, 1000, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
@@ -634,11 +681,21 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Sand;
-        paintHeight(0, 502, float.MaxValue, "Ground", 0);
+        paintHeight("Ground", 0, 502, float.MaxValue, 0);
+
+        terrainLayer = TerrainSplat.Enum.Snow;
+        paintHeight("Ground", 750, 1000, float.MaxValue, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
         paintSlope("Ground", 0.9945f, 0);
     } 
+    public void autoGenerateBiome() // Assigns biome splats to these values.
+    {
+        changeLayer("Biome");
+
+        biomeLayer = TerrainBiome.Enum.Arctic;
+        paintHeight("Biome", 750, 1000, float.MaxValue, 0);
+    }
     #endregion
 
     private void loadMapInfo(MapInfo terrains)

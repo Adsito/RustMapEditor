@@ -8,6 +8,7 @@ public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
     float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0f;
+    int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
     {
@@ -58,11 +59,11 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(y1, y2, opacity, "Ground", 0);
+                mapIO.paintHeight("Ground", y1, y2, opacity, 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(y1, y2, opacity, "Ground", 1);
+                mapIO.paintHeight("Ground", y1, y2, opacity, 1);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -91,17 +92,19 @@ public class LayerOptionEditor : Editor
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
-            y1 = EditorGUILayout.FloatField("top", y1);
-            EditorGUILayout.BeginHorizontal();
+            y2 = EditorGUILayout.FloatField("top", y2);
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue, "Biome", 0);
+                mapIO.paintHeight("Biome", y1, y2, float.MaxValue, 0);
             }
-            if (GUILayout.Button("Erase range"))
+            z1 = EditorGUILayout.IntField("From Z ", z1);
+            z2 = EditorGUILayout.IntField("To Z ", z2);
+            x1 = EditorGUILayout.IntField("From X ", x1);
+            x2 = EditorGUILayout.IntField("To X ", x2);
+            if (GUILayout.Button("Paint Area"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue, "Biome", 1);
+                mapIO.paintArea("Biome", z1, z2, x1, x2, 0);
             }
-            EditorGUILayout.EndHorizontal();
         }
         #endregion
 
@@ -109,6 +112,8 @@ public class LayerOptionEditor : Editor
         if (mapIO.landLayer.Equals("Alpha"))
         {
             GUILayout.Label("Alpha Layer Paint", EditorStyles.boldLabel);
+            GUILayout.Label("Green = Terrain Visible, Purple = Terrain Invisible", EditorStyles.boldLabel);
+            GUILayout.Space(10f);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Rotate 90°"))
             {
@@ -125,15 +130,28 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue, "Alpha", 0);
+                mapIO.paintHeight("Alpha", y1, y2, float.MaxValue, 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue, "Alpha", 1);
+                mapIO.paintHeight("Alpha", y1, y2, float.MaxValue, 1);
             }
             EditorGUILayout.EndHorizontal();
-            
-            if (GUILayout.Button("Clear alpha layer"))
+            z1 = EditorGUILayout.IntField("From Z ", z1);
+            z2 = EditorGUILayout.IntField("To Z ", z2);
+            x1 = EditorGUILayout.IntField("From X ", x1);
+            x2 = EditorGUILayout.IntField("To X ", x2);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Paint Area"))
+            {
+                mapIO.paintArea("Alpha", z1, z2, x1, x2, 0);
+            }
+            if (GUILayout.Button("Erase Area"))
+            {
+                mapIO.paintArea("Alpha", z1, z2, x1, x2, 1);
+            }
+            EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Clear topology layer"))
             {
                 mapIO.clearLayer("Alpha");
             }
@@ -144,6 +162,8 @@ public class LayerOptionEditor : Editor
         if (mapIO.landLayer.Equals("Topology"))
         {
             GUILayout.Label("Topology Layer Paint", EditorStyles.boldLabel);
+            GUILayout.Label("Green = Topology Active, Purple = Topology Inactive", EditorStyles.boldLabel);
+            GUILayout.Space(10f);
             mapIO.oldTopologyLayer = mapIO.topologyLayer;
             mapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", mapIO.topologyLayer);
             if (mapIO.topologyLayer != mapIO.oldTopologyLayer)
@@ -174,11 +194,25 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue,"Topology", 0); 
+                mapIO.paintHeight("Topology", y1, y2, float.MaxValue, 0); 
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight(y1, y2, float.MaxValue, "Topology", 1);
+                mapIO.paintHeight("Topology", y1, y2, float.MaxValue, 1);
+            }
+            EditorGUILayout.EndHorizontal();
+            z1 = EditorGUILayout.IntField("From Z ", z1);
+            z2 = EditorGUILayout.IntField("To Z ", z2);
+            x1 = EditorGUILayout.IntField("From X ", x1);
+            x2 = EditorGUILayout.IntField("To X ", x2);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Paint Area"))
+            {
+                mapIO.paintArea("Topology", z1, z2, x1, x2, 0);
+            }
+            if (GUILayout.Button("Erase Area"))
+            {
+                mapIO.paintArea("Topology", z1, z2, x1, x2, 1);
             }
             EditorGUILayout.EndHorizontal();
             if (GUILayout.Button("Clear topology layer"))
