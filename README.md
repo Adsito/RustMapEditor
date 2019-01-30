@@ -63,19 +63,45 @@ Again with `MapIO` selected you can switch between editing different map feature
 
 
 ### 4) Using Prefabs
-Prefabs still need to be worked on a bit. How it's currently being done is every Prefab that spawns on the map is represented by a white cube in the editor. When the map is saved and loaded in to Rust, the client spawns the actual prefab there. In the editor if you load a map you will notice white cubes everywhere. Clicking on a white cube will show you information about that Prefab and moving it around will update it's position values. If you use your file explorer to naviate to Resources/Prefabs/Monuments you will notice I made a Prefab called `Dome`. To make Prefabs like this simply select a Prefab that you have in your scene and drag it in to the file explorer to save it. You can then rename it to anything you like and drag it back in to the Scene view as many times as you'd like.
+Prefabs are shown in the editor as white cubes. Prefabs also have an option to load them from the game files on play. 
+If you press the play button the editor will load the actual Prefab from the game files.
 
-Prefabs also have an option to load them from the game files on play. If you press the play button the editor will load the actual Prefab from the game files.
-
-- Extended SDK to allow loading prefabs from bundle files
-	- Warning: Unity will use alot RAM if you load prefabs from the game files. So don't press play if you have unsaved changes.
-	- The prefab loading is really basic, it works but its not the best
-	- Prefabs from core/building won't load.
-
+#Note: 
+Prefabs from the Assets/prefabs path do not load currently.
+- Warning: Unity will use alot RAM if you load prefabs from the game files. So don't press play if you have unsaved changes.
+- The prefab loading is really basic, it works but its not the best
+- Any changes to the map in play mode need to be saved by exporting the map before unloading the scene.
 	
 ### 5) Rotating Maps
 	- Rotate Clockwise or Counterclockwise.
 	- Rotate All Splatmaps (Ground, Biome, Alpha, Topology), Prefabs, Paths and Heightmaps (Land and Water).
 	- To rotate map, select MapIO and select either 'Rotate 90° or Rotate 270°'
 	
+### 6) Generating Layers
+	- Generate certain Ground, Biome and Topology layers based on certain rules.
+	
+	Ground: 
+	Sand = 0 - 502
+	Rock = Slopes of 45° or higher
+	
+	Biome:	
+	Arctic = 750 - 1000
+	
+	Topology: 
+	Cliff = Slopes of 50° or higher
+	Ocean = 0 - 498
+	Offshore = 0 - 475
+	Beach = 500 - 502
+	Oceanside = 500 - 502
+	Mainland = 500 - 1000
+	Tier 0 = Bottom third of map
+	Tier 1 = Middle third of map
+	Tier 2 = Top third of map
+	
+### 7) Painting Layers
+	- Paint layers based on height, slope, area and clear layers.
+	- Generate basic noise for any topology layer.
+	
+				
+		
 	
