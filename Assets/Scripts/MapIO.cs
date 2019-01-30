@@ -585,6 +585,10 @@ public class MapIO : MonoBehaviour {
             paintHeight(0, 1000, float.MaxValue, "Topology", 1);
             paintHeight(500, 1000, float.MaxValue, "Topology", 0);
 
+            oldTopologyLayer = TerrainTopology.Enum.Cliff;
+            paintHeight(0, 1000, float.MaxValue, "Topology", 1);
+            paintSlope("Topology", 0.995f, 0);
+
             changeLandLayer();
         }
         else
@@ -616,6 +620,11 @@ public class MapIO : MonoBehaviour {
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight(500, 1000, float.MaxValue, "Topology", 0);
 
+            topologyLayer = TerrainTopology.Enum.Cliff;
+            changeLandLayer();
+            oldTopologyLayer = TerrainTopology.Enum.Cliff;
+            paintSlope("Topology", 0.995f, 0);
+
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
         }
@@ -623,8 +632,12 @@ public class MapIO : MonoBehaviour {
     public void autoGenerateGround() // Assigns terrain splats to these values. 
     {
         changeLayer("Ground");
+
         terrainLayer = TerrainSplat.Enum.Sand;
-        paintHeight(0, 502, float.MaxValue, "Ground", 2);
+        paintHeight(0, 502, float.MaxValue, "Ground", 0);
+
+        terrainLayer = TerrainSplat.Enum.Rock;
+        paintSlope("Ground", 0.9945f, 0);
     } 
     #endregion
 
