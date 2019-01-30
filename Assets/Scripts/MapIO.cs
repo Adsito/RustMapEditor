@@ -143,13 +143,11 @@ public class MapIO : MonoBehaviour {
     }
     
     #region RotateMap Methods
-    public void rotateHeightmap(bool CW) //Rotates Terrain Map, Water Map and Paths 90°.
+    public void rotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        var pathData = GameObject.FindGameObjectWithTag("Paths").GetComponentsInChildren<PathDataHolder>();
-        var oldpathData = 0f;
-        Vector3 pathDataPos;
+
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
 
@@ -318,6 +316,176 @@ public class MapIO : MonoBehaviour {
         }
         topologyLandData.setData(newTopology, "topology");
         topologyLandData.setLayer();
+    }
+    public void rotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
+    {
+        LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+        float[,,] newTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
+        float[,,] oldTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
+        oldTopologyLayer2 = topologyLayer;
+        
+        topologyLayer = TerrainTopology.Enum.Alt;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Alt;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Beach;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Beach;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Beachside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Beachside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Beachside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Beachside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Building;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Building;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Cliff;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Cliff;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Cliffside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Cliffside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Clutter;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Clutter;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Decor;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Decor;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Field;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Field;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Forest;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Forest;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Forestside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Forestside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Hilltop;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Hilltop;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Lake;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Lake;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Lakeside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Lakeside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Mainland;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Mainland;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Monument;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Monument;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Mountain;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Mountain;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Ocean;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Ocean;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Oceanside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Oceanside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Offshore;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Offshore;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Powerline;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Powerline;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.River;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.River;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Riverside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Riverside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Road;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Road;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Roadside;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Roadside;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Runway;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Runway;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Summit;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Summit;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Swamp;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Swamp;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Tier0;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Tier0;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Tier1;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Tier1;
+        rotateTopologymap(CW);
+
+        topologyLayer = TerrainTopology.Enum.Tier2;
+        changeLandLayer();
+        oldTopologyLayer = TerrainTopology.Enum.Tier2;
+        rotateTopologymap(CW);
+
+        topologyLayer = oldTopologyLayer2;
+        changeLandLayer();
     }
     #endregion
 
