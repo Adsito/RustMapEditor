@@ -819,7 +819,7 @@ public class MapIO : MonoBehaviour {
 
             changeLandLayer();
         }
-        else  
+        else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
             oldTopologyLayer2 = topologyLayer;
 
@@ -857,17 +857,17 @@ public class MapIO : MonoBehaviour {
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0);
-
+            
             topologyLayer = TerrainTopology.Enum.Tier1;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
-
+            
             topologyLayer = TerrainTopology.Enum.Tier2;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
-
+            
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
         }
@@ -892,19 +892,21 @@ public class MapIO : MonoBehaviour {
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, float.MaxValue, 0);
     }
-    public void generateTwoLayersNoise(string landLayer, int t)
+    /*public void generateTwoLayersNoise(string landLayer, int t)
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            for (int j = 0; j <= splatMap.GetLength(1); j++)
+            for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                // Put noise generation here. If float closer to 0 make 0, else convert to 1.
+                float i2 = i / splatMap.GetLength(0) - 0.5f, j2 = j / splatMap.GetLength(1) - 0.5f;
+                float perlin = Mathf.PerlinNoise(i2, j2);
+                splatMap[i, j, t] = perlin;
             }
         }
-    }
+    }*/
     #endregion
 
 
