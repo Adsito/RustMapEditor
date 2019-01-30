@@ -171,7 +171,7 @@ public class LayerOptionEditor : Editor
                 mapIO.changeLandLayer();
                 Repaint();
             }
-            GUILayout.Label("Each Topology layer rotates independent of each other");
+            GUILayout.Label("Rotate seperately or all at once");
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Rotate 90°"))
             {
@@ -180,6 +180,14 @@ public class LayerOptionEditor : Editor
             if (GUILayout.Button("Rotate 270°"))
             {
                 mapIO.rotateTopologymap(false);
+            }
+            if (GUILayout.Button("Rotate all 90°"))
+            {
+                mapIO.rotateAllTopologymap(true);
+            }
+            if (GUILayout.Button("Rotate all 270°"))
+            {
+                mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Slope threshhold:");

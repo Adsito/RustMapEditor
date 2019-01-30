@@ -97,7 +97,7 @@ public class MapIOEditor : Editor
             script.scaleHeightmap();
             script.scale = 1f;
         }
-
+        GUILayout.Label("Rotating maps takes roughly 1 minute to process \n for the largest maps.", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Rotate 90°")) // Calls every rotate function from MapIO. Rotates 90 degrees.
         {
@@ -110,7 +110,7 @@ public class MapIOEditor : Editor
             script.changeLayer("Alpha");
             script.rotateAlphamap(true);
             script.changeLayer("Topology");
-            script.rotateTopologymap(true);
+            script.rotateAllTopologymap(true);
         }
         if (GUILayout.Button("Rotate 270°")) // Calls every rotate function from MapIO. Rotates 270 degrees.
         {
@@ -123,7 +123,7 @@ public class MapIOEditor : Editor
             script.changeLayer("Alpha");
             script.rotateAlphamap(false);
             script.changeLayer("Topology");
-            script.rotateTopologymap(false);
+            script.rotateAllTopologymap(false);
         }
 
         if (GUILayout.Button("Flip"))
