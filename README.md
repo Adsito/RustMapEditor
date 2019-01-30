@@ -75,7 +75,7 @@ Prefabs also have an option to load them from the game files on play. If you pre
 	
 ### 5) Rotating Maps
 	- Rotate Clockwise or Counterclockwise.
-	- Rotate All Splatmaps (Ground, Biome, Alpha, Topology), Prefabs and Heightmaps (Land and Water).
+	- Rotate All Splatmaps (Ground, Biome, Alpha, Topology), Prefabs, Paths and Heightmaps (Land and Water).
 	- To rotate map, select MapIO and select either 'Rotate 90° or Rotate 270°'
-	- For Topologies each topology layer will need to be rotated seperately for now. Should be fixed shortly.
+	
 	
