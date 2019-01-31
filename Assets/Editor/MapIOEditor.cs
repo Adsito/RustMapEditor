@@ -14,6 +14,8 @@ public class MapIOEditor : Editor
     int mapSize = 2000;
     public LayerOptionEditor optionEditor;
 
+    int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
+
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
@@ -147,12 +149,60 @@ public class MapIOEditor : Editor
         {
             script.autoGenerateGround();
         }
+        GUILayout.Label("This paints the textureToPaint on the layerToPaint if the layerFrom has the textureFrom in that coordinate.\n Eg. If layerFrom = Ground, textureToCopyFrom = Snow and \n" +
+            "layerToPaint = Topology, textureToPaint = Decor \n it would paint decor wherever there was snow"); //ToDo: Have this make sense and not look like a chimp wrote it.
+        string[] layerFromList = { "Ground", "Biome", "Topology" };
+        landLayerFrom = EditorGUILayout.Popup("Land Layer To Copy From:", landLayerFrom, layerFromList);
+        switch (landLayerFrom) // Get texture list from the currently selected landLayer.
+        {
+            default:
+                Debug.Log("Layer doesn't exist");
+                break;
+            case 0:
+                script.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.groundLayerFrom);
+                textureFrom = 0;
+                break;
+            case 1:
+                script.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.biomeLayerFrom);
+                textureFrom = 1;
+                break;
+            case 2:
+                script.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.topologyLayerFrom);
+                textureFrom = 2;
+                break;
+        }
+        string[] layerToList = { "Ground", "Biome", "Topology" };
+        landLayerToPaint = EditorGUILayout.Popup("Land Layer To Paint to:", landLayerToPaint, layerToList);
+        switch (landLayerToPaint) // Get texture list from the currently selected landLayer.
+        {
+            default:
+                Debug.Log("Layer doesn't exist");
+                break;
+            case 0:
+                script.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.groundLayerToPaint);
+                textureToPaint = 0;
+                break;
+            case 1:
+                script.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.biomeLayerToPaint);
+                textureToPaint = 1;
+                break;
+            case 2:
+                script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.topologyLayerToPaint);
+                textureToPaint = 2;
+                break;
+        }
+        if (GUILayout.Button("Copy textures to new layer"))
+        {
+            script.textureCopy(layerFromList[landLayerFrom], layerToList[landLayerToPaint], textureFrom, textureToPaint);
+        }
+
         GUILayout.Label("This paints the ground texture to rock wherever the alpha is removing the terrain ingame. \n Used to prevent floating grass.");
         if (GUILayout.Button("Debug Alpha Textures"))
         {
             script.changeLayer("Ground");
             script.alphaDebug("Ground");
         }
+
 
     }
 }
