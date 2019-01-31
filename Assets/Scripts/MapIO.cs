@@ -625,6 +625,33 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
+    public void paintLayer(string landLayer)
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textures(landLayer));
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                if (landLayer == "Alpha")
+                {
+                    splatMap[i, j, 1] = float.MaxValue;
+                    splatMap[i, j, 0] = float.MinValue;
+                }
+                else
+                {
+                    splatMap[i, j, 1] = float.MinValue;
+                    splatMap[i, j, 0] = float.MaxValue;
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+        if (landLayer == "Topology")
+        {
+            saveTopologyLayer();
+        }
+    }
     public void clearLayer(string landLayer) // Sets whole layer to the inactive texture. Alpha and Topology only.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
@@ -731,7 +758,6 @@ public class MapIO : MonoBehaviour {
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         if (landLayer == "Ground")
         {
             t = textures(landLayer); // Active texture to paint on layer.
@@ -892,21 +918,29 @@ public class MapIO : MonoBehaviour {
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, float.MaxValue, 0);
     }
-    /*public void generateTwoLayersNoise(string landLayer, int t)
+    
+    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                float i2 = i / splatMap.GetLength(0) - 0.5f, j2 = j / splatMap.GetLength(1) - 0.5f;
-                float perlin = Mathf.PerlinNoise(i2, j2);
-                splatMap[i, j, t] = perlin;
+                float i2 = i / scale;
+                float j2 = j / scale;
+                float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
+                splatMap[i, j, 0] = perlin * -1;
+                splatMap[i, j, 1] = perlin;
             }
         }
-    }*/
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+        if (landLayer == "Topology")
+        {
+            saveTopologyLayer();
+        }
+    }
     #endregion
 
 
