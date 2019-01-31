@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0f, scale = 0f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -151,10 +151,16 @@ public class LayerOptionEditor : Editor
                 mapIO.paintArea("Alpha", z1, z2, x1, x2, 1);
             }
             EditorGUILayout.EndHorizontal();
-            if (GUILayout.Button("Clear topology layer"))
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Paint layer"))
+            {
+                mapIO.paintLayer("Alpha");
+            }
+            if (GUILayout.Button("Clear layer"))
             {
                 mapIO.clearLayer("Alpha");
             }
+            EditorGUILayout.EndHorizontal();
         }
         #endregion
 
@@ -223,14 +229,22 @@ public class LayerOptionEditor : Editor
                 mapIO.paintArea("Topology", z1, z2, x1, x2, 1);
             }
             EditorGUILayout.EndHorizontal();
-            if (GUILayout.Button("Clear topology layer"))
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Paint layer"))
+            {
+                mapIO.paintLayer("Topology");
+            }
+            if (GUILayout.Button("Clear layer"))
             {
                 mapIO.clearLayer("Topology");
             }
-            /*if (GUILayout.Button("Generate noise topology layer"))
+            EditorGUILayout.EndHorizontal();
+            GUILayout.Label("Noise scale");
+            scale = GUILayout.HorizontalSlider(scale, 0.01f, 10000f);
+            if (GUILayout.Button("Generate noise topology layer, broken rn"))
             {
-                mapIO.generateTwoLayersNoise("Topology", 0);
-            }*/
+                mapIO.generateTwoLayersNoise("Topology", scale, 0);
+            }
         }
         #endregion
     }
