@@ -105,6 +105,12 @@ Prefabs from the Assets/prefabs path do not load currently.
 	- Paint topologies, ground and biome layers if another layer has a selected texture.
 		eg: Paint all snow textures with arctic or snow biomes.
 	- Blend layers
+
+### 8) Copying Layers
+	- Copy a texture from one layer, and paint it to another.
+	  eg: For every Grass texture on the Ground map, paint the biome to be Temperate.
+	- For topologies, copying and pasting will reference the active texture (The Green Texture)
+	- You cannot currently copy the inactive topology layer, this will be fixed soon.
 	
 				
 		
