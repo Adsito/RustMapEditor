@@ -147,5 +147,12 @@ public class MapIOEditor : Editor
         {
             script.autoGenerateGround();
         }
+        GUILayout.Label("This paints the ground texture to rock wherever the alpha is removing the terrain ingame. \n Used to prevent floating grass.");
+        if (GUILayout.Button("Debug Alpha Textures"))
+        {
+            script.changeLayer("Ground");
+            script.alphaDebug("Ground");
+        }
+
     }
 }
