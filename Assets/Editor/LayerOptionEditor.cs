@@ -66,6 +66,10 @@ public class LayerOptionEditor : Editor
                 mapIO.paintHeight("Ground", y1, y2, opacity, 1);
             }
             EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Paint Layer"))
+            {
+                mapIO.paintLayer("Ground", 0);
+            }
         }
         #endregion
 
@@ -104,6 +108,10 @@ public class LayerOptionEditor : Editor
             if (GUILayout.Button("Paint Area"))
             {
                 mapIO.paintArea("Biome", z1, z2, x1, x2, 0);
+            }
+            if (GUILayout.Button("Paint Layer"))
+            {
+                mapIO.paintLayer("Biome", 0);
             }
         }
         #endregion
@@ -154,7 +162,7 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint layer"))
             {
-                mapIO.paintLayer("Alpha");
+                mapIO.paintLayer("Alpha", 0);
             }
             if (GUILayout.Button("Clear layer"))
             {
@@ -232,7 +240,7 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint layer"))
             {
-                mapIO.paintLayer("Topology");
+                mapIO.paintLayer("Topology", 0);
             }
             if (GUILayout.Button("Clear layer"))
             {

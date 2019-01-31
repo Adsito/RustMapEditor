@@ -625,10 +625,18 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintLayer(string landLayer)
+    public void paintLayer(string landLayer, int t)
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textures(landLayer));
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        if (landLayer == "Ground")
+        {
+            t = textures(landLayer); // Active texture to paint on layer.
+        }
+        else if (landLayer == "Biome")
+        {
+            t = textures(landLayer); // Active texture to paint on layer.
+        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -638,10 +646,28 @@ public class MapIO : MonoBehaviour {
                     splatMap[i, j, 1] = float.MaxValue;
                     splatMap[i, j, 0] = float.MinValue;
                 }
-                else
+                else if (landLayer == "Topology")
                 {
                     splatMap[i, j, 1] = float.MinValue;
                     splatMap[i, j, 0] = float.MaxValue;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 0;
+                    if (textureCount(landLayer) > 2)
+                    {
+                        splatMap[i, j, 2] = 0;
+                        splatMap[i, j, 3] = 0;
+                        if (textureCount(landLayer) > 4)
+                        {
+                            splatMap[i, j, 4] = 0;
+                            splatMap[i, j, 5] = 0;
+                            splatMap[i, j, 6] = 0;
+                            splatMap[i, j, 7] = 0;
+                        }
+                    }
+                    splatMap[i, j, t] = 1;
                 }
             }
         }
@@ -918,7 +944,6 @@ public class MapIO : MonoBehaviour {
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, float.MaxValue, 0);
     }
-    
     public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
