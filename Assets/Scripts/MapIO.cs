@@ -526,7 +526,10 @@ public class MapIO : MonoBehaviour {
     #endregion
 
     #region SplatMap Methods
-    public int textures(string landLayer) // Textures in layer.
+    // Todo: I will rewrite the autoGenerate methods to use loops instead of a shittonne of code, however that will require rewriting the current TerrainTopology class, which will break
+    // other scripts, and prevent easily merging in updates from Dez's own editor repo. I am well aware it's not the best way to iterate through the layers :)
+    public int textures(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
+    // Accepts "Ground", "Biome", "Alpha" and "Topology".
     {
         if (landLayer == "Ground")
         {
@@ -538,7 +541,8 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public int textureCount(string landLayer)
+    public int textureCount(string landLayer) // Texture count in layer chosen, used for determining the size of the splatmap array.
+    // Call method with the layer you are painting to.
     {
         if(landLayer == "Ground")
         {
@@ -550,7 +554,8 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public void paintHeight(string landLayer, float y1, float y2, float opacity, int t ) // Paints height between 2 floats.
+    public void paintHeight(string landLayer, float y1, float y2, float opacity, int t ) // Paints height between 2 floats. Opacity is currently not implemented so just give it value
+    // of float.MaxValue to avoid errors.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -625,7 +630,8 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintLayer(string landLayer, int t)
+    public void paintLayer(string landLayer, int t) // Sets whole layer to the active texture. 
+    //Alpha layers are inverted because it's more logical to have clear Alpha = Terrain appears in game.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -677,8 +683,9 @@ public class MapIO : MonoBehaviour {
         {
             saveTopologyLayer();
         }
-    }
-    public void clearLayer(string landLayer) // Sets whole layer to the inactive texture. Alpha and Topology only.
+    } 
+    public void clearLayer(string landLayer) // Sets whole layer to the inactive texture. Alpha and Topology only. 
+    //Alpha layers are inverted because it's more logical to have clear Alpha = Terrain appears in game.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textures(landLayer));
@@ -704,8 +711,10 @@ public class MapIO : MonoBehaviour {
         {
             saveTopologyLayer();
         }
-    }
-    public void paintSlope(string landLayer, float s, int t)
+    } 
+    public void paintSlope(string landLayer, float slope, int t) // Paints slope based on the current slope input, the slope range is set to 90° - wherever the slider is set.
+    // The slider to the far left = 90° - 90°, the slider in the middle = 90° - 45° and at the far right would be 90° - 0° or the whole map.
+    // The slope value must be between 0.99f and 1.0f. The slider is clamped to this value.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -725,7 +734,7 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 1; j < 4095; j++)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < s || baseMap[i, j] / baseMap[i - 1, j - 1] < s)
+                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < slope || baseMap[i, j] / baseMap[i - 1, j - 1] < slope)
                     {
                             splatMap[i / 2, j / 2, 0] = 0;
                             splatMap[i / 2, j / 2, 1] = 0;
@@ -752,7 +761,7 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 1; j < splatMap.GetLength(1) - 1; j++)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < s || baseMap[i, j] / baseMap[i - 1, j - 1] < s)
+                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < slope || baseMap[i, j] / baseMap[i - 1, j - 1] < slope)
                     {
                         splatMap[i, j, 0] = 0;
                         splatMap[i, j, 1] = 0;
@@ -780,7 +789,11 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintArea(string landLayer, int z1, int z2, int x1, int x2, int t)
+    public void paintArea(string landLayer, int z1, int z2, int x1, int x2, int t) // Paints area within these splatmap coords, Maps will always have a splatmap resolution between
+    // 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048). Face downright in the editor with Z axis facing up, and X axis facing right, and the map will draw
+    // from the bottom left corner, up to the top right. So a value of z1 = 0, z2 = 500, x1 = 0, x2 = 1000, would paint 500 pixels up, and 1000 pixels left from the bottom right corner.
+    // Note that the results of how much of the map is covered is dependant on the map size, a 2000 map size would paint almost the bottom half of the map, whereas a 4000 map would 
+    // paint up nearly one quarter of the map, and across nearly half of the map.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -826,7 +839,8 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. Also include option to wipe layers before calling method.
+    public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. If wipeLayer == true it will wipe the existing topologies on the layer before painting
+    // the new topologies.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
@@ -944,7 +958,39 @@ public class MapIO : MonoBehaviour {
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, float.MaxValue, 0);
     }
-    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn.
+    public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
+    // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
+    {
+
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
+
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                if (alphaSplatMap[i, j, 1] == 1)
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 2;
+                    splatMap[i, j, 2] = 0;
+                    splatMap[i, j, 3] = 0;
+                    splatMap[i, j, 4] = 0;
+                    splatMap[i, j, 5] = 0;
+                    splatMap[i, j, 6] = 0;
+                    splatMap[i, j, 7] = 0;
+
+                    splatMap[i, j, 3] = 1; // This paints the rock layer. Where 3 = the layer to paint.
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+    }
+    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn, due to perlin noise always being the same value on each full number (int). Will probably
+    // look at blending the layers abit to create the effect. 
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
