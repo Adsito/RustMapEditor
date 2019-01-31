@@ -11,7 +11,14 @@ using static WorldSerialization;
 [Serializable]
 
 public class MapIO : MonoBehaviour {
-    
+    #region LayersFrom
+    public TerrainTopology.Enum topologyLayerFrom;
+    public TerrainTopology.Enum topologyLayerToPaint;
+    public TerrainSplat.Enum groundLayerFrom;
+    public TerrainSplat.Enum groundLayerToPaint;
+    public TerrainBiome.Enum biomeLayerFrom;
+    public TerrainBiome.Enum biomeLayerToPaint;
+    #endregion
     public TerrainTopology.Enum topologyLayer;
     public TerrainTopology.Enum oldTopologyLayer;
     public TerrainTopology.Enum oldTopologyLayer2;
@@ -52,7 +59,6 @@ public class MapIO : MonoBehaviour {
             Debug.LogError("Splatmap is null");
             return;
         }
-
         for (int i = 0; i < topologyMap.res; i++)
         {
             for (int j = 0; j < topologyMap.res; j++)
@@ -528,6 +534,7 @@ public class MapIO : MonoBehaviour {
     #region SplatMap Methods
     // Todo: I will rewrite the autoGenerate methods to use loops instead of a shittonne of code, however that will require rewriting the current TerrainTopology class, which will break
     // other scripts, and prevent easily merging in updates from Dez's own editor repo. I am well aware it's not the best way to iterate through the layers :)
+    // It will be fixed shortly.
     public int textures(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
     // Accepts "Ground", "Biome", "Alpha" and "Topology".
     {
@@ -967,6 +974,7 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
 
+
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -988,6 +996,91 @@ public class MapIO : MonoBehaviour {
         }
         landData.setData(splatMap, landLayer);
         landData.setLayer();
+    }
+    public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
+    // and paints the same coordinate on another landlayer with the selected texture.
+    {
+
+        switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
+        {
+            default:
+                Debug.Log("landLayerFrom not found!");
+                break;
+            case "Ground":
+                changeLayer("Ground");
+                textureFrom = TerrainSplat.TypeToIndex((int)groundLayerFrom); // Layer texture to copy from Ground Textures.
+                break;
+            case "Biome":
+                changeLayer("Biome");
+                textureFrom = TerrainBiome.TypeToIndex((int)biomeLayerFrom); // Layer texture to copy from Biome Textures.
+                break;
+            case "Topology":
+                changeLayer("Topology");
+                textureFrom = 0;
+                oldTopologyLayer2 = topologyLayer;
+                topologyLayer = topologyLayerFrom;
+                changeLandLayer();
+                oldTopologyLayer = topologyLayerFrom;
+                break;
+        }
+        LandData landDataFrom = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerFrom).GetComponent<LandData>();
+        float[,,] splatMapFrom = TypeConverter.singleToMulti(landDataFrom.splatMap, textureCount(landLayerFrom)); // Land layer to copy from.
+        switch (landLayerToPaint) // Gathers the information on which texture we are painting to in the landlayer.
+        {
+            default:
+                Debug.Log("landLayerToPaint not found!");
+                break;
+            case "Ground":
+                changeLayer("Ground");
+                textureToPaint = TerrainSplat.TypeToIndex((int)groundLayerToPaint); // Layer texture to copy from Ground Textures.
+                break;
+            case "Biome":
+                changeLayer("Biome");
+                textureToPaint = TerrainBiome.TypeToIndex((int)biomeLayerToPaint); // Layer texture to copy from Biome Textures.
+                break;
+            case "Topology":
+                changeLayer("Topology");
+                textureToPaint = 0;
+                oldTopologyLayer2 = topologyLayer;
+                topologyLayer = topologyLayerFrom;
+                changeLandLayer();
+                oldTopologyLayer = topologyLayerFrom;
+                break;
+        }
+        LandData landDataToPaint = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerToPaint).GetComponent<LandData>();
+        float[,,] splatMapTo = TypeConverter.singleToMulti(landDataToPaint.splatMap, textureCount(landLayerToPaint)); //  Land layer to paint to.
+
+        for (int i = 0; i < splatMapFrom.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMapFrom.GetLength(1); j++)
+            {
+                if (splatMapFrom [i, j, textureFrom] > 0)
+                {
+                    splatMapTo[i, j, 0] = 0;
+                    splatMapTo[i, j, 1] = 0;
+                    if (textureCount(landLayerToPaint) > 2)
+                    {
+                        splatMapTo[i, j, 2] = 0;
+                        splatMapTo[i, j, 3] = 0;
+                        if (textureCount(landLayerToPaint) > 4)
+                        {
+                            splatMapTo[i, j, 4] = 0;
+                            splatMapTo[i, j, 5] = 0;
+                            splatMapTo[i, j, 6] = 0;
+                            splatMapTo[i, j, 7] = 0;
+                        }
+                    }
+                    splatMapTo[i, j, textureToPaint] = 1;
+                }
+            }
+        }
+        landDataToPaint.setData(splatMapTo, landLayerToPaint);
+        landDataToPaint.setLayer();
+        if (landLayerToPaint == "Topology")
+        {
+            topologyLayer = oldTopologyLayer2;
+            saveTopologyLayer();
+        }
     }
     public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn, due to perlin noise always being the same value on each full number (int). Will probably
     // look at blending the layers abit to create the effect. 
