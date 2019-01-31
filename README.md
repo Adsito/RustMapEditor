@@ -13,10 +13,11 @@ Edit > Project Settings > Player > Other Settings > Configuration > Scripting Ru
 https://discord.gg/VQruSpk
 
 ### Contribute
-Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord.
+Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
 ### Credits
 Roughly 90% of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
+https://github.com/JasonM97/Rust-Map-Editor
 https://www.patreon.com/dezinated
 
 ## Features
@@ -100,7 +101,10 @@ Prefabs from the Assets/prefabs path do not load currently.
 	
 ### 7) Painting Layers
 	- Paint layers based on height, slope, area and clear layers.
-	- Generate basic noise for any topology layer.
+	- Paint any areas where the alpha is active with rock texture, to remove floating grass ingame.
+	- Paint topologies, ground and biome layers if another layer has a selected texture.
+		eg: Paint all snow textures with arctic or snow biomes.
+	- Blend layers
 	
 				
 		
