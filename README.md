@@ -1,13 +1,8 @@
 # Rust Map Making Unity Editor
 
-**Make sure you're using a Unity 2018 version. 2018.2.0b7 is confirmed working, not sure about 2018.1.**
-
-
-DOWNLOAD LINK:
-https://unity3d.com/unity/beta/unity2018.2.0b7
-
-Set your Unity .NET version to 4.0.
-Edit > Project Settings > Player > Other Settings > Configuration > Scripting Runtime Version
+**Make sure you're using a Unity 2018.3.3f1 version.**
+Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
+After installing Unity Hub, click this link to download Unity 2018.3.3f1 :unityhub://2018.3.3f1/393bae82dbb8
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
