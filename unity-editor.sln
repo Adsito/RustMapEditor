@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unity-editor", "Facepunch.System.csproj", "{C65E3ABE-47DB-6163-FC2E-2494C9EC1F63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facepunch.System", "Facepunch.System.csproj", "{C65E3ABE-47DB-6163-FC2E-2494C9EC1F63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unity-editor", "Assembly-CSharp.csproj", "{50B76936-22D2-6F1E-0B35-8DDE19C924DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{50B76936-22D2-6F1E-0B35-8DDE19C924DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unity-editor", "NewAssembly.csproj", "{A323F4C9-F759-15BE-6994-5A9C5DD66BAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewAssembly", "NewAssembly.csproj", "{A323F4C9-F759-15BE-6994-5A9C5DD66BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unity-editor", "Rust.World.csproj", "{5E2BF25A-1524-06B7-8614-0806D4835E14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rust.World", "Rust.World.csproj", "{5E2BF25A-1524-06B7-8614-0806D4835E14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unity-editor", "Assembly-CSharp-Editor.csproj", "{263090E3-BA21-C7EA-7344-82C35F835BF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{263090E3-BA21-C7EA-7344-82C35F835BF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
