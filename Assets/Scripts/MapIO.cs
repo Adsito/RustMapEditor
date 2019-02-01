@@ -1017,10 +1017,7 @@ public class MapIO : MonoBehaviour {
             case "Topology":
                 changeLayer("Topology");
                 textureFrom = 0;
-                oldTopologyLayer2 = topologyLayer;
                 topologyLayer = topologyLayerFrom;
-                changeLandLayer();
-                oldTopologyLayer = topologyLayerFrom;
                 break;
         }
         LandData landDataFrom = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerFrom).GetComponent<LandData>();
@@ -1042,9 +1039,9 @@ public class MapIO : MonoBehaviour {
                 changeLayer("Topology");
                 textureToPaint = 0;
                 oldTopologyLayer2 = topologyLayer;
-                topologyLayer = topologyLayerFrom;
+                topologyLayer = topologyLayerToPaint;
                 changeLandLayer();
-                oldTopologyLayer = topologyLayerFrom;
+                oldTopologyLayer = topologyLayerToPaint;
                 break;
         }
         LandData landDataToPaint = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerToPaint).GetComponent<LandData>();
