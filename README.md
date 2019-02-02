@@ -29,9 +29,6 @@ https://www.patreon.com/dezinated
 - Paint terrain based on height and slopes.
   
 ## Notes
-
-- <b>Make sure you're on Unity version 2018.2.0b7. Unity 2018.2.0b11 DOES NOT WORK!</b>
-- Use .NET 4.0
 - Maps need to be hosted on websites in order for other players to download them (You can use a local path if just testing on your own network)
 - If you get a FileMismatch error that means you already have the file but it doesn't match the one on the server. To delete the copy of the map on your PC just open console in game by hitting F1 and look for the map file name it was trying to download. Then find it in this directory "C:\Program Files (x86)\Steam\steamapps\common\Rust\maps" and delete it. If you're still getting this error that means the server already has the map but it doesn't match the one being downloaded from the website. 
 - Moving terrains around won't do anything. The editor will only export the heightmap.
@@ -42,7 +39,7 @@ https://www.patreon.com/dezinated
 ## How to use the Editor
 
 ### 1) Opening the Project
-Make sure you're on Unity 2018.2 and then launch Unity. When the Unity projects window opens up click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. Load `Dezinated's Rust Map Editor` project and it should take you into the editor view. Then at the bottom of the editor view there should be a file explorer; navigate to the Scenes folder and open `SampleScene`.
+Make sure you're on Unity 2018.2 and then launch Unity. When the Unity projects window opens up click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. Load `unity-editor-master` project and it should take you into the editor view. Then at the bottom of the editor view there should be a file explorer; navigate to the Scenes folder and open `SampleScene`.
 
 ### 2) Loading a Map
 On the left side of the editor screen, in the Hierarchy you will see all of the object the scene contains. Click on the `MapIO` object and you will notice map option on the right side of the editor in the Inspector. Import/Export buttons are to load and save .map files.
