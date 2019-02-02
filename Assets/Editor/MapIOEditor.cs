@@ -149,7 +149,7 @@ public class MapIOEditor : Editor
         {
             script.autoGenerateGround();
         }
-        GUILayout.Label("This paints the textureToPaint on the layerToPaint if the layerFrom has the textureFrom in that coordinate.\n Eg. If layerFrom = Ground, textureToCopyFrom = Snow and \n" +
+        GUILayout.Label("This paints the textureToPaint on the layerToPaint \n if the layerFrom has the textureFrom in that coordinate.\n Eg. If layerFrom = Ground, textureToCopyFrom = Snow and \n" +
             "layerToPaint = Topology, textureToPaint = Decor \n it would paint decor wherever there was snow"); //ToDo: Have this make sense and not look like a chimp wrote it.
         string[] layerFromList = { "Ground", "Biome", "Topology" };
         landLayerFrom = EditorGUILayout.Popup("Land Layer To Copy From:", landLayerFrom, layerFromList);
@@ -196,7 +196,7 @@ public class MapIOEditor : Editor
             script.textureCopy(layerFromList[landLayerFrom], layerToList[landLayerToPaint], textureFrom, textureToPaint);
         }
 
-        GUILayout.Label("This paints the ground texture to rock wherever the alpha is removing the terrain ingame. \n Used to prevent floating grass.");
+        GUILayout.Label("This paints the ground texture to rock wherever the alpha \n is removing the terrain ingame. \n Used to prevent floating grass.");
         if (GUILayout.Button("Debug Alpha Textures"))
         {
             script.changeLayer("Ground");
