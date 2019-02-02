@@ -49,7 +49,6 @@ public static class FileSystem
     public static T Load<T>(string filePath, bool bComplain = true) where T : UnityEngine.Object
     {
         filePath = filePath.ToLower();
-        T obj1 = (T)null;
         T obj2;
         if (FileSystem.cache.ContainsKey(filePath))
         {
