@@ -719,7 +719,7 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     } 
-    public void paintSlope(string landLayer, float slope, int t) // Paints slope based on the current slope input, the slope range is set to 90° - wherever the slider is set.
+    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, int t) // Paints slope based on the current slope input, the slope range is set to 90° - wherever the slider is set.
     // The slider to the far left = 90° - 90°, the slider in the middle = 90° - 45° and at the far right would be 90° - 0° or the whole map.
     // The slope value must be between 0.99f and 1.0f. The slider is clamped to this value.
     {
@@ -741,8 +741,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 1; j < 4095; j++)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < slope || baseMap[i, j] / baseMap[i - 1, j - 1] < slope)
+                    if (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow || baseMap[i, j] / baseMap[i - 1, j - 1] > slopeLow)
                     {
+                        if (baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh || baseMap[i, j] / baseMap[i - 1, j - 1] < slopeHigh)
+                        {
                             splatMap[i / 2, j / 2, 0] = 0;
                             splatMap[i / 2, j / 2, 1] = 0;
                             if (textureCount(landLayer) > 2)
@@ -762,29 +764,33 @@ public class MapIO : MonoBehaviour {
                     }
                 }
             }
+        }
         else
         {
             for (int i = 1; i < splatMap.GetLength(0) - 1; i++)
             {
                 for (int j = 1; j < splatMap.GetLength(1) - 1; j++)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] < slope || baseMap[i, j] / baseMap[i - 1, j - 1] < slope)
+                    if (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow || baseMap[i, j] / baseMap[i - 1, j - 1] > slopeLow)
                     {
-                        splatMap[i, j, 0] = 0;
-                        splatMap[i, j, 1] = 0;
-                        if (textureCount(landLayer) > 2)
+                        if(baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh || baseMap[i, j] / baseMap[i - 1, j - 1] < slopeHigh)
                         {
-                            splatMap[i, j, 2] = 0;
-                            splatMap[i, j, 3] = 0;
-                            if (textureCount(landLayer) > 4)
+                            splatMap[i, j, 0] = 0;
+                            splatMap[i, j, 1] = 0;
+                            if (textureCount(landLayer) > 2)
                             {
-                                splatMap[i, j, 4] = 0;
-                                splatMap[i, j, 5] = 0;
-                                splatMap[i, j, 6] = 0;
-                                splatMap[i, j, 7] = 0;
+                                splatMap[i, j, 2] = 0;
+                                splatMap[i, j, 3] = 0;
+                                if (textureCount(landLayer) > 4)
+                                {
+                                    splatMap[i, j, 4] = 0;
+                                    splatMap[i, j, 5] = 0;
+                                    splatMap[i, j, 6] = 0;
+                                    splatMap[i, j, 7] = 0;
+                                }
                             }
+                            splatMap[i, j, t] = 1;
                         }
-                        splatMap[i, j, t] = 1;
                     }
                 }
             }
@@ -876,19 +882,19 @@ public class MapIO : MonoBehaviour {
 
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintSlope("Topology", 0.995f, 0);
+            paintSlope("Topology", 0.995f, 1f, 0);
 
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             changeLandLayer();
         }
@@ -924,7 +930,7 @@ public class MapIO : MonoBehaviour {
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
-            paintSlope("Topology", 0.995f, 0);
+            paintSlope("Topology", 0.995f, 1f, 0);
 
             topologyLayer = TerrainTopology.Enum.Tier0;
             changeLandLayer();
@@ -956,7 +962,7 @@ public class MapIO : MonoBehaviour {
         paintHeight("Ground", 750, 1000, float.MaxValue, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
-        paintSlope("Ground", 0.9945f, 0);
+        paintSlope("Ground", 0.9945f, 1f, 0);
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {

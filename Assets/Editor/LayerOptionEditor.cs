@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0.995f, scale = 0f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 0f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -48,10 +48,11 @@ public class LayerOptionEditor : Editor
             //GUILayout.Label("Texture Opacity: " + opacity + " %");
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
             GUILayout.Label("Slope threshhold:");
-            slope = GUILayout.HorizontalSlider(slope, 0.99f, 1f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Ground", slope, 0);
+                mapIO.paintSlope("Ground", slopeLow, slopeHigh, 0);
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
@@ -62,7 +63,7 @@ public class LayerOptionEditor : Editor
                 mapIO.paintHeight("Ground", y1, y2, opacity, 0);
             }
             EditorGUILayout.EndHorizontal();
-            if (GUILayout.Button("Paint Layer"))
+            if (GUILayout.Button("Paint Whole Layer"))
             {
                 mapIO.paintLayer("Ground", 0);
             }
@@ -85,10 +86,11 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Slope threshhold:");
-            slope = GUILayout.HorizontalSlider(slope, 0.99f, 1f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Biome", slope, 0);
+                mapIO.paintSlope("Biome", slopeLow, slopeHigh, 0);
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
@@ -105,7 +107,7 @@ public class LayerOptionEditor : Editor
             {
                 mapIO.paintArea("Biome", z1, z2, x1, x2, 0);
             }
-            if (GUILayout.Button("Paint Layer"))
+            if (GUILayout.Button("Paint Whole Layer"))
             {
                 mapIO.paintLayer("Biome", 0);
             }
@@ -156,11 +158,11 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint layer"))
+            if (GUILayout.Button("Paint Whole layer"))
             {
                 mapIO.paintLayer("Alpha", 0);
             }
-            if (GUILayout.Button("Clear layer"))
+            if (GUILayout.Button("Clear Whole layer"))
             {
                 mapIO.clearLayer("Alpha");
             }
@@ -201,10 +203,11 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Slope threshhold:");
-            slope = GUILayout.HorizontalSlider(slope, 0.99f, 1f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Topology", slope, 0);
+                mapIO.paintSlope("Topology", slopeLow, slopeHigh, 0);
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
@@ -234,11 +237,11 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint layer"))
+            if (GUILayout.Button("Paint Whole layer"))
             {
                 mapIO.paintLayer("Topology", 0);
             }
-            if (GUILayout.Button("Clear layer"))
+            if (GUILayout.Button("Clear Whole layer"))
             {
                 mapIO.clearLayer("Topology");
             }
