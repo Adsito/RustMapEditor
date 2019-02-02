@@ -28,6 +28,10 @@ public class LayerOptionEditor : Editor
             mapIO.changeLandLayer();
             Repaint();
         }
+        if (slopeLow >= slopeHigh)
+        {
+            slopeLow = slopeHigh - 0.00001f;
+        }
         #endregion
         
         #region Ground Layer
