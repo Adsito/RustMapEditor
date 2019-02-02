@@ -30,7 +30,7 @@ public class LayerOptionEditor : Editor
         }
         if (slopeLow > slopeHigh)
         {
-            slopeHigh += 0.00001f;
+            slopeHigh += 0.00005f;
             slopeLow = slopeHigh - 0.00001f;
             if (slopeHigh > 1f)
             {
