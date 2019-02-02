@@ -35,12 +35,10 @@ public class LayerOptionEditor : Editor
             if (slopeHigh > 1f)
             {
                 slopeHigh = 1f;
-                slopeLow = 0.99999f;
             }
             if (slopeLow < 0f)
             {
                 slopeLow = 0f;
-                slopeHigh = 0.00001f;
             }
         }
         #endregion

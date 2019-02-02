@@ -860,7 +860,7 @@ public class MapIO : MonoBehaviour {
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
-            oldTopologyLayer = TerrainTopology.Enum.Offshore;
+            oldTopologyLayer = TerrainTopology.Enum.Offshore; //If wiping layers we don't need to get the current layers splatmap detail, so we just wipe it clean then repaint.
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
@@ -900,11 +900,11 @@ public class MapIO : MonoBehaviour {
         }
         else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
-            oldTopologyLayer2 = topologyLayer;
+            oldTopologyLayer2 = topologyLayer; //This saves the currently selected topology layer so we can swap back to it at the end, ensuring we don't accidentally erase anything.
 
-            topologyLayer = TerrainTopology.Enum.Offshore;
-            changeLandLayer();
-            oldTopologyLayer = TerrainTopology.Enum.Offshore;
+            topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
+            changeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
+            oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
             paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
             topologyLayer = TerrainTopology.Enum.Ocean;
