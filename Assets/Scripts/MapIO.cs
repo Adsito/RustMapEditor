@@ -1006,7 +1006,6 @@ public class MapIO : MonoBehaviour {
     public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
-
         switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
         {
             default:
