@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0f, scale = 0f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slope = 0.995f, scale = 0f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -60,10 +60,6 @@ public class LayerOptionEditor : Editor
             if (GUILayout.Button("Paint range"))
             {
                 mapIO.paintHeight("Ground", y1, y2, opacity, 0);
-            }
-            if (GUILayout.Button("Erase range"))
-            {
-                mapIO.paintHeight("Ground", y1, y2, opacity, 1);
             }
             EditorGUILayout.EndHorizontal();
             if (GUILayout.Button("Paint Layer"))
