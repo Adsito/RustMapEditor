@@ -12,8 +12,9 @@ public class PrefabLookup : System.IDisposable
 
 	private static string lookupPath = "Assets/Modding/Prefabs.txt";
 	private static string scenePath = "Assets/Modding/Prefabs.unity";
+    private static string manifestPath = "Assets/manifest.asset";
 
-	public bool isLoaded
+    public bool isLoaded
 	{
 		get { return scene.isLoaded; }
 	}
@@ -23,8 +24,18 @@ public class PrefabLookup : System.IDisposable
 		backend = new AssetBundleBackend(bundlename);
 
 		var lookupAsset = backend.Load<TextAsset>(lookupPath);
+        var lookupManifest = backend.Load<GameManifest>(manifestPath);
+        
+        /*
+        for (int i = 0; i < lookupManifest.prefabProperties.Length; i++)
+        {
+            Debug.Log(lookupManifest.prefabProperties[i].hash);
+        } 
+        Enable to turn on a list of all the prefabs in Rust.
+        */
+        
 
-		lookup = new HashLookup(lookupAsset.text);
+        lookup = new HashLookup(lookupAsset.text);
 
 		var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
 
@@ -39,7 +50,7 @@ public class PrefabLookup : System.IDisposable
 		};
 	}
 
-	public void Dispose()
+    public void Dispose()
 	{
 		if (!isLoaded)
 		{
