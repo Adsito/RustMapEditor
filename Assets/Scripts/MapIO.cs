@@ -771,9 +771,7 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 1; j < splatMap.GetLength(1) - 1; j++)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow || baseMap[i, j] / baseMap[i - 1, j - 1] > slopeLow)
-                    {
-                        if(baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh || baseMap[i, j] / baseMap[i - 1, j - 1] < slopeHigh)
+                    if ((baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh) && (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow))
                         {
                             splatMap[i, j, 0] = 0;
                             splatMap[i, j, 1] = 0;
@@ -791,7 +789,6 @@ public class MapIO : MonoBehaviour {
                             }
                             splatMap[i, j, t] = 1;
                         }
-                    }
                 }
             }
         }
