@@ -3,3 +3,6 @@
 *.ide-shm
 *.ide-wal
 Library\metadata
+*.bin
+*.info
+*.info
