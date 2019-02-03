@@ -67,9 +67,11 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             //GUILayout.Label("Texture Opacity: " + opacity + " %");
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
-            GUILayout.Label("Slope threshhold: ");
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
+            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
+            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, 0);
@@ -105,9 +107,11 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateBiomemap(false);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshhold:");
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
+            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
+            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Biome", slopeLow, slopeHigh, 0);
