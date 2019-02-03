@@ -1081,7 +1081,7 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
+    public void generateTwoLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
@@ -1111,6 +1111,51 @@ public class MapIO : MonoBehaviour {
         {
             saveTopologyLayer();
         }
+    }
+    public void generateFourLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across four layers, the smaller the scale the smaller the blobs 
+    // it generates will be. Wipes the current layer.
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 4);
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                float i2 = i / scale;
+                float j2 = j / scale;
+                float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
+                if (perlin < 0.25f)
+                {
+                    splatMap[i, j, 3] = 0;
+                    splatMap[i, j, 2] = 0;
+                    splatMap[i, j, 1] = 0;
+                    splatMap[i, j, 0] = 1;
+                }
+                else if (perlin < 0.5f)
+                {
+                    splatMap[i, j, 3] = 0;
+                    splatMap[i, j, 2] = 0;
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
+                }
+                else if (perlin < 0.75f)
+                {
+                    splatMap[i, j, 3] = 0;
+                    splatMap[i, j, 1] = 0;
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 2] = 1;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 0;
+                    splatMap[i, j, 2] = 0;
+                    splatMap[i, j, 3] = 1;
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
     }
     #endregion
 

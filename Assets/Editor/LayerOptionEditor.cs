@@ -135,6 +135,13 @@ public class LayerOptionEditor : Editor
             {
                 mapIO.paintLayer("Biome", 0);
             }
+            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
+            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
+            scale = GUILayout.HorizontalSlider(scale, 500f, 5000f);
+            if (GUILayout.Button("Generate random Biome map"))
+            {
+                mapIO.generateFourLayersNoise("Biome", scale);
+            }
         }
         #endregion
 
@@ -277,7 +284,7 @@ public class LayerOptionEditor : Editor
             scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
             if (GUILayout.Button("Generate random topology map"))
             {
-                mapIO.generateTwoLayersNoise("Topology", scale, 0);
+                mapIO.generateTwoLayersNoise("Topology", scale);
             }
         }
         #endregion
