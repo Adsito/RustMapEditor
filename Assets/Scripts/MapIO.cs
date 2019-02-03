@@ -1084,8 +1084,8 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Doesn't work rn, due to perlin noise always being the same value on each full number (int). Will probably
-    // look at blending the layers abit to create the effect. 
+    public void generateTwoLayersNoise(string landLayer, float scale, int t) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
+    // it generates will be. Wipes the current layer.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
@@ -1096,8 +1096,16 @@ public class MapIO : MonoBehaviour {
                 float i2 = i / scale;
                 float j2 = j / scale;
                 float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
-                splatMap[i, j, 0] = perlin * -1;
-                splatMap[i, j, 1] = perlin;
+                if (perlin <= 0.5f)
+                {
+                    splatMap[i, j, 1] = 0;
+                    splatMap[i, j, 0] = 1;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
+                }
             }
         }
         landData.setData(splatMap, landLayer);

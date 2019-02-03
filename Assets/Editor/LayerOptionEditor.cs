@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 0f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 50f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -259,9 +259,9 @@ public class LayerOptionEditor : Editor
                 mapIO.clearLayer("Topology");
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Noise scale");
-            scale = GUILayout.HorizontalSlider(scale, 0.01f, 10000f);
-            if (GUILayout.Button("Generate noise topology layer, broken rn"))
+            GUILayout.Label("Noise scale, the futher left the smaller the blobs");
+            scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
+            if (GUILayout.Button("Generate random topology map"))
             {
                 mapIO.generateTwoLayersNoise("Topology", scale, 0);
             }
