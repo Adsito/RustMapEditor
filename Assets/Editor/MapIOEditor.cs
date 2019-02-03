@@ -35,7 +35,8 @@ public class MapIOEditor : Editor
             script.newEmptyTerrain(mapSize);   
         }
 
-        GUILayout.Label("Load Map", EditorStyles.boldLabel);
+        GUILayout.Label("Import and Export Map", EditorStyles.boldLabel);
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("Import .map file"))
         {
             loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
@@ -50,8 +51,6 @@ public class MapIOEditor : Editor
             blob.Load(loadFile);
             script.Load(blob);
         }
-
-        GUILayout.Label("Save Map", EditorStyles.boldLabel);
         if (GUILayout.Button("Export .map file"))
         {
             saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
@@ -62,7 +61,7 @@ public class MapIOEditor : Editor
             Debug.Log("Exported map " + saveFile);
             script.Save(saveFile);
         }
-
+        GUILayout.EndHorizontal();
 
         GUILayout.Label("Bundle file", EditorStyles.boldLabel);
         script.bundleFile = GUILayout.TextField(script.bundleFile, GUILayout.MinWidth(100));
@@ -83,7 +82,7 @@ public class MapIOEditor : Editor
 
 
 
-        GUILayout.Label("Heightmap Options", EditorStyles.boldLabel);
+        GUILayout.Label("Whole Map Options", EditorStyles.boldLabel);
 
         GUILayout.Label("Land Heightmap Offset (Move Land to correct position)");
         if (GUILayout.Button("Click here to bake heightmap values"))
@@ -91,6 +90,7 @@ public class MapIOEditor : Editor
             script.offsetHeightmap();
         }
 
+        /* Hiding this until I fully implement scaling all map components.
         GUILayout.Label("Land Heightmap Scale");
         script.scale = float.Parse(GUILayout.TextField(script.scale + ""));
         script.scale = GUILayout.HorizontalSlider(script.scale, 0.1f, 2);
@@ -99,6 +99,7 @@ public class MapIOEditor : Editor
             script.scaleHeightmap();
             script.scale = 1f;
         }
+        */
         GUILayout.Label("Rotating maps takes roughly 1 minute to process \n for the largest maps.", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Rotate 90°")) // Calls every rotate function from MapIO. Rotates 90 degrees.
@@ -128,6 +129,7 @@ public class MapIOEditor : Editor
             script.rotateAllTopologymap(false);
         }
 
+        /* Hiding these until we have everything flip at once.
         if (GUILayout.Button("Flip"))
         {
             script.flipHeightmap();
@@ -135,7 +137,8 @@ public class MapIOEditor : Editor
         if (GUILayout.Button("Transpose"))
         {
             script.transposeHeightmap();
-        }
+        }*/
+
         EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Paint Default Topologies"))
         {

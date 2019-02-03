@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.99995f, slopeHigh = 0.99995f, scale = 50f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 50f;
     float slopeDegreesLow = 0f, slopeDegreesHigh = 90f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
@@ -17,8 +17,8 @@ public class LayerOptionEditor : Editor
         if (mapIO == null)
             mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
 
-        GUILayout.Label("Land Options", EditorStyles.boldLabel);
-        LayerOptions.showBounds = EditorGUILayout.Toggle("Show Bounds", LayerOptions.showBounds);
+        GUILayout.Label("Land Layer To Select", EditorStyles.boldLabel);
+        //LayerOptions.showBounds = EditorGUILayout.Toggle("Show Bounds", LayerOptions.showBounds);
 
         string oldLandLayer = mapIO.landLayer;
         string[] options = { "Ground", "Biome", "Alpha", "Topology" };
@@ -88,6 +88,13 @@ public class LayerOptionEditor : Editor
             if (GUILayout.Button("Paint Whole Layer"))
             {
                 mapIO.paintLayer("Ground", 0);
+            }
+            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Ground textures");
+            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
+            scale = GUILayout.HorizontalSlider(scale, 10f, 2000f);
+            if (GUILayout.Button("Generate random Ground map"))
+            {
+                mapIO.generateEightLayersNoise("Ground", scale);
             }
         }
         #endregion
