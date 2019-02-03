@@ -7,7 +7,8 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 50f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.99995f, slopeHigh = 0.99995f, scale = 50f;
+    float slopeDegreesLow = 0f, slopeDegreesHigh = 90f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -31,18 +32,24 @@ public class LayerOptionEditor : Editor
         if (slopeLow > slopeHigh)
         {
             slopeHigh += 0.00005f;
-            slopeLow = slopeHigh - 0.00005f;
-            if (slopeHigh > 1f)
+            slopeLow = slopeHigh - 0.00006f;
+            if (slopeHigh > 1.0050f)
             {
-                slopeHigh = 1f;
+                slopeHigh = 1.0050f;
             }
             if (slopeLow < 0f)
             {
                 slopeLow = 0f;
             }
         }
+        slopeDegreesLow = slopeLow - 0.99f;
+        slopeDegreesLow *= 6000.006050f;
+        slopeDegreesHigh = slopeHigh - 0.99f;
+        slopeDegreesHigh *= 6000.006050f;
+        // From 0.99000f to 1.00500f
+        // Range 0.10500f
         #endregion
-        
+
         #region Ground Layer
         if (mapIO.landLayer.Equals("Ground"))
         {
@@ -60,7 +67,7 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             //GUILayout.Label("Texture Opacity: " + opacity + " %");
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
-            GUILayout.Label("Slope threshhold:");
+            GUILayout.Label("Slope threshhold: ");
             slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
             slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
             if (GUILayout.Button("Paint slopes"))
@@ -215,9 +222,11 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshhold:");
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1f);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.99f, 1f);
+            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
+            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Topology", slopeLow, slopeHigh, 0);
@@ -259,7 +268,8 @@ public class LayerOptionEditor : Editor
                 mapIO.clearLayer("Topology");
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Noise scale, the futher left the smaller the blobs");
+            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");
+            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
             scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
             if (GUILayout.Button("Generate random topology map"))
             {
