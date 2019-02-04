@@ -12,7 +12,7 @@ public class MapIOEditor : Editor
     string mapName = "";
 
     int mapSize = 2000;
-    float heightToSet = 0f;
+    float heightToSet = 0f, scale = 0f;
     bool top = false, left = false, right = false, bottom = false;
     public LayerOptionEditor optionEditor;
 
@@ -29,12 +29,12 @@ public class MapIOEditor : Editor
         GUILayout.EndHorizontal();
         if (GUILayout.Button("Create new Map (Overwrite current map)"))
         {
-            if(mapSize < 1000)
+            if (mapSize < 1000)
             {
                 Debug.LogError("Use a map size greater than 1000");
                 return;
             }
-            script.newEmptyTerrain(mapSize);   
+            script.newEmptyTerrain(mapSize);
         }
 
         GUILayout.Label("Import and Export Map", EditorStyles.boldLabel);
@@ -56,7 +56,7 @@ public class MapIOEditor : Editor
         if (GUILayout.Button("Export .map file"))
         {
             saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
-            if(saveFile == "")
+            if (saveFile == "")
             {
                 Debug.LogError("Empty save path");
             }
@@ -142,6 +142,12 @@ public class MapIOEditor : Editor
         }*/
 
         EditorGUILayout.EndHorizontal();
+        GUILayout.Label("Scale of the heightmap generation, the further left the less smoothed the terrain will be");
+        scale = EditorGUILayout.Slider(scale, 1f, 2000f);
+        if (GUILayout.Button("Generate Perlin Heightmap"))
+        {
+            script.generatePerlinHeightmap(scale);
+        }
         if (GUILayout.Button("Paint Default Topologies"))
         {
             script.autoGenerateTopology(false);
