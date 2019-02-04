@@ -10,6 +10,11 @@ https://discord.gg/VQruSpk
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
+### Support Us
+The entirety of the Rust Map Making community resources, including this editor, are free and open-source. We would appreciate any sized contribution to fund these resources. Any amount, even just a single $ can go a long way in maintaining these projects. Thank you.
+
+If you wish to support us, follow this link and enter your desired amount: https://paypal.me/RustMapMaking
+
 ### Credits
 The foundations of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
 https://github.com/JasonM97/Rust-Map-Editor
@@ -42,10 +47,11 @@ Also using Assets from:
 ## How to use the Editor
 
 ### 1) Opening the Project
-Make sure you're on Unity 2018.2 and then launch Unity. When the Unity projects window opens up click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. Load `unity-editor-master` project and it should take you into the editor view. Then at the bottom of the editor view there should be a file explorer; navigate to the Scenes folder and open `SampleScene`.
+Make sure you are on at least Unity 2018.3.3 and then launch Unity. We recommend using Unity Hub to open the editor.
+When you open Unity Hub a projects window will appear, click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. You will then see the Project in the window. Click on the three dots "..." on the right and make sure you are on Unity version 2018.3.3 or above and click "Open". The Unity project along with our editor scripts will now be loaded into Unity.
 
 ### 2) Loading a Map
-On the left side of the editor screen, in the Hierarchy you will see all of the object the scene contains. Click on the `MapIO` object and you will notice map option on the right side of the editor in the Inspector. Import/Export buttons are to load and save .map files.
+On the left side of the editor screen, in the Hierarchy you will see all of the object the scene contains. Click on the `MapIO` object and you will notice map options on the right side of the editor in the Inspector. Import/Export buttons are to load and save .map files.
 
 ### 3) Editing Map Features
 Again with `MapIO` selected you can switch between editing different map features. The dropdown list will contain Ground, Biome, Alpha, and Topology. Simply select a feature you would like to edit and then click on `Land` in the Hierarchy. From there you will see the Terrain component on the right side in the Inspector. Changing the terrain height will change the heightmap no matter which feature you are editing. To change features go to the texture painting tool on the terrain options. Depending on which feature you are editing there will be different textures available to use.
@@ -60,7 +66,7 @@ Again with `MapIO` selected you can switch between editing different map feature
 
 ### 4) Using Prefabs
 Prefabs are shown in the editor as white cubes. Prefabs also have an option to load them from the game files on play. 
-If you press the play button the editor will load the actual Prefab from the game files.
+If you press the play button the editor will load the actual Prefab from the game files. Make sure you remember to select your bundles file so the director field is filled when pressing play.
 
 #Note: 
 Prefabs from the Assets/prefabs path do not load currently.
