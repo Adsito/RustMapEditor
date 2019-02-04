@@ -529,7 +529,7 @@ public class MapIO : MonoBehaviour {
         land.terrainData.SetHeights(0, 0, heightMap);
         land.transform.position = Vector3.zero;
     }
-    public void setEdgePixel(float heightToSet)
+    public void setEdgePixel(float heightToSet, bool top, bool left, bool right, bool bottom)
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
@@ -537,21 +537,21 @@ public class MapIO : MonoBehaviour {
         {
             for (int j = 0; j < land.terrainData.heightmapWidth; j++)
             {
-                if (i == 0)
+                if (i == 0 && bottom == true)
                 {
-                    heightMap[i, j] = heightToSet;
+                    heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (i == land.terrainData.heightmapHeight - 1)
+                if (i == land.terrainData.heightmapHeight - 1 && top == true)
                 {
-                    heightMap[i, j] = heightToSet;
+                    heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (j == 0)
+                if (j == 0 && left == true)
                 {
-                    heightMap[i, j] = heightToSet;
+                    heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (j == land.terrainData.heightmapWidth - 1)
+                if (j == land.terrainData.heightmapWidth - 1 && right == true)
                 {
-                    heightMap[i, j] = heightToSet;
+                    heightMap[i, j] = heightToSet / 1000f;
                 }
             }
         }
