@@ -529,7 +529,8 @@ public class MapIO : MonoBehaviour {
         land.terrainData.SetHeights(0, 0, heightMap);
         land.transform.position = Vector3.zero;
     }
-    public void setEdgePixel(float heightToSet, bool top, bool left, bool right, bool bottom)
+    public void setEdgePixel(float heightToSet, bool top, bool left, bool right, bool bottom) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
+    // option for sides.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
@@ -553,6 +554,23 @@ public class MapIO : MonoBehaviour {
                 {
                     heightMap[i, j] = heightToSet / 1000f;
                 }
+            }
+        }
+        land.terrainData.SetHeights(0, 0, heightMap);
+    }
+    public void generatePerlinHeightmap(float scale)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+
+        for (int i = 0; i < land.terrainData.heightmapHeight; i++)
+        {
+            for (int j = 0; j < land.terrainData.heightmapWidth; j++)
+            {
+                float i2 = i / scale;
+                float j2 = j / scale;
+                float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
+                heightMap[i, j] = perlin;
             }
         }
         land.terrainData.SetHeights(0, 0, heightMap);
