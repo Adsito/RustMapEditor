@@ -69,9 +69,9 @@ public class LayerOptionEditor : Editor
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
             GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
             GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 1.0049f, 0.99f);
             GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 1.0050f, 0.9901f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, 0);
@@ -116,9 +116,9 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
             GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 1.0049f, 0.99f);
             GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 1.0050f, 0.9901f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Biome", slopeLow, slopeHigh, 0);
@@ -242,9 +242,9 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
             GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 1.0049f, 0.99f);
             GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.0050f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 1.0050f, 0.9901f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Topology", slopeLow, slopeHigh, 0);

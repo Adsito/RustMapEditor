@@ -2,7 +2,7 @@
 *.ide
 *.ide-shm
 *.ide-wal
-Library\metadata
+Library\metadata/
 *.bin
 *.info
 *.info
