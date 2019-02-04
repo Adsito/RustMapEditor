@@ -529,6 +529,34 @@ public class MapIO : MonoBehaviour {
         land.terrainData.SetHeights(0, 0, heightMap);
         land.transform.position = Vector3.zero;
     }
+    public void setEdgePixel(float heightToSet)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        for (int i = 0; i < land.terrainData.heightmapHeight; i++)
+        {
+            for (int j = 0; j < land.terrainData.heightmapWidth; j++)
+            {
+                if (i == 0)
+                {
+                    heightMap[i, j] = heightToSet;
+                }
+                if (i == land.terrainData.heightmapHeight - 1)
+                {
+                    heightMap[i, j] = heightToSet;
+                }
+                if (j == 0)
+                {
+                    heightMap[i, j] = heightToSet;
+                }
+                if (j == land.terrainData.heightmapWidth - 1)
+                {
+                    heightMap[i, j] = heightToSet;
+                }
+            }
+        }
+        land.terrainData.SetHeights(0, 0, heightMap);
+    }
     #endregion
 
     #region SplatMap Methods

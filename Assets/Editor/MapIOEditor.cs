@@ -12,6 +12,7 @@ public class MapIOEditor : Editor
     string mapName = "";
 
     int mapSize = 2000;
+    float heightToSet = 0f;
     public LayerOptionEditor optionEditor;
 
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
@@ -204,6 +205,11 @@ public class MapIOEditor : Editor
         {
             script.changeLayer("Ground");
             script.alphaDebug("Ground");
+        }
+        heightToSet = EditorGUILayout.FloatField(heightToSet);
+        if (GUILayout.Button("Set Edge Pixel Height"))
+        {
+            script.setEdgePixel(heightToSet);
         }
 
 
