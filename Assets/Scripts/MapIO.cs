@@ -1362,6 +1362,7 @@ public class MapIO : MonoBehaviour {
         biomeLandData.setData(terrains.biomeMap, "biome");
 
         alphaLandData.setData(terrains.alphaMap, "alpha");
+        clearLayer("Alpha");
 
         topologyLandData.setData(topology.getSplatMap((int)topologyLayer), "topology");
         changeLandLayer();
