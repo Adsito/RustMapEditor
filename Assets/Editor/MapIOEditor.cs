@@ -13,6 +13,7 @@ public class MapIOEditor : Editor
 
     int mapSize = 2000;
     float heightToSet = 0f;
+    bool top = false, left = false, right = false, bottom = false;
     public LayerOptionEditor optionEditor;
 
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
@@ -206,12 +207,19 @@ public class MapIOEditor : Editor
             script.changeLayer("Ground");
             script.alphaDebug("Ground");
         }
+        GUILayout.Label("This sets the very edges of the map to this height.");
         heightToSet = EditorGUILayout.FloatField(heightToSet);
+        EditorGUILayout.BeginHorizontal();
+        top = EditorGUILayout.ToggleLeft("Top ", top);
+        left = EditorGUILayout.ToggleLeft("Left ", left);
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        bottom = EditorGUILayout.ToggleLeft("Bottom ", bottom);
+        right = EditorGUILayout.ToggleLeft("Right ", right);
+        EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Set Edge Pixel Height"))
         {
-            script.setEdgePixel(heightToSet);
+            script.setEdgePixel(heightToSet, top, left, right, bottom);
         }
-
-
     }
 }
