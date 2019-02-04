@@ -11,9 +11,12 @@ https://discord.gg/VQruSpk
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
 ### Credits
-Roughly 90% of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
+The foundations of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
 https://github.com/JasonM97/Rust-Map-Editor
 https://www.patreon.com/dezinated
+
+Also using Assets from:
+-https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Ground Textures.
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
