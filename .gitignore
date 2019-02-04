@@ -2,11 +2,11 @@
 *.ide
 *.ide-shm
 *.ide-wal
-Library\metadata\*
+/Library/metadata/
 *.bin
 *.info
 *.info
-Temp\*
+/Temp/
 Library/metadata/04/041cbf4cde81c46f59608fbd19f2aa80
 Library/metadata/07/072450ffed31fe545a60f71f33f53916
 Library/metadata/0a/0a641b2900e62465d98a6c3d3baf11df
