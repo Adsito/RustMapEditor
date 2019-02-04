@@ -1360,6 +1360,7 @@ public class MapIO : MonoBehaviour {
         groundLandData.setData(terrains.splatMap, "ground");
 
         biomeLandData.setData(terrains.biomeMap, "biome");
+        paintLayer("Biome", 0);
 
         alphaLandData.setData(terrains.alphaMap, "alpha");
         clearLayer("Alpha");
