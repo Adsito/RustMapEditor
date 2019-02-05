@@ -44,8 +44,10 @@ public class LayerOptionEditor : Editor
         }
         slopeDegreesLow = slopeLow - 0.99f;
         slopeDegreesLow *= 6000.006050f;
+        slopeDegreesLow = 90f - slopeDegreesLow;
         slopeDegreesHigh = slopeHigh - 0.99f;
         slopeDegreesHigh *= 6000.006050f;
+        slopeDegreesHigh = 90f - slopeDegreesHigh;
         // From 0.99000f to 1.00500f
         // Range 0.10500f
         #endregion
@@ -69,9 +71,9 @@ public class LayerOptionEditor : Editor
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
             GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
             GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 1.0049f, 0.99f);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
             GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 1.0050f, 0.9901f);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.005f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, 0);
