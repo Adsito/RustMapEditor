@@ -12,8 +12,8 @@ public class MapIOEditor : Editor
     string mapName = "";
 
     int mapSize = 2000;
-    float heightToSet = 0f, scale = 0f;
-    bool top = false, left = false, right = false, bottom = false;
+    float heightToSet = 0f, scale = 0f, offset = 0f;
+    bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     public LayerOptionEditor optionEditor;
 
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
@@ -87,9 +87,19 @@ public class MapIOEditor : Editor
         GUILayout.Label("Whole Map Options", EditorStyles.boldLabel);
 
         GUILayout.Label("Land Heightmap Offset (Move Land to correct position)");
-        if (GUILayout.Button("Click here to bake heightmap values"))
+        if (GUILayout.Button("Move Map"))
         {
-            script.offsetHeightmap();
+            script.moveHeightmap();
+        }
+        GUILayout.Label("Land Heightmap Offset (Increase or Decrease the entire Heightmap)");
+        offset = EditorGUILayout.FloatField(offset);
+        EditorGUILayout.BeginHorizontal();
+        checkHeight = EditorGUILayout.ToggleLeft("Only raise if offset is within heightmap bounds ", checkHeight);
+        setWaterMap = EditorGUILayout.ToggleLeft("Raise watermap ", setWaterMap);
+        EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("Offset Heightmap"))
+        {
+            script.offsetHeightmap(offset, checkHeight, setWaterMap);
         }
 
         /* Hiding this until I fully implement scaling all map components.
@@ -142,7 +152,7 @@ public class MapIOEditor : Editor
         }*/
 
         EditorGUILayout.EndHorizontal();
-        GUILayout.Label("Scale of the heightmap generation, the further left the less smoothed the terrain will be");
+        GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
         if (GUILayout.Button("Generate Perlin Heightmap"))
         {

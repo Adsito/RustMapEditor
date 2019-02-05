@@ -514,7 +514,7 @@ public class MapIO : MonoBehaviour {
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         land.terrainData.SetHeights(0, 0, MapTransformations.transpose(heightMap));
     }
-    public void offsetHeightmap()
+    public void moveHeightmap()
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Vector3 difference = land.transform.position;
@@ -558,7 +558,7 @@ public class MapIO : MonoBehaviour {
         }
         land.terrainData.SetHeights(0, 0, heightMap);
     }
-    public void generatePerlinHeightmap(float scale)
+    public void generatePerlinHeightmap(float scale) // Extremely basic first run of perlin map gen. In future this will have roughly 15 controllable elements.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
@@ -574,6 +574,56 @@ public class MapIO : MonoBehaviour {
             }
         }
         land.terrainData.SetHeights(0, 0, heightMap);
+    }
+    public void offsetHeightmap(float offset, bool checkHeight, bool setWaterMap) // Increases or decreases the heightmap by the offset. Useful for moving maps up or down in the scene if the heightmap
+    // isn't at the right height. If checkHeight is enabled it will make sure that the offset does not flatten a part of the map because it hits the floor or ceiling.
+    // If setWaterMap is enabled it will offset the water map as well, however if this goes below 500 the watermap will be broken.
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
+        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        offset = offset / 1000f;
+        bool heightOutOfRange = false;
+        for (int i = 0; i < land.terrainData.heightmapHeight; i++)
+        {
+            for (int j = 0; j < land.terrainData.heightmapWidth; j++)
+            {
+                if (checkHeight == true)
+                {
+                    if ((heightMap[i, j] + offset > 1f || heightMap[i, j] + offset < 0f) || (waterMap[i, j] + offset > 1f || waterMap[i, j] + offset < 0f))
+                    {
+                        heightOutOfRange = true;
+                        break;
+                    }
+                    else
+                    {
+                        heightMap[i, j] += offset;
+                        if (setWaterMap == true)
+                        {
+                            waterMap[i, j] += offset;
+                        }
+                    }
+                }
+                else
+                {
+                    heightMap[i, j] += offset;
+                    if (setWaterMap == true)
+                    {
+                        waterMap[i, j] += offset;
+                    }
+                }
+            }
+        }
+        if (heightOutOfRange == false)
+        {
+            land.terrainData.SetHeights(0, 0, heightMap);
+            water.terrainData.SetHeights(0, 0, waterMap);
+        }
+        else if (heightOutOfRange == true)
+        {
+            Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value." );
+        }
     }
     #endregion
 
