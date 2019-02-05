@@ -1449,11 +1449,9 @@ public class MapIO : MonoBehaviour {
 
         EditorUtility.DisplayProgressBar("Loading Map", "Loading Biome Data ", 0.5f);
         biomeLandData.setData(terrains.biomeMap, "biome");
-        paintLayer("Biome", 0);
 
         EditorUtility.DisplayProgressBar("Loading Map", "Loading Alpha Data ", 0.6f);
         alphaLandData.setData(terrains.alphaMap, "alpha");
-        clearLayer("Alpha");
 
         EditorUtility.DisplayProgressBar("Loading Map", "Loading Topology Data ", 0.7f);
         topologyLandData.setData(topology.getSplatMap((int)topologyLayer), "topology");
