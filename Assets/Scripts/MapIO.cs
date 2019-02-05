@@ -328,162 +328,188 @@ public class MapIO : MonoBehaviour {
         float[,,] newTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
         float[,,] oldTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
         oldTopologyLayer2 = topologyLayer;
-        
+
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alt Topology ", 0.4f);
         topologyLayer = TerrainTopology.Enum.Alt;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Alt;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Beach Topology ", 0.425f);
         topologyLayer = TerrainTopology.Enum.Beach;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Beach;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Beachside Topology ", 0.45f);
         topologyLayer = TerrainTopology.Enum.Beachside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Beachside;
         rotateTopologymap(CW);
 
-        topologyLayer = TerrainTopology.Enum.Beachside;
-        changeLandLayer();
-        oldTopologyLayer = TerrainTopology.Enum.Beachside;
-        rotateTopologymap(CW);
-
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Building Topology ", 0.475f);
         topologyLayer = TerrainTopology.Enum.Building;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Building;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Cliff Topology ", 0.5f);
         topologyLayer = TerrainTopology.Enum.Cliff;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Cliff;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Cliffside Topology ", 0.525f);
         topologyLayer = TerrainTopology.Enum.Cliffside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Cliffside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Clutter Topology ", 0.55f);
         topologyLayer = TerrainTopology.Enum.Clutter;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Clutter;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Decor Topology ", 0.575f);
         topologyLayer = TerrainTopology.Enum.Decor;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Decor;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Field Topology ", 0.6f);
         topologyLayer = TerrainTopology.Enum.Field;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Field;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Forest Topology ", 0.625f);
         topologyLayer = TerrainTopology.Enum.Forest;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Forest;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Forestside Topology ", 0.65f);
         topologyLayer = TerrainTopology.Enum.Forestside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Forestside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Hilltop Topology ", 0.675f);
         topologyLayer = TerrainTopology.Enum.Hilltop;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Hilltop;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Lake Topology ", 0.7f);
         topologyLayer = TerrainTopology.Enum.Lake;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Lake;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Lakeside Topology ", 0.725f);
         topologyLayer = TerrainTopology.Enum.Lakeside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Lakeside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Mainland Topology ", 0.75f);
         topologyLayer = TerrainTopology.Enum.Mainland;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Mainland;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Monument Topology ", 0.775f);
         topologyLayer = TerrainTopology.Enum.Monument;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Monument;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Mountain Topology ", 0.8f);
         topologyLayer = TerrainTopology.Enum.Mountain;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Mountain;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ocean Topology ", 0.825f);
         topologyLayer = TerrainTopology.Enum.Ocean;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Ocean;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Oceanside Topology ", 0.85f);
         topologyLayer = TerrainTopology.Enum.Oceanside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Oceanside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Offshore Topology ", 0.875f);
         topologyLayer = TerrainTopology.Enum.Offshore;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Offshore;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Powerline Topology ", 0.9f);
         topologyLayer = TerrainTopology.Enum.Powerline;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Powerline;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating River Topology ", 0.91f);
         topologyLayer = TerrainTopology.Enum.River;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.River;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating River Topology ", 0.922f);
         topologyLayer = TerrainTopology.Enum.Riverside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Riverside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Road Topology ", 0.93f);
         topologyLayer = TerrainTopology.Enum.Road;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Road;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Roadside Topology ", 0.94f);
         topologyLayer = TerrainTopology.Enum.Roadside;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Roadside;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Runway Topology ", 0.95f);
         topologyLayer = TerrainTopology.Enum.Runway;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Runway;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Summit Topology ", 0.96f);
         topologyLayer = TerrainTopology.Enum.Summit;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Summit;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Swamp Topology ", 0.97f);
         topologyLayer = TerrainTopology.Enum.Swamp;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Swamp;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Tier0 Topology ", 0.98f);
         topologyLayer = TerrainTopology.Enum.Tier0;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Tier0;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Tier1 Topology ", 0.99f);
         topologyLayer = TerrainTopology.Enum.Tier1;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Tier1;
         rotateTopologymap(CW);
 
+        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Tier2 Topology ", 0.995f);
         topologyLayer = TerrainTopology.Enum.Tier2;
         changeLandLayer();
         oldTopologyLayer = TerrainTopology.Enum.Tier2;
@@ -1354,13 +1380,14 @@ public class MapIO : MonoBehaviour {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         
         cleanUpMap();
-
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.1f);
         var terrainPosition = 0.5f * terrains.size;
-
+        
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Watermap Data ", 0.2f);
 
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -1393,19 +1420,25 @@ public class MapIO : MonoBehaviour {
         land.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
         water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
 
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Ground Data ", 0.4f);
         groundLandData.setData(terrains.splatMap, "ground");
 
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Biome Data ", 0.5f);
         biomeLandData.setData(terrains.biomeMap, "biome");
         paintLayer("Biome", 0);
 
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Alpha Data ", 0.6f);
         alphaLandData.setData(terrains.alphaMap, "alpha");
         clearLayer("Alpha");
 
+        EditorUtility.DisplayProgressBar("Loading Map", "Loading Topology Data ", 0.7f);
         topologyLandData.setData(topology.getSplatMap((int)topologyLayer), "topology");
         changeLandLayer();
 
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
+
+        EditorUtility.DisplayProgressBar("Loading Map", "Spawning Prefabs ", 0.8f);
 
         Dictionary<uint, GameObject> savedPrefabs = getPrefabs();
 
@@ -1429,7 +1462,7 @@ public class MapIO : MonoBehaviour {
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
-        
+        EditorUtility.DisplayProgressBar("Loading Map", "Spawning Paths ", 0.9f);
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
 
@@ -1451,6 +1484,8 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
+        EditorUtility.DisplayProgressBar("Loading Map", "Finishing ", 1f);
+        EditorUtility.ClearProgressBar();
     }
 
     public void Load(WorldSerialization blob)
@@ -1471,18 +1506,20 @@ public class MapIO : MonoBehaviour {
         if(selectedLandLayer != null)
             selectedLandLayer.save();
         saveTopologyLayer();
-
+        EditorUtility.DisplayProgressBar("Saving Map", "Saving Heightmap ", 0.1f);
         if (GameObject.FindGameObjectWithTag("Water") == null)
             Debug.Log("Water not enabled");
         if (GameObject.FindGameObjectWithTag("Land") == null)
             Debug.Log("Land not enabled");
         Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        
-
+        EditorUtility.DisplayProgressBar("Saving Map", "Saving Watermap ", 0.25f);
+        EditorUtility.DisplayProgressBar("Saving Map", "Saving Prefabs ", 0.4f);
         WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
-        
+        EditorUtility.DisplayProgressBar("Saving Map", "Saving Layers ", 0.6f);
         world.Save(path);
+        EditorUtility.DisplayProgressBar("Saving Map", "Saving to disk ", 0.8f);
+        EditorUtility.ClearProgressBar();
         //Debug.Log("Map hash: " + world.Checksum);
     }
 

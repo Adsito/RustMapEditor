@@ -116,29 +116,47 @@ public class MapIOEditor : Editor
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Rotate 90°")) // Calls every rotate function from MapIO. Rotates 90 degrees.
         {
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Heightmap ", 0.05f);
             script.rotateHeightmap(true);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Objects ", 0.1f);
             script.rotateObjects(true);
             script.changeLayer("Ground");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
             script.rotateGroundmap(true);
             script.changeLayer("Biome");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
             script.rotateBiomemap(true);
             script.changeLayer("Alpha");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
             script.rotateAlphamap(true);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.3f);
             script.changeLayer("Topology");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.35f);
             script.rotateAllTopologymap(true);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
+            EditorUtility.ClearProgressBar();
         }
         if (GUILayout.Button("Rotate 270°")) // Calls every rotate function from MapIO. Rotates 270 degrees.
         {
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Heightmap ", 0.05f);
             script.rotateHeightmap(false);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Objects ", 0.1f);
             script.rotateObjects(false);
             script.changeLayer("Ground");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
             script.rotateGroundmap(false);
             script.changeLayer("Biome");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
             script.rotateBiomemap(false);
             script.changeLayer("Alpha");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
             script.rotateAlphamap(false);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.3f);
             script.changeLayer("Topology");
+            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.35f);
             script.rotateAllTopologymap(false);
+            EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
+            EditorUtility.ClearProgressBar();
         }
 
         /* Hiding these until we have everything flip at once.
