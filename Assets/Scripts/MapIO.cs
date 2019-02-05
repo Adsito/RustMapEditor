@@ -965,93 +965,113 @@ public class MapIO : MonoBehaviour {
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             oldTopologyLayer = TerrainTopology.Enum.Offshore; //If wiping layers we don't need to get the current layers splatmap detail, so we just wipe it clean then repaint.
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 0, 498, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             oldTopologyLayer = TerrainTopology.Enum.Beach;
             paintHeight("Topology", 0, 1000, float.MaxValue,  1);
             paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 500, 1000, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintSlope("Topology", 0.995f, 1f, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
+            EditorUtility.ClearProgressBar();
             changeLandLayer();
         }
         else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
             oldTopologyLayer2 = topologyLayer; //This saves the currently selected topology layer so we can swap back to it at the end, ensuring we don't accidentally erase anything.
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
             changeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
             oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
             paintHeight("Topology", 0, 475, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             topologyLayer = TerrainTopology.Enum.Ocean;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             paintHeight("Topology", 0, 498, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             topologyLayer = TerrainTopology.Enum.Beach;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
             paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             topologyLayer = TerrainTopology.Enum.Oceanside;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
             paintHeight("Topology", 500, 502, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             topologyLayer = TerrainTopology.Enum.Mainland;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight("Topology", 500, 1000, float.MaxValue, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintSlope("Topology", 0.995f, 1f, 0);
 
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             topologyLayer = TerrainTopology.Enum.Tier0;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0);
-            
+
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             topologyLayer = TerrainTopology.Enum.Tier1;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
-            
+
+            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             topologyLayer = TerrainTopology.Enum.Tier2;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
-            
+
+            EditorUtility.ClearProgressBar();
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
         }
@@ -1079,12 +1099,12 @@ public class MapIO : MonoBehaviour {
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
-
+        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.3f);
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
-
+        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.5f);
 
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -1105,12 +1125,16 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
+        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.7f);
         landData.setData(splatMap, landLayer);
         landData.setLayer();
+        EditorUtility.DisplayProgressBar("Debug Alpha", "Done", 1f);
+        EditorUtility.ClearProgressBar();
     }
     public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
+        EditorUtility.DisplayProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
         switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
         {
             default:
@@ -1132,6 +1156,7 @@ public class MapIO : MonoBehaviour {
         }
         LandData landDataFrom = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerFrom).GetComponent<LandData>();
         float[,,] splatMapFrom = TypeConverter.singleToMulti(landDataFrom.splatMap, textureCount(landLayerFrom)); // Land layer to copy from.
+        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.5f);
         switch (landLayerToPaint) // Gathers the information on which texture we are painting to in the landlayer.
         {
             default:
@@ -1156,7 +1181,7 @@ public class MapIO : MonoBehaviour {
         }
         LandData landDataToPaint = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerToPaint).GetComponent<LandData>();
         float[,,] splatMapTo = TypeConverter.singleToMulti(landDataToPaint.splatMap, textureCount(landLayerToPaint)); //  Land layer to paint to.
-
+        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.75f);
         for (int i = 0; i < splatMapFrom.GetLength(0); i++)
         {
             for (int j = 0; j < splatMapFrom.GetLength(1); j++)
@@ -1181,6 +1206,7 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
+        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
         landDataToPaint.setData(splatMapTo, landLayerToPaint);
         landDataToPaint.setLayer();
         if (landLayerToPaint == "Topology")
@@ -1188,6 +1214,7 @@ public class MapIO : MonoBehaviour {
             topologyLayer = oldTopologyLayer2;
             saveTopologyLayer();
         }
+        EditorUtility.ClearProgressBar();
     }
     public void generateTwoLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
