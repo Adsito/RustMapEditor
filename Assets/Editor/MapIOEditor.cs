@@ -11,7 +11,7 @@ public class MapIOEditor : Editor
     string saveFile = "";
     string mapName = "";
 
-    int mapSize = 2000;
+    int mapSize = 1000;
     float heightToSet = 0f, scale = 0f, offset = 0f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     public LayerOptionEditor optionEditor;
@@ -112,7 +112,7 @@ public class MapIOEditor : Editor
             script.scale = 1f;
         }
         */
-        GUILayout.Label("Rotating maps takes roughly 1 minute to process \n for the largest maps.", EditorStyles.boldLabel);
+        GUILayout.Label("Rotating maps takes roughly 1-2 minutes to process \n for the largest maps.", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Rotate 90°")) // Calls every rotate function from MapIO. Rotates 90 degrees.
         {
