@@ -1407,14 +1407,13 @@ public class MapIO : MonoBehaviour {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         
         cleanUpMap();
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.1f);
+        
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Watermap Data ", 0.2f);
 
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -1422,9 +1421,7 @@ public class MapIO : MonoBehaviour {
         land.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
 
-
         topology.InitMesh(terrains.topology);
-       
 
         land.terrainData.heightmapResolution = terrains.resolution;
         land.terrainData.size = terrains.size;
