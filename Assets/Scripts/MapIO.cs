@@ -797,13 +797,13 @@ public class MapIO : MonoBehaviour {
             {
                 if (landLayer == "Alpha")
                 {
-                    splatMap[i, j, 1] = float.MaxValue;
-                    splatMap[i, j, 0] = float.MinValue;
+                    splatMap[i, j, 1] = 1;
+                    splatMap[i, j, 0] = 0;
                 }
                 else if (landLayer == "Topology")
                 {
-                    splatMap[i, j, 1] = float.MinValue;
-                    splatMap[i, j, 0] = float.MaxValue;
+                    splatMap[i, j, 1] = 0;
+                    splatMap[i, j, 0] = 1;
                 }
                 else
                 {
