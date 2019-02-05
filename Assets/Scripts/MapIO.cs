@@ -1548,6 +1548,8 @@ public class MapIO : MonoBehaviour {
     public void newEmptyTerrain(int size)
     {
         loadMapInfo(WorldConverter.emptyWorld(size));
+        clearLayer("Alpha");
+        paintLayer("Biome", 0);
     }
 
 
