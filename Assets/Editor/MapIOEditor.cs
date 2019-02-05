@@ -42,7 +42,7 @@ public class MapIOEditor : Editor
         if (GUILayout.Button("Import .map file"))
         {
             loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
-
+            
             var blob = new WorldSerialization();
             Debug.Log("Importing map " + loadFile);
             if (loadFile == "")
@@ -50,7 +50,9 @@ public class MapIOEditor : Editor
                 Debug.LogError("Empty load path");
                 return;
             }
+            EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.2f);
             blob.Load(loadFile);
+            EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.3f);
             script.Load(blob);
         }
         if (GUILayout.Button("Export .map file"))

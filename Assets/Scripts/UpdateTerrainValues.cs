@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 [ExecuteInEditMode]
 public class UpdateTerrainValues : MonoBehaviour {
