@@ -7,8 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0.995f, slopeHigh = 0.995f, scale = 50f;
-    float slopeDegreesLow = 0f, slopeDegreesHigh = 90f;
+    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 0f, slopeHigh = 90f, scale = 50f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     #region All Layers
     public override void OnInspectorGUI()
@@ -31,27 +30,18 @@ public class LayerOptionEditor : Editor
         }
         if (slopeLow > slopeHigh)
         {
-            slopeHigh += 0.00005f;
-            slopeLow = slopeHigh - 0.00006f;
-            if (slopeHigh > 1.0050f)
+            slopeHigh += 0.5f;
+            slopeLow = slopeHigh - 0.5f;
+            if (slopeHigh > 90f)
             {
-                slopeHigh = 1.0050f;
+                slopeHigh = 90f;
             }
             if (slopeLow < 0f)
             {
                 slopeLow = 0f;
             }
         }
-        slopeDegreesLow = slopeLow - 0.99f;
-        slopeDegreesLow *= 6000.006050f;
-        slopeDegreesLow = 90f - slopeDegreesLow;
-        slopeDegreesHigh = slopeHigh - 0.99f;
-        slopeDegreesHigh *= 6000.006050f;
-        slopeDegreesHigh = 90f - slopeDegreesHigh;
-        // From 0.99000f to 1.00500f
-        // Range 0.10500f
         #endregion
-
         #region Ground Layer
         if (mapIO.landLayer.Equals("Ground"))
         {
@@ -69,11 +59,11 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             //GUILayout.Label("Texture Opacity: " + opacity + " %");
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
-            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
-            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
-            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.005f);
+            GUILayout.Label("Slope threshhold:"); // From 0 - 90
+            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0f, 90f);
+            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0f, 90f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, 0);
@@ -116,11 +106,11 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateBiomemap(false);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
-            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
-            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.005f);
+            GUILayout.Label("Slope threshhold:"); // From 0 - 90
+            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0f, 90f);
+            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0f, 90f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Biome", slopeLow, slopeHigh, 0);
@@ -242,11 +232,11 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshhold:"); // From 0.99000f to 1.00500f
-            GUILayout.Label("From: " + slopeDegreesLow.ToString() + "°", EditorStyles.boldLabel);
-            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0.99f, 1.0049f);
-            GUILayout.Label("To: " + slopeDegreesHigh.ToString() + "°", EditorStyles.boldLabel);
-            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0.9901f, 1.005f);
+            GUILayout.Label("Slope threshhold:"); // From 0 - 90
+            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+            slopeLow = GUILayout.HorizontalSlider(slopeLow, 0f, 90f);
+            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+            slopeHigh = GUILayout.HorizontalSlider(slopeHigh, 0f, 90f);
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Topology", slopeLow, slopeHigh, 0);
