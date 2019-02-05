@@ -625,6 +625,25 @@ public class MapIO : MonoBehaviour {
             Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value." );
         }
     }
+    public static float[,] getSteepness() //Gets the steepness at the terrain point.
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        int terrainSize = (int)land.terrainData.size.x;
+        Debug.Log(terrainSize);
+        float[,] steepness = new float[terrainSize, terrainSize];
+        float iNorm, jNorm, slope = 0f;
+        for (int i = 0; i < terrainSize; i++)
+        {
+            for (int j = 0; j < terrainSize; j++)
+            {
+                iNorm = (float)i / 1000f;
+                jNorm = (float)j / 1000f;
+                slope = land.terrainData.GetSteepness(iNorm, jNorm);
+                steepness[i, j] = slope;
+            }
+        }
+        return steepness;
+    }
     #endregion
 
     #region SplatMap Methods
@@ -815,14 +834,11 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     } 
-    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, int t) // Paints slope based on the current slope input, the slope range is set to 90° - wherever the slider is set.
-    // The slider to the far left = 90° - 90°, the slider in the middle = 90° - 45° and at the far right would be 90° - 0° or the whole map.
-    // The slope value must be between 0.99f and 1.0f. The slider is clamped to this value.
+    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         if (landLayer == "Ground")
         {
             t = textures(landLayer); // Active texture to paint on layer.
@@ -831,60 +847,30 @@ public class MapIO : MonoBehaviour {
         {
             t = textures(landLayer); // Active texture to paint on layer.
         }
-        if (land.terrainData.heightmapWidth > 2049) //The splatmaps are clamped at 2048 so if the heightmap is double we assign each heightmap coord to every second splatmap coord.
+        for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            for (int i = 1; i < 4095; i++)
+            for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                for (int j = 1; j < 4095; j++)
+                float iNorm = (float)i / (float)splatMap.GetLength(0);
+                float jNorm = (float)j / (float)splatMap.GetLength(1);
+                float slope = land.terrainData.GetSteepness(jNorm, iNorm);
+                if (slope > slopeLow && slope < slopeHigh)
                 {
-                    if (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow || baseMap[i, j] / baseMap[i - 1, j - 1] > slopeLow)
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 0;
+                    if (textureCount(landLayer) > 2)
                     {
-                        if (baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh || baseMap[i, j] / baseMap[i - 1, j - 1] < slopeHigh)
+                        splatMap[i, j, 2] = 0;
+                        splatMap[i, j, 3] = 0;
+                        if (textureCount(landLayer) > 4)
                         {
-                            splatMap[i / 2, j / 2, 0] = 0;
-                            splatMap[i / 2, j / 2, 1] = 0;
-                            if (textureCount(landLayer) > 2)
-                            {
-                                splatMap[i / 2, j / 2, 2] = 0;
-                                splatMap[i / 2, j / 2, 3] = 0;
-                                if (textureCount(landLayer) > 4)
-                                {
-                                    splatMap[i / 2, j / 2, 4] = 0;
-                                    splatMap[i / 2, j / 2, 5] = 0;
-                                    splatMap[i / 2, j / 2, 6] = 0;
-                                    splatMap[i / 2, j / 2, 7] = 0;
-                                }
-                            }
-                            splatMap[i / 2, j / 2, t] = 1;
+                            splatMap[i, j, 4] = 0;
+                            splatMap[i, j, 5] = 0;
+                            splatMap[i, j, 6] = 0;
+                            splatMap[i, j, 7] = 0;
                         }
                     }
-                }
-            }
-        }
-        else
-        {
-            for (int i = 1; i < splatMap.GetLength(0) - 1; i++)
-            {
-                for (int j = 1; j < splatMap.GetLength(1) - 1; j++)
-                {
-                    if ((baseMap[i, j] / baseMap[i + 1, j + 1] < slopeHigh) && (baseMap[i, j] / baseMap[i + 1, j + 1] > slopeLow))
-                        {
-                            splatMap[i, j, 0] = 0;
-                            splatMap[i, j, 1] = 0;
-                            if (textureCount(landLayer) > 2)
-                            {
-                                splatMap[i, j, 2] = 0;
-                                splatMap[i, j, 3] = 0;
-                                if (textureCount(landLayer) > 4)
-                                {
-                                    splatMap[i, j, 4] = 0;
-                                    splatMap[i, j, 5] = 0;
-                                    splatMap[i, j, 6] = 0;
-                                    splatMap[i, j, 7] = 0;
-                                }
-                            }
-                            splatMap[i, j, t] = 1;
-                        }
+                    splatMap[i, j, t] = 1;
                 }
             }
         }
