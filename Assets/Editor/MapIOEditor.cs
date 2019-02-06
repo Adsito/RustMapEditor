@@ -96,7 +96,7 @@ public class MapIOEditor : Editor
         GUILayout.Label("Land Heightmap Offset (Increase or Decrease the entire Heightmap)");
         offset = EditorGUILayout.FloatField(offset);
         EditorGUILayout.BeginHorizontal();
-        checkHeight = EditorGUILayout.ToggleLeft("Check for out of range", checkHeight);
+        checkHeight = EditorGUILayout.ToggleLeft("Only raise if offset is within heightmap bounds ", checkHeight);
         setWaterMap = EditorGUILayout.ToggleLeft("Raise watermap ", setWaterMap);
         EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Offset Heightmap"))
