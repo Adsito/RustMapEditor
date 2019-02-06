@@ -787,19 +787,9 @@ public class MapIO : MonoBehaviour {
                 }
                 else
                 {
-                    splatMap[i, j, 0] = 0;
-                    splatMap[i, j, 1] = 0;
-                    if (textureCount(landLayer) > 2)
+                    for (int k = 0; k < textureCount(landLayer); k++)
                     {
-                        splatMap[i, j, 2] = 0;
-                        splatMap[i, j, 3] = 0;
-                        if (textureCount(landLayer) > 4)
-                        {
-                            splatMap[i, j, 4] = 0;
-                            splatMap[i, j, 5] = 0;
-                            splatMap[i, j, 6] = 0;
-                            splatMap[i, j, 7] = 0;
-                        }
+                        splatMap[i, j, k] = 0;
                     }
                     splatMap[i, j, t] = 1;
                 }
@@ -823,13 +813,13 @@ public class MapIO : MonoBehaviour {
             {
                 if (landLayer == "Alpha")
                 {
-                    splatMap[i, j, 0] = float.MaxValue;
-                    splatMap[i, j, 1] = float.MinValue;
+                    splatMap[i, j, 0] = 1;
+                    splatMap[i, j, 1] = 0;
                 }
                 else
                 {
-                    splatMap[i, j, 0] = float.MinValue;
-                    splatMap[i, j, 1] = float.MaxValue;
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
                 }
             }
         }
@@ -862,19 +852,9 @@ public class MapIO : MonoBehaviour {
                 float slope = land.terrainData.GetSteepness(jNorm, iNorm);
                 if (slope > slopeLow && slope < slopeHigh)
                 {
-                    splatMap[i, j, 0] = 0;
-                    splatMap[i, j, 1] = 0;
-                    if (textureCount(landLayer) > 2)
+                    for (int k = 0; k < textureCount(landLayer); k++)
                     {
-                        splatMap[i, j, 2] = 0;
-                        splatMap[i, j, 3] = 0;
-                        if (textureCount(landLayer) > 4)
-                        {
-                            splatMap[i, j, 4] = 0;
-                            splatMap[i, j, 5] = 0;
-                            splatMap[i, j, 6] = 0;
-                            splatMap[i, j, 7] = 0;
-                        }
+                        splatMap[i, j, k] = 0;
                     }
                     splatMap[i, j, t] = 1;
                 }
@@ -911,19 +891,9 @@ public class MapIO : MonoBehaviour {
                 {
                     if (j >= x1 && j <= x2)
                     {
-                            splatMap[i, j, 0] = 0;
-                            splatMap[i, j, 1] = 0;
-                            if (textureCount(landLayer) > 2)
-                            {
-                                splatMap[i, j, 2] = 0;
-                                splatMap[i, j, 3] = 0;
-                                if (textureCount(landLayer) > 4)
-                                {
-                                    splatMap[i, j, 4] = 0;
-                                    splatMap[i, j, 5] = 0;
-                                    splatMap[i, j, 6] = 0;
-                                    splatMap[i, j, 7] = 0;
-                                }
+                        for (int k = 0; k < textureCount(landLayer); k++)
+                        {
+                            splatMap[i, j, k] = 0;
                         }
                         splatMap[i, j, t] = 1;
                     }
@@ -1092,15 +1062,10 @@ public class MapIO : MonoBehaviour {
             {
                 if (alphaSplatMap[i, j, 1] == 1)
                 {
-                    splatMap[i, j, 0] = 0;
-                    splatMap[i, j, 1] = 2;
-                    splatMap[i, j, 2] = 0;
-                    splatMap[i, j, 3] = 0;
-                    splatMap[i, j, 4] = 0;
-                    splatMap[i, j, 5] = 0;
-                    splatMap[i, j, 6] = 0;
-                    splatMap[i, j, 7] = 0;
-
+                    for (int k = 0; k < textureCount(landLayer); k++)
+                    {
+                        splatMap[i, j, k] = 0;
+                    }
                     splatMap[i, j, 3] = 1; // This paints the rock layer. Where 3 = the layer to paint.
                 }
             }
@@ -1168,19 +1133,9 @@ public class MapIO : MonoBehaviour {
             {
                 if (splatMapFrom [i, j, textureFrom] > 0)
                 {
-                    splatMapTo[i, j, 0] = 0;
-                    splatMapTo[i, j, 1] = 0;
-                    if (textureCount(landLayerToPaint) > 2)
+                    for (int k = 0; k < textureCount(landLayerToPaint); k++)
                     {
-                        splatMapTo[i, j, 2] = 0;
-                        splatMapTo[i, j, 3] = 0;
-                        if (textureCount(landLayerToPaint) > 4)
-                        {
-                            splatMapTo[i, j, 4] = 0;
-                            splatMapTo[i, j, 5] = 0;
-                            splatMapTo[i, j, 6] = 0;
-                            splatMapTo[i, j, 7] = 0;
-                        }
+                        splatMapTo[i, j, k] = 0;
                     }
                     splatMapTo[i, j, textureToPaint] = 1;
                 }
