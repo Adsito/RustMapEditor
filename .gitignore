@@ -18,3 +18,4 @@
 *.pdb
 *.csproj
 /.vs/
+/obj/
