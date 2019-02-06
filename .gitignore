@@ -2,7 +2,9 @@
 *.ide
 *.ide-shm
 *.ide-wal
-/Library/
+Library/
+!Library/assetDatabase3
+!Library/CurrentLayout.dwlt
 *.bin
 *.info
 *.info
@@ -19,4 +21,4 @@
 *.csproj
 /.vs/
 /obj/
-!/Library/assetDatabase3
+
