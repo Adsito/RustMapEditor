@@ -1,10 +1,7 @@
-
 *.ide
 *.ide-shm
 *.ide-wal
 Library/*
-!Library/assetDatabase3
-!Library/CurrentLayout.dwlt
 !Library/LastSceneManagerSetup.txt
 *.bin
 *.info
@@ -21,4 +18,4 @@ Library/*
 *.csproj
 /.vs/
 /obj/
-
+*.sln

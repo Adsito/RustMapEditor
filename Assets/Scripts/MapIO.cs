@@ -725,21 +725,11 @@ public class MapIO : MonoBehaviour {
                 {
                     if (baseMap[i, j] * 1000f > y1 && baseMap[i, j] * 1000f < y2)
                     {
-                        splatMap[i / 2, j / 2, 0] = 0;
-                        splatMap[i / 2, j / 2, 1] = 0;
-                        if (textureCount(landLayer) > 2)
+                        for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
                         {
-                            splatMap[i / 2, j / 2, 2] = 0;
-                            splatMap[i / 2, j / 2, 3] = 0;
-                            if (textureCount(landLayer) > 4)
-                            {
-                                splatMap[i / 2, j / 2, 4] = 0;
-                                splatMap[i / 2, j / 2, 5] = 0;
-                                splatMap[i / 2, j / 2, 6] = 0;
-                                splatMap[i / 2, j / 2, 7] = 0;
-                            }
+                            splatMap[i / 2, j / 2, k] = 0;
                         }
-                        splatMap[i / 2, j / 2, t] = 1;
+                        splatMap[i / 2, j / 2, t] = 1; // Paints the texture t.
                     }
                 }
             }
@@ -752,21 +742,11 @@ public class MapIO : MonoBehaviour {
                 {
                     if (baseMap[i, j] * 1000f > y1 && baseMap[i, j] * 1000f < y2)
                     {
-                        splatMap[i, j, 0] = 0;
-                        splatMap[i, j, 1] = 0;
-                        if (textureCount(landLayer) > 2)
+                        for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
                         {
-                            splatMap[i, j, 2] = 0;
-                            splatMap[i, j, 3] = 0;
-                            if (textureCount(landLayer) > 4)
-                            {
-                                splatMap[i, j, 4] = 0;
-                                splatMap[i, j, 5] = 0;
-                                splatMap[i, j, 6] = 0;
-                                splatMap[i, j, 7] = 0;
-                            }
+                            splatMap[i, j, k] = 0;
                         }
-                        splatMap[i, j, t] = 1;
+                        splatMap[i, j, t] = 1; // Paints the texture t.
                     }
                 }
             }
