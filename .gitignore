@@ -19,3 +19,4 @@
 *.csproj
 /.vs/
 /obj/
+!/Library/assetDatabase3
