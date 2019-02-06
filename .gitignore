@@ -2,7 +2,7 @@
 *.ide
 *.ide-shm
 *.ide-wal
-Library/
+Library/*
 !Library/assetDatabase3
 !Library/CurrentLayout.dwlt
 *.bin
