@@ -915,7 +915,10 @@ public class MapIO : MonoBehaviour {
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
+            //foreach (TerrainTopology.Enum topology in Enum.GetValues(typeof(TerrainTopology.Enum)))
+            //{
+            //}
+                EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             oldTopologyLayer = TerrainTopology.Enum.Offshore; //If wiping layers we don't need to get the current layers splatmap detail, so we just wipe it clean then repaint.
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
             paintHeight("Topology", 0, 475, float.MaxValue, 0);
