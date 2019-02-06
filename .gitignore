@@ -5,6 +5,7 @@
 Library/*
 !Library/assetDatabase3
 !Library/CurrentLayout.dwlt
+!Library/LastSceneManagerSetup.txt
 *.bin
 *.info
 *.info
