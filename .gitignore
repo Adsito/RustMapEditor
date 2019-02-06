@@ -19,5 +19,3 @@ Library/*
 /.vs/
 /obj/
 *.sln
-Assets/land.asset
-Assets/water.asset
