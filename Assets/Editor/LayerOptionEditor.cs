@@ -10,6 +10,7 @@ public class LayerOptionEditor : Editor
     float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 40f, slopeHigh = 60f, scale = 50f;
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
+    bool blendSlopes = false;
     #region All Layers
     public override void OnInspectorGUI()
     {
@@ -47,6 +48,11 @@ public class LayerOptionEditor : Editor
         }
         maxBlendLow = slopeLow;
         minBlendHigh = slopeHigh;
+        if (blendSlopes == false)
+        {
+            minBlendLow = maxBlendLow;
+            maxBlendHigh = minBlendHigh;
+        }
         #endregion
         #region Ground Layer
         if (mapIO.landLayer.Equals("Ground"))
@@ -65,16 +71,23 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.EndHorizontal();
             //GUILayout.Label("Texture Opacity: " + opacity + " %");
             //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
-            GUILayout.Label("Slope threshholds:", EditorStyles.boldLabel); // From 0 - 90
+            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+            EditorGUILayout.BeginHorizontal();
+            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+            // Todo: Toggle for check between heightrange.
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-            GUILayout.Label("Blend Low: " + minBlendLow + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
-            GUILayout.Label("Blend High: " + maxBlendHigh + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            if (blendSlopes == true)
+            {
+                GUILayout.Label("Blend Low: " + minBlendLow + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
+                GUILayout.Label("Blend High: " + maxBlendHigh + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            }
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow , maxBlendHigh, 0);
@@ -117,16 +130,23 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateBiomemap(false);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshholds:", EditorStyles.boldLabel); // From 0 - 90
+            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+            EditorGUILayout.BeginHorizontal();
+            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+            // Todo: Toggle for check between heightrange.
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-            GUILayout.Label("Blend Low: " + minBlendLow + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
-            GUILayout.Label("Blend High: " + maxBlendHigh + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            if (blendSlopes == true)
+            {
+                GUILayout.Label("Blend Low: " + minBlendLow + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
+                GUILayout.Label("Blend High: " + maxBlendHigh + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            }
             if (GUILayout.Button("Paint slopes"))
             {
                 mapIO.paintSlope("Biome", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
@@ -248,19 +268,26 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Slope threshholds:", EditorStyles.boldLabel); // From 0 - 90
+            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+            EditorGUILayout.BeginHorizontal();
+            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+            // Todo: Toggle for check between heightrange.
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-            GUILayout.Label("Blend Low: " + minBlendLow + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
-            GUILayout.Label("Blend High: " + maxBlendHigh + "°");
-            EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            if (blendSlopes == true)
+            {
+                GUILayout.Label("Blend Low: " + minBlendLow + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
+                GUILayout.Label("Blend High: " + maxBlendHigh + "°");
+                EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+            }
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Topology", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
+                mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
