@@ -287,7 +287,7 @@ public class LayerOptionEditor : Editor
             }
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
+                mapIO.paintSlope("Topology", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
             }
             GUILayout.Label("Custom height range");
             y1 = EditorGUILayout.FloatField("bottom", y1);
