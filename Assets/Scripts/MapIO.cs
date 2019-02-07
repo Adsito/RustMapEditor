@@ -830,11 +830,12 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     } 
-    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
         if (landLayer == "Ground")
         {
             t = textures(landLayer); // Active texture to paint on layer.
@@ -857,6 +858,41 @@ public class MapIO : MonoBehaviour {
                         splatMap[i, j, k] = 0;
                     }
                     splatMap[i, j, t] = 1;
+                }
+                else if (slope > minBlendLow && slope < slopeLow)
+                {
+                    for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
+                    {
+                        splatMapLayers[k] = splatMap[i, j, k];
+                    }
+                    float newSlope = slope - minBlendLow;
+                    float newSlopeLow = slopeLow - minBlendLow;
+                    float slopeBlend = slope / newSlopeLow; // Holds data about the texture weight between the blend ranges.
+                    splatMapLayers[t] = slopeBlend;
+                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
+                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
+                    {
+                        splatMapLayers[l] /= textureWeight;
+                        splatMap[i, j, l] = splatMapLayers[l];
+                    }         
+                }
+                else if (slope > slopeHigh && slope < maxBlendHigh)
+                {
+                    for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
+                    {
+                        splatMapLayers[k] = splatMap[i, j, k];
+                    }
+                    float newSlope = slope - slopeHigh;
+                    float newMaxBlendHigh = maxBlendHigh - slopeHigh; 
+                    float slopeBlendInverted = newSlope / newMaxBlendHigh; // Holds data about the texture weight between the blend ranges.
+                    float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
+                    splatMapLayers[t] = slopeBlend;
+                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
+                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
+                    {
+                        splatMapLayers[l] /= textureWeight;
+                        splatMap[i, j, l] = splatMapLayers[l];
+                    }
                 }
             }
         }
@@ -943,7 +979,7 @@ public class MapIO : MonoBehaviour {
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintSlope("Topology", 0.995f, 1f, 0);
+            paintSlope("Topology", 45f, 90f, 45f, 90f, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
@@ -1001,7 +1037,7 @@ public class MapIO : MonoBehaviour {
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
-            paintSlope("Topology", 0.995f, 1f, 0);
+            paintSlope("Topology", 45f, 90f, 45, 90f, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             topologyLayer = TerrainTopology.Enum.Tier0;
@@ -1037,7 +1073,7 @@ public class MapIO : MonoBehaviour {
         paintHeight("Ground", 750, 1000, float.MaxValue, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
-        paintSlope("Ground", 0.9945f, 1f, 0);
+        paintSlope("Ground", 45f, 90f, 45f, 90f, 0);
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {
