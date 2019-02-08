@@ -43,6 +43,7 @@ Also using Assets from:
 - !Important! Water needs to be at 500. It can go over but if it's under 500 it will still count as water but look like land. Use the flatten option from the terrain editor to set it to 500.
 - If you get a `NullReferenceException: Object reference not set to an instance of an object` error message you probably have water disabled. Select the `Water` object from the Hierarchy and in the Inspector select the checkbox by its name to enable it.
 - Rust's alphamaps resolution can only go upto 2048, so maps made over 4096 in size will have less detail per tile as the heightmap will be twice the resolution.
+- If the scene view camera clips through the terrain when too close, click on the terrain with Middle Mouse Button to have Unity refocus on the terrain and turn off clipping of the terrain.
 
 ## How to use the Editor
 
@@ -105,7 +106,8 @@ Prefabs from the Assets/prefabs path do not load currently.
 	- Paint any areas where the alpha is active with rock texture, to remove floating grass ingame.
 	- Paint topologies, ground and biome layers if another layer has a selected texture.
 		eg: Paint all snow textures with arctic or snow biomes.
-	- Blend layers
+	- Toggle blending within certain parameters in the Slope and Height tools.
+	- Invert Topology and Alpha layers.
 
 ### 8) Copying Layers
 	- Copy a texture from one layer, and paint it to another.
