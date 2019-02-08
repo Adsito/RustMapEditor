@@ -676,7 +676,7 @@ public class MapIO : MonoBehaviour {
     // Todo: I will rewrite the autoGenerate methods to use loops instead of a shittonne of code, however that will require rewriting the current TerrainTopology class, which will break
     // other scripts, and prevent easily merging in updates from Dez's own editor repo. I am well aware it's not the best way to iterate through the layers :)
     // It will be fixed shortly.
-    public int textures(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
+    public int texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
     // Accepts "Ground", "Biome", "Alpha" and "Topology".
     {
         if (landLayer == "Ground")
@@ -702,55 +702,77 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public void paintHeight(string landLayer, float y1, float y2, float opacity, int t ) // Paints height between 2 floats. Opacity is currently not implemented so just give it value
+    public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t ) // Paints height between 2 floats. Opacity is currently not implemented so just give it value
     // of float.MaxValue to avoid errors.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
-        if (landLayer == "Ground")
+        float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
+        switch (landLayer)
         {
-            t = textures(landLayer); // Active texture to paint on layer.
+            default:
+                t = 2;
+                break;
+            case "Ground":
+                t = texture(landLayer);
+                break;
+            case "Biome":
+                t = texture(landLayer);
+                break;
         }
-        else if (landLayer == "Biome")
+        for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            t = textures(landLayer); // Active texture to paint on layer.
-        }
-        if (land.terrainData.heightmapWidth > 2049) //The splatmaps are clamped at 2048 so if the heightmap is double we assign each heightmap coord to every second splatmap coord.
-        {
-            for (int i = 0; i < 4096; i++)
+            for (int j = 0; j < (float)splatMap.GetLength(1); j++)
             {
-                for (int j = 0; j < 4096; j++)
+                float iNorm = (float)i / (float)splatMap.GetLength(0);
+                float jNorm = (float)j / (float)splatMap.GetLength(1);
+                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm);
+                if (height > heightLow && height < heightHigh)
                 {
-                    if (baseMap[i, j] * 1000f > y1 && baseMap[i, j] * 1000f < y2)
+                    for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
                     {
-                        for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
-                        {
-                            splatMap[i / 2, j / 2, k] = 0;
-                        }
-                        splatMap[i / 2, j / 2, t] = 1; // Paints the texture t.
+                        splatMap[i, j, k] = 0;
+                    }
+                    splatMap[i, j, t] = 1; // Paints the texture t.
+                }
+                else if (height > minBlendLow && height < heightLow)
+                {
+                    for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
+                    {
+                        splatMapLayers[k] = splatMap[i, j, k];
+                    }
+                    float newHeight = height - minBlendLow;
+                    float newHeightLow = heightLow - minBlendLow;
+                    float heightBlend = newHeight / newHeightLow; // Holds data about the texture weight between the blend ranges.
+                    splatMapLayers[t] = heightBlend;
+                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
+                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
+                    {
+                        splatMapLayers[l] /= textureWeight;
+                        splatMap[i, j, l] = splatMapLayers[l];
+                    }
+                }
+                else if (height > heightHigh && height < maxBlendHigh)
+                {
+                    for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
+                    {
+                        splatMapLayers[k] = splatMap[i, j, k];
+                    }
+                    float newHeight = height - heightHigh;
+                    float newMaxBlendHigh = maxBlendHigh - heightHigh;
+                    float heightBlendInverted = newHeight / newMaxBlendHigh; // Holds data about the texture weight between the blend ranges.
+                    float heightBlend = 1 - heightBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
+                    splatMapLayers[t] = heightBlend;
+                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
+                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
+                    {
+                        splatMapLayers[l] /= textureWeight;
+                        splatMap[i, j, l] = splatMapLayers[l];
                     }
                 }
             }
-        }
-        else
-        {
-            for (int i = 0; i < splatMap.GetLength(0); i++)
-            {
-                for (int j = 0; j < splatMap.GetLength(1); j++)
-                {
-                    if (baseMap[i, j] * 1000f > y1 && baseMap[i, j] * 1000f < y2)
-                    {
-                        for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
-                        {
-                            splatMap[i, j, k] = 0;
-                        }
-                        splatMap[i, j, t] = 1; // Paints the texture t.
-                    }
-                }
-            }
-        }
+        }    
         landData.setData(splatMap, landLayer);
         landData.setLayer();
         if (landLayer == "Topology")
@@ -765,11 +787,11 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         if (landLayer == "Ground")
         {
-            t = textures(landLayer); // Active texture to paint on layer.
+            t = texture(landLayer); // Active texture to paint on layer.
         }
         else if (landLayer == "Biome")
         {
-            t = textures(landLayer); // Active texture to paint on layer.
+            t = texture(landLayer); // Active texture to paint on layer.
         }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -806,7 +828,7 @@ public class MapIO : MonoBehaviour {
     //Alpha layers are inverted because it's more logical to have clear Alpha = Terrain appears in game.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textures(landLayer));
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, texture(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -836,13 +858,14 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
-        if (landLayer == "Ground")
+        switch (landLayer)
         {
-            t = textures(landLayer); // Active texture to paint on layer.
-        }
-        else if (landLayer == "Biome")
-        {
-            t = textures(landLayer); // Active texture to paint on layer.
+            case "Ground":
+                t = texture(landLayer);
+                break;
+            case "Biome":
+                t = texture(landLayer);
+                break;
         }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -867,7 +890,7 @@ public class MapIO : MonoBehaviour {
                     }
                     float newSlope = slope - minBlendLow;
                     float newSlopeLow = slopeLow - minBlendLow;
-                    float slopeBlend = slope / newSlopeLow; // Holds data about the texture weight between the blend ranges.
+                    float slopeBlend = newSlope / newSlopeLow; // Holds data about the texture weight between the blend ranges.
                     splatMapLayers[t] = slopeBlend;
                     float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
                     for (int l = 0; l < land.terrainData.alphamapLayers; l++)
@@ -913,11 +936,11 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         if (landLayer == "Ground")
         {
-            t = textures(landLayer); // Active texture to paint on layer.
+            t = texture(landLayer); // Active texture to paint on layer.
         }
         else if (landLayer == "Biome")
         {
-            t = textures(landLayer); // Active texture to paint on layer.
+            t = texture(landLayer); // Active texture to paint on layer.
         }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -953,47 +976,47 @@ public class MapIO : MonoBehaviour {
         {
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             oldTopologyLayer = TerrainTopology.Enum.Offshore; //If wiping layers we don't need to get the current layers splatmap detail, so we just wipe it clean then repaint.
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintHeight("Topology", 0, 475, float.MaxValue, 0);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
+            paintHeight("Topology", 0, 475, 0, 475, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintHeight("Topology", 0, 498, float.MaxValue, 0);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
+            paintHeight("Topology", 0, 498, 0, 498, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            paintHeight("Topology", 0, 1000, float.MaxValue,  1);
-            paintHeight("Topology", 500, 502, float.MaxValue, 0);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
+            paintHeight("Topology", 500, 502, 500, 502, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintHeight("Topology", 500, 502, float.MaxValue, 0);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
+            paintHeight("Topology", 500, 502, 500, 502, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
-            paintHeight("Topology", 500, 1000, float.MaxValue, 0);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
+            paintHeight("Topology", 500, 1000, 500, 1000, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
             paintSlope("Topology", 45f, 90f, 45f, 90f, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
             paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
-            paintHeight("Topology", 0, 1000, float.MaxValue, 1);
+            paintHeight("Topology", 0, 1000, 0, 1000, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.ClearProgressBar();
@@ -1007,31 +1030,31 @@ public class MapIO : MonoBehaviour {
             topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
             changeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
             oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
-            paintHeight("Topology", 0, 475, float.MaxValue, 0);
+            paintHeight("Topology", 0, 475, 0, 475, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             topologyLayer = TerrainTopology.Enum.Ocean;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
-            paintHeight("Topology", 0, 498, float.MaxValue, 0);
+            paintHeight("Topology", 0, 498, 0, 498, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             topologyLayer = TerrainTopology.Enum.Beach;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
-            paintHeight("Topology", 500, 502, float.MaxValue, 0);
+            paintHeight("Topology", 500, 502, 500, 502, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             topologyLayer = TerrainTopology.Enum.Oceanside;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
-            paintHeight("Topology", 500, 502, float.MaxValue, 0);
+            paintHeight("Topology", 500, 502, 500, 502, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             topologyLayer = TerrainTopology.Enum.Mainland;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
-            paintHeight("Topology", 500, 1000, float.MaxValue, 0);
+            paintHeight("Topology", 500, 1000, 500, 1000, 0);
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             topologyLayer = TerrainTopology.Enum.Cliff;
@@ -1067,10 +1090,10 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Sand;
-        paintHeight("Ground", 0, 502, float.MaxValue, 0);
+        paintHeight("Ground", 0, 502, 0, 502, 0);
 
         terrainLayer = TerrainSplat.Enum.Snow;
-        paintHeight("Ground", 750, 1000, float.MaxValue, 0);
+        paintHeight("Ground", 750, 1000, 750, 1000, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
         paintSlope("Ground", 45f, 90f, 45f, 90f, 0);
@@ -1080,7 +1103,7 @@ public class MapIO : MonoBehaviour {
         changeLayer("Biome");
 
         biomeLayer = TerrainBiome.Enum.Arctic;
-        paintHeight("Biome", 750, 1000, float.MaxValue, 0);
+        paintHeight("Biome", 750, 1000, 750, 1000, 0);
     }
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
