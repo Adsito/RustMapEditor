@@ -7,10 +7,11 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float y1 = 0f, y2 = 500f, opacity = 0.50f, slopeLow = 40f, slopeHigh = 60f, scale = 50f;
+    float heightLow = 0f, heightHigh = 500f, opacity = 0.50f, slopeLow = 40f, slopeHigh = 60f, scale = 50f;
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f;
+    float minBlendLowHeight = 0f, maxBlendHighHeight = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
-    bool blendSlopes = false;
+    bool blendSlopes = false, blendHeights = false;
     #region All Layers
     public override void OnInspectorGUI()
     {
@@ -53,6 +54,11 @@ public class LayerOptionEditor : Editor
             minBlendLow = maxBlendLow;
             maxBlendHigh = minBlendHigh;
         }
+        if (blendHeights == false)
+        {
+            minBlendLowHeight = heightLow;
+            maxBlendHighHeight = heightHigh;
+        }
         #endregion
         #region Ground Layer
         if (mapIO.landLayer.Equals("Ground"))
@@ -93,14 +99,21 @@ public class LayerOptionEditor : Editor
                 mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow , maxBlendHigh, 0);
             }
             GUILayout.Label("Custom height range");
-            y1 = EditorGUILayout.FloatField("bottom", y1);
-            y2 = EditorGUILayout.FloatField("top", y2);
-            EditorGUILayout.BeginHorizontal();
+            blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
+            if (blendHeights == true)
+            {
+                minBlendLowHeight = EditorGUILayout.FloatField("Bottom Blend", minBlendLowHeight);
+            }
+            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
+            if (blendHeights == true)
+            {
+                maxBlendHighHeight = EditorGUILayout.FloatField("Top Blend", maxBlendHighHeight);
+            }
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Ground", y1, y2, opacity, 0);
+                mapIO.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0);
             }
-            EditorGUILayout.EndHorizontal();
             if (GUILayout.Button("Paint Whole Layer"))
             {
                 mapIO.paintLayer("Ground", 0);
@@ -152,11 +165,20 @@ public class LayerOptionEditor : Editor
                 mapIO.paintSlope("Biome", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
             }
             GUILayout.Label("Custom height range");
-            y1 = EditorGUILayout.FloatField("bottom", y1);
-            y2 = EditorGUILayout.FloatField("top", y2);
+            blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
+            if (blendHeights == true)
+            {
+                minBlendLowHeight = EditorGUILayout.FloatField("Bottom Blend", minBlendLowHeight);
+            }
+            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
+            if (blendHeights == true)
+            {
+                maxBlendHighHeight = EditorGUILayout.FloatField("Top Blend", maxBlendHighHeight);
+            }
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Biome", y1, y2, float.MaxValue, 0);
+                mapIO.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0);
             }
             z1 = EditorGUILayout.IntField("From Z ", z1);
             z2 = EditorGUILayout.IntField("To Z ", z2);
@@ -197,16 +219,16 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Custom height range");
-            y1 = EditorGUILayout.FloatField("bottom", y1);
-            y2 = EditorGUILayout.FloatField("top", y2);
+            heightLow = EditorGUILayout.FloatField("bottom", heightLow);
+            heightHigh = EditorGUILayout.FloatField("top", heightHigh);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Alpha", y1, y2, float.MaxValue, 0);
+                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight("Alpha", y1, y2, float.MaxValue, 1);
+                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1);
             }
             EditorGUILayout.EndHorizontal();
             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -278,28 +300,21 @@ public class LayerOptionEditor : Editor
             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-            if (blendSlopes == true)
-            {
-                GUILayout.Label("Blend Low: " + minBlendLow + "°");
-                EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
-                GUILayout.Label("Blend High: " + maxBlendHigh + "°");
-                EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
-            }
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Topology", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
+                mapIO.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0);
             }
             GUILayout.Label("Custom height range");
-            y1 = EditorGUILayout.FloatField("bottom", y1);
-            y2 = EditorGUILayout.FloatField("top", y2);
+            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Topology", y1, y2, float.MaxValue, 0); 
+                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0); 
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight("Topology", y1, y2, float.MaxValue, 1);
+                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1);
             }
             EditorGUILayout.EndHorizontal();
             z1 = EditorGUILayout.IntField("From Z ", z1);
