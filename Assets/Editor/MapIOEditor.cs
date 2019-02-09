@@ -235,13 +235,17 @@ public class MapIOEditor : Editor
         {
             script.textureCopy(layerFromList[landLayerFrom], layerToList[landLayerToPaint], textureFrom, textureToPaint);
         }
-
-        GUILayout.Label("This paints the ground texture to rock wherever the alpha \n is removing the terrain ingame. \n Used to prevent floating grass.");
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Debug Alpha Textures"))
         {
             script.changeLayer("Ground");
             script.alphaDebug("Ground");
         }
+        if (GUILayout.Button("Debug Water Height"))
+        {
+            script.debugWaterLevel();
+        }
+        EditorGUILayout.EndHorizontal();
         GUILayout.Label("This sets the very edges of the map to this height.");
         heightToSet = EditorGUILayout.FloatField(heightToSet);
         EditorGUILayout.BeginHorizontal();
