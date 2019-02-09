@@ -19,3 +19,4 @@ Library/*
 /.vs/
 /obj/
 *.sln
+/ProjectSettings/
