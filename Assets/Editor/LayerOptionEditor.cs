@@ -7,7 +7,7 @@ using UnityEngine;
 public class LayerOptionEditor : Editor
 {
     MapIO mapIO;
-    float heightLow = 0f, heightHigh = 500f, opacity = 0.50f, slopeLow = 40f, slopeHigh = 60f, scale = 50f;
+    float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f, scale = 50f;
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f;
     float minBlendLowHeight = 0f, maxBlendHighHeight = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
