@@ -651,24 +651,21 @@ public class MapIO : MonoBehaviour {
             Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value." );
         }
     }
-    public static float[,] getSteepness() //Gets the steepness at the terrain point.
+    public void debugWaterLevel() // Puts the water level up to 500 if it's below 500 in height.
     {
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        int terrainSize = (int)land.terrainData.size.x;
-        Debug.Log(terrainSize);
-        float[,] steepness = new float[terrainSize, terrainSize];
-        float iNorm, jNorm, slope = 0f;
-        for (int i = 0; i < terrainSize; i++)
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
+        for (int i = 0; i < waterMap.GetLength(0); i++)
         {
-            for (int j = 0; j < terrainSize; j++)
+            for (int j = 0; j < waterMap.GetLength(1); j++)
             {
-                iNorm = (float)i / 1000f;
-                jNorm = (float)j / 1000f;
-                slope = land.terrainData.GetSteepness(iNorm, jNorm);
-                steepness[i, j] = slope;
+                if (waterMap[i, j] < 0.5f)
+                {
+                    waterMap[i, j] = 0.5f;
+                }
             }
         }
-        return steepness;
+        water.terrainData.SetHeights(0, 0, waterMap);
     }
     #endregion
 
