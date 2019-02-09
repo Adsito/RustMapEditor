@@ -75,8 +75,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateGroundmap(false);
             }
             EditorGUILayout.EndHorizontal();
-            //GUILayout.Label("Texture Opacity: " + opacity + " %");
-            //opacity = GUILayout.HorizontalSlider(opacity, 0, 1);
+            if (GUILayout.Button("Paint Rivers"))
+            {
+                mapIO.paintRiver("Ground", 0);
+            }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
             blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
@@ -143,6 +145,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateBiomemap(false);
             }
             EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Paint Rivers"))
+            {
+                mapIO.paintRiver("Biome", 0);
+            }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
             blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
@@ -294,6 +300,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Paint Rivers"))
+            {
+                mapIO.paintRiver("Topology", 0);
+            }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
             blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
