@@ -93,7 +93,7 @@ public class MapIOEditor : Editor
         {
             script.moveHeightmap();
         }
-        GUILayout.Label("Land Heightmap Offset (Increase or Decrease the entire Heightmap)");
+        GUILayout.Label("Land Heightmap Offset (Increase or Decrease)");
         offset = EditorGUILayout.FloatField(offset);
         EditorGUILayout.BeginHorizontal();
         checkHeight = EditorGUILayout.ToggleLeft("Check if heightmap in bounds", checkHeight);
@@ -114,7 +114,7 @@ public class MapIOEditor : Editor
             script.scale = 1f;
         }
         */
-        GUILayout.Label("Rotating maps takes roughly 1-2 minutes to process \n for the largest maps.", EditorStyles.boldLabel);
+        GUILayout.Label("Rotating maps takes roughly 1-2 minutes \n to process for the largest maps.", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Rotate 90°")) // Calls every rotate function from MapIO. Rotates 90 degrees.
         {
@@ -190,8 +190,7 @@ public class MapIOEditor : Editor
         {
             script.autoGenerateGround();
         }
-        GUILayout.Label("This paints the textureToPaint on the layerToPaint \n if the layerFrom has the textureFrom in that coordinate.\n Eg. If layerFrom = Ground, textureToCopyFrom = Snow and \n" +
-            "layerToPaint = Topology, textureToPaint = Decor \n it would paint decor wherever there was snow"); //ToDo: Have this make sense and not look like a chimp wrote it.
+        GUILayout.Label("Copies the texture selected, and paints the selected \n texture in wherever the texture is active."); //ToDo: Have this make sense and not look like a chimp wrote it.
         string[] layerFromList = { "Ground", "Biome", "Topology" };
         landLayerFrom = EditorGUILayout.Popup("Land Layer To Copy From:", landLayerFrom, layerFromList);
         switch (landLayerFrom) // Get texture list from the currently selected landLayer.
