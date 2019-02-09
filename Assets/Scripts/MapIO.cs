@@ -702,8 +702,8 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t ) // Paints height between 2 floats. Opacity is currently not implemented so just give it value
-    // of float.MaxValue to avoid errors.
+    public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t ) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
+    // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
@@ -711,9 +711,6 @@ public class MapIO : MonoBehaviour {
         float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
         switch (landLayer)
         {
-            default:
-                t = 2;
-                break;
             case "Ground":
                 t = texture(landLayer);
                 break;
@@ -727,7 +724,7 @@ public class MapIO : MonoBehaviour {
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm);
+                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
                 if (height > heightLow && height < heightHigh)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++) // Erases the textures on all the layers.
@@ -900,10 +897,10 @@ public class MapIO : MonoBehaviour {
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float slope = land.terrainData.GetSteepness(jNorm, iNorm);
+                float slope = land.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
                 if (slope > slopeLow && slope < slopeHigh)
                 {
-                    for (int k = 0; k < textureCount(landLayer); k++)
+                    for (int k = 0; k < textureCount(landLayer); k++) 
                     {
                         splatMap[i, j, k] = 0;
                     }
@@ -918,11 +915,11 @@ public class MapIO : MonoBehaviour {
                     float newSlope = slope - minBlendLow;
                     float newSlopeLow = slopeLow - minBlendLow;
                     float slopeBlend = newSlope / newSlopeLow; // Holds data about the texture weight between the blend ranges.
-                    splatMapLayers[t] = slopeBlend;
+                    splatMapLayers[t] = slopeBlend; // Assigns the texture we are painting to equal a value between 0 - 1, depending on how far away it is from the solid texture.
                     float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
                     for (int l = 0; l < land.terrainData.alphamapLayers; l++)
                     {
-                        splatMapLayers[l] /= textureWeight;
+                        splatMapLayers[l] /= textureWeight; // Averages out all the texture weights. If you want a stronger blend adjust this value.
                         splatMap[i, j, l] = splatMapLayers[l];
                     }         
                 }
@@ -961,13 +958,14 @@ public class MapIO : MonoBehaviour {
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
-        if (landLayer == "Ground")
+        switch (landLayer)
         {
-            t = texture(landLayer); // Active texture to paint on layer.
-        }
-        else if (landLayer == "Biome")
-        {
-            t = texture(landLayer); // Active texture to paint on layer.
+            case "Ground":
+                t = texture(landLayer);
+                break;
+            case "Biome":
+                t = texture(landLayer);
+                break;
         }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -983,6 +981,44 @@ public class MapIO : MonoBehaviour {
                         }
                         splatMap[i, j, t] = 1;
                     }
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+        if (landLayer == "Topology")
+        {
+            saveTopologyLayer();
+        }
+    }
+    public void paintRiver(string landLayer, int t) // Paints the splats wherever the water is above 500 and is above the terrain
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        switch (landLayer)
+        {
+            case "Ground":
+                t = texture(landLayer);
+                break;
+            case "Biome":
+                t = texture(landLayer);
+                break;
+        }
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                float iNorm = (float)i / (float)splatMap.GetLength(0);
+                float jNorm = (float)j / (float)splatMap.GetLength(1);
+                float height = water.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
+                if (height > 500)
+                {
+                    for (int k = 0; k < textureCount(landLayer); k++)
+                    {
+                        splatMap[i, j, k] = 0;
+                    }
+                    splatMap[i, j, t] = 1;
                 }
             }
         }
