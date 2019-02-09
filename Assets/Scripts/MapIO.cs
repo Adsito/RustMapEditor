@@ -851,7 +851,34 @@ public class MapIO : MonoBehaviour {
         {
             saveTopologyLayer();
         }
-    } 
+    }
+    public void invertLayer(string landLayer) // Inverts the active and inactive textures. Alpha and Topology only. 
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                if (splatMap[i, j, 0] < 0.5f)
+                {
+                    splatMap[i, j, 0] = 1;
+                    splatMap[i, j, 1] = 0;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
+                }
+            }
+        }
+        landData.setData(splatMap, landLayer);
+        landData.setLayer();
+        if (landLayer == "Topology")
+        {
+            saveTopologyLayer();
+        }
+    }
     public void paintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();

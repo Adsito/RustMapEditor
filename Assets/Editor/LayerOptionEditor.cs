@@ -246,13 +246,17 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint Whole layer"))
+            if (GUILayout.Button("Paint Layer"))
             {
                 mapIO.paintLayer("Alpha", 0);
             }
-            if (GUILayout.Button("Clear Whole layer"))
+            if (GUILayout.Button("Clear Layer"))
             {
                 mapIO.clearLayer("Alpha");
+            }
+            if (GUILayout.Button("Invert Layer"))
+            {
+                mapIO.invertLayer("Alpha");
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -332,13 +336,17 @@ public class LayerOptionEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint Whole layer"))
+            if (GUILayout.Button("Paint Layer"))
             {
                 mapIO.paintLayer("Topology", 0);
             }
-            if (GUILayout.Button("Clear Whole layer"))
+            if (GUILayout.Button("Clear Layer"))
             {
                 mapIO.clearLayer("Topology");
+            }
+            if (GUILayout.Button("Invert Layer"))
+            {
+                mapIO.invertLayer("Topology");
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");
