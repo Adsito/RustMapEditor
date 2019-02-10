@@ -24,7 +24,7 @@ public class PrefabLookup : System.IDisposable
 		backend = new AssetBundleBackend(bundlename);
 
 		var lookupAsset = backend.Load<TextAsset>(lookupPath);
-        var lookupManifest = backend.Load<GameManifest>(manifestPath);
+        //var lookupManifest = backend.Load<GameManifest>(manifestPath);
         
         /*
         for (int i = 0; i < lookupManifest.prefabProperties.Length; i++)
