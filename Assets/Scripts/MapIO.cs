@@ -988,11 +988,13 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintRiver(string landLayer, int t) // Paints the splats wherever the water is above 500 and is above the terrain
+    public void paintRiver(string landLayer, bool aboveTerrain, int t) // Paints the splats wherever the water is above 500 and is above the terrain. Above terrain
+    // true will paint only if water is above 500 and is also above the land terrain.
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         switch (landLayer)
         {
             case "Ground":
@@ -1008,14 +1010,30 @@ public class MapIO : MonoBehaviour {
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float height = water.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
-                if (height > 500)
+                float waterHeight = water.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
+                float landHeight = land.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
+                switch (aboveTerrain)
                 {
-                    for (int k = 0; k < textureCount(landLayer); k++)
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1;
+                    case true:
+                        if (waterHeight > 500 && waterHeight > landHeight)
+                        {
+                            for (int k = 0; k < textureCount(landLayer); k++)
+                            {
+                                splatMap[i, j, k] = 0;
+                            }
+                            splatMap[i, j, t] = 1;
+                        }
+                        break;
+                    case false:
+                        if (waterHeight > 500)
+                        {
+                            for (int k = 0; k < textureCount(landLayer); k++)
+                            {
+                                splatMap[i, j, k] = 0;
+                            }
+                            splatMap[i, j, t] = 1;
+                        }
+                        break;
                 }
             }
         }
@@ -1452,8 +1470,6 @@ public class MapIO : MonoBehaviour {
         landData.setLayer();
     }
     #endregion
-
-
 
     private void loadMapInfo(MapInfo terrains)
     {
