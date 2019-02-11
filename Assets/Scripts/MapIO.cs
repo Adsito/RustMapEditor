@@ -1471,6 +1471,34 @@ public class MapIO : MonoBehaviour {
     }
     #endregion
 
+    public void removeBrokenPrefabs()
+    {
+        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        var prefabsRemovedCount = 0;
+        foreach (PrefabDataHolder p in prefabs)
+        {
+            switch (p.prefabData.id)
+            {
+                default:
+                    // Do nothing
+                    break;
+                case 3493139359:
+                    DestroyImmediate(p.gameObject);
+                    prefabsRemovedCount++;
+                    break;
+                case 1655878423:
+                    DestroyImmediate(p.gameObject);
+                    prefabsRemovedCount++;
+                    break;
+                case 350141265:
+                    DestroyImmediate(p.gameObject);
+                    prefabsRemovedCount++;
+                    break;
+            }
+        }
+        Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
+    }
+
     private void loadMapInfo(MapInfo terrains)
     {
         if (MapIO.topology == null)

@@ -246,6 +246,11 @@ public class MapIOEditor : Editor
             script.debugWaterLevel();
         }
         EditorGUILayout.EndHorizontal();
+        GUILayout.Label("Goes through and removes any prefabs that are known \n to break custom maps.");
+        if (GUILayout.Button("Remove Broken Prefabs"))
+        {
+            script.removeBrokenPrefabs();
+        }
         GUILayout.Label("This sets the very edges of the map to this height.");
         heightToSet = EditorGUILayout.FloatField(heightToSet);
         EditorGUILayout.BeginHorizontal();
