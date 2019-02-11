@@ -11,7 +11,7 @@ public class LayerOptionEditor : Editor
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f;
     float minBlendLowHeight = 0f, maxBlendHighHeight = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
-    bool blendSlopes = false, blendHeights = false;
+    bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     #region All Layers
     public override void OnInspectorGUI()
     {
@@ -75,9 +75,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateGroundmap(false);
             }
             EditorGUILayout.EndHorizontal();
+            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
             if (GUILayout.Button("Paint Rivers"))
             {
-                mapIO.paintRiver("Ground", 0);
+                mapIO.paintRiver("Ground", aboveTerrain, 0);
             }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
@@ -145,9 +146,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateBiomemap(false);
             }
             EditorGUILayout.EndHorizontal();
+            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
             if (GUILayout.Button("Paint Rivers"))
             {
-                mapIO.paintRiver("Biome", 0);
+                mapIO.paintRiver("Biome", aboveTerrain, 0);
             }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
@@ -300,9 +302,10 @@ public class LayerOptionEditor : Editor
                 mapIO.rotateAllTopologymap(true);
             }
             EditorGUILayout.EndHorizontal();
+            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
             if (GUILayout.Button("Paint Rivers"))
             {
-                mapIO.paintRiver("Topology", 0);
+                mapIO.paintRiver("Topology", aboveTerrain, 0);
             }
             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
             EditorGUILayout.BeginHorizontal();
