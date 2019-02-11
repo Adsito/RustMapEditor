@@ -12,7 +12,7 @@ public class PrefabLookup : System.IDisposable
 
 	private static string lookupPath = "Assets/Modding/Prefabs.txt";
 	private static string scenePath = "Assets/Modding/Prefabs.unity";
-    private static string manifestPath = "Assets/manifest.asset";
+    //private static string manifestPath = "Assets/manifest.asset";
 
     public bool isLoaded
 	{
