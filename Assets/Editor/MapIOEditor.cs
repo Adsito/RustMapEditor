@@ -12,7 +12,7 @@ public class MapIOEditor : Editor
     string mapName = "";
 
     int mapSize = 1000;
-    float heightToSet = 0f, scale = 0f, offset = 0f;
+    float heightToSet = 450f, scale = 0f, offset = 0f, minimumHeight = 450f, maximumHeight = 1000f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     public LayerOptionEditor optionEditor;
 
@@ -265,5 +265,17 @@ public class MapIOEditor : Editor
         {
             script.setEdgePixel(heightToSet, top, left, right, bottom);
         }
+        GUILayout.Label("Moves the heightmap to the selected value if it's \n below or above.");
+        minimumHeight = EditorGUILayout.FloatField(heightToSet);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Set Minimum Height"))
+        {
+            script.setMinimumHeight(minimumHeight);
+        }
+        if (GUILayout.Button("Set Maximum Height"))
+        {
+            script.setMaximumHeight(maximumHeight);
+        }
+        EditorGUILayout.EndHorizontal();
     }
 }
