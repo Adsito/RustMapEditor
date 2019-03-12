@@ -667,6 +667,40 @@ public class MapIO : MonoBehaviour {
         }
         water.terrainData.SetHeights(0, 0, waterMap);
     }
+    public void setMinimumHeight(float minimumHeight) // Puts the heightmap level to the minimum if it's below.
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,] landMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        minimumHeight /= 1000f; // Normalise the input to a value between 0 and 1.
+        for (int i = 0; i < landMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < landMap.GetLength(1); j++)
+            {
+                if (landMap[i, j] < minimumHeight)
+                {
+                    landMap[i, j] = minimumHeight;
+                }
+            }
+        }
+        land.terrainData.SetHeights(0, 0, landMap);
+    }
+    public void setMaximumHeight(float maximumHeight) // Puts the heightmap level to the minimum if it's below.
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,] landMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        maximumHeight /= 1000f; // Normalise the input to a value between 0 and 1.
+        for (int i = 0; i < landMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < landMap.GetLength(1); j++)
+            {
+                if (landMap[i, j] > maximumHeight)
+                {
+                    landMap[i, j] = maximumHeight;
+                }
+            }
+        }
+        land.terrainData.SetHeights(0, 0, landMap);
+    }
     #endregion
 
     #region SplatMap Methods
