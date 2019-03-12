@@ -1180,19 +1180,19 @@ public class MapIO : MonoBehaviour {
             topologyLayer = TerrainTopology.Enum.Tier0;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
-            paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             topologyLayer = TerrainTopology.Enum.Tier1;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
-            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             topologyLayer = TerrainTopology.Enum.Tier2;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
-            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0);
+            paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
             EditorUtility.ClearProgressBar();
             topologyLayer = oldTopologyLayer2;
@@ -1204,16 +1204,19 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Sand;
-        paintHeight("Ground", 0, 502, 0, 504, 0);
+        paintHeight("Ground", 0, 502, 0, 505, 0);
 
         terrainLayer = TerrainSplat.Enum.Grass;
-        paintHeight("Ground", 504, 675, 502, 700, 0);
+        paintHeight("Ground", 503, 675, 502, 700, 0);
+
+        terrainLayer = TerrainSplat.Enum.Dirt;
+        paintSlope("Ground", 20, 20, 10, 30, 0);
 
         terrainLayer = TerrainSplat.Enum.Snow;
         paintHeight("Ground", 700, 1000, 650, 1000, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
-        paintSlope("Ground", 45f, 90f, 40f, 90f, 0);
+        paintSlope("Ground", 50f, 90f, 40f, 90f, 0);
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {
