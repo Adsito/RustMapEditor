@@ -1202,13 +1202,16 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Sand;
-        paintHeight("Ground", 0, 502, 0, 502, 0);
+        paintHeight("Ground", 0, 502, 0, 504, 0);
+
+        terrainLayer = TerrainSplat.Enum.Grass;
+        paintHeight("Ground", 504, 675, 502, 700, 0);
 
         terrainLayer = TerrainSplat.Enum.Snow;
-        paintHeight("Ground", 750, 1000, 750, 1000, 0);
+        paintHeight("Ground", 700, 1000, 650, 1000, 0);
 
         terrainLayer = TerrainSplat.Enum.Rock;
-        paintSlope("Ground", 45f, 90f, 45f, 90f, 0);
+        paintSlope("Ground", 45f, 90f, 40f, 90f, 0);
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {
@@ -1216,6 +1219,9 @@ public class MapIO : MonoBehaviour {
 
         biomeLayer = TerrainBiome.Enum.Arctic;
         paintHeight("Biome", 750, 1000, 750, 1000, 0);
+
+        biomeLayer = TerrainBiome.Enum.Tundra;
+        paintHeight("Biome", 675, 750, 675, 750, 0);
     }
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
