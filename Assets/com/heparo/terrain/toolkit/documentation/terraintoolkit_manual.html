@@ -1,0 +1,1254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<TITLE>Terrain Toolkit 2017 for Unity 3D terrains</TITLE>
+<link rel="stylesheet" type="text/css" href="css/styles.css"/>
+</HEAD>
+<BODY>
+<!-- ###################################################################################################### -->
+<!--	
+This page is part of the Terrain Toolkit 2017 asset sold to customers at the Unity Asset Store 
+Please refer to : https://unity3d.com/asset-store
+Author : Hervé PARONNAUD 
+Contact / Support : contact@heparo.com
+Asset Store Terms of Service and EULA
+Please refer to : http://unity3d.com/company/legal/as_terms
+-->
+<!-- ###################################################################################################### -->
+<div class="menuDiv" align="right">
+	<font class="petit">
+	<h2 class="h2Menu">
+		Manual
+	</h2>
+	<a href="#1">Overview</a><br>
+	<a href="#2">Content</a><br>
+	<a href="#3">Getting started</a><br>
+	<a href="#4">Toolkit</a><br>
+	<a href="#5">Terrain models</a><br>
+	<a href="#6">API Reference</a><br>
+	<a href="#8">Known bugs</a><br>
+	<a href="#81">Changelog</a><br>
+	<a href="#9">Contacts</a>
+	</font>
+</div>
+<!-- ###################################################################################################### -->
+<table width="100%" class="header" cellspacing="0" cellpadding="3" border="0">
+	<tr>
+		<td width="256px" align="left" valign="middle">
+			<IMG src="images/terraintoolkit_logo_256x64.png" alt="Terrain Toolkit 2017 logo">
+		</td>
+		<td>
+			&nbsp;
+		</td>
+		<td width="128px" class="unity3DCell" align="center" valign="middle">
+			<a href="https://unity3d.com/" class="white_link">unity3d.com</a>
+		</td>
+	</tr>
+	<tr>
+		<td class="toolsCell" align="left" valign="middle">
+			<font class="normal">Version 20190125140200</font>
+		</td>
+		<td colspan="2" class="toolsCell" align="right" valign="middle">
+			<font class="normal">&nbsp;</font>
+		</td>
+	</tr>
+</table>
+<table width="100%" height="100%" cellspacing="1" cellpadding="3" border="0">
+	<tr>
+		<td class="menuCell" align="right" valign="top" width="200px">
+			<img src="images/div_200.png">
+		</td>
+		<td class="contentCell" align="left" valign="top">
+			<font class="normal">
+			<!-- ###################################################################################################### -->
+			<a name="1"></a><h2 class="h2Content">Overview</h2>	
+			<p>
+				The present version of the Unity Terrain Toolkit is based on :
+			</p>
+			<p>
+				<b>The Unity Terrain Toolkit from the Unity Summer of Code 2009<br>
+				All code by Sándor Moldán, except where noted.<br>
+				Contains an implementation of Perlin noise by Daniel Greenheck.<br>
+				Contains an implementation of the Diamond-Square algorithm by Jim George.</b>
+			</p>
+			<p>
+				The present version of the Terrain Toolkit is an adaptation and enhancement of the original tool (V1.0.2) for the newer versions of Unity.<br>
+				Beyond the necessary code adaptation, a cosmetic refactoring was performed (GUI mainly but also core code).<br>
+				This being said, the whole toolkit works as the original toolkit was designed.
+			</p>
+			<p>
+				The original package (Unity 4 compatible) is bundled in the 'original' folder. It comes with its associated documentation. 
+			</p>
+			<p>
+				The original toolkit was FREE, this version too !
+			</p>
+			<p>
+				Enjoy and keep it a popular tool !
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="2"></a><h2 class="h2Content">Content</h2>
+			The Terrain Toolkit 2017 package is composed of the following :
+			<p>
+			<img src="images/tertoolkit_content_000.jpg"><br>
+			<ul>
+				<li><b>com.heparo.terrain.toolkit</b> : the Terrain Toolkit 2017 package (main folder hierarchy) [0 file(s)]</li>
+				<ul>
+					<li><b>demonstration</b> : contains the demonstration scene [1 file(s)]</li>
+					<ul>
+						<li><b>materials</b> : the materials used in the scene [n file(s)]</li>
+						<li><b>terrains</b> : the terrain used in the scene [1 terrain]</li>
+						<li><b>textures</b> : the textures used in the scene [n file(s)]</li>
+					</ul>
+					<li><b>documentation</b> : contains the HTML documentation of the Terrain Toolkit 2017 package (normally the page you are presently reading... Isn't it ?) [1 file(s)]</li>
+					<ul>
+						<li><b>css</b> : the CSS file of the documentation [1 file(s)]</li>
+						<li><b>images</b> : contains all the images used in the present documentation [n file(s)]</li>
+					</ul>
+				</ul>
+				<ul>
+					<li><b>editor</b> : contains the cs extension used as the main working interface for the toolkit [1 file(s)]</li>
+					<ul>
+						<li><b>resources</b> : contains all the resources used by the editor [n file(s)]</li>
+					</ul>
+				</ul>
+				<ul>
+					<li><b>original</b> : contains the original toolkit (unitypackage from Unity 4) with its associated documentation [2 file(s)]</li>
+				</ul>
+				<ul>
+					<li><b>scripts</b> : contains all the Terrain Toolkit 2017 core classes [1 file(s)]</li>
+				</ul>
+				<ul>
+					<li><b>textures</b> : the terrain textures from Unity 4 to use with the toolkit [n file(s)]</li>
+				</ul>
+			</ul>
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<!--
+			<a name="3"></a><h2 class="h2Content">xxxxx</h2>
+			xxxx :<br>
+			<p>
+			<ul>
+				<li>xxxxxx</li>
+				<li>xxxxx</li>
+			</ul>
+			xxxxxx
+			</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			-->
+			<!-- ###################################################################################################### -->
+			<a name="3"></a><h2 class="h2Content">Getting started</h2>
+			<p>
+			<font class="titre1">1 - The demonstration scene</font>
+			</p>
+			<p>
+			A demonstration scene is provided with the package. It's a simple an convenient way of testing the toolkit with a pregenerated terrain 
+			</p>
+			<p>
+			<img src="images/tertoolkit_manual_025.jpg"><br>
+			Select and open the demonstration scene provided with the asset. Then select the demonstration terrain to access to the the toolkit.
+			</p>
+			<p>&nbsp;</p>
+			<p>
+			<font class="titre1">2 - From scratch</font>
+			</p>
+			<p>
+			Getting started with Terrain Toolkit is quite easy : attach the Terrain Toolkit component to any Unity Terrain object either by dragging and dropping the script onto the terrain object or by selecting it through the Component/Scripts menu..
+			</p>
+			<p>
+			<img src="images/tertoolkit_manual_000.jpg"><br>
+			Attach the C# script [TerrainToolkit] to a terrain, you can now work with the toolkit
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="4"></a><h2 class="h2Content">Toolkit</h2>
+			<p>
+				The toolset is divided into three areas - terrain generation, erosion and texturing - accessible in the Create, Erode and Texture panels.
+			</p>
+			<p>
+				The toolkit contains:
+				<ul>
+				<li>6 different erosion filters (thermal, tidal, wind and 3 types of hydraulic erosion).</li>
+				<li>3 'generators' that use Voronoi, cloud fractal and Perlin noise algorithms to create base terrain.</li>
+				<li>Some useful tools that allow the terrain object to be smoothed or normalised, inverted, etc.</li>
+				<li> A procedural terrain texturing tool.</li>
+				</ul>
+			</p>
+			<p>
+				All of these features are provided both as filters which can be applied in the Unity Editor and as fully documented API methods which enables Unity artists and developers to procedurally generate, filters and texture terrain objects at runtime through their own scripts.
+			</p>
+			<p>
+				Additionally - thermal, fast-hydraulic and tidal erosion filters can also be applied directly to the terrain object using brushes in the Unity Editor.
+			</p>
+			<p>&nbsp;</p>
+			<p>
+			<font class="titre1">1 - CREATE</font>
+			</p>
+			<p>
+				<img src="images/tertoolkit_manual_001.jpg"><br>
+				The Terrain Toolkit includes a number of generators for creating random terrains, plus some useful smoothing and normalising filters.
+				<ul>
+					<li>
+						<b>Voronoi</b> : this tool generates a random heightmap consisting of a series of mountain-like peaks using a Voronoi diagram and applies it to the terrain object.
+						<p>
+							<img src="images/tertoolkit_manual_002.jpg">
+							<ul>
+								<li>A preset can be used to automatically set all of the properties for this generator.</li>
+								<li><b>Feature type</b> : the type of interpolation used, which influences the shape of the generated features. Mountains are interpolated linearly, Hills are interpolated along a sine curve and Plateaus are interpolated along a tangent curve.</li>
+								<li><b>Cells [int]</b> : the number of cells the terrain object will be divided into in the Voronoi diagram.</li>
+								<li><b>Features [float]</b> : the proportion of cells that will form rising features. The remaining cells are left flat. This is a floating point number in the range 0.0 - 1.0, where 0.0 results in no cells forming features and 1.0 results in all cells forming features.</li>
+								<li><b>Scale [float]</b> : the extent to which features are scaled down based on their proximity to the next nearest feature. This is a floating point number in the range 0.0 - 1.0, where 0.0 results in no scaling and 1.0 results in the maximum amount of scaling.</li>
+								<li><b>Blend [float]</b> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Fractal</b> : This tool generates a random heightmap using the 'cloud' or 'plasma' fractal algorithm and applies it to the terrain object.
+						<p>
+							<img src="images/tertoolkit_manual_003.jpg">
+							<ul>
+								<li>A preset can be used to automatically set all of the properties for this generator.</li>
+								<li><b>Delta [float]</b> : this value affects the roughness of the generated terrain. This is a floating point number in the range 0.0 - 1.0, where a value of 0.0 results in a very smooth heightmap and a value of 1.0 results in an extremely noisy heightmap. Values close to 0.5 tend to work best.</li>
+								<li><b>Blend [float]</b> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Perlin</b> : this tool generates a random heightmap using Perlin noise and applies it to the terrain object.
+						<p>
+							<img src="images/tertoolkit_manual_004.jpg">
+							<ul>
+								<li>A preset can be used to automatically set all of the properties for this generator.</li>
+								<li><b>Frequency [int]</b> : the initial frequency used to generate Perlin noise. This value is doubled in every successive Octave. Lower frequency values result in smooth, rolling hills and higher vales resut in more jagged terrain.</li>
+								<li><b>Amplitude [float]</b> : the initial amplitude used to generate Perlin noise. This value is halved in every successive Octave.</li>
+								<li><b>Octaves [int]</b> : the number of octaves used to generate Perlin noise. More octaves result in more detailed terrain but take longer to process.</li>
+								<li><b>Blend [float]</b> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Smooth</b> : this tool is a filter which applies smoothing to the terrain object repeatedly over a number of iterations.
+						<p>
+							<ul>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied.</li>
+								<li><b>Blend [float]</b> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Normalise</b> : this tool is a filter which normalises the terrain object by setting the highest point in the current terrain heightmap to the maximum and the lowest point to the minimum. All other points are interpolated between the maximum and minimum.
+						<p>
+							<ul>
+								<li><b>minHeight [float]</b> : the lowest point is set to minHeight.</li>
+								<li><b>maxHeight [float]</b> : the greatest height is set to maxHeight</li>
+								<li><b>Blend [float]</b> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0</li>
+							</ul>
+						</p>
+					</li>
+				</ul>
+			</p>
+			<p>&nbsp;</p>
+			<p>
+			<font class="titre1">2 - ERODE</font>
+			</p>
+			<p>
+				<img src="images/tertoolkit_manual_005.jpg"><br>
+				The Terrain Toolkit includes a number of forms of erosion which can either be applied to the entire terrain object either as a filter, or in some cases directly to an area of the terrain using brushes.
+				<ul>
+					<li>
+						<b>Brushes</b>
+						<p>
+							<ul>
+								<li>The following erosion types can be applied directly to the terrain object using brushes : Thermal Erosion, Hydraulic Erosion (Fast), Tidal Erosion</li>
+								<li><b>Note</b> : as brushes apply erosion in single iteration, other erosion types cannot be applied with brushes as they require multiple iterations to generate meaningful results.</li>
+								<li><b>Hint</b> : use the Thermal Erosion Brush and Hydraulic Erosion Brush presets for best results.</li>
+								<li>To use a brush, select an appropriate erosion type and turn the brush on in the inspector. Brushes are applied by holding down the SHIFT key. </li>
+								<li>Brushes have a number of settings which can be modified to alter the manner in which erosion is applied to the terrain object :</li>
+									<ul>
+									<li><b>Brush size [float]</b> : the diameter of the brush in world units.</li>
+									<li><b>Opacity [float]</b> : the opacity of the brush at the centre. This is a floating point number in the range 0.0 - 1.0, where 0.0 means the brush has no effect, and 1.0 means the brush is applied at full effect.</li>
+									<li><b>Softness [float]</b> : the softness of the brush. This is a floating point number in the range 0.0 - 1.0, where 0.0 is a hard brush and 1.0 is a soft brush.</li>
+								</ul>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Thermal Erosion</b>
+						<p>
+							<img src="images/tertoolkit_manual_006.jpg">
+							<ul>
+								<li><b>Approach</b> : single layer fast erosion (height only).</li>
+								<li><b>Difference maps</b> : yes, optional in brush mode</li>
+								<li>Thermal erosion removes material from areas with a slope greater than the minimum slope and deposits it further down the slope. This tends to smooth and flatten inclines in the terrain.</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied. Not applicable to brushes.</li>
+								<li><b>Minimum slope [float]</b> : only points where the slope is greater than this amount are effected by erosion. Expressed in degrees in the range from 0.0 to 90.0</li>
+								<li><b>Falloff [float]</b> : the effects of erosion are blended out towards zero over this range. Expressed in a range from 0.0 (no falloff) to 1.0 (maximum falloff).</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Hydraulic Erosion (Fast)</b>
+						<p>
+							<img src="images/tertoolkit_manual_007.jpg">
+							<ul>
+								<li><b>Approach</b> : single layer fast erosion (height only).</li>
+								<li><b>Difference maps</b> : yes, optional in brush mode</li>
+								<li>Hydraulic erosion removes material from areas with a slope less than the maximum slope and deposits it further down the slope. This tends to steepen inclines in the terrain and further smooth and flatten other areas.</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied. Not applicable to brushes.</li>
+								<li><b>Maximum slope [float]</b> : only points where the slope is less than this amount are effected by erosion. Expressed in degrees in the range from 0.0 to 90.0</li>
+								<li><b>Falloff [float]</b> : the effects of erosion are blended out towards zero over this range. Expressed in a range from 0.0 (no falloff) to 1.0 (maximum falloff).</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Hydraulic Erosion (Full)</b>
+						<p>
+							<img src="images/tertoolkit_manual_008.jpg">
+							<ul>
+								<li><b>Approach</b> : 3 layer erosion (height, water, sediment)</li>
+								<li><b>Difference maps</b> : yes</li>
+								<li>Full hydraulic erosion is a simplified simulation the water cycle, where material is sissolved by rainfall. Water carrying the dissolved material is moved over the terrain based on the slope, then deposited as the water is evaporated again.</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Hint</b> : water flows poorly over very noisy terrain. Try using Thermal Erosion first to smooth the terrain before applying this filter.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied. Not applicable to brushes.</li>
+								<li><b>Rainfall [float]</b> : the amount of water added to the system as precipitation per iteration. This value should generally be kept very low.</li>
+								<li><b>Evaporation [float]</b> : the amount of water removed from the system per iteration. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point.</li>
+								<li><b>Solubility [float]</b> : the ratio of material that is dissolved by water, proportional to the amount of water at that point.</li>
+								<li><b>Saturation [float]</b> : the maximum ratio of dissolved material that can be suspended in water, proportional to the amount of water at that point.</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Hydraulic Erosion (Velocity)</b>
+						<p>
+							<img src="images/tertoolkit_manual_009.jpg">
+							<ul>
+								<li><b>Approach</b> : 4 layer erosion (height, water, velocity, sediment)</li>
+								<li><b>Difference maps</b> : yes</li>
+								<li>Velocity hydraulic erosion is similar to full hydraulic erosion, except that the movement of water in the system is used to generate a velocity map. Velocity increases water flow influenced by both slope and momentum, carrying dissolved material with it. The velocity map can also be used to simulated the effects of downcutting - creating a carved and weathered terrain.</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Hint</b> : water flows poorly over very noisy terrain. Try using Thermal Erosion first to smooth the terrain before applying this filter.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied. Not applicable to brushes.</li>
+								<li><b>Rainfall [float]</b> : the amount of water added to the system as precipitation per iteration. This value should generally be kept very low.</li>
+								<li><b>Evaporation [float]</b> : the amount of water removed from the system per iteration. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point.</li>
+								<li><b>Solubility [float]</b> : the ratio of material that is dissolved by water, proportional to the amount of water at that point.</li>
+								<li><b>Saturation [float]</b> : the maximum ratio of dissolved material that can be suspended in water, proportional to the amount of water at that point.</li>
+								<li><b>Velocity [float]</b> : a global multiplier for the velocity of the water flow in the system. Could also be considered to be a gravity variable.</li>
+								<li><b>Momentum [float]</b> : the amount of velocity transferred into neighbouring cells by moving water.</li>
+								<li><b>Entropy [float]</b> : the amount of velocity removed from the system due to loss of kinetic energy such as friction, heat, etc.</li>
+								<li><b>Downcutting [float]</b> : the amount of additional material removed per iteration due to weathering in areas where water is flowing with a high velocity.</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Tidal Erosion</b>
+						<p>
+							<img src="images/tertoolkit_manual_010.jpg">
+							<ul>
+								<li><b>Approach</b> : single layer fast erosion (height only)</li>
+								<li><b>Difference maps</b> : no</li>
+								<li>Tidal erosion applies smoothing at the chosen sea level, except in areas where the slope exceeds a given value. This simulates the erosive action of waves around a shoreline and creates beaches.</li>
+								<li><b>Note</b> : when the tidal erosion panel is selected, a gizmo box will appear in the scene window showing both the current Sea level (blue) and Tidal range (white).</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Note</b> : presets for this filter will not affect the value of Sea level.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied. Not applicable to brushes.</li>
+								<li><b>Sea level [float]</b> : the altitude of the sea level. This is the point at which the greatest tidal erosion will occur. Expressed as a value of world units on the y-axis.</li>
+								<li><b>Tidal range [float]</b> : the range above and below the sea level which is affected by tidal erosion. The effects of erosion are blended out towards zero over this range in both directions. Expressed as a value of world units on the y-axis.</li>
+								<li><b>Cliff limit [float]</b> : only points where the slope is less than this amount are effected by tidal erosion. This maintains the appearance of cliffs adjacent to bodies of water.</li>
+							</ul>
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Wind Erosion</b>
+						<p>
+							<img src="images/tertoolkit_manual_011.jpg">
+							<ul>
+								<li><b>Approach</b> : 3 layer erosion (height, velocity, suspended material)<li>
+								<li><b>Difference maps</b> : yes</li>
+								<li>Wind erosion is an <u>experimental</u> erosion filter. Material will be lifted from areas exposed to the wind, carried in the wind direction and deposited when the effects of gravity and entropy make it impossible for the particles to maintain lift. Smoothing can also be applied to areas exposed to the wind.</li>
+								<li><b>Hint</b> : a preset can be used to automatically set all of the properties for this filter.</li>
+								<li><b>Iterations [int]</b> : the number of times this filter is applied.</li>
+								<li><b>Direction [float]</b> : the direction of the wind in degrees. This is a floating point number in the range 0.0 - 360.0</li>
+								<li><b>Force [float]</b> : the strength of the wind.</li>
+								<li><b>Lift [float]</b> : the amount of material removed by wind in each iteration proportional to the velocity of the wind at that point.</li>
+								<li><b>Gravity [float]</b> : the proportion of suspended material that is dropped per iteration due to the effects of gravity.</li>
+								<li><b>Capacity [float]</b> : the maximum amount of material that can be suspended at any point.</li>
+								<li><b>Entropy [float]</b> : the amount of velocity removed from the system due to loss of kinetic energy such as friction, heat, etc.</li>
+								<li><b>Smoothing [float]</b> : the degree to which areas facing the wind direction are smoothed due to the effects of wind erosion and particulate abrasion.</li>
+							</ul>
+						</p>
+					</li>
+				</ul>
+			</p>
+			<p>&nbsp;</p>
+			<p>
+			<font class="titre1">3 - TEXTURE</font>
+			</p>
+			<p>
+				<img src="images/tertoolkit_manual_012.jpg"><br>
+				The Terrain Toolkit includes a procedural terrain texturing tool which automatically textures the terrain object using the slope and altitude of the terrain to determine which texture will be used.<br>
+				The tool uses 'stops' to define the slope or altitude where each texture starts and ends - similar to the way gradients are edited in some graphics software. Textures are automatically blended between stops.<br>
+				Stops can either be set numerically, or by dragging the stop handles in the interface.
+				<ul>
+					<li>
+						<b>Setting slope stops</b>
+						<p>
+						<img src="images/tertoolkit_manual_013.jpg">
+						</p>
+						<p>
+							All values for slope stops are in degrees and must be in the range 0 - 90 degrees.
+						</p>
+						<p>
+							The example to the rights shows the cliff texture being applied at minimum where the slope is 20 degrees and at maximum where the slope is 50 degrees. Areas where the slope is less than 20 degrees will have no cliff texture, areas where the slope is greater than 50 degrees will have only the cliff texture.
+						</p>
+						<ul>
+							<li><b>Slope start [float]</b> : the slope at which Cliff texture will start to appear.</li>
+							<li><b>Slope end [float]</b> : the slope at which Cliff texture will appear fully.</li>
+							<li><b>Cliff texture [Texture2D]</b> : the texture used for steep areas. Suitable for rock and cliff textures.</li>
+						</ul>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Setting altitude stops</b>
+						<p>
+						<img src="images/tertoolkit_manual_014.jpg">
+						</p>
+						<p>
+							All values for altitude stops are defined as floating point numbers in the range 0.0 - 1.0, where 0.0 is the minimum height of the terrain object and 1.0 is the maximum height.
+						</p>
+						<p>
+							The example above shows three height textures distributed over the height range of the terrain.
+						</p>
+						<ul>
+							<li>
+								<b>For the first texture</b> :
+								<ul>
+									<li>Texture 1 end [float]</li>
+									<li>The point at which first texture begins to blend into the next texture. Also, this texture appears fully between 0.0 and this point.</li>
+									<li><b>Hint</b> : Use textures suitable for low altitudes, such as sand, gravel, dirt or grass.</li>
+								</ul>
+							</li>
+							<li>
+								<b>For intermediate textures</b> :
+								<ul>
+									<li>Texture 1 + n start [float]</li>
+									<li>The point at which the previous texture stops blending into the next texture, and this texture appears fully.</li>
+									<li>Texture 1 + n end [float]</li>
+									<li>The point at which the current texture begins to blend into the next one.</li>
+									<li><b>Hint</b> : Use textures suitable for medium altitudes, such as grass or dirt.</li>
+								</ul>
+							</li>
+							<li>
+								<b>For the last texture</b> :
+								<ul>
+									<li>Texture N start [float]</li>
+									<li>The point at which the second last stops blending into the last texture, and the last texture appears fully. Also, this texture appears fully between this point and 1.0</li>
+									<li><b>Hint</b> : Use textures suitable for high altitudes, such as rock or snow.</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Apply procedural texture</b>
+						<p>
+						<img src="images/tertoolkit_manual_015.jpg">
+						</p>
+						<p>
+							The textures used by the procedural terrain texturing tool can be added, deleted or changed both using the interface provided in the Texture panel, or as normally done in the Terrain component in the Terrain/Paint Texture panel.
+						</p>
+						<p>
+							Click the 'Add Texture' button to add more textures (maximum of six). To assign a texture, drag a texture image from the 'Project' folder onto one of the texture icons. To delete a texture, click the delete ('x') button next to it.
+						</p>
+						<p>
+							The procedural terrain texturing tool supports a total of six textures - one 'cliff' texture which is applied to steep areas, and five further textures which are applied to terrain at different heights.							
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Apply procedural texture</b>
+						<p>
+						<img src="images/tertoolkit_manual_016.jpg">
+						</p>
+						<p>
+							Once the slope and altitude stops have been set to the desired values, simply click the "Apply procedural texture" button.<br>
+							Carefull, there is no undo for this operation !							
+						</p>
+					</li>
+				</ul>
+			</p>
+			<p>&nbsp;</p>
+			<p>
+			<font class="titre1">4 - OPTIONS / ADVANCED SETTINGS</font>
+			</p>
+			<p>
+				<img src="images/tertoolkit_manual_017.jpg"><br>
+				These settings are accessible with the last tab of the Terrain Toolkit tools inspector. They are recommended for advanced users.
+				<ul>
+					<li>
+						<b>Cell neighbourhood</b>
+						<p>
+						<img src="images/tertoolkit_manual_018.jpg">
+						</p>
+						<p>
+							This setting switches between using Moore neighbourhoods (8 nearest neighbours) and Von Neumann neighbourhoods (4 nearest neighbours) for all erosion brushes and filters and procedural terrain texturing. Moore neighbourhoods produce the best results with the greatest accuracy but take longer to calculate, Von Neumann neighbourhoods provide faster results at the cost of lower quality.
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Use difference maps in brush mode</b>
+						<p>
+						<img src="images/tertoolkit_manual_019.jpg">
+						</p>
+						<p>
+							All filters and brushes use difference maps by default. Difference maps are used to calculate operations for each iteration at every cell (point) on the terrain object in parallel and then used apply the changes at the end of the iteration. These additional calculations mean the operations take longer, however if changes to cells are not performed in parallel, strange results can occur. This setting allows difference maps to be switched off in brush mode to provide faster performance.
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Reload presets</b>
+						<p>
+						<img src="images/tertoolkit_manual_020.jpg">
+						</p>
+						<p>
+							This button reloads all of the presets for the Terrain Toolkit. It is included for debug reasons only and generally will not be required for normal use of the Terrain Toolkit.
+						</p>
+					</li>
+					<p>&nbsp;</p>
+					<li>
+						<b>Terrain : reset terrain</b>
+						<p>
+						<img src="images/tertoolkit_manual_021.jpg">
+						</p>
+						<ul>
+							<li><b>Reset the terrain</b> : heightmap and textures are reseted. Carefull, there is no undo for this operation !</li>
+							<li><b>Invert the terrain</b> : invert the heightmap data of the terrain. Carefull, there is no undo for this operation and the textures surely need to be re-applied !</li>
+							<li><b>Turn a terrain seamless</b> : select the amount of terrain ti use for the seam and turn the terrain semaless ! The textures surely need to be re-applied ! </li>
+						</ul>
+						<p>
+						<img src="images/tertoolkit_manual_022.jpg"><br>
+						A terrain inverted with textures re-applied on the right
+						</p>
+						<p>
+						<img src="images/tertoolkit_manual_023.jpg"><br>
+						A terrain turned seamless with textures re-applied on the right
+						</p>
+					</li>
+				</ul>
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="5"></a><h2 class="h2Content">Terrain models</h2>
+			<p>
+				The terrain models are a set of preconfigured generators and textures : a fast way to obtain a basic prototype !
+			</p>
+			<img src="images/tertoolkit_manual_024.jpg"><br>
+			<p>
+			<ul>
+				<li>You can edit and modify the terrain afterwards : all the tools are configured with the values used</li>
+				<li>You don't like the result of the generation ? Try again ! Each generation is different from the previous !</li>
+			</ul>	
+			<ul>
+				<li><b>Note</b> : the base terrain used for all the models of this asset is 1000 x 1000 x 600</li>
+				<li><b>Note</b> : a water plane is provided, feel free to disable it and move it when needed !</li>
+			</ul>
+			</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="6"></a><h2 class="h2Content">API Reference</h2>
+			In this section are described all the suitable classes for a normal and happy integration of RsDb in a project.
+			<p>
+			<table class="apiTable" width="100%" cellspacing="0" cellpadding="3" border="0">
+				<tr>
+					<td align="left" valign="middle">
+						namespace <b>com.heparo.terrain.toolkit</b>
+					</td>
+				</tr>
+				<tr>
+					<td class="toolsCell" align="left" valign="middle">
+						<font class="titre0">public class TerrainToolkit : MonoBehaviour</font>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" valign="middle">
+						TerrainToolkit contains a number of methods that can be used to generate, erode and texture Terrain objects in the Unity engine.
+					</td>
+				</tr>
+				<tr>
+					<td align="left" valign="middle">
+						<table class="apiTable" width="100%" cellspacing="3" cellpadding="3" border="0">
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<!-- <b>public TerrainToolkit()</b><br> -->
+									<font class="petit">
+									Default constructor
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void VoronoiGenerator(FeatureType featureType, int cells, float features, float scale, float blend)</b><br>
+									<font class="petit">
+									<p>
+									Generates a series of mountain-like features on the terrain object using a Voronoi diagram. There are 3 types of interpolation used to generate features, defined by featureType. The terrain object is subdivided into a number of regions equal to cells. The percentage of cells that will become features is defined by features. The remaining cells are left flat. Features are scaled proportional to their proximity to the next nearest feature by scale. The resulting heightmap is then blended with the original heightmap by blend.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>featureType</b></i> : the type of interpolation used, which influences the shape of the generated features. Mountains are interpolated linearly, Hills are interpolated along a sine curve and Plateaus are interpolated along a tangent curve.
+									</p>
+									<p>
+									- <i><b>cells</b></i> : the number of cells the terrain object will be divided into in the Voronoi diagram.
+									</p>
+									<p>
+									- <i><b>features</b></i> : the proportion of cells that will form rising features. The remaining cells are left flat. This is a floating point number in the range 0.0 - 1.0, where 0.0 results in no cells forming features and 1.0 results in all cells forming features.
+									</p>
+									<p>
+									- <i><b>scale</b></i> : the extent to which features are scaled down based on their proximity to the next nearest feature. This is a floating point number in the range 0.0 - 1.0, where 0.0 results in no scaling and 1.0 results in the maximum amount of scaling.
+									</p>
+									<p>
+									- <i><b>blend</b></i> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void FractalGenerator(float fractalDelta, float blend)</b><br>
+									<font class="petit">
+									<p>
+									Generates a random heightmap on the terrain object using the cloud or plasma fractal algorithm. Higher values of fractalDelta result in rougher terrain. The resulting heightmap is then blended with the original heightmap by blend.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>fractalDelta</b></i> : this value affects the roughness of the generated terrain. This is a floating point number in the range 0.0 - 1.0, where a value of 0.0 results in a very smooth heightmap and a value of 1.0 results in an extremely noisy heightmap. Values close to 0.5 tend to work best.
+									</p>
+									<p>
+									- <i><b>blend</b></i> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void PerlinGenerator(int frequency, float amplitude, int octaves, float blend)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Generates a random heightmap on the terrain object using Perlin noise. The resulting heightmap is then blended with the original heightmap by blend.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>frequency</b></i> : the initial frequency used to generate Perlin noise. This value is doubled in every successive Octave. Lower frequency values result in smooth, rolling hills and higher vales resut in more jagged terrain.
+									</p>
+									<p>
+									- <i><b>amplitude</b></i> : the initial amplitude used to generate Perlin noise. This value is halved in every successive Octave.
+									</p>
+									<p>
+									- <i><b>octaves</b></i> : the number of octaves used to generate Perlin noise. More octaves result in more detailed terrain but take longer to process.
+									</p>
+									<p>
+									- <i><b>blend</b></i> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void SmoothTerrain(int iterations, float blend)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Smooths the terrain object repeatedly over a number of iterations. The resulting heightmap is then blended with the original heightmap by blend.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied.
+									</p>
+									<p>
+									- <i><b>blend</b></i> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void NormaliseTerrain(float minHeight, float maxHeight, float blend)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Normalises the terrain object where the lowest point is set to minHeight and the greatest height is set to maxHeight. The resulting heightmap is then blended with the original heightmap by blend.
+									</p>
+									<p>
+									Note: For simplicity's sake, both British spelling (NormaliseTerrain) and U.S. spelling (NormalizeTerrain) will work correctly.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>minHeight </b></i> : the lowest point is set to minHeight.
+									</p>
+									<p>
+									- <i><b>maxHeight </b></i> : the greatest height is set to maxHeight
+									</p>
+									<p>
+									- <i><b>blend</b></i> : the resulting heightmap from this generator will be blended with the original heightmap by this amount. This is a floating point number in the range 0.0 - 1.0
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void FastThermalErosion(int iterations, float minSlope, float blendAmount)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs fast thermal erosion on the terrain object over a number of iterations. Thermal erosion removes material from areas with a slope greater than minSlope degrees and deposits it further down the slope. This tends to smooth and flatten inclines in the terrain. The effects of erosion are blended out towards zero over a range determined by falloff, where 0.0 results in no falloff and 1.0 results in maximum falloff.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>minSlope</b></i> : only points where the slope is greater than this amount are effected by erosion. Expressed in degrees in the range from 0.0 to 90.0
+									</p>
+									<p>
+									- <i><b>blendAmount</b></i> : the effects of erosion are blended out towards zero over this range. Expressed in a range from 0.0 (no falloff) to 1.0 (maximum falloff).
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void FastHydraulicErosion(int iterations, float maxSlope, float blendAmount)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs fast hydraulic erosion on the terrain object over a number of iterations. Hydraulic erosion removes material from areas with a slope less than maxSlope degrees and deposits it further down the slope. This tends to steepen inclines in the terrain and further smooth and flatten other areas. The effects of erosion are blended out towards zero over a range determined by falloff, where 0.0 results in no falloff and 1.0 results in maximum falloff.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>maxSlope</b></i> : only points where the slope is less than this amount are effected by erosion. Expressed in degrees in the range from 0.0 to 90.0
+									</p>
+									<p>
+									- <i><b>blendAmount</b></i> : the effects of erosion are blended out towards zero over this range. Expressed in a range from 0.0 (no falloff) to 1.0 (maximum falloff).
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void FullHydraulicErosion(int iterations, float rainfall, float evaporation, float solubility, float saturation)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs full hydraulic erosion on the terrain object over a number of iterations. Each iteration, an amount of water equal to rainfall is added to the system as precipitation per iteration. An amount of material equal to solubility and proportional to the amount of water at that point is dissolved up to a maximum of saturation. The water flows downhill through the system, carrying any dissoved sediment with it. At the end of each iteration an amount of water equal to evaporation is removed from the system. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>rainfall</b></i> : the amount of water added to the system as precipitation per iteration. This value should generally be kept very low.
+									</p>
+									<p>
+									- <i><b>evaporation</b></i> : the amount of water removed from the system per iteration. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point.
+									</p>
+										<p>
+									- <i><b>solubility</b></i> : the ratio of material that is dissolved by water, proportional to the amount of water at that point.
+									</p>
+										<p>
+									- <i><b>saturation</b></i> : the maximum ratio of dissolved material that can be suspended in water, proportional to the amount of water at that point.
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void VelocityHydraulicErosion(int iterations, float rainfall, float evaporation, float solubility, float saturation, float velocity, float momentum, float entropy, float downcutting)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs velocity hydraulic erosion on the terrain object over a number of iterations.
+									</p>
+									<p>
+									Velocity hydraulic erosion works similarly to full hydraulic erosion except that it is influenced by a velocity field.
+									</p>
+									<p>
+									Each iteration, an amount of water equal to rainfall is added to the system as precipitation per iteration. An amount of material equal to solubility and proportional to both the amount of water and the current velocity at that point is dissolved up to a maximum of saturation. Velocity is added at each point proportional to the slope of the terrain at that point and the velocity value. An amount of velocity is transferred into neighbouring cells by moving water equal to momentum. The water flows downhill through the system, carrying any dissoved sediment with it.
+									</p>
+									<p>
+									At the end of each iteration an amount of water equal to evaporation is removed from the system. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point. Also, an amount of velocity defined by entropy is removed from the system.
+									</p>
+									<p>
+									Each iteration, an amount of additional material proportional to downcutting and the current velocity at that point is removed due to weathering.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>rainfall</b></i> : the amount of water added to the system as precipitation per iteration. This value should generally be kept very low.
+									</p>
+									<p>
+									- <i><b>evaporation</b></i> : the amount of water removed from the system per iteration. When water is evaporated, it leaves behind sedimentary deposits if the the amount of remaining water after evaporation is insufficient to contain the amount of sediment at that point.
+									</p>
+									<p>
+									- <i><b>solubility</b></i> : the ratio of material that is dissolved by water, proportional to the amount of water at that point.
+									</p>
+									<p>
+									- <i><b>saturation</b></i> : the maximum ratio of dissolved material that can be suspended in water, proportional to the amount of water at that point.
+									</p>
+									<p>
+									- <i><b>velocity</b></i> : a global multiplier for the velocity of the water flow in the system. Could also be considered to be a gravity variable.
+									</p>
+									<p>
+									- <i><b>momentum</b></i> : the amount of velocity transferred into neighbouring cells by moving water.
+									</p>
+									<p>
+									- <i><b>entropy</b></i> : the amount of velocity removed from the system due to loss of kinetic energy such as friction, heat, etc.
+									</p>
+									<p>
+									- <i><b>downcutting</b></i> : the amount of additional material removed per iteration due to weathering in areas where water is flowing with a high velocity.
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void TidalErosion(int iterations, float seaLevel, float tidalRange, float cliffLimit)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs tidal erosion on the terrain object over a number of iterations. Tidal erosion applies smoothing at seaLevel, except in areas where the slope exceeds cliffLimit degrees. This simulates the erosive action of waves around a shoreline and creates beaches. The effects of erosion are blended out towards zero over tidalRange in both directions.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>seaLevel</b></i> : the altitude of the sea level. This is the point at which the greatest tidal erosion will occur. Expressed as a value of world units on the y-axis.
+									</p>
+									<p>
+									- <i><b>tidalRange</b></i> : the range above and below the sea level which is affected by tidal erosion. The effects of erosion are blended out towards zero over this range in both directions. Expressed as a value of world units on the y-axis.
+									</p>
+										<p>
+									- <i><b>cliffLimit</b></i> : only points where the slope is less than this amount are effected by tidal erosion. This maintains the appearance of cliffs adjacent to bodies of water.
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void WindErosion(int iterations, float direction, float force, float lift, float gravity, float capacity, float entropy, float smoothing)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Performs wind erosion on the terrain object over a number of iterations.
+									</p>
+									<p>
+									The direction and strength of the wind are defined by the direction and force values.
+									</p>
+									<p>
+									Each iteration an amount of material proportional to lift and the velocity at that point is removed by wind up to a maximum of capacity. Velocity is added at each point inversely proportional to the impedance of the terrain at that point realtive to the wind direction. Velocity is transferred into neighbouring cells in the direction of the wind flow, carrying any suspended material with it.
+									</p>
+									<p>
+									At the end of each iteration, an amount of suspended material proportional to gravity is dropped due to the effects of gravity. Also, an amount of velocity defined by entropy is removed from the system.
+									</p>
+									<p>
+									Additionally, in each iteration areas facing the wind direction are smoothed due to the effects of wind erosion and particulate abrasion by an amount proportional to smoothing.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>iterations</b></i> : the number of times this filter is applied. Not applicable to brushes.
+									</p>
+									<p>
+									- <i><b>direction</b></i> : the direction of the wind in degrees. This is a floating point number in the range 0.0 - 360.0
+									</p>
+									<p>
+									- <i><b>force</b></i> : the strength of the wind
+									</p>
+										<p>
+									- <i><b>lift</b></i> : the amount of material removed by wind in each iteration proportional to the velocity of the wind at that point.</li>
+									</p>
+									<p>
+									- <i><b>gravity</b></i> : the proportion of suspended material that is dropped per iteration due to the effects of gravity.
+									</p>
+									<p>
+									- <i><b>capacity</b></i> : the maximum amount of material that can be suspended at any point.
+									</p>
+									<p>
+									- <i><b>entropy</b></i> : the amount of velocity removed from the system due to loss of kinetic energy such as friction, heat, etc.
+									</p>
+									<p>
+									- <i><b>smoothing</b></i> : the degree to which areas facing the wind direction are smoothed due to the effects of wind erosion and particulate abrasion.
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void TextureTerrain(float[] slopeStops, float[] heightStops, Texture2D[] textures)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Procedurally textures the terrain object by height and slope. Note that slopeStops must contain 2 stops and heightStops must contain 2 stops for each height-assigned texture after the first (i.e. not including the slope-assigned texture or the first height-assigned texture) as per the example below. The textures array contains a list of all of the textures to be assigned to the terrain object. The slope-assigned texture is always the first Texture2D item in the textures array.
+									</p>
+									<p>
+									e.g. For 4 textures there must be 2 slope stops, 4 height stops and 4 textures.
+									</p>
+									<p>
+									Note: The procedural terrain texturing tool is limited to 1 slope-assigned texture and between 1 and 5 height-assigned textures.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>slopeStops</b></i> : the slope at which Cliff texture will start to appear.
+									</p>
+									<p>
+									- <i><b>heightStops</b></i> : the slope at which Cliff texture will appear fully.
+									</p>
+									<p>
+									- <i><b>textures</b></i> : the texture used for steep areas. Suitable for rock and cliff textures.
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void resetTerrain()</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Reset the terrain : heightmap and textures.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void invertTerrain()</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Invert the heightmap data of the terrain (between 0 and 1)
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public void seamlessTerrain(float amount)</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Turn a terrain seamless in order to duplicate and tile it.
+									</p>
+									<p>
+									<b>Parameter(s)</b> :
+									</p>
+									<p>
+									- <i><b>amount</b></i> : the amount (%) of the terrain to be used as seam (the height is modified in this zone)
+									</p>
+									<p>
+									<b>Returns</b> :
+									</p>
+									<p>
+									- <i>nothing</i>
+									</p>
+									</font>									
+								</td>
+							</tr>
+							<tr>
+								<td class="apiMethodTitleCell" align="left" valign="middle">
+									<b>public enum FeatureType {Mountains = 0, Hills = 1, Plateaus = 2}</b><br>
+									<font class="petit">
+									</p>
+									<p>
+									Used by VoronoiGenerator to define the type of interpolation used to generate features.
+									</p>
+									<p>
+									<b>Value(s)</b> :
+									</p>
+									<p>
+									- FeatureType.Mountains - Interpolated linearly
+									</p>
+									<p>
+									- FeatureType.Hills - Interpolated along a sine curve
+									</p>
+									<p>
+									- FeatureType.Plateaus - Interpolated along a tangent curve
+									</p>
+									</font>									
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="8"></a><h2 class="h2Content">Known bugs or malfunctions</h2>
+			<p>
+			None at the moment.
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="81"></a><h2 class="h2Content">Changelog</h2>
+			<p>
+				<font class="titre1">Version 20190125140200</font><br>
+			</p>
+			<p>
+				<ul>
+					<li>Big update for version 2018.3 + bug correction for versions 2017.x and 5.x</li>
+ 				</ul>
+				<ul>
+					<li><b>For versions 2017.x and 5.x</b></li>
+					<li>From a user reviews : thermal erosion modification to avoid generate artifacts</li>
+ 				</ul>
+				<ul>
+					<li><b>For versions 2018.x prior to 2018.3.x</b></li>
+					<li>Please use  2017.x version</li>
+ 				</ul>
+				<ul>
+					<li><b>For version 2018.3.x and we will see in later versions what we will have to deal with...</b></li>
+					<li>From a user reviews : thermal erosion modification to avoid generate artifacts</li>
+					<li>API update : SplatPrototype is now deprecated and replaced by TerrainLayer with consequences</li>
+					<li>In [TerrainToolkit.cs]  variable [public SplatPrototype[] splatPrototypes;] is replaced by [public TerrainLayer[] terrainLayers;}</li>
+					<li>In [TerrainToolkit.cs]  method [public void addSplatPrototype(Texture2D tex, int index)] is replaced by [public void addTerrainLayer(Texture2D tex, int index)}</li>
+					<li>In [TerrainToolkit.cs]  method [public void addSplatPrototype(Texture2D tex, int index)] is replaced by [public void addTerrainLayer(Texture2D tex, int index)}</li>
+					<li>In [TerrainToolkit.cs]  method [public void deleteAllSplatPrototypes()] is replaced by [public void deleteAllTerrainLayers()}</li>
+					<li>In [TerrainToolkit.cs]  method [public void BuildPaths()] is added</li>
+					<li><b>REASON</b> We now must create and manage TerrainLayer assets thus the folder [<b>TerrainToolkitLayers</b>] is created automatically in [<b>Assets</b>] folder</li>					
+					<li>The toolkit will generate a sub-folder FOR EACH manipulated terrain using its <b>name + "_Layers"</b> (if the name of the terrain is modified, a new folder is generated)</li>					
+					<li>In each terrain folder, the TerrainLayer assets are generated according to your texturing actions</li>	
+					<li>Do not rename the TerrainLayers because the toolkit relies their names</li>						
+ 				</ul>
+				<ul>
+					<li>Compatible with Unity 5, 2017, 2018 (but <b>NOT COMPATIBLE</b> with HRP and LRP)</li>
+ 				</ul>
+			</p>
+			<p>
+				<font class="titre1">Version 20180515170000</font><br>
+			</p>
+			<p>
+				<ul>
+					<li>Simple actualized version - No modification</li>
+					<li>Compatible with Unity 5, 2017, 2018 (but <b>NOT COMPATIBLE</b> with HRP and LRP)</li>
+ 				</ul>
+			</p>
+			<p>
+				<font class="titre1">Version 20180209120000</font><br>
+			</p>
+			<p>
+				<ul>
+					<li>Enhancement of the textureTerrain method :</li>
+					<ul>
+						<li>From the origins, the texturing algorithm would generate visual artefacts particulary visible in deferred rendering mode (white fringes) as stated by a user</li>
+						<li>This is now corrected without modifying the orignal way</li>
+					</ul>
+					<li>Modified demonstration scene (2 cameras with deferred and forward rendering modes)</li>					
+				</ul>
+			</p>
+			<p>
+				<font class="titre1">Version 20171108120000</font><br>
+			</p>
+			<p>
+				<ul>
+					<li>Minor code tweaking and cosmetics (explicit button labels when not undoable for example)</li>
+					<li>Modification : advanced settings are now in a dedicated tab</li>
+					<li>Added functions in advanced settings : reset, inverse and seamless terrain</li>
+					<li>Added models for terrain : a quick way to generate ready to use terrains for prototyping (desert mesa, sea shore, etc.)</li>
+					<li>Complete new documenation (for part reusing the original documentation)</li>
+					<li>Modified demonstration scene</li>					
+				</ul>
+			</p>
+			<p>
+				<font class="titre1">Version 20170315210000</font><br>
+			</p>
+			<p>
+				<ul>
+					<li>Initial released version</li>
+				</ul>
+			</p>
+			<p>&nbsp;</p>
+			<a class="small_link" href="#top">Back to top</a><br>
+			<!-- ###################################################################################################### -->
+			<a name="9"></a><h2 class="h2Content">Contacts</h2>
+			<p>
+			Also, for any issue / problem / bug / question relative to this asset, please feel free to send me an email at : <a href="mailto:contact@heparo.com?subject=[Terrain Toolkit 2017] Your subject">contact@heparo.com</a>
+			</p>
+			<p>
+			Please, do not forget to place <b>[Terrain Toolkit 2017]</b> at the beginning of your mail subject.
+			<ul>
+				<li>I speak english</li>
+				<li>Hablo espa&ntilde;ol</li>
+				<li>Je parle fran&ccedil;ais</li>
+			</ul>
+			</p>
+			<p>
+				<font class="titre1">Thank you for downloading and using this asset !</font>
+			</p>
+			<p>
+				Kind regards,
+			</p>
+			<p>
+				<b>HEPARO</b> / Herv&eacute; PARONNAUD (<a href="http://www.heparo.com">www.heparo.com</a>)
+			</p>
+			<p>
+			<a href="http://www.heparo.com"><img width="96px" src="images/heparo_logo_128.jpg"></a>
+			</p>
+			<p>
+				<i>Do you appreciate my work ? You can support me with</i>
+			</p>
+			<p>
+			<a href="https://www.paypal.me/heparo"><img src="images/paypal.me-128-32.jpg" alt=""></a>
+			</p>
+			<!-- <p> -->
+				<!-- <i>All material included in the [Terrain Toolkit 2017] package was made by me <b>except when mentioned explicitly</b></i> -->
+			<!-- </p> -->
+			<a class="small_link" href="#top">Back to top</a><br>
+			</font>			
+		</td>
+	</tr>
+</table>
+</BODY>
+</HTML>
