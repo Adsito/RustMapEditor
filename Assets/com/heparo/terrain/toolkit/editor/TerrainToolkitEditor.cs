@@ -274,7 +274,7 @@ public class TerrainToolkitEditor : Editor {
 		// -------------------------------------------------------------------------------------------
 		// BRUTAL... BUT NECESSARY TO AVOID PROBLEMS !!!!
 		
-		if( toolkit.GetComponent<Terrain>().terrainData.heightmapResolution>2049 ){
+		/*if( toolkit.GetComponent<Terrain>().terrainData.heightmapResolution>2049 ){
 			
 			// Show warning message
 			EditorGUILayout.Separator();
@@ -290,7 +290,7 @@ public class TerrainToolkitEditor : Editor {
 			// Return
 			return;
 			
-		}	
+		}	*/
 
 		// -------------------------------------------------------------------------------------------
 		
