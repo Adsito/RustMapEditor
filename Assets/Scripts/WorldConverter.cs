@@ -229,14 +229,11 @@ public class WorldConverter {
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
 
-        
         byte[] landHeightBytes = TypeConverter.floatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight));
-
 
         byte[] waterHeightBytes = TypeConverter.floatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight));
     
-        var textureResolution = Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f));
-
+        var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 
         float[,,] splatMapValues = TypeConverter.singleToMulti(GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>().splatMap, 8);
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
