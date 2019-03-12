@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using System.Threading;
 using static WorldConverter;
 using static WorldSerialization;
 
@@ -29,6 +30,7 @@ public class MapIO : MonoBehaviour {
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
     static TopologyMesh topology;
+    //public Thread th1;
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -1686,8 +1688,12 @@ public class MapIO : MonoBehaviour {
     public void newEmptyTerrain(int size)
     {
         loadMapInfo(WorldConverter.emptyWorld(size));
+        changeLayer("Alpha");
         clearLayer("Alpha");
+        changeLayer("Biome");
         paintLayer("Biome", 0);
+        changeLayer("Ground");
+        setMinimumHeight(505f);
     }
 
 
