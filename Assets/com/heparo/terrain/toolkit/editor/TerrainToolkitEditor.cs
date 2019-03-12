@@ -274,14 +274,14 @@ public class TerrainToolkitEditor : Editor {
 		// -------------------------------------------------------------------------------------------
 		// BRUTAL... BUT NECESSARY TO AVOID PROBLEMS !!!!
 		
-		/*if( toolkit.GetComponent<Terrain>().terrainData.heightmapResolution>2049 ){
+		if( toolkit.GetComponent<Terrain>().terrainData.heightmapResolution>2049 ){
 			
 			// Show warning message
 			EditorGUILayout.Separator();
 			GUI.skin = p_skin;
 			GUILayout.Label(
 				"[ERROR] The [Heightmap Resolution] of the current Terrain component is greater than [2049] (2048+1)\n\n" +
-				"[ERROR] Please lower the [Heightmap resolution] value to [2049] (Unity limitation)",
+				"[ERROR] Please lower the [Terrain] value to [4096 or below] (Unity limitation)",
 				"errorText"
 			);
 			GUI.skin = null;
@@ -290,7 +290,7 @@ public class TerrainToolkitEditor : Editor {
 			// Return
 			return;
 			
-		}	*/
+		}	
 
 		// -------------------------------------------------------------------------------------------
 		
