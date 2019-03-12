@@ -12,7 +12,7 @@ public class MapIOEditor : Editor
     string mapName = "";
 
     int mapSize = 1000;
-    float heightToSet = 450f, scale = 0f, offset = 0f, minimumHeight = 450f, maximumHeight = 1000f;
+    float heightToSet = 450f, scale = 0f, offset = 0f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     public LayerOptionEditor optionEditor;
 
@@ -253,6 +253,7 @@ public class MapIOEditor : Editor
         }
         GUILayout.Label("This sets the very edges of the map to this height.");
         heightToSet = EditorGUILayout.FloatField(heightToSet);
+        GUILayout.Label("Edges to set:");
         EditorGUILayout.BeginHorizontal();
         top = EditorGUILayout.ToggleLeft("Top ", top);
         left = EditorGUILayout.ToggleLeft("Left ", left);
@@ -265,16 +266,15 @@ public class MapIOEditor : Editor
         {
             script.setEdgePixel(heightToSet, top, left, right, bottom);
         }
-        GUILayout.Label("Moves the heightmap to the selected value if it's \n below or above.");
-        minimumHeight = EditorGUILayout.FloatField(heightToSet);
+        GUILayout.Label("Set whole map");
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Set Minimum Height"))
         {
-            script.setMinimumHeight(minimumHeight);
+            script.setMinimumHeight(heightToSet);
         }
         if (GUILayout.Button("Set Maximum Height"))
         {
-            script.setMaximumHeight(maximumHeight);
+            script.setMaximumHeight(heightToSet);
         }
         EditorGUILayout.EndHorizontal();
     }

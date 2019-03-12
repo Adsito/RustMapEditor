@@ -22,7 +22,7 @@ using System;
 public class IslandGenerator : MonoBehaviour {
 
     public Terrain terrain;
-
+    MapIO mapIO;
     //Variables for Cellular Automata
     private int smoothTimes = 5;
     private int neighboringWalls = 4;
@@ -119,6 +119,7 @@ public class IslandGenerator : MonoBehaviour {
         heights2 = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapWidth);
 
         GenerateMap();
+
     }
 
     /// <summary>
@@ -383,6 +384,7 @@ public class IslandGenerator : MonoBehaviour {
     /// </summary>
     void GenerateMap()
     {
+        mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         //Flat the map
         Flatten();
 
@@ -431,7 +433,7 @@ public class IslandGenerator : MonoBehaviour {
 
         terrain.terrainData.SetHeights(0, 0, heights);
         heights2 = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapWidth);
-
+        mapIO.offsetHeightmap(410f, false, false);
     }
 
     /// <summary>
@@ -468,6 +470,7 @@ public class IslandGenerator : MonoBehaviour {
         terrain = GetComponent<Terrain>();
         terrain.terrainData.SetHeights(0, 0, heights);
         heights2 = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapWidth);
+        mapIO.offsetHeightmap(410f, false, false);
     }
 
     /// <summary>
