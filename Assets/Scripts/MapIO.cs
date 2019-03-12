@@ -1193,9 +1193,9 @@ public class MapIO : MonoBehaviour {
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
         EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.5f);
 
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        for (int i = 0; i < alphaSplatMap.GetLength(0); i++)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
+            for (int j = 0; j < alphaSplatMap.GetLength(1); j++)
             {
                 if (alphaSplatMap[i, j, 1] == 1)
                 {
