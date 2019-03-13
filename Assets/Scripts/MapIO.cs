@@ -1204,11 +1204,11 @@ public class MapIO : MonoBehaviour {
 
         terrainLayer = TerrainSplat.Enum.Forest;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.15f);
-        generateTwoLayersNoise("Ground", 150f, 0, 4);
+        generateTwoLayersNoise("Ground", 50f, 0, 4);
 
         terrainLayer = TerrainSplat.Enum.Grass;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.3f);
-        paintSlope("Ground", 25f, 45, 10f, 50f, 0, 3.5f);
+        paintSlope("Ground", 35f, 45, 20f, 50f, 0, 2f);
 
         terrainLayer = TerrainSplat.Enum.Dirt;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.4f);
@@ -1216,11 +1216,11 @@ public class MapIO : MonoBehaviour {
 
         terrainLayer = TerrainSplat.Enum.Snow;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.6f);
-        paintHeight("Ground", 700, 1000, 650, 1000, 0, 4);
+        paintHeight("Ground", 700, 1000, 650, 1000, 0, 3f);
 
         terrainLayer = TerrainSplat.Enum.Rock;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.8f);
-        paintSlope("Ground", 50f, 90f, 40f, 90f, 0, 4);
+        paintSlope("Ground", 50f, 90f, 40f, 90f, 0, 4.5f);
 
         terrainLayer = TerrainSplat.Enum.Sand;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.9f);
@@ -1355,7 +1355,7 @@ public class MapIO : MonoBehaviour {
                 float i2 = i / scale;
                 float j2 = j / scale;
                 float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
-                if (perlin <= 0.3f)
+                if (perlin <= 0.15f)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++)
                     {
