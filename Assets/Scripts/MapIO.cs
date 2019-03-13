@@ -168,18 +168,27 @@ public class MapIO : MonoBehaviour {
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(waterMap));
         }
     }
-    public void rotateObjects(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    public void rotatePrefabs(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
-        var pathRotate = GameObject.FindGameObjectWithTag("Paths");
         if (CW)
         {
             prefabRotate.transform.Rotate(0, 90, 0, Space.World);
-            pathRotate.transform.Rotate(0, 90, 0, Space.World);
         }
         else
         {
             prefabRotate.transform.Rotate(0, -90, 0, Space.World);
+        }
+    }
+    public void rotatePaths(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    {
+        var pathRotate = GameObject.FindGameObjectWithTag("Paths");
+        if (CW)
+        {
+            pathRotate.transform.Rotate(0, 90, 0, Space.World);
+        }
+        else
+        {
             pathRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
