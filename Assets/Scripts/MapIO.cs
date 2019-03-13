@@ -1208,11 +1208,11 @@ public class MapIO : MonoBehaviour {
 
         terrainLayer = TerrainSplat.Enum.Grass;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.3f);
-        paintSlope("Ground", 25f, 45, 10f, 50f, 0, 2.5f);
+        paintSlope("Ground", 25f, 45, 10f, 50f, 0, 3.5f);
 
         terrainLayer = TerrainSplat.Enum.Dirt;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.4f);
-        paintSlope("Ground", 20, 20, 10, 30, 0, 1.5f);
+        paintSlope("Ground", 20, 20, 10, 30, 0, 0.5f);
 
         terrainLayer = TerrainSplat.Enum.Snow;
         EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.6f);
