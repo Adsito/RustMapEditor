@@ -99,7 +99,7 @@ public class LayerOptionEditor : Editor
             }
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow , maxBlendHigh, 0);
+                mapIO.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow , maxBlendHigh, 0, 1);
             }
             GUILayout.Label("Custom height range");
             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -115,7 +115,7 @@ public class LayerOptionEditor : Editor
             }
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0);
+                mapIO.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, 1);
             }
             if (GUILayout.Button("Paint Whole Layer"))
             {
@@ -170,7 +170,7 @@ public class LayerOptionEditor : Editor
             }
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Biome", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0);
+                mapIO.paintSlope("Biome", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0, 1);
             }
             GUILayout.Label("Custom height range");
             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -186,7 +186,7 @@ public class LayerOptionEditor : Editor
             }
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0);
+                mapIO.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, 1);
             }
             z1 = EditorGUILayout.IntField("From Z ", z1);
             z2 = EditorGUILayout.IntField("To Z ", z2);
@@ -232,11 +232,11 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0);
+                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0, 1);
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1);
+                mapIO.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1, 1);
             }
             EditorGUILayout.EndHorizontal();
             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -319,7 +319,7 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
             if (GUILayout.Button("Paint slopes"))
             {
-                mapIO.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0);
+                mapIO.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
             }
             GUILayout.Label("Custom height range");
             heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
@@ -327,11 +327,11 @@ public class LayerOptionEditor : Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Paint range"))
             {
-                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0); 
+                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, 1); 
             }
             if (GUILayout.Button("Erase range"))
             {
-                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1);
+                mapIO.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, 1);
             }
             EditorGUILayout.EndHorizontal();
             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -367,7 +367,7 @@ public class LayerOptionEditor : Editor
             scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
             if (GUILayout.Button("Generate random topology map"))
             {
-                mapIO.generateTwoLayersNoise("Topology", scale);
+                mapIO.generateTwoLayersNoise("Topology", scale, 1, 0);
             }
         }
         #endregion
