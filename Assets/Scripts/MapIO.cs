@@ -542,9 +542,6 @@ public class MapIO : MonoBehaviour {
     #endregion
 
     #region SplatMap Methods
-    // Todo: I will rewrite the autoGenerate methods to use loops instead of a shittonne of code, however that will require rewriting the current TerrainTopology class, which will break
-    // other scripts, and prevent easily merging in updates from Dez's own editor repo. I am well aware it's not the best way to iterate through the layers :)
-    // It will be fixed shortly.
     public int texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
     // Accepts "Ground", "Biome", "Alpha" and "Topology".
     {
@@ -1368,6 +1365,24 @@ public class MapIO : MonoBehaviour {
         }
         landData.setData(splatMap, landLayer);
         landData.setLayer();
+    }
+    public void generateLayerNoise(string landLayer, int layers, float scale)
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                float i2 = i / scale;
+                float j2 = j / scale;
+                float perlin = Mathf.Clamp(Mathf.PerlinNoise(i2, j2), 0, layers);
+                if (perlin <= 1f)
+                {
+
+                }
+            }
+        }
     }
     #endregion
 
