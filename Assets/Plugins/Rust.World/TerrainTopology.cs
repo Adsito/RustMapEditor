@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public static class TerrainTopology
+public class TerrainTopology
 {
 	public enum Enum
 	{
