@@ -144,9 +144,7 @@ public class MapIOEditor : Editor
                                     }
                                     if (topology == true)
                                     {
-                                        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.3f);
                                         script.changeLayer("Topology");
-                                        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.35f);
                                         script.rotateAllTopologymap(true);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
@@ -189,9 +187,7 @@ public class MapIOEditor : Editor
                                     }
                                     if (topology == true)
                                     {
-                                        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.3f);
                                         script.changeLayer("Topology");
-                                        EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Topology Textures ", 0.35f);
                                         script.rotateAllTopologymap(false);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
