@@ -1370,6 +1370,7 @@ public class MapIO : MonoBehaviour {
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        float layerBlend = 1 / layers;
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1377,7 +1378,7 @@ public class MapIO : MonoBehaviour {
                 float i2 = i / scale;
                 float j2 = j / scale;
                 float perlin = Mathf.Clamp(Mathf.PerlinNoise(i2, j2), 0, layers);
-                if (perlin <= 1f)
+                if (perlin <= layerBlend)
                 {
 
                 }
