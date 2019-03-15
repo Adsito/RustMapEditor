@@ -11,12 +11,16 @@ public class MapIOEditor : Editor
     string saveFile = "";
     string mapName = "";
 
+    //Todo: Clean this up.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0;
-    float heightToSet = 450f, scale = 0f, offset = 0f;
+    float heightToSet = 450f, scale = 50f, offset = 0f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     bool allLayers = false, ground = false, biome = false, alpha = false, topology = false, heightmap = false, prefabs = false, paths = false;
-    public LayerOptionEditor optionEditor;
-
+    float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
+    float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f, blendStrength = 5f;
+    float minBlendLowHeight = 0f, maxBlendHighHeight = 1000f;
+    int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
+    bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
 
     public override void OnInspectorGUI()
@@ -29,9 +33,10 @@ public class MapIOEditor : Editor
         mainMenu[2] = new GUIContent("Prefabs");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
-        #region Main Menu
+        #region Menu
         switch (mainMenuOptions)
         {
+            #region Main Menu
             case 0:
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("New Map", GUILayout.MaxWidth(75)))
@@ -81,6 +86,7 @@ public class MapIOEditor : Editor
                 }
                 GUILayout.EndHorizontal();
                 break;
+            #endregion
             #region Tools
             case 1:
                 GUIContent[] toolsOptionsMenu = new GUIContent[3];
@@ -332,12 +338,343 @@ public class MapIOEditor : Editor
                             #endregion
                         }
                         break;
-                    default:
-                        toolsOptions = 0;
-                        break;
                     #endregion
                     #region Layer Tools
                     case 1:
+                        GUILayout.Label("Land Layer To Select", EditorStyles.boldLabel);
+
+
+                        string oldLandLayer = script.landLayer;
+                        string[] options = { "Ground", "Biome", "Alpha", "Topology" };
+                        script.landSelectIndex = EditorGUILayout.Popup("Select Land Layer:", script.landSelectIndex, options);
+                        script.landLayer = options[script.landSelectIndex];
+                        if (script.landLayer != oldLandLayer)
+                        {
+                            script.changeLandLayer();
+                            Repaint();
+                        }
+                        if (minBlendHigh > maxBlendHigh)
+                        {
+                            maxBlendHigh = minBlendHigh + 0.25f;
+                            if (maxBlendHigh > 90f)
+                            {
+                                maxBlendHigh = 90f;
+                            }
+                        }
+                        if (minBlendLow > maxBlendLow)
+                        {
+                            minBlendLow = maxBlendLow - 0.25f;
+                            if (minBlendLow < 0f)
+                            {
+                                minBlendLow = 0f;
+                            }
+                        }
+                        maxBlendLow = slopeLow;
+                        minBlendHigh = slopeHigh;
+                        if (blendSlopes == false)
+                        {
+                            minBlendLow = maxBlendLow;
+                            maxBlendHigh = minBlendHigh;
+                        }
+                        if (blendHeights == false)
+                        {
+                            minBlendLowHeight = heightLow;
+                            maxBlendHighHeight = heightHigh;
+                        }
+                        #region Ground Layer
+                        if (script.landLayer.Equals("Ground"))
+                        {
+                            GUILayout.Label("Ground Layer Paint", EditorStyles.boldLabel);
+                            script.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture to paint: ", script.terrainLayer);
+                            if (GUILayout.Button("Paint Whole Layer"))
+                            {
+                                script.paintLayer("Ground", 0);
+                            }
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Rotate 90°"))
+                            {
+                                script.rotateGroundmap(true);
+                            }
+                            if (GUILayout.Button("Rotate 270°"))
+                            {
+                                script.rotateGroundmap(false);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
+                            if (GUILayout.Button("Paint Rivers"))
+                            {
+                                script.paintRiver("Ground", aboveTerrain, 0);
+                            }
+                            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+                            EditorGUILayout.BeginHorizontal();
+                            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+                            // Todo: Toggle for check between heightrange.
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+                            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
+                            if (blendSlopes == true)
+                            {
+                                GUILayout.Label("Blend Low: " + minBlendLow + "°");
+                                EditorGUILayout.MinMaxSlider(ref minBlendLow, ref maxBlendLow, 0f, 90f);
+                                GUILayout.Label("Blend High: " + maxBlendHigh + "°");
+                                EditorGUILayout.MinMaxSlider(ref minBlendHigh, ref maxBlendHigh, 0f, 90f);
+                                GUILayout.Label("Blend Strength: ");
+                                blendStrength = EditorGUILayout.Slider(blendStrength, 0f, 10f);
+                            }
+                            if (GUILayout.Button("Paint slopes"))
+                            {
+                                script.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0, blendStrength);
+                            }
+                            GUILayout.Label("Custom height range");
+                            blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
+                            if (blendHeights == true)
+                            {
+                                minBlendLowHeight = EditorGUILayout.FloatField("Bottom Blend", minBlendLowHeight);
+                            }
+                            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+                            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
+                            if (blendHeights == true)
+                            {
+                                maxBlendHighHeight = EditorGUILayout.FloatField("Top Blend", maxBlendHighHeight);
+                                GUILayout.Label("Blend Strength: ");
+                                blendStrength = EditorGUILayout.Slider(blendStrength, 0f, 10f);
+                            }
+                            if (GUILayout.Button("Paint Heights"))
+                            {
+                                script.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, blendStrength);
+                            }
+                            
+                            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Ground textures");
+                            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
+                            scale = GUILayout.HorizontalSlider(scale, 10f, 2000f);
+                            if (GUILayout.Button("Generate random Ground map"))
+                            {
+                                script.generateEightLayersNoise("Ground", scale);
+                            }
+                        }
+                        #endregion
+
+                        #region Biome Layer
+                        if (script.landLayer.Equals("Biome"))
+                        {
+                            GUILayout.Label("Biome Layer Paint", EditorStyles.boldLabel);
+                            script.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Select biome to paint:", script.biomeLayer);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Rotate 90°"))
+                            {
+                                script.rotateBiomemap(true);
+                            }
+                            if (GUILayout.Button("Rotate 270°"))
+                            {
+                                script.rotateBiomemap(false);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
+                            if (GUILayout.Button("Paint Rivers"))
+                            {
+                                script.paintRiver("Biome", aboveTerrain, 0);
+                            }
+                            EditorGUILayout.BeginHorizontal();
+                            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+                            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
+                            if (GUILayout.Button("Paint slopes"))
+                            {
+                                script.paintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
+                            }
+                            GUILayout.Label("Custom height range");
+                            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+                            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
+                            if (GUILayout.Button("Paint range"))
+                            {
+                                script.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, 1);
+                            }
+                            z1 = EditorGUILayout.IntField("From Z ", z1);
+                            z2 = EditorGUILayout.IntField("To Z ", z2);
+                            x1 = EditorGUILayout.IntField("From X ", x1);
+                            x2 = EditorGUILayout.IntField("To X ", x2);
+                            if (GUILayout.Button("Paint Area"))
+                            {
+                                script.paintArea("Biome", z1, z2, x1, x2, 0);
+                            }
+                            if (GUILayout.Button("Paint Whole Layer"))
+                            {
+                                script.paintLayer("Biome", 0);
+                            }
+                            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
+                            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
+                            scale = GUILayout.HorizontalSlider(scale, 500f, 5000f);
+                            if (GUILayout.Button("Generate random Biome map"))
+                            {
+                                script.generateFourLayersNoise("Biome", scale);
+                            }
+                        }
+                        #endregion
+
+                        #region Alpha Layer
+                        if (script.landLayer.Equals("Alpha"))
+                        {
+                            GUILayout.Label("Alpha Layer Paint", EditorStyles.boldLabel);
+                            GUILayout.Label("Green = Terrain Visible, Purple = Terrain Invisible", EditorStyles.boldLabel);
+                            GUILayout.Space(10f);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Rotate 90°"))
+                            {
+                                script.rotateAlphamap(true);
+                            }
+                            if (GUILayout.Button("Rotate 270°"))
+                            {
+                                script.rotateAlphamap(false);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            GUILayout.Label("Custom height range");
+                            heightLow = EditorGUILayout.FloatField("bottom", heightLow);
+                            heightHigh = EditorGUILayout.FloatField("top", heightHigh);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint range"))
+                            {
+                                script.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0, 1);
+                            }
+                            if (GUILayout.Button("Erase range"))
+                            {
+                                script.paintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1, 1);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            z1 = EditorGUILayout.IntField("From Z ", z1);
+                            z2 = EditorGUILayout.IntField("To Z ", z2);
+                            x1 = EditorGUILayout.IntField("From X ", x1);
+                            x2 = EditorGUILayout.IntField("To X ", x2);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint Area"))
+                            {
+                                script.paintArea("Alpha", z1, z2, x1, x2, 0);
+                            }
+                            if (GUILayout.Button("Erase Area"))
+                            {
+                                script.paintArea("Alpha", z1, z2, x1, x2, 1);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint Layer"))
+                            {
+                                script.paintLayer("Alpha", 0);
+                            }
+                            if (GUILayout.Button("Clear Layer"))
+                            {
+                                script.clearLayer("Alpha");
+                            }
+                            if (GUILayout.Button("Invert Layer"))
+                            {
+                                script.invertLayer("Alpha");
+                            }
+                            EditorGUILayout.EndHorizontal();
+                        }
+                        #endregion
+
+                        #region Topology Layer
+                        if (script.landLayer.Equals("Topology"))
+                        {
+                            GUILayout.Label("Topology Layer Paint", EditorStyles.boldLabel);
+                            GUILayout.Label("Green = Topology Active, Purple = Topology Inactive", EditorStyles.boldLabel);
+                            GUILayout.Space(10f);
+                            script.oldTopologyLayer = script.topologyLayer;
+                            script.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", script.topologyLayer);
+                            if (script.topologyLayer != script.oldTopologyLayer)
+                            {
+                                script.changeLandLayer();
+                                Repaint();
+                            }
+                            GUILayout.Label("Rotate seperately or all at once");
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Rotate 90°"))
+                            {
+                                script.rotateTopologymap(true);
+                            }
+                            if (GUILayout.Button("Rotate 270°"))
+                            {
+                                script.rotateTopologymap(false);
+                            }
+                            if (GUILayout.Button("Rotate all 90°"))
+                            {
+                                script.rotateAllTopologymap(true);
+                            }
+                            if (GUILayout.Button("Rotate all 270°"))
+                            {
+                                script.rotateAllTopologymap(true);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
+                            if (GUILayout.Button("Paint Rivers"))
+                            {
+                                script.paintRiver("Topology", aboveTerrain, 0);
+                            }
+                            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+                            EditorGUILayout.BeginHorizontal();
+                            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+                            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
+                            if (GUILayout.Button("Paint slopes"))
+                            {
+                                script.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
+                            }
+                            GUILayout.Label("Custom height range");
+                            heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
+                            heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint range"))
+                            {
+                                script.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, 1);
+                            }
+                            if (GUILayout.Button("Erase range"))
+                            {
+                                script.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, 1);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            z1 = EditorGUILayout.IntField("From Z ", z1);
+                            z2 = EditorGUILayout.IntField("To Z ", z2);
+                            x1 = EditorGUILayout.IntField("From X ", x1);
+                            x2 = EditorGUILayout.IntField("To X ", x2);
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint Area"))
+                            {
+                                script.paintArea("Topology", z1, z2, x1, x2, 0);
+                            }
+                            if (GUILayout.Button("Erase Area"))
+                            {
+                                script.paintArea("Topology", z1, z2, x1, x2, 1);
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint Layer"))
+                            {
+                                script.paintLayer("Topology", 0);
+                            }
+                            if (GUILayout.Button("Clear Layer"))
+                            {
+                                script.clearLayer("Topology");
+                            }
+                            if (GUILayout.Button("Invert Layer"))
+                            {
+                                script.invertLayer("Topology");
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");
+                            GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
+                            scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
+                            if (GUILayout.Button("Generate random topology map"))
+                            {
+                                script.generateTwoLayersNoise("Topology", scale, 1, 0);
+                            }
+                        }
+                        break;
+                    #endregion
+                    default:
+                        toolsOptions = 0;
                         break;
                     #endregion
                     #region Generation
@@ -364,10 +701,10 @@ public class MapIOEditor : Editor
                         #endregion
                 }
                 break;
-            #endregion
             default:
                 mainMenuOptions = 0;
                 break;
+                #endregion
         }
         #endregion
     }
