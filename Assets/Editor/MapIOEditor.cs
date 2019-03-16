@@ -691,12 +691,14 @@ public class MapIOEditor : Editor
                         {
                             script.autoGenerateGround();
                         }
+                        /*
                         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
                         GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
                         if (GUILayout.Button("Generate Perlin Heightmap"))
                         {
                             script.generatePerlinHeightmap(scale);
                         }
+                        */
                         break;
                         #endregion
                 }
