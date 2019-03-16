@@ -539,6 +539,24 @@ public class MapIO : MonoBehaviour {
         }
         land.terrainData.SetHeights(0, 0, landMap);
     }
+    public float getHeight(int x, int y)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float xNorm = (float)x / (float)landData.splatMap.GetLength(0);
+        float yNorm = (float)y / (float)landData.splatMap.GetLength(1);
+        float height = land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
+        return height;
+    }
+    public float getSlope(int x, int y)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float xNorm = (float)x / (float)landData.splatMap.GetLength(0);
+        float yNorm = (float)y / (float)landData.splatMap.GetLength(1);
+        float slope = land.terrainData.GetSteepness(xNorm, yNorm);
+        return slope;
+    }
     #endregion
 
     #region SplatMap Methods
@@ -567,6 +585,13 @@ public class MapIO : MonoBehaviour {
             return 4;
         }
         return 2;
+    }
+    public int getTexture(string landLayer, int texture, int x, int y)
+    {
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        float returnedTexture = splatMap[x, y, texture];
+        return (int)returnedTexture;
     }
     public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
