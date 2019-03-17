@@ -10,7 +10,45 @@ using static WorldConverter;
 using static WorldSerialization;
 
 [Serializable]
-
+public class Conditions : List<Conditions>
+{
+    public string[] LandLayers
+    {
+        get; set;
+    }
+    public int[] TopologyLayers
+    {
+        get; set;
+    }
+    public int[] GroundTextures
+    {
+        get; set;
+    }
+    public int[] BiomeTextures
+    {
+        get; set;
+    }
+    public int[] AlphaTextures
+    {
+        get; set;
+    }
+    public int[] TopologyTextures
+    {
+        get; set;
+    }
+    public float[,] HeightRange
+    {
+        get; set;
+    }
+    public float[,] SlopeRange
+    {
+        get; set;
+    }
+    public int[,,,] AreaRange
+    {
+        get; set;
+    }
+}
 public class MapIO : MonoBehaviour {
     #region LayersFrom
     public TerrainTopology.Enum topologyLayerFrom;
@@ -600,6 +638,128 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = topology.getSplatMap((int)layer);
         float returnedTexture = splatMap[x, y, texture];
         return returnedTexture;
+    }
+    public void paintConditional(string landLayer, int texture)
+    {
+        LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
+        LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
+        LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
+        LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+        float[,,] groundSplatMap = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
+        float[,,] biomeSplatMap = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
+        float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
+        float[,,] topologySplatMap = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
+        float[,,] splatMapPaint = new float[2048, 2048, 8];
+        bool paint = true;
+
+        // Make a UI to handle this.
+        List<Conditions> conditions = new List<Conditions>();
+        conditions.Add(new Conditions()
+        {
+            LandLayers = new string[] { "Ground", "Biome" },
+            GroundTextures = new int[] { 1 },
+            BiomeTextures = new int[] { 2, 3 },
+            AlphaTextures = new int[] { 0, 1 },
+            TopologyLayers = new int[] { 0, 1 },
+            TopologyTextures = new int[] {1}
+        });
+        foreach (Conditions item in conditions)
+        {
+            for (int i = 0; i < 2048; i++)
+            {
+                for (int j = 0; j < 2048; j++)
+                {
+                    paint = true;
+                    foreach (var landLayers in item.LandLayers)
+                    {
+                        if (paint == true)
+                        {
+                            switch (landLayers)
+                            {
+                                case "Ground":
+                                    foreach (var groundTexture in item.GroundTextures)
+                                    {
+                                        if (groundSplatMap[i, j, groundTexture] > 0.5f)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            paint = false;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case "Biome":
+                                    foreach (var biomeTexture in item.BiomeTextures)
+                                    {
+                                        if (biomeSplatMap[i, j, biomeTexture] > 0.5f)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            paint = false;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case "Alpha":
+                                    foreach (var alphaTexture in item.AlphaTextures)
+                                    {
+                                        if (alphaSplatMap[i, j, alphaTexture] > 0.5f)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            paint = false;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case "Topology":
+                                    foreach (var topologyLayerList in item.TopologyLayers)
+                                    {
+                                        topologySplatMap = topology.getSplatMap((int)topologyLayerList);
+                                        foreach (var topologyTexture in item.TopologyTextures)
+                                        {
+                                            if (topologySplatMap[i, j, topologyTexture] > 0.5f)
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                paint = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    Debug.Log("Conditional LandLayer not found");
+                                    paint = false;
+                                    break;
+                            }
+                            for (int k = 0; k < textureCount(landLayer); k++)
+                            {
+                                splatMapPaint[i, j, k] = 0;
+                            }
+                            splatMapPaint[i, j, texture] = 1f;
+                        }
+                        else
+                        {
+                            for (int k = 0; k < textureCount(landLayer); k++)
+                            {
+                                splatMapPaint[i, j, k] = groundSplatMap[i, j, k];
+                            }
+                        }
+                    }
+                }
+            }
+            groundLandData.setData(splatMapPaint, landLayer);
+            groundLandData.setLayer();
+        }
     }
     public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
