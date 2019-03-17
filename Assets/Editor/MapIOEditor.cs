@@ -30,7 +30,7 @@ public class MapIOEditor : Editor
         GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Prefabs");
+        mainMenu[2] = new GUIContent("Testing");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -701,6 +701,12 @@ public class MapIOEditor : Editor
                         */
                         break;
                         #endregion
+                }
+                break;
+            case 2:
+                if (GUILayout.Button("Conditional Test"))
+                {
+                    script.paintConditional("Ground", 4);
                 }
                 break;
             default:
