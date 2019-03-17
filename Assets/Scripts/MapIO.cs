@@ -586,12 +586,20 @@ public class MapIO : MonoBehaviour {
         }
         return 2;
     }
-    public int getTexture(string landLayer, int texture, int x, int y)
+    public float getTexture(string landLayer, int texture, int x, int y)
     {
+        changeLayer(landLayer);
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         float returnedTexture = splatMap[x, y, texture];
-        return (int)returnedTexture;
+        return returnedTexture;
+    }
+    public float getTopologyTexture(TerrainTopology.Enum layer, int texture, int x, int y)
+    {
+        changeLayer("Topology");
+        float[,,] splatMap = topology.getSplatMap((int)layer);
+        float returnedTexture = splatMap[x, y, texture];
+        return returnedTexture;
     }
     public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
