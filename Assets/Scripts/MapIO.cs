@@ -656,10 +656,10 @@ public class MapIO : MonoBehaviour {
         List<Conditions> conditions = new List<Conditions>();
         conditions.Add(new Conditions()
         {
-            LandLayers = new string[] { "Ground", "Biome" },
+            LandLayers = new string[] { "Ground", "Biome", "Alpha" },
             GroundTextures = new int[] { 1 },
-            BiomeTextures = new int[] { 2, 3 },
-            AlphaTextures = new int[] { 0, 1 },
+            BiomeTextures = new int[] { 3 },
+            AlphaTextures = new int[] { 1 },
             TopologyLayers = new int[] { 0, 1 },
             TopologyTextures = new int[] {1}
         });
@@ -681,12 +681,10 @@ public class MapIO : MonoBehaviour {
                                     {
                                         if (groundSplatMap[i, j, groundTexture] > 0.5f)
                                         {
-                                            continue;
                                         }
                                         else
                                         {
                                             paint = false;
-                                            break;
                                         }
                                     }
                                     break;
@@ -695,12 +693,10 @@ public class MapIO : MonoBehaviour {
                                     {
                                         if (biomeSplatMap[i, j, biomeTexture] > 0.5f)
                                         {
-                                            continue;
                                         }
                                         else
                                         {
                                             paint = false;
-                                            break;
                                         }
                                     }
                                     break;
@@ -709,12 +705,10 @@ public class MapIO : MonoBehaviour {
                                     {
                                         if (alphaSplatMap[i, j, alphaTexture] > 0.5f)
                                         {
-                                            continue;
                                         }
                                         else
                                         {
                                             paint = false;
-                                            break;
                                         }
                                     }
                                     break;
@@ -741,6 +735,9 @@ public class MapIO : MonoBehaviour {
                                     paint = false;
                                     break;
                             }
+                        }
+                        if (paint == true)
+                        {
                             for (int k = 0; k < textureCount(landLayer); k++)
                             {
                                 splatMapPaint[i, j, k] = 0;
