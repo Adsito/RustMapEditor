@@ -97,7 +97,7 @@ public class MapIO : MonoBehaviour {
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
-    public string landLayer = "ground";
+    public string landLayer = "Ground";
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
     public float progressBar = 0f;
