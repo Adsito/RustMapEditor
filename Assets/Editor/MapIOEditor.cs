@@ -47,10 +47,10 @@ public class MapIOEditor : Editor
         MapIO script = (MapIO)target;
         
 
-        GUIContent[] mainMenu = new GUIContent[3];
+        GUIContent[] mainMenu = new GUIContent[2];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Testing");
+        //mainMenu[2] = new GUIContent("Testing");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
