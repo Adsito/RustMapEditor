@@ -17,37 +17,59 @@ public class TopologyLayers : List<TopologyLayers>
         get; set;
     }
 }
+public class GroundTextures : List<GroundTextures>
+{
+    public int Textures
+    {
+        get; set;
+    }
+}
+public class BiomeTextures : List<BiomeTextures>
+{
+    public int Textures
+    {
+        get; set;
+    }
+}
 public class Conditions : List<Conditions>
 {
     public string[] LandLayers
     {
         get; set;
     }
-    public int[] TopologyLayers
+    public TerrainTopology.Enum TopologyLayers
     {
         get; set;
     }
-    public int[] GroundTextures
+    public bool[] AlphaTextures
     {
         get; set;
     }
-    public int[] BiomeTextures
+    public bool[] TopologyTextures
     {
         get; set;
     }
-    public int[] AlphaTextures
+    public bool CheckHeight
     {
         get; set;
     }
-    public int[] TopologyTextures
+    public float HeightLow
     {
         get; set;
     }
-    public float[,] HeightRange
+    public float HeightHigh
     {
         get; set;
     }
-    public float[,] SlopeRange
+    public bool CheckSlope
+    {
+        get; set;
+    }
+    public float SlopeLow
+    {
+        get; set;
+    }
+    public float SlopeHigh
     {
         get; set;
     }
@@ -66,10 +88,14 @@ public class MapIO : MonoBehaviour {
     public TerrainBiome.Enum biomeLayerToPaint;
     #endregion
     public TerrainTopology.Enum topologyLayer;
+    public TerrainTopology.Enum conditionalTopology;
+    public TerrainTopology.Enum topologyLayersList;
     public TerrainTopology.Enum oldTopologyLayer;
     public TerrainTopology.Enum oldTopologyLayer2;
     public TerrainBiome.Enum biomeLayer;
+    public TerrainBiome.Enum conditionalBiome;
     public TerrainSplat.Enum terrainLayer;
+    public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
     public string landLayer = "ground";
     LandData selectedLandLayer;
@@ -588,23 +614,94 @@ public class MapIO : MonoBehaviour {
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float xNorm = (float)x / (float)landData.splatMap.GetLength(0);
-        float yNorm = (float)y / (float)landData.splatMap.GetLength(1);
+        float xNorm = (float)x / (float)land.terrainData.alphamapHeight;
+        float yNorm = (float)y / (float)land.terrainData.alphamapHeight;
         float height = land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
         return height;
+    }
+    public float[,] getHeights()
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
+        for (int i = 0; i < land.terrainData.alphamapHeight; i++)
+        {
+            for (int j = 0; j < land.terrainData.alphamapHeight; j++)
+            {
+                float iNorm = (float)i / (float)land.terrainData.alphamapHeight;
+                float jNorm = (float)j / (float)land.terrainData.alphamapHeight;
+                heights[i, j] = land.terrainData.GetInterpolatedHeight(iNorm, jNorm);
+            }
+        }
+        return heights;
     }
     public float getSlope(int x, int y)
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float xNorm = (float)x / (float)landData.splatMap.GetLength(0);
-        float yNorm = (float)y / (float)landData.splatMap.GetLength(1);
+        float xNorm = (float)x / land.terrainData.alphamapHeight;
+        float yNorm = (float)y / land.terrainData.alphamapHeight;
         float slope = land.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
+    }
+    public float[,] getSlopes()
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
+        float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
+        for (int i = 0; i < land.terrainData.alphamapHeight; i++)
+        {
+            for (int j = 0; j < land.terrainData.alphamapHeight; j++)
+            {
+                float iNorm = (float)i / (float)land.terrainData.alphamapHeight;
+                float jNorm = (float)j / (float)land.terrainData.alphamapHeight;
+                slopes[i, j] = land.terrainData.GetSteepness(iNorm, jNorm);
+            }
+        }
+        return slopes;
     }
     #endregion
 
     #region SplatMap Methods
+    List<int> ReturnSelectedElementsTopology()
+    {
+        List<int> selectedElements = new List<int>();
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
+        {
+            int layer = 1 << i;
+            if (((int)conditionalTopology & layer) != 0)
+            {
+                selectedElements.Add(i);
+            }
+        }
+        return selectedElements;
+    }
+    List<int> ReturnSelectedElementsGround()
+    {
+        List<int> selectedElements = new List<int>();
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
+        {
+            int layer = 1 << i;
+            if (((int)conditionalGround & layer) != 0)
+            {
+                selectedElements.Add(i);
+            }
+        }
+        return selectedElements;
+    }
+    List<int> ReturnSelectedElementsBiome()
+    {
+        List<int> selectedElements = new List<int>();
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
+        {
+            int layer = 1 << i;
+            if (((int)conditionalBiome & layer) != 0)
+            {
+                selectedElements.Add(i);
+            }
+        }
+        return selectedElements;
+    }
     public int texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
     // Accepts "Ground", "Biome", "Alpha" and "Topology".
     {
@@ -647,56 +744,123 @@ public class MapIO : MonoBehaviour {
         float returnedTexture = splatMap[x, y, texture];
         return returnedTexture;
     }
-    public void paintConditional(string landLayer, int texture)
+    public void paintConditional(string landLayer, int texture, List<Conditions> conditions) // Todo: Optimisation and cleanup.
     {
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
+
         float[,,] groundSplatMap = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
         float[,,] biomeSplatMap = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
         float[,,] topologySplatMap = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
-        float[,,] splatMapPaint = new float[2048, 2048, 8];
+        float[,,] splatMapPaint = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, textureCount(landLayer)];
+        float[,,] splatMapOld = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, textureCount(landLayer)];
         bool paint = true;
-
-        // Make a UI to handle this.
-        List<TopologyLayers> topologyLayers = new List<TopologyLayers>();
-        List<Conditions> conditions = new List<Conditions>();
-        conditions.Add(new Conditions()
+        float slope, height;
+        float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
+        float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
+        int  alphaTexture = 0, topologyTexture = 0;
+        EditorUtility.DisplayProgressBar("Conditional Painter FIRST VERSION", "Preparing SplatMaps", 0.025f);
+        switch (landLayer)
         {
-            LandLayers = new string[] { "Ground", "Biome", "Alpha", "Topology" },
-            GroundTextures = new int[] { 1 },
-            BiomeTextures = new int[] { 3 },
-            AlphaTextures = new int[] { 1 },
-            TopologyLayers = new int[] { 1 },
-            TopologyTextures = new int[] { 0 }
-        });
+            case "Ground":
+                changeLayer(landLayer);
+                splatMapOld = groundSplatMap;
+                break;
+            case "Biome":
+                changeLayer(landLayer);
+                splatMapOld = biomeSplatMap;
+                break;
+            case "Alpha":
+                changeLayer(landLayer);
+                splatMapOld = alphaSplatMap;
+                break;
+            case "Topology":
+                changeLayer(landLayer);
+                splatMapOld = topologySplatMap;
+                oldTopologyLayer2 = topologyLayer;
+                topologyLayer = topologyLayerToPaint;
+                changeLandLayer();
+                break;
+        }
+        List<TopologyLayers> topologyLayers = new List<TopologyLayers>();
+        List<GroundTextures> groundTexturesList = new List<GroundTextures>();
+        List<BiomeTextures> biomeTexturesList = new List<BiomeTextures>();
         foreach (Conditions item in conditions)
         {
-            foreach (var topologyLayerInt in item.TopologyLayers)
+            foreach (var topologyLayerInt in ReturnSelectedElementsTopology())
             {
                 topologyLayers.Add(new TopologyLayers()
                 {
                     Topologies = topology.getSplatMap(topologyLayerInt)
                 });
             }
-            for (int i = 0; i < 2048; i++)
+            foreach (var groundTextureInt in ReturnSelectedElementsGround())
             {
-                for (int j = 0; j < 2048; j++)
+                groundTexturesList.Add(new GroundTextures()
+                {
+                    Textures = groundTextureInt
+                });
+            }
+            foreach (var biomeTextureInt in ReturnSelectedElementsBiome())
+            {
+                biomeTexturesList.Add(new BiomeTextures()
+                {
+                    Textures = biomeTextureInt
+                });
+            }
+            if (item.CheckHeight == true)
+            {
+                heights = getHeights();
+            }
+            if (item.CheckSlope == true)
+            {
+                slopes = getSlopes();
+            }
+            EditorUtility.DisplayProgressBar("Conditional Painter", "Checking Conditions", 0.05f);
+            for (int i = 0; i < groundSplatMap.GetLength(0); i++)
+            {
+                EditorUtility.DisplayProgressBar("Conditional Painter", "If this hangs too long close Unity. \n" +
+                    "A performance update will come soon.", 0.5f);
+                for (int j = 0; j < groundSplatMap.GetLength(1); j++)
                 {
                     paint = true;
+                    if (item.CheckSlope == true)
+                    {
+                        slope = slopes[j, i];
+                        if (slope > item.SlopeLow && slope < item.SlopeHigh)
+                        {
+                        }
+                        else
+                        {
+                            paint = false;
+                        }
+                    }
+                    if (item.CheckHeight == true)
+                    {
+                        height = heights[j, i];
+                        if (height > item.HeightLow && height < item.HeightHigh)
+                        {
+                        }
+                        else
+                        {
+                            paint = false;
+                        }
+                    }
                     foreach (var landLayers in item.LandLayers)
                     {
                         if (paint == true)
                         {
                             switch (landLayers)
                             {
-                                case "Ground":
-                                    foreach (var groundTexture in item.GroundTextures)
+                                case "Ground": 
+                                    foreach (GroundTextures groundTextureCheck in groundTexturesList)
                                     {
-                                        if (groundSplatMap[i, j, groundTexture] > 0.5f)
+                                        if (groundSplatMap[i, j, groundTextureCheck.Textures] > 0.5f)
                                         {
                                         }
                                         else
@@ -706,9 +870,9 @@ public class MapIO : MonoBehaviour {
                                     }
                                     break;
                                 case "Biome":
-                                    foreach (var biomeTexture in item.BiomeTextures)
+                                    foreach (BiomeTextures biomeTextureCheck in biomeTexturesList)
                                     {
-                                        if (biomeSplatMap[i, j, biomeTexture] > 0.5f)
+                                        if (biomeSplatMap[i, j, biomeTextureCheck.Textures] > 0.5f)
                                         {
                                         }
                                         else
@@ -718,23 +882,11 @@ public class MapIO : MonoBehaviour {
                                     }
                                     break;
                                 case "Alpha":
-                                    foreach (var alphaTexture in item.AlphaTextures)
+                                    foreach (var alphaTextureBool in item.AlphaTextures)
                                     {
-                                        if (alphaSplatMap[i, j, alphaTexture] > 0.5f)
+                                        if (alphaTextureBool == true)
                                         {
-                                        }
-                                        else
-                                        {
-                                            paint = false;
-                                        }
-                                    }
-                                    break;
-                                case "Topology":
-                                    foreach (var topologyTexture in item.TopologyTextures)
-                                    {
-                                        foreach (TopologyLayers layer in topologyLayers)
-                                        {
-                                            if (layer.Topologies[i, j, topologyTexture] > 0.5f)
+                                            if (alphaSplatMap[i, j, alphaTexture] > 0.5f)
                                             {
                                             }
                                             else
@@ -744,8 +896,26 @@ public class MapIO : MonoBehaviour {
                                         }
                                     }
                                     break;
+                                case "Topology": 
+                                    foreach (var topologyTextureBool in item.TopologyTextures)
+                                    {
+                                        if (topologyTextureBool == true)
+                                        {
+                                            foreach (TopologyLayers layer in topologyLayers)
+                                            {
+                                                if (layer.Topologies[i, j, topologyTexture] > 0.5f)
+                                                {
+                                                }
+                                                else
+                                                {
+                                                    paint = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
                                 default:
-                                    Debug.Log("Conditional LandLayer not found");
+                                    Debug.Log("Conditional LandLayer not found" + landLayers);
                                     paint = false;
                                     break;
                             }
@@ -762,14 +932,35 @@ public class MapIO : MonoBehaviour {
                         {
                             for (int k = 0; k < textureCount(landLayer); k++)
                             {
-                                splatMapPaint[i, j, k] = groundSplatMap[i, j, k];
+                                splatMapPaint[i, j, k] = splatMapOld[i, j, k];
                             }
                         }
                     }
                 }
             }
-            groundLandData.setData(splatMapPaint, landLayer);
-            groundLandData.setLayer();
+            EditorUtility.ClearProgressBar();
+            progressValue = 0f; progressBar = 0f;
+            switch (landLayer)
+            {
+                case "Ground":
+                    groundLandData.setData(splatMapPaint, landLayer);
+                    groundLandData.setLayer();
+                    break;
+                case "Biome":
+                    biomeLandData.setData(splatMapPaint, landLayer);
+                    biomeLandData.setLayer();
+                    break;
+                case "Alpha":
+                    alphaLandData.setData(splatMapPaint, landLayer);
+                    alphaLandData.setLayer();
+                    break;
+                case "Topology":
+                    topologyLandData.setData(splatMapPaint, landLayer);
+                    topologyLandData.setLayer();
+                    topologyLayer = oldTopologyLayer2;
+                    saveTopologyLayer();
+                    break;
+            }
         }
     }
     public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
