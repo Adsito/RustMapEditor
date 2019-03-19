@@ -510,7 +510,6 @@ public class MapIOEditor : Editor
                     case 1:
                         GUILayout.Label("Land Layer To Select", EditorStyles.boldLabel);
 
-
                         string oldLandLayer = script.landLayer;
                         string[] options = { "Ground", "Biome", "Alpha", "Topology" };
                         script.landSelectIndex = EditorGUILayout.Popup("Select Land Layer:", script.landSelectIndex, options);
