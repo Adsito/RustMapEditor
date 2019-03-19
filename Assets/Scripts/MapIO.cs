@@ -10,6 +10,13 @@ using static WorldConverter;
 using static WorldSerialization;
 
 [Serializable]
+public class TopologyLayers : List<TopologyLayers>
+{
+    public float[,,] Topologies
+    {
+        get; set;
+    }
+}
 public class Conditions : List<Conditions>
 {
     public string[] LandLayers
@@ -635,6 +642,7 @@ public class MapIO : MonoBehaviour {
     public float getTopologyTexture(TerrainTopology.Enum layer, int texture, int x, int y)
     {
         changeLayer("Topology");
+        topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         float[,,] splatMap = topology.getSplatMap((int)layer);
         float returnedTexture = splatMap[x, y, texture];
         return returnedTexture;
@@ -645,6 +653,7 @@ public class MapIO : MonoBehaviour {
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+        topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         float[,,] groundSplatMap = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
         float[,,] biomeSplatMap = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
@@ -653,18 +662,26 @@ public class MapIO : MonoBehaviour {
         bool paint = true;
 
         // Make a UI to handle this.
+        List<TopologyLayers> topologyLayers = new List<TopologyLayers>();
         List<Conditions> conditions = new List<Conditions>();
         conditions.Add(new Conditions()
         {
-            LandLayers = new string[] { "Ground", "Biome", "Alpha" },
+            LandLayers = new string[] { "Ground", "Biome", "Alpha", "Topology" },
             GroundTextures = new int[] { 1 },
             BiomeTextures = new int[] { 3 },
             AlphaTextures = new int[] { 1 },
-            TopologyLayers = new int[] { 0, 1 },
-            TopologyTextures = new int[] {1}
+            TopologyLayers = new int[] { 1 },
+            TopologyTextures = new int[] { 0 }
         });
         foreach (Conditions item in conditions)
         {
+            foreach (var topologyLayerInt in item.TopologyLayers)
+            {
+                topologyLayers.Add(new TopologyLayers()
+                {
+                    Topologies = topology.getSplatMap(topologyLayerInt)
+                });
+            }
             for (int i = 0; i < 2048; i++)
             {
                 for (int j = 0; j < 2048; j++)
@@ -713,19 +730,16 @@ public class MapIO : MonoBehaviour {
                                     }
                                     break;
                                 case "Topology":
-                                    foreach (var topologyLayerList in item.TopologyLayers)
+                                    foreach (var topologyTexture in item.TopologyTextures)
                                     {
-                                        topologySplatMap = topology.getSplatMap((int)topologyLayerList);
-                                        foreach (var topologyTexture in item.TopologyTextures)
+                                        foreach (TopologyLayers layer in topologyLayers)
                                         {
-                                            if (topologySplatMap[i, j, topologyTexture] > 0.5f)
+                                            if (layer.Topologies[i, j, topologyTexture] > 0.5f)
                                             {
-                                                continue;
                                             }
                                             else
                                             {
                                                 paint = false;
-                                                break;
                                             }
                                         }
                                     }
