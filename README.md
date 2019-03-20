@@ -2,7 +2,7 @@
 
 **Make sure you're using a Unity 2018.3.3f1 or above.**
 Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
-After installing Unity Hub, paste this link into your browser to download Unity 2018.3.4f1: unityhub://2018.3.4f1/1d952368ca3a
+After installing Unity Hub, paste this link into your browser to download Unity 2018.3.9f1: unityhub://2018.3.9f1/947e1ea5aa8d
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
