@@ -35,6 +35,7 @@ public class MapIOEditor : Editor
     public TerrainSplat.Enum groundLayerToPaint;
     public TerrainSplat.Enum groundLayerConditional;
 
+    bool layerSet = false;
     bool[] groundTxtCndtl = new bool[8] { true, true, true, true, true, true, true, true };
     bool[] biomeTxtCndtl = new bool[4] { true, true, true, true };
     bool[] alphaTxtCndtl = new bool[2] { true, true };
@@ -45,7 +46,13 @@ public class MapIOEditor : Editor
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
-        
+
+        if (layerSet == false)
+        {
+            groundLayerToPaint = TerrainSplat.Enum.Grass;
+            biomeLayerToPaint = TerrainBiome.Enum.Temperate;
+            layerSet = true;
+        }
 
         GUIContent[] mainMenu = new GUIContent[2];
         mainMenu[0] = new GUIContent("Main Menu");
