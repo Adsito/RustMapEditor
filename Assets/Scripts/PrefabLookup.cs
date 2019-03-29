@@ -33,8 +33,7 @@ public class PrefabLookup : System.IDisposable
             writer.WriteLine(gameManifest);
         }
         writer.Close();
-        */
-        /*
+        
         for (int i = 0; i < lookupManifest.prefabProperties.Length; i++)
         {
             Debug.Log(lookupManifest.prefabProperties[i].hash);
