@@ -112,6 +112,7 @@ public class MapIOEditor : Editor
                     script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
                 }
                 GUILayout.EndHorizontal();
+                GUILayout.TextArea(script.bundleFile);
                 break;
             #endregion
             #region Tools
