@@ -10,11 +10,6 @@ https://discord.gg/VQruSpk
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
-### Support Us
-The entirety of the Rust Map Making community resources, including this editor, are free and open-source. We would appreciate any sized contribution to fund these resources. Any amount, even just a single $ can go a long way in maintaining these projects. Thank you.
-
-If you wish to support us, follow this link and enter your desired amount: https://paypal.me/RustMapMaking
-
 ### Credits
 The foundations of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
 https://github.com/JasonM97/Rust-Map-Editor
