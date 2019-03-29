@@ -5,6 +5,7 @@ using System.IO;
 
 public class PrefabLookup : System.IDisposable
 {
+    private AssetBundle bundle;
 	private AssetBundleBackend backend;
 	private HashLookup lookup;
 	private Scene scene;
@@ -13,7 +14,7 @@ public class PrefabLookup : System.IDisposable
 
 	private static string lookupPath = "Assets/Modding/Prefabs.txt";
 	private static string scenePath = "Assets/Modding/Prefabs.unity";
-    private static string manifestPath = "assets/manifest.asset";
+    private static string manifestPath = "assets/content/props/strobe light/strobelight.prefab";
 
     public bool isLoaded
 	{
@@ -23,9 +24,9 @@ public class PrefabLookup : System.IDisposable
     public PrefabLookup(string bundlename)
     {
         backend = new AssetBundleBackend(bundlename);
-        var lookupAsset = backend.Load<TextAsset>(lookupPath);
-        var manifest = backend.Load<GameManifest>(manifestPath);
-        Debug.Log(manifest);
+        //var lookupAsset = backend.Load<TextAsset>(lookupPath);
+        var manifest = backend.Load<GameObject>(manifestPath);
+        //Debug.Log(manifest);
         /*
         StreamWriter writer = new StreamWriter(@"F:\Documents\GitHub\output.txt", true);
         foreach (string gameManifest in lookupManifest.)
@@ -42,7 +43,7 @@ public class PrefabLookup : System.IDisposable
         */
 
         return;
-        lookup = new HashLookup(lookupAsset.text);
+        //lookup = new HashLookup(lookupAsset.text);
 
 		var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
 

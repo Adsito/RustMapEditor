@@ -96,7 +96,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 	protected override T LoadAsset<T>(string filePath)
 	{
 		AssetBundle bundle = null;
-
+        
 		if (!files.TryGetValue(filePath, out bundle))
 		{
 			return null;
