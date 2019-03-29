@@ -1975,7 +1975,6 @@ public class MapIO : MonoBehaviour {
             UnityEditor.EditorApplication.isPlaying = false;
             return;
         }
-        Debug.Log("started");
         if (getPrefabLookUp() != null)
         {
             getPrefabLookUp().Dispose();
