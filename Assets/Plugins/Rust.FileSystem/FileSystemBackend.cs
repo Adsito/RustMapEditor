@@ -57,28 +57,29 @@ public abstract class FileSystemBackend
 	public T Load<T>(string filePath) where T : Object
 	{
 		var val = default(T);
-
+        
 		if (cache.ContainsKey(filePath))
 		{
 			val = cache[filePath] as T;
-		}
+            Debug.Log("1 of 2");
+        }
 		else
 		{
 			val = LoadAsset<T>(filePath);
-
-			if (val != null)
+            Debug.Log("2 of 2");
+            if (val != null)
 			{
 				cache.Add(filePath, val);
-			}
+                Debug.Log("Failed");
+            }
 		}
-
 		return val;
 	}
 
 	protected void LoadError(string err)
 	{
 		Debug.LogError(err);
-		loadingError = err;
+        loadingError = err;
 		isError = true;
 	} 
 
