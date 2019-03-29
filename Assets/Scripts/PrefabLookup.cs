@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.IO;
 
 public class PrefabLookup : System.IDisposable
 {
@@ -12,29 +13,36 @@ public class PrefabLookup : System.IDisposable
 
 	private static string lookupPath = "Assets/Modding/Prefabs.txt";
 	private static string scenePath = "Assets/Modding/Prefabs.unity";
-    //private static string manifestPath = "Assets/manifest.asset";
+    private static string manifestPath = "assets/manifest.asset";
 
     public bool isLoaded
 	{
 		get { return scene.isLoaded; }
 	}
 
-	public PrefabLookup(string bundlename)
-	{
-		backend = new AssetBundleBackend(bundlename);
-
-		var lookupAsset = backend.Load<TextAsset>(lookupPath);
-        //var lookupManifest = backend.Load<GameManifest>(manifestPath);
-        
+    public PrefabLookup(string bundlename)
+    {
+        backend = new AssetBundleBackend(bundlename);
+        var lookupAsset = backend.Load<TextAsset>(lookupPath);
+        var manifest = backend.Load<GameManifest>(manifestPath);
+        Debug.Log(manifest);
+        /*
+        StreamWriter writer = new StreamWriter(@"F:\Documents\GitHub\output.txt", true);
+        foreach (string gameManifest in lookupManifest.)
+        {
+            writer.WriteLine(gameManifest);
+        }
+        writer.Close();
+        */
         /*
         for (int i = 0; i < lookupManifest.prefabProperties.Length; i++)
         {
             Debug.Log(lookupManifest.prefabProperties[i].hash);
         } 
-        Enable to turn on a list of all the prefabs in Rust.
+        //Enable to turn on a list of all the prefabs in Rust.
         */
-        
 
+        return;
         lookup = new HashLookup(lookupAsset.text);
 
 		var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
