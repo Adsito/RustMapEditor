@@ -61,16 +61,13 @@ public abstract class FileSystemBackend
 		if (cache.ContainsKey(filePath))
 		{
 			val = cache[filePath] as T;
-            Debug.Log("1 of 2");
         }
 		else
 		{
 			val = LoadAsset<T>(filePath);
-            Debug.Log("2 of 2");
             if (val != null)
 			{
 				cache.Add(filePath, val);
-                Debug.Log("Failed");
             }
 		}
 		return val;
