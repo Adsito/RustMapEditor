@@ -14,7 +14,7 @@ public class PrefabLookup : System.IDisposable
 
 	private static string lookupPath = "Assets/Modding/Prefabs.txt";
 	private static string scenePath = "Assets/Modding/Prefabs.unity";
-    private static string manifestPath = "assets/content/props/strobe light/strobelight.prefab";
+    private static string manifestPath = "Assets/manifest.asset";
 
     public bool isLoaded
 	{
@@ -24,26 +24,14 @@ public class PrefabLookup : System.IDisposable
     public PrefabLookup(string bundlename)
     {
         backend = new AssetBundleBackend(bundlename);
-        //var lookupAsset = backend.Load<TextAsset>(lookupPath);
-        var manifest = backend.Load<GameObject>(manifestPath);
-        //Debug.Log(manifest);
-        /*
-        StreamWriter writer = new StreamWriter(@"F:\Documents\GitHub\output.txt", true);
-        foreach (string gameManifest in lookupManifest.)
-        {
-            writer.WriteLine(gameManifest);
-        }
-        writer.Close();
-        
-        for (int i = 0; i < lookupManifest.prefabProperties.Length; i++)
-        {
-            Debug.Log(lookupManifest.prefabProperties[i].hash);
-        } 
-        //Enable to turn on a list of all the prefabs in Rust.
-        */
+        var lookupAsset = backend.Load<TextAsset>(lookupPath);
+        var manifest = backend.Load<GameManifest>(manifestPath);
+        var gameObjectLoad = backend.LoadPrefab("assets/prefabs/building core/wall.frame/wall.frame.metal.prefab");
+        //Debug.Log(manifest.pooledStrings[0].hash);
+        GameObject gameObject = GameObject.Instantiate(gameObjectLoad);
 
         return;
-        //lookup = new HashLookup(lookupAsset.text);
+        var lookup = new HashLookup(lookupAsset.text);
 
 		var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
 
@@ -53,10 +41,10 @@ public class PrefabLookup : System.IDisposable
 		{
 			foreach (var go in scene.GetRootGameObjects())
 			{
-				prefabs.Add(lookup[go.name], go);
-			}
+                prefabs.Add(lookup[go.name], go);
+            }
 		};
-	}
+    }
 
     public void Dispose()
 	{
