@@ -26,14 +26,61 @@ public class PrefabLookup : System.IDisposable
         backend = new AssetBundleBackend(bundlename);
         var lookupAsset = backend.Load<TextAsset>(lookupPath);
         var manifest = backend.Load<GameManifest>(manifestPath);
-        var gameObjectLoad = backend.LoadPrefab("assets/prefabs/building core/wall.frame/wall.frame.metal.prefab");
-        //Debug.Log(manifest.pooledStrings[0].hash);
-        GameObject gameObject = GameObject.Instantiate(gameObjectLoad);
+        var prefabLoad = backend.Load<GameObject>("assets/bundled/prefabs/autospawn/monument/cave/cave_large_hard.prefab");
+        var prefabObject = GameObject.Instantiate(prefabLoad);
+        StreamWriter streamWriter = new StreamWriter(@"F:\Documents\GitHub\prefaboutput2.txt", false);
 
+
+        
+        for (int i = 0; i < manifest.prefabProperties.GetLength(0); i++)
+        {
+            if (manifest.prefabProperties[i].name.EndsWith(".prefab"))
+            {
+                
+                if (manifest.prefabProperties[i].name.StartsWith("assets/bundled"))
+                {
+                    prefabLoad = backend.Load<GameObject>(manifest.prefabProperties[i].name);
+                    prefabObject = GameObject.Instantiate(prefabLoad);
+                    //prefabs.Add(manifest.prefabProperties[i].hash, prefabObject);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].name);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].hash);
+                }
+                else if (manifest.prefabProperties[i].name.StartsWith("assets/content"))
+                {
+                    prefabLoad = backend.Load<GameObject>(manifest.prefabProperties[i].name);
+                    prefabObject = GameObject.Instantiate(prefabLoad);
+                    //prefabs.Add(manifest.prefabProperties[i].hash, prefabObject);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].name);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].hash);
+                }
+                else if (manifest.prefabProperties[i].name.StartsWith("assets/prefabs/building core"))
+                {
+                    prefabLoad = backend.Load<GameObject>(manifest.prefabProperties[i].name);
+                    prefabObject = GameObject.Instantiate(prefabLoad);
+                    //prefabs.Add(manifest.prefabProperties[i].hash, prefabObject);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].name);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].hash);
+                }
+                
+                else if (manifest.prefabProperties[i].name.StartsWith("assets/prefabs/deployable"))
+                {
+                    prefabLoad = backend.Load<GameObject>(manifest.prefabProperties[i].name);
+                    prefabObject = GameObject.Instantiate(prefabLoad);
+                    //prefabs.Add(manifest.prefabProperties[i].hash, prefabObject);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].name);
+                    streamWriter.WriteLine(manifest.prefabProperties[i].hash);
+                }
+            }
+        }
+     
+        streamWriter.Close();
+        // Assign prefab LOD's to the white cubes in prefab loading.
+        //
+        //gameObject.name = "assets/prefabs/building core/wall.frame/wall.frame.metal.prefab";
         return;
-        var lookup = new HashLookup(lookupAsset.text);
 
-		var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
+        var lookup = new HashLookup(lookupAsset.text);
+        var asyncOperation = SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Additive);
 
 		scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
@@ -42,6 +89,7 @@ public class PrefabLookup : System.IDisposable
 			foreach (var go in scene.GetRootGameObjects())
 			{
                 prefabs.Add(lookup[go.name], go);
+                // Add the other UIDs here.
             }
 		};
     }
