@@ -1,8 +1,8 @@
 # Rust Map Making Unity Editor
 
-**Make sure you're using a Unity 2018.3.10f1 or above.**
+**Make sure you're using a Unity 2018.3.3f1 or 2018.3.4f1 .**
 Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
-After installing Unity Hub, download the latest version of Unity from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
+After installing Unity Hub, download the Unity 2018.3.3f1 from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
@@ -16,7 +16,8 @@ https://github.com/JasonM97/Rust-Map-Editor
 https://www.patreon.com/dezinated
 
 Also using Assets from:
--https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Ground Textures.
+-https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
+-https://assetstore.unity.com/packages/tools/terrain/terrain-toolkit-2017-83490 for Terrain Toolkit 2017.
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
