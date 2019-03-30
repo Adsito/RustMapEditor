@@ -1921,7 +1921,6 @@ public class MapIO : MonoBehaviour {
 
     public void Load(WorldSerialization blob)
     {
-        Debug.Log("Map hash: " + blob.Checksum);
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
         loadMapInfo(terrains);
     }
