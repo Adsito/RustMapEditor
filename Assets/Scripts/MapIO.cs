@@ -1962,7 +1962,7 @@ public class MapIO : MonoBehaviour {
         changeLayer("Biome");
         paintLayer("Biome", 0);
         changeLayer("Ground");
-        setMinimumHeight(505f);
+        setMinimumHeight(503f);
     }
 
 
