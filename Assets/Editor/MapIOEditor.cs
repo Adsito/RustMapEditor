@@ -54,10 +54,10 @@ public class MapIOEditor : Editor
             layerSet = true;
         }
 
-        GUIContent[] mainMenu = new GUIContent[2];
+        GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        //mainMenu[2] = new GUIContent("Testing");
+        mainMenu[2] = new GUIContent("Testing");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -878,14 +878,21 @@ public class MapIOEditor : Editor
                 }
                 break;
             case 2:
-                if (GUILayout.Button("Multi Thread Test"))
+                if (GUILayout.Button("Prefab Lookup"))
                 {
+                    script.StartPrefabLookup();
+                }
+                if (GUILayout.Button("Unload Prefabs"))
+                {
+                    script.getPrefabLookUp().Dispose();
+                    script.setPrefabLookup(null);
                 }
                 break;
             default:
                 mainMenuOptions = 0;
                 break;
                 #endregion
+            
         }
         #endregion
     }
