@@ -887,6 +887,10 @@ public class MapIOEditor : Editor
                     script.getPrefabLookUp().Dispose();
                     script.setPrefabLookup(null);
                 }
+                if (GUILayout.Button("Spawn Prefabs"))
+                {
+                    script.ReplacePrefabs();
+                }
                 break;
             default:
                 mainMenuOptions = 0;
