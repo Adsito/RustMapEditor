@@ -1988,13 +1988,12 @@ public class MapIO : MonoBehaviour {
         }
         setPrefabLookup(new PrefabLookup(bundleFile, this));
     }
-
-    private void Update()
+    */
+    public void ReplacePrefabs()
     {
         if(prefabLookup == null)
         {
-            Debug.LogError("No bundle file selected");
-            UnityEditor.EditorApplication.isPlaying = false;
+            Debug.LogError("Prefabs are not loaded!");
             return;
         }
         if (prefabLookup.isLoaded)
@@ -2023,14 +2022,13 @@ public class MapIO : MonoBehaviour {
                     go.tag = "LoadedPrefab";
                     go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
                     
-                    Destroy(pdh.gameObject);
+                    DestroyImmediate(pdh.gameObject);
 
                     setChildrenUnmoveable(go);
                 }
             }
         }
     }
-    */
     public void loadAssetPrefabs()
     {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
