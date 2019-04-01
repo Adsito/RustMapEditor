@@ -13,6 +13,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 	public AssetBundleBackend(string assetRoot)
 	{
+        
 		isError = false;
 		assetPath = System.IO.Path.GetDirectoryName(assetRoot) + System.IO.Path.DirectorySeparatorChar;
 
