@@ -1839,7 +1839,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1847,7 +1847,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1855,7 +1855,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1863,7 +1863,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1871,7 +1871,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1879,7 +1879,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1887,15 +1887,16 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
                 case 1892026534:
+                    p.transform.Rotate(Vector3.zero, 180f);
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1903,7 +1904,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":" + p.transform.localPosition + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;

@@ -138,10 +138,10 @@ public class MapIOEditor : Editor
                 }
                 */
                 EditorGUILayout.EndHorizontal();
-                if (GUILayout.Button("Export LootCrates"))
+                if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
+                    "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
                 {
-                    
-                    prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, mapName + " prefabs", "json");
+                    prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
                     if (prefabSaveFile == "")
                     {
                         return;
