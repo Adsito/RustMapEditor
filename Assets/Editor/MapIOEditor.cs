@@ -10,8 +10,8 @@ public class MapIOEditor : Editor
 
     string saveFile = "";
     string mapName = "";
-
-    //Todo: Clean this up.
+    string prefabSaveFile = "";
+    //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0;
     float heightToSet = 450f, scale = 50f, offset = 0f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
@@ -72,16 +72,17 @@ public class MapIOEditor : Editor
                     loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
 
                     var blob = new WorldSerialization();
-                    Debug.Log("Importing map " + loadFile);
+                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     if (loadFile == "")
                     {
-                        Debug.LogError("Empty load path");
                         return;
                     }
-                    EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.2f);
                     blob.Load(loadFile);
-                    EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.3f);
+                    script.loadPath = loadFile;
+                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                     script.Load(blob);
+                    saveFile = loadFile;
+                    prefabSaveFile = loadFile;
                 }
                 if (GUILayout.Button("Save", GUILayout.MaxWidth(45)))
                 {
@@ -91,6 +92,9 @@ public class MapIOEditor : Editor
                         Debug.LogError("Empty save path");
                     }
                     Debug.Log("Exported map " + saveFile);
+                    script.savePath = saveFile;
+                    prefabSaveFile = saveFile;
+                    EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                     script.Save(saveFile);
                 }
                 if (GUILayout.Button("New", GUILayout.MaxWidth(45)))
@@ -134,6 +138,16 @@ public class MapIOEditor : Editor
                 }
                 */
                 EditorGUILayout.EndHorizontal();
+                if (GUILayout.Button("Export LootCrates"))
+                {
+                    
+                    prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, mapName + " prefabs", "json");
+                    if (prefabSaveFile == "")
+                    {
+                        return;
+                    }
+                    script.exportLootCrates(prefabSaveFile);
+                }
                 break;
             #endregion
             #region Tools
