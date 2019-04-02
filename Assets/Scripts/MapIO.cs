@@ -1839,7 +1839,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1847,7 +1847,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1855,7 +1855,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1863,7 +1863,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1871,7 +1871,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1879,7 +1879,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1887,7 +1887,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1895,7 +1895,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1903,7 +1903,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = p.name + ":" + p.transform.position + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":" + p.transform.position + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
