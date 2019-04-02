@@ -1911,7 +1911,7 @@ public class MapIO : MonoBehaviour {
         }
         foreach (PrefabExport prefabDetail in prefabExports)
         {
-            streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\" \"" + prefabDetail.PrefabProperty + "\",");
+            streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabProperty + "\",");
         }
         streamWriter.WriteLine("   \"Prefab Count\": " + lootCrateCount);
         streamWriter.WriteLine("}");
