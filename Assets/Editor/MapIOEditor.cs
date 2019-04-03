@@ -57,7 +57,7 @@ public class MapIOEditor : Editor
         GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Testing");
+        mainMenu[2] = new GUIContent("Prefabs");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -72,24 +72,22 @@ public class MapIOEditor : Editor
                     loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
 
                     var blob = new WorldSerialization();
-                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     if (loadFile == "")
                     {
                         return;
                     }
+                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     blob.Load(loadFile);
                     script.loadPath = loadFile;
                     EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                     script.Load(blob);
-                    saveFile = loadFile;
-                    prefabSaveFile = loadFile;
                 }
                 if (GUILayout.Button("Save", GUILayout.MaxWidth(45)))
                 {
                     saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
                     if (saveFile == "")
                     {
-                        Debug.LogError("Empty save path");
+                        return;
                     }
                     Debug.Log("Exported map " + saveFile);
                     script.savePath = saveFile;
@@ -118,6 +116,7 @@ public class MapIOEditor : Editor
                             if (saveFile == "")
                             {
                                 EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
+                                return;
                             }
                             Debug.Log("Exported map " + saveFile);
                             script.Save(saveFile);
@@ -136,9 +135,9 @@ public class MapIOEditor : Editor
                 {
                     script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
                 }
-                GUILayout.TextArea(script.bundleFile);
-
                 EditorGUILayout.EndHorizontal();
+                GUILayout.TextArea(script.bundleFile);
+                
                 if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
                     "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
                 {
@@ -913,8 +912,10 @@ public class MapIOEditor : Editor
                         #endregion
                 }
                 break;
+            #endregion
+            #region Prefabs
             case 2:
-                if (GUILayout.Button("Prefab Lookup"))
+                if (GUILayout.Button("Load Prefabs"))
                 {
                     script.StartPrefabLookup();
                 }
@@ -928,11 +929,10 @@ public class MapIOEditor : Editor
                     script.ReplacePrefabs();
                 }
                 break;
+            #endregion
             default:
                 mainMenuOptions = 0;
                 break;
-                #endregion
-            
         }
         #endregion
     }
