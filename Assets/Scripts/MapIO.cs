@@ -2070,11 +2070,17 @@ public class MapIO : MonoBehaviour {
         changeLayer("Biome");
         paintLayer("Biome", 0);
         changeLayer("Ground");
-        setMinimumHeight(505f);
+        setMinimumHeight(503f);
     }
 
 
     public string bundleFile = "No bundle file selected";
+
+    public void StartPrefabLookup()
+    {
+        setPrefabLookup(new PrefabLookup(bundleFile, this));
+    }
+    /*
     public void Start()
     {
         if (bundleFile.Equals("No bundle file selected"))
@@ -2083,31 +2089,24 @@ public class MapIO : MonoBehaviour {
             UnityEditor.EditorApplication.isPlaying = false;
             return;
         }
-        Debug.Log("started");
         if (getPrefabLookUp() != null)
         {
             getPrefabLookUp().Dispose();
             setPrefabLookup(null);
         }
-        setPrefabLookup(new PrefabLookup(bundleFile));
+        setPrefabLookup(new PrefabLookup(bundleFile, this));
     }
-
-    private void Update()
+    */
+    public void ReplacePrefabs()
     {
         if(prefabLookup == null)
         {
-            Debug.LogError("No bundle file selected");
-            UnityEditor.EditorApplication.isPlaying = false;
+            Debug.LogError("Prefabs are not loaded!");
             return;
         }
-
-        //Debug.LogWarning("Prefabs are not saved in play mode. Export the map before stopping play mode.");
-
         if (prefabLookup.isLoaded)
         {
             if(GameObject.FindObjectsOfType<PrefabDataHolder>().Length > 0) { 
-
-                
 
                 Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
                 foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
@@ -2131,14 +2130,38 @@ public class MapIO : MonoBehaviour {
                     go.tag = "LoadedPrefab";
                     go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
                     
-                    Destroy(pdh.gameObject);
+                    DestroyImmediate(pdh.gameObject);
 
                     setChildrenUnmoveable(go);
                 }
             }
         }
     }
+    public void loadAssetPrefabs()
+    {
+        Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
 
+
+        foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
+        {
+            if (pdh.gameObject.tag == "LoadedPrefab")
+                continue;
+
+            loadAssetPrefab(pdh, prefabsParent);
+        }
+    }
+    public void loadAssetPrefab(PrefabDataHolder pdh, Transform prefabsParent)
+    {
+        PrefabData prefabData = pdh.prefabData;
+        string name = null;
+        if (!pdh.gameObject.name.StartsWith("DefaultPrefab"))
+            name = pdh.gameObject.name;
+        GameObject go = SpawnPrefab(prefabData, prefabsParent, name);
+        go.tag = "LoadedPrefab";
+        go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
+
+        Destroy(pdh.gameObject);
+    }
     private void setChildrenUnmoveable(GameObject root)
     {
         for(int i = 0; i < root.transform.childCount; i++)
@@ -2227,14 +2250,11 @@ public class MapIO : MonoBehaviour {
 
 
         WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
-        Debug.Log("1");
         SpawnPrefabs(world, prefabLookup);
     }
 
     private void SpawnPrefabs(WorldSerialization blob, PrefabLookup prefabs)
     {
-        Debug.Log("2");
-        Debug.Log(blob.world.prefabs.Count);
         var offset = getMapOffset();
         foreach (var prefab in blob.world.prefabs)
         {
@@ -2245,7 +2265,6 @@ public class MapIO : MonoBehaviour {
                 go.SetActive(true);
             }
         }
-        Debug.Log("3");
     }
 
     public Dictionary<uint, GameObject> getPrefabs()

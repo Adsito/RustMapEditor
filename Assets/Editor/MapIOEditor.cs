@@ -54,10 +54,10 @@ public class MapIOEditor : Editor
             layerSet = true;
         }
 
-        GUIContent[] mainMenu = new GUIContent[2];
+        GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        //mainMenu[2] = new GUIContent("Testing");
+        mainMenu[2] = new GUIContent("Testing");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -131,12 +131,13 @@ public class MapIOEditor : Editor
                 GUILayout.Label("Size", GUILayout.MaxWidth(30));
                 mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
                 
-                /*
+                
                 if (GUILayout.Button("Select Bundle File", GUILayout.MaxWidth(125)))
                 {
                     script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
                 }
-                */
+                GUILayout.TextArea(script.bundleFile);
+
                 EditorGUILayout.EndHorizontal();
                 if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
                     "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
@@ -148,7 +149,7 @@ public class MapIOEditor : Editor
                     }
                     script.exportLootCrates(prefabSaveFile);
                 }
-                break;
+            break;
             #endregion
             #region Tools
             case 1:
@@ -913,14 +914,25 @@ public class MapIOEditor : Editor
                 }
                 break;
             case 2:
-                if (GUILayout.Button("Multi Thread Test"))
+                if (GUILayout.Button("Prefab Lookup"))
                 {
+                    script.StartPrefabLookup();
+                }
+                if (GUILayout.Button("Unload Prefabs"))
+                {
+                    script.getPrefabLookUp().Dispose();
+                    script.setPrefabLookup(null);
+                }
+                if (GUILayout.Button("Spawn Prefabs"))
+                {
+                    script.ReplacePrefabs();
                 }
                 break;
             default:
                 mainMenuOptions = 0;
                 break;
                 #endregion
+            
         }
         #endregion
     }
