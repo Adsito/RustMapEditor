@@ -13,6 +13,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 	public AssetBundleBackend(string assetRoot)
 	{
+        
 		isError = false;
 		assetPath = System.IO.Path.GetDirectoryName(assetRoot) + System.IO.Path.DirectorySeparatorChar;
 
@@ -96,7 +97,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 	protected override T LoadAsset<T>(string filePath)
 	{
 		AssetBundle bundle = null;
-
+        
 		if (!files.TryGetValue(filePath, out bundle))
 		{
 			return null;
