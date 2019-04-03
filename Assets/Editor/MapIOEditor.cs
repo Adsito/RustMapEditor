@@ -10,8 +10,8 @@ public class MapIOEditor : Editor
 
     string saveFile = "";
     string mapName = "";
-
-    //Todo: Clean this up.
+    string prefabSaveFile = "";
+    //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0;
     float heightToSet = 450f, scale = 50f, offset = 0f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
@@ -65,39 +65,26 @@ public class MapIOEditor : Editor
         {
             #region Main Menu
             case 0:
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("New Map", GUILayout.MaxWidth(75)))
-                {
-                if (mapSize < 1000)
-                    {
-                        Debug.LogError("Use a map size greater than 1000");
-                        return;
-                    }
-                    script.newEmptyTerrain(mapSize);
-                }
-                GUILayout.Label("Map Size", GUILayout.MaxWidth(60));
-                mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(40));
-                EditorGUILayout.EndHorizontal();
-                    
-                    
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Load Map", GUILayout.MaxWidth(75)))
+                GUILayout.Label("Map Options", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Load", GUILayout.MaxWidth(45)))
                 {
                     loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
 
                     var blob = new WorldSerialization();
-                    Debug.Log("Importing map " + loadFile);
+                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     if (loadFile == "")
                     {
-                        Debug.LogError("Empty load path");
                         return;
                     }
-                    EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.2f);
                     blob.Load(loadFile);
-                    EditorUtility.DisplayProgressBar("Loading Map", "Loading Land Heightmap Data ", 0.3f);
+                    script.loadPath = loadFile;
+                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                     script.Load(blob);
+                    saveFile = loadFile;
+                    prefabSaveFile = loadFile;
                 }
-                if (GUILayout.Button("Save Map", GUILayout.MaxWidth(75)))
+                if (GUILayout.Button("Save", GUILayout.MaxWidth(45)))
                 {
                     saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
                     if (saveFile == "")
@@ -105,15 +92,64 @@ public class MapIOEditor : Editor
                         Debug.LogError("Empty save path");
                     }
                     Debug.Log("Exported map " + saveFile);
+                    script.savePath = saveFile;
+                    prefabSaveFile = saveFile;
+                    EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                     script.Save(saveFile);
                 }
+                if (GUILayout.Button("New", GUILayout.MaxWidth(45)))
+                {
+                    int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
+                    if (mapSize < 1000 & mapSize > 6000)
+                    {
+                        EditorUtility.DisplayDialog("Error", "Map size must be between 1000 - 6000", "Ok");
+                        return;
+                    }
+                    switch (newMap)
+                    {
+                        case 0:
+                            script.newEmptyTerrain(mapSize);
+                            break;
+                        case 1:
+                            // User cancelled
+                            break;
+                        case 2:
+                            saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+                            if (saveFile == "")
+                            {
+                                EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
+                            }
+                            Debug.Log("Exported map " + saveFile);
+                            script.Save(saveFile);
+                            script.newEmptyTerrain(mapSize);
+                            break;
+                        default:
+                            Debug.Log("Create New Map option outofbounds");
+                            break;
+                    }
+                }
+                GUILayout.Label("Size", GUILayout.MaxWidth(30));
+                mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
+                
+                
                 if (GUILayout.Button("Select Bundle File", GUILayout.MaxWidth(125)))
                 {
                     script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
                 }
-                GUILayout.EndHorizontal();
                 GUILayout.TextArea(script.bundleFile);
-                break;
+
+                EditorGUILayout.EndHorizontal();
+                if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
+                    "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
+                {
+                    prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
+                    if (prefabSaveFile == "")
+                    {
+                        return;
+                    }
+                    script.exportLootCrates(prefabSaveFile);
+                }
+            break;
             #endregion
             #region Tools
             case 1:
