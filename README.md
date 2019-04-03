@@ -1,8 +1,8 @@
 # Rust Map Making Unity Editor
 
-**Make sure you're using a Unity 2018.3.3f1 or 2018.3.4f1 .**
+**Make sure you're using a Unity 2018.3.4f1 .**
 Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
-After installing Unity Hub, download the Unity 2018.3.3f1 from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
+After installing Unity Hub, download the Unity 2018.3.4f1 from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
@@ -45,8 +45,8 @@ Also using Assets from:
 ## How to use the Editor
 
 ### 1) Opening the Project
-Make sure you are on at least Unity 2018.3.3 and then launch Unity. We recommend using Unity Hub to open the editor.
-When you open Unity Hub a projects window will appear, click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. You will then see the Project in the window. Click on the three dots "..." on the right and make sure you are on Unity version 2018.3.3 or above and click "Open". The Unity project along with our editor scripts will now be loaded into Unity.
+Make sure you are on Unity 2018.3.4 and then launch Unity. We recommend using Unity Hub to open the editor.
+When you open Unity Hub a projects window will appear, click on Open. Do not create a new project. Select the folder that contains the files downloaded from GitHub. You will then see the Project in the window. Click on the three dots "..." on the right and make sure you are on Unity version 2018.3.4 and click "Open". The Unity project along with our editor scripts will now be loaded into Unity.
 
 ### 2) Loading a Map
 On the left side of the editor screen, in the Hierarchy you will see all of the object the scene contains. Click on the `MapIO` object and you will notice map options on the right side of the editor in the Inspector. Import/Export buttons are to load and save .map files.
