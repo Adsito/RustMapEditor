@@ -10,6 +10,17 @@ using static WorldConverter;
 using static WorldSerialization;
 
 [Serializable]
+public class PrefabExport
+{
+    public int PrefabNumber
+    {
+        get; set;
+    }
+    public string PrefabProperty
+    {
+        get; set;
+    }
+}
 public class TopologyLayers : List<TopologyLayers>
 {
     public float[,,] Topologies
@@ -97,7 +108,7 @@ public class MapIO : MonoBehaviour {
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
-    public string landLayer = "Ground";
+    public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
     public float progressBar = 0f;
@@ -1810,6 +1821,105 @@ public class MapIO : MonoBehaviour {
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
 
+    public void exportLootCrates(string prefabFilePath)
+    {
+        StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
+        streamWriter.WriteLine("{");
+        List<PrefabExport> prefabExports = new List<PrefabExport>();
+        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        var lootCrateCount = 0;
+        foreach (PrefabDataHolder p in prefabs)
+        {
+            switch (p.prefabData.id)
+            {
+                default:
+                    // Not a lootcrate
+                    break;
+                case 1603759333:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 3286607235:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 1071933290:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 2857304752:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 1546200557:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 2066926276:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 1791916628:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 1892026534:
+                    p.transform.Rotate(Vector3.zero, 180f);
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+                case 3852690109:
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                    });
+                    lootCrateCount++;
+                    break;
+            }
+        }
+        foreach (PrefabExport prefabDetail in prefabExports)
+        {
+            streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabProperty + "\",");
+        }
+        streamWriter.WriteLine("   \"Prefab Count\": " + lootCrateCount);
+        streamWriter.WriteLine("}");
+        streamWriter.Close();
+        Debug.Log("Exported " + lootCrateCount + " lootcrates.");
+    }
+
     private void loadMapInfo(MapInfo terrains)
     {
         if (MapIO.topology == null)
@@ -1830,6 +1940,7 @@ public class MapIO : MonoBehaviour {
         land.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
 
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.3f);
         topology.InitMesh(terrains.topology);
 
         land.terrainData.heightmapResolution = terrains.resolution;
@@ -1853,23 +1964,23 @@ public class MapIO : MonoBehaviour {
         land.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
         water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
 
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Ground Data ", 0.4f);
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         groundLandData.setData(terrains.splatMap, "ground");
 
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Biome Data ", 0.5f);
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.5f);
         biomeLandData.setData(terrains.biomeMap, "biome");
 
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Alpha Data ", 0.6f);
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.6f);
         alphaLandData.setData(terrains.alphaMap, "alpha");
 
-        EditorUtility.DisplayProgressBar("Loading Map", "Loading Topology Data ", 0.7f);
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.7f);
         topologyLandData.setData(topology.getSplatMap((int)topologyLayer), "topology");
         changeLandLayer();
 
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
 
-        EditorUtility.DisplayProgressBar("Loading Map", "Spawning Prefabs ", 0.8f);
+        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
 
         Dictionary<uint, GameObject> savedPrefabs = getPrefabs();
 
@@ -1893,7 +2004,7 @@ public class MapIO : MonoBehaviour {
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
-        EditorUtility.DisplayProgressBar("Loading Map", "Spawning Paths ", 0.9f);
+        EditorUtility.DisplayProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.9f);
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
 
@@ -1915,13 +2026,11 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        EditorUtility.DisplayProgressBar("Loading Map", "Finishing ", 1f);
         EditorUtility.ClearProgressBar();
     }
 
     public void Load(WorldSerialization blob)
     {
-        Debug.Log("Map hash: " + blob.Checksum);
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
         loadMapInfo(terrains);
     }
@@ -1937,19 +2046,18 @@ public class MapIO : MonoBehaviour {
         if(selectedLandLayer != null)
             selectedLandLayer.save();
         saveTopologyLayer();
-        EditorUtility.DisplayProgressBar("Saving Map", "Saving Heightmap ", 0.1f);
         if (GameObject.FindGameObjectWithTag("Water") == null)
             Debug.Log("Water not enabled");
         if (GameObject.FindGameObjectWithTag("Land") == null)
             Debug.Log("Land not enabled");
         Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        EditorUtility.DisplayProgressBar("Saving Map", "Saving Watermap ", 0.25f);
-        EditorUtility.DisplayProgressBar("Saving Map", "Saving Prefabs ", 0.4f);
+        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
+        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
         WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
-        EditorUtility.DisplayProgressBar("Saving Map", "Saving Layers ", 0.6f);
+        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
-        EditorUtility.DisplayProgressBar("Saving Map", "Saving to disk ", 0.8f);
+        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
         EditorUtility.ClearProgressBar();
         //Debug.Log("Map hash: " + world.Checksum);
     }
