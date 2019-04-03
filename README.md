@@ -1,8 +1,8 @@
 # Rust Map Making Unity Editor
 
-**Make sure you're using a Unity 2018.3.10f1 or above.**
+**Make sure you're using a Unity 2018.3.3f1 or 2018.3.4f1 .**
 Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
-After installing Unity Hub, download the latest version of Unity from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
+After installing Unity Hub, download the Unity 2018.3.3f1 from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
@@ -10,18 +10,14 @@ https://discord.gg/VQruSpk
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
-### Support Us
-The entirety of the Rust Map Making community resources, including this editor, are free and open-source. We would appreciate any sized contribution to fund these resources. Any amount, even just a single $ can go a long way in maintaining these projects. Thank you.
-
-If you wish to support us, follow this link and enter your desired amount: https://paypal.me/RustMapMaking
-
 ### Credits
 The foundations of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
 https://github.com/JasonM97/Rust-Map-Editor
 https://www.patreon.com/dezinated
 
 Also using Assets from:
--https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Ground Textures.
+-https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
+-https://assetstore.unity.com/packages/tools/terrain/terrain-toolkit-2017-83490 for Terrain Toolkit 2017.
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
