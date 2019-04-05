@@ -2083,6 +2083,11 @@
 2610609995  :  assets/content/properties/lootspawn/collections/m249 with ammo.asset
 3782458982  :  assets/content/properties/lootspawn/collections/m39 with ammo.asset
 3166274234  :  assets/content/properties/lootspawn/collections/m92 with ammo.asset
+1523805445  :  assets/content/properties/lootspawn/collections/mgl/mgl.asset
+1706851294  :  assets/content/properties/lootspawn/collections/mgl/mgl_ammo.asset
+3339505179  :  assets/content/properties/lootspawn/collections/mgl/mgl_buckshot.asset
+664468468  :  assets/content/properties/lootspawn/collections/mgl/mgl_he.asset
+1692375837  :  assets/content/properties/lootspawn/collections/mgl/mgl_smoke.asset
 840815596  :  assets/content/properties/lootspawn/collections/mining gunpowder.asset
 4220578663  :  assets/content/properties/lootspawn/collections/mining metalfrags.asset
 169248058  :  assets/content/properties/lootspawn/collections/mining oil.asset
@@ -2606,10 +2611,12 @@
 478599631  :  assets/content/properties/lootspawn/generated/items/weapon/grenade.beancan.asset
 4044697315  :  assets/content/properties/lootspawn/generated/items/weapon/grenade.f1.asset
 504759315  :  assets/content/properties/lootspawn/generated/items/weapon/knife.bone.asset
+1802332459  :  assets/content/properties/lootspawn/generated/items/weapon/knife.combat.asset
 287435709  :  assets/content/properties/lootspawn/generated/items/weapon/lmg.m249.asset
 1983270167  :  assets/content/properties/lootspawn/generated/items/weapon/longsword.asset
 1445369734  :  assets/content/properties/lootspawn/generated/items/weapon/mace.asset
 1257639875  :  assets/content/properties/lootspawn/generated/items/weapon/machete.asset
+3629694038  :  assets/content/properties/lootspawn/generated/items/weapon/multiplegrenadelauncher.asset
 3608780241  :  assets/content/properties/lootspawn/generated/items/weapon/pistol.eoka.asset
 2541406536  :  assets/content/properties/lootspawn/generated/items/weapon/pistol.m92.asset
 2048147968  :  assets/content/properties/lootspawn/generated/items/weapon/pistol.nailgun.asset
@@ -2758,6 +2765,7 @@
 2129633267  :  assets/content/properties/protection/clothing/hazmat_boots.asset
 3731040078  :  assets/content/properties/protection/clothing/hazmat_fullsuit.asset
 1150064829  :  assets/content/properties/protection/clothing/hazmat_gloves.asset
+4005794538  :  assets/content/properties/protection/clothing/hazmat_heavy.asset
 2308738888  :  assets/content/properties/protection/clothing/hazmat_helmet.asset
 3985418679  :  assets/content/properties/protection/clothing/hazmat_jacket.asset
 111101561  :  assets/content/properties/protection/clothing/hazmat_pants.asset
@@ -3074,6 +3082,8 @@
 1599665512  :  assets/content/props/light_fixtures/v2/plight.siren.red.off.prefab
 672448401  :  assets/content/props/light_fixtures/v2/plight.siren.red.on.prefab
 1099756916  :  assets/content/props/light_fixtures/v2/plight.spotlight.on.cool.prefab
+2051419081  :  assets/content/props/light_fixtures/v2/plight.streetlight.detached.on.prefab
+263877350  :  assets/content/props/light_fixtures/v2/plight.streetlight.on.prefab
 1982510237  :  assets/content/props/light_fixtures/v2/radtown work prefabs/airfield lighting.prefab
 676393543  :  assets/content/props/light_fixtures/v2/radtown work prefabs/cargoship exhaust.prefab
 617500384  :  assets/content/props/light_fixtures/v2/radtown work prefabs/cargoship interior lighting.prefab
@@ -3081,6 +3091,8 @@
 2424002848  :  assets/content/props/light_fixtures/v2/radtown work prefabs/compound lighting.prefab
 307619289  :  assets/content/props/light_fixtures/v2/radtown work prefabs/lighthousefx-ph.prefab
 2305922457  :  assets/content/props/light_fixtures/v2/radtown work prefabs/militarytunnel lighting v2.prefab
+1974287225  :  assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig exhaust flame v2.1.prefab
+4287108809  :  assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig exhaust flame v2.prefab
 3742542907  :  assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig exhaust flame.prefab
 3496704987  :  assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig fx.prefab
 1051135025  :  assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig lighting.prefab
@@ -4127,6 +4139,7 @@
 1521329408  :  assets/content/sound/oilrig/oilrig-fluorescent-light-buzz.ambience-def.asset
 3601308780  :  assets/content/sound/oilrig/oilrig-fluorescent-light-buzz.ambience-list.asset
 307435840  :  assets/content/sound/oilrig/oilrig-fluorescent-light-buzz.asset
+2018367643  :  assets/content/sound/oilrig/oilriglargeaudio.prefab
 1777696938  :  assets/content/sound/oilrig/oilrigsmallaudio.prefab
 1090776032  :  assets/content/sound/oilrig/oilrig-sparks.ambience-def.asset
 1754988930  :  assets/content/sound/oilrig/oilrig-sparks.ambience-list.asset
@@ -5752,6 +5765,12 @@
 3552767728  :  assets/items.asset
 1443996968  :  assets/manifest.asset
 3626367034  :  assets/plugins/facepunch.unity/fpapi/resources/facepunch.performance.prefab
+1909876928  :  assets/prefabs/ammo/40mmgrenade/40mm_buckshot.item.prefab
+1494616841  :  assets/prefabs/ammo/40mmgrenade/40mm_grenade_he.item.prefab
+1859672190  :  assets/prefabs/ammo/40mmgrenade/40mm_grenade_he.prefab
+3304606617  :  assets/prefabs/ammo/40mmgrenade/40mm_grenade_smoke.item.prefab
+1502533292  :  assets/prefabs/ammo/40mmgrenade/40mm_grenade_smoke.prefab
+133790274  :  assets/prefabs/ammo/40mmgrenade/effects/40mm_he_explosion.prefab
 26759631  :  assets/prefabs/ammo/arrow/arrow.prefab
 3234870787  :  assets/prefabs/ammo/arrow/arrow_hv.item.prefab
 4135687601  :  assets/prefabs/ammo/arrow/arrow_hv.prefab
@@ -6477,6 +6496,7 @@
 226280759  :  assets/prefabs/componentitems/weaponparts/semibody/semibody.worldmodel.prefab
 521610271  :  assets/prefabs/componentitems/weaponparts/smgbody/smgbody.item.prefab
 1888066580  :  assets/prefabs/componentitems/weaponparts/smgbody/smgbody.worldmodel.prefab
+1424066995  :  assets/prefabs/debris/debris.wall.prefab
 663059122  :  assets/prefabs/deployable/advanced lootbox/advancedlootbox.prefab
 876283078  :  assets/prefabs/deployable/barricades/barricade.concrete.item.prefab
 2057881102  :  assets/prefabs/deployable/barricades/barricade.concrete.prefab
@@ -7221,6 +7241,7 @@
 1523703314  :  assets/prefabs/io/electric/lights/simplelight.prefab
 4129440825  :  assets/prefabs/io/electric/lights/sirenlightorange.prefab
 500822506  :  assets/prefabs/io/electric/other/alarmsound.prefab
+1174518703  :  assets/prefabs/io/electric/other/rfbroadcaster.static.prefab
 2864014888  :  assets/prefabs/io/electric/switches/andswitch.prefab
 1841596500  :  assets/prefabs/io/electric/switches/cardreader.prefab
 3165678508  :  assets/prefabs/io/electric/switches/doormanipulator.prefab
@@ -7986,6 +8007,7 @@
 4038020117  :  assets/prefabs/tools/rf units/rfreceiver.prefab
 1277383634  :  assets/prefabs/tools/smoke grenade/effects/ignite.prefab
 2143839482  :  assets/prefabs/tools/smoke grenade/effects/smokegrenade.prefab
+430600702  :  assets/prefabs/tools/smoke grenade/effects/smokegrenade_small.prefab
 1464001967  :  assets/prefabs/tools/smoke grenade/grenade.smoke.deployed.prefab
 2797820532  :  assets/prefabs/tools/smoke grenade/smoke_grenade.item.prefab
 3642747736  :  assets/prefabs/tools/smoke grenade/smoke_grenade.weapon.prefab
@@ -8077,10 +8099,14 @@
 3961284343  :  assets/prefabs/weapon mods/silencers/effects/silencedshot_default.prefab
 4241824942  :  assets/prefabs/weapon mods/silencers/effects/silencer_attach.fx.prefab
 1347189270  :  assets/prefabs/weapon mods/silencers/effects/silencer_attach.sound.asset
+3214577923  :  assets/prefabs/weapon mods/silencers/oilfiltersilencer_v.prefab
+450231358  :  assets/prefabs/weapon mods/silencers/oilfiltersilencer_w.prefab
 2395313048  :  assets/prefabs/weapon mods/silencers/silencer.entity.prefab
 3945301531  :  assets/prefabs/weapon mods/silencers/silencer.item.prefab
 4172713628  :  assets/prefabs/weapon mods/silencers/silencer.vm.attachment.prefab
 306216640  :  assets/prefabs/weapon mods/silencers/silencer.worldmodel.prefab
+3275154730  :  assets/prefabs/weapon mods/silencers/sodacansilencer_v.prefab
+1767351887  :  assets/prefabs/weapon mods/silencers/sodacansilencer_w.prefab
 1804136847  :  assets/prefabs/weapon mods/silencers/sound/silenced_shot.asset
 1036951605  :  assets/prefabs/weapon mods/smallscope/scope.small.item.prefab
 2957289628  :  assets/prefabs/weapon mods/smallscope/smallscope.entity.prefab
@@ -8434,6 +8460,27 @@
 3670045966  :  assets/prefabs/weapons/flamethrower/sounds/flamethrower-pilot-loop.asset
 1801105248  :  assets/prefabs/weapons/flamethrower/sounds/flamethrower-toggle_flame.asset
 4209166294  :  assets/prefabs/weapons/flamethrower/sounds/flamethrower-valve_open.asset
+327589787  :  assets/prefabs/weapons/grenade launcher/effects/attack.prefab
+2079084601  :  assets/prefabs/weapons/grenade launcher/effects/deploy.prefab
+1587257372  :  assets/prefabs/weapons/grenade launcher/effects/reload_end.prefab
+1887467020  :  assets/prefabs/weapons/grenade launcher/effects/reload_single_insert.prefab
+1692704936  :  assets/prefabs/weapons/grenade launcher/effects/reload_single_spin.prefab
+1543993308  :  assets/prefabs/weapons/grenade launcher/effects/reload_single_start.prefab
+3768160076  :  assets/prefabs/weapons/grenade launcher/effects/reload_start.prefab
+2112039638  :  assets/prefabs/weapons/grenade launcher/glammo.prefab
+1608177130  :  assets/prefabs/weapons/grenade launcher/glammo_low.prefab
+3238515541  :  assets/prefabs/weapons/grenade launcher/grenadelauncher.viewmodel.prefab
+3251480081  :  assets/prefabs/weapons/grenade launcher/grenadelauncher.worldmodel.prefab
+1233562048  :  assets/prefabs/weapons/grenade launcher/mgl.entity.prefab
+4002274265  :  assets/prefabs/weapons/grenade launcher/mgl.item.prefab
+3532422562  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-attack.asset
+2770667660  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-deploy.asset
+1933083716  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-explosion.asset
+2325861299  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-reload-end.asset
+2133792351  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-reload-single-insert.asset
+3692899639  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-reload-single-spin.asset
+1290285414  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-reload-single-start.asset
+1222001160  :  assets/prefabs/weapons/grenade launcher/sound/grenade-launcher-reload-start.asset
 712012299  :  assets/prefabs/weapons/hacksaw/effects/attack-1.prefab
 656412929  :  assets/prefabs/weapons/hacksaw/effects/attack-2.prefab
 2255031337  :  assets/prefabs/weapons/hacksaw/effects/hit.prefab
@@ -8520,6 +8567,24 @@
 1818398564  :  assets/prefabs/weapons/hatchet/sound/hatchet-strike.asset
 291400807  :  assets/prefabs/weapons/hatchet/sound/hatchet-strike-muted.asset
 4030259360  :  assets/prefabs/weapons/hatchet/sound/hatchet-strike-soft.asset
+3631351366  :  assets/prefabs/weapons/knife/effects/attack-1.prefab
+2017309924  :  assets/prefabs/weapons/knife/effects/attack-2.prefab
+3488194323  :  assets/prefabs/weapons/knife/effects/deploy.prefab
+3855319798  :  assets/prefabs/weapons/knife/effects/hit.prefab
+2320416148  :  assets/prefabs/weapons/knife/effects/holster.prefab
+796893045  :  assets/prefabs/weapons/knife/effects/strike.prefab
+2801170576  :  assets/prefabs/weapons/knife/effects/strike_screenshake.prefab
+3463118964  :  assets/prefabs/weapons/knife/effects/strike-soft.prefab
+1058114240  :  assets/prefabs/weapons/knife/effects/throw.prefab
+327944951  :  assets/prefabs/weapons/knife/knife.combat.entity.prefab
+448209846  :  assets/prefabs/weapons/knife/knife.combat.item.prefab
+742765807  :  assets/prefabs/weapons/knife/knife.combat.projectile.prefab
+3072374812  :  assets/prefabs/weapons/knife/knife.combat.skinnable.asset
+3332341092  :  assets/prefabs/weapons/knife/knife.combat.viewmodel.prefab
+721747552  :  assets/prefabs/weapons/knife/knife.combat.worldmodel.prefab
+4116549901  :  assets/prefabs/weapons/knife/knife_v.prefab
+2042556838  :  assets/prefabs/weapons/knife/knife_w.prefab
+3210690743  :  assets/prefabs/weapons/knife/sound/combat.knife.deploy.asset
 2759858355  :  assets/prefabs/weapons/l96/effects/attack.prefab
 1333833444  :  assets/prefabs/weapons/l96/effects/attack_shake.prefab
 1072513790  :  assets/prefabs/weapons/l96/effects/dryfire.prefab
@@ -8610,6 +8675,7 @@
 1960117851  :  assets/prefabs/weapons/m249/effects/w_eject_rifle_shell.prefab
 1440914039  :  assets/prefabs/weapons/m249/m249.entity.prefab
 97851053  :  assets/prefabs/weapons/m249/m249.item.prefab
+1650174910  :  assets/prefabs/weapons/m249/m249.skinnable.asset
 572664508  :  assets/prefabs/weapons/m249/m249.viewmodel.prefab
 1877337005  :  assets/prefabs/weapons/m249/m249_worldmodel.prefab
 1106011523  :  assets/prefabs/weapons/m249/sound/m249-ammobox_insert.asset
@@ -8642,6 +8708,7 @@
 2403715222  :  assets/prefabs/weapons/m39 emr/effects/w_eject_rifle_shell.prefab
 1517089664  :  assets/prefabs/weapons/m39 emr/m39.entity.prefab
 950244464  :  assets/prefabs/weapons/m39 emr/m39.item.prefab
+1544599970  :  assets/prefabs/weapons/m39 emr/m39.skinnable.asset
 1900502670  :  assets/prefabs/weapons/m39 emr/m39.viewmodel.prefab
 762720731  :  assets/prefabs/weapons/m39 emr/m39.worldmodel.prefab
 111129657  :  assets/prefabs/weapons/m39 emr/sound/m39-attack.asset
@@ -9953,6 +10020,8 @@
 3289360761  :  brow
 399556546  :  bucket
 976870907  :  bucket_mesh
+4223781255  :  bulb_off
+1161049772  :  bulb_on
 3589697355  :  bulbsounds
 717082016  :  bullet
 174416087  :  bullet_1
@@ -10053,7 +10122,6 @@
 2774163504  :  chaff_left
 1960794062  :  chaff_right
 136036548  :  chaffeffects
-4168786373  :  chainlink
 3420923628  :  chainlink_1
 66065270  :  chainlink_10
 3256043541  :  chainlink_11
@@ -10155,11 +10223,9 @@
 2453481397  :  check (8)
 1523019402  :  check (9)
 3990636557  :  chicken_rootbone
-3659241929  :  chin_bars
 1716989129  :  chinese_door_decoration/sockets/dressing-male
 2428313974  :  chinese_door_frame_decoration/sockets/dressing-male
 113872500  :  ChineseLantern.deployed/sockets (1)/free
-2923899776  :  chinlockedcratecodelock_lod0
 3763519731  :  christmas_lights
 4202687755  :  christmas_lights_lod0
 4145641073  :  christmas_lights_lod1
@@ -10194,8 +10260,6 @@
 2967279854  :  coax_mg
 1573134182  :  coax_mg_muzzlespawn
 947647945  :  cocking_handle
-371700132  :  codelockcollision
-3344107452  :  codelockedhackablecrate
 4184059006  :  coffin
 93644822  :  coffin_lod0
 3997911705  :  coffin_lod1
@@ -10301,7 +10365,6 @@
 2686370343  :  dbs_stock_lod1
 4278924953  :  dbs_stock_lod2
 505782801  :  decorations
-2988857222  :  denied
 4198534919  :  deploy
 1292241482  :  deploy (1)
 3187952048  :  deploy_volume
@@ -10719,10 +10782,15 @@
 222828128  :  gingermen_treeset_lod0
 789059322  :  gingermen_treeset_lod1
 1744927325  :  gingermen_treeset_lod2
+212559732  :  gl_ammo_1
+1576496266  :  gl_ammo_2
+3374610817  :  gl_ammo_3
+1409577700  :  gl_ammo_4
+921136757  :  gl_ammo_5
+2089106130  :  gl_ammo_6
 432631845  :  glass
 94584099  :  glass_lod0
 820010373  :  glass_lod1
-670695676  :  granted
 3829453833  :  grass
 2953204084  :  gravel
 183332688  :  gravestone
@@ -10735,6 +10803,7 @@
 2494064494  :  green_bubbles (1)
 873715116  :  green_smoke
 2640347685  :  grenade
+2877614435  :  grenadelauncher.viewmodel
 1729961527  :  grip_lod0
 3927880476  :  grip_lod1
 1927852572  :  grip_lod2
@@ -10760,11 +10829,7 @@
 3667692849  :  gun_right_yaw
 3830236201  :  guntrap.deployed
 2666710477  :  guntrap.deployed/sockets/free
-3600302157  :  hacked
-2421408034  :  hackingobject
 1610611593  :  hackingtext
-592094913  :  hackprogress
-1164200004  :  hackstart
 4227963231  :  hammer
 2231176917  :  hand_mesh
 3404235131  :  hand_mesh1
@@ -11162,9 +11227,6 @@
 4249450132  :  ladder.wooden.wall/sockets/free
 2613904195  :  landmine/sockets/free
 536165828  :  lantern.deployed/sockets/free
-2166080233  :  laptopambient
-242862488  :  laptopcollision
-1885019689  :  laptopmodel
 1612821789  :  large.rechargable.battery.deployed/sockets/free
 2071462656  :  large_planter_lod0
 3317134926  :  large_planter_lod1
@@ -11568,11 +11630,6 @@
 824075610  :  piston_axle
 2351593388  :  piston_scale
 4250445788  :  pivot
-2603364539  :  plane
-3391118211  :  plane (1)
-2777939745  :  plane (2)
-2875140444  :  plane (3)
-524586194  :  plane (4)
 1822061927  :  planter.large.deployed
 2813742009  :  planter.large.deployed/sockets/free
 736582669  :  planter.large.deployed/sockets/PlanterSlot (1)
@@ -11607,10 +11664,13 @@
 4088326849  :  playerattack
 3921235351  :  playersmoothmovement
 2884648246  :  playspookysound
+1262843088  :  plight.flare
 2857692792  :  point
 3178678925  :  point light
 4237050857  :  point light (1)
 1953850905  :  point light 1
+190719148  :  point light g (1)
+1947089254  :  point light r (1)
 4197660835  :  point1
 4081770856  :  point2
 160534462  :  poison_arrowhead
@@ -11619,6 +11679,7 @@
 2899568917  :  polestar_treeset
 4216657296  :  port
 354337542  :  port_cover
+4285767805  :  powerin2
 3778543711  :  press
 1504337928  :  pressurepad.deployed/sockets/free
 3373787990  :  prevent_building
@@ -11797,6 +11858,7 @@
 442576725  :  reticle
 662669140  :  revdown
 2727360023  :  revup
+4293496380  :  RFBroadcaster.static/sockets/free
 3935016830  :  RFBroadcaster/sockets/free
 3507876735  :  RFReceiver/sockets/free
 1323745918  :  rifle
@@ -12197,6 +12259,7 @@
 3800726972  :  serveractionchange
 979061374  :  servercardswiped
 2150846253  :  servereffects
+240404208  :  serverfractionalreloadinsert
 2778616053  :  serversetfrequency
 643124146  :  setbranchoffpower
 3749570935  :  setfiring
@@ -12410,7 +12473,6 @@
 2808526587  :  startloading
 548378753  :  startlootingcontainer
 555589155  :  startreload
-1308707382  :  statusglow
 901999250  :  steering_wheel
 868218935  :  stick
 1370163411  :  stock_lod0
@@ -12476,9 +12538,6 @@
 2875459524  :  tail5
 410522215  :  taildamaged
 2095191079  :  taildestroyed
-560834115  :  targcomp_lod0
-638909261  :  targcomp_lod1
-1988729615  :  targcomp_lod2
 2935729730  :  target
 365102685  :  target_collider
 2528224745  :  target_collider_bullseye
@@ -12610,6 +12669,7 @@
 150341774  :  v_eoka_rock
 1181766135  :  v_flamethrower
 3563692165  :  v_flare
+339617327  :  v_grenadelauncher
 1132543003  :  v_keycard
 4043666687  :  v_l96
 2432118130  :  v_lr300
@@ -12843,6 +12903,11 @@
 3834956913  :  weapon_03
 2582317712  :  weapon_04
 1886444223  :  weapon_05
+4134519798  :  weapon_06
+1898416453  :  weapon_07
+3546386693  :  weapon_08
+3325477717  :  weapon_09
+2292330994  :  weapon_10
 584842500  :  weapon_parent
 4145912575  :  weapon_root
 1714380057  :  weapon_socket
@@ -12887,13 +12952,6 @@
 3642589474  :  wood
 1232315445  :  woodbox_deployed
 3196867913  :  woodbox_deployed/sockets/free
-2531495811  :  wooden_crate_2 (3)
-3626044986  :  wooden_crate_2 (4)
-3252796901  :  wooden_crate_2 (5)
-661669350  :  wooden_crate_2_lod0
-936648074  :  wooden_crate_2_lod1
-1978382879  :  wooden_crate_2_lod2
-2124437093  :  wooden_crate_2_lod3
 3230246947  :  wooden_cross (1)
 3071434081  :  wooden_cross_lod0
 2314485048  :  wooden_cross_lod1
