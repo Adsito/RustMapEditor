@@ -36,10 +36,8 @@ public class GameManifest : ScriptableObject
         if ((UnityEngine.Object)GameManifest.loadedManifest != (UnityEngine.Object)null)
             return;
         GameManifest.loadedManifest = loadedManifest;
-        //Debug.Log(loadedManifest.prefabProperties.Length);
         foreach (GameManifest.PrefabProperties prefabProperty in GameManifest.loadedManifest.prefabProperties)
             GameManifest.guidToPath.Add(prefabProperty.guid, prefabProperty.name);
-        //DebugE.Log((object)GameManifest.GetMetadataStatus(), StackTraceLogType.None);
     }
     public static void Load()
     {
@@ -48,25 +46,7 @@ public class GameManifest : ScriptableObject
         GameManifest.loadedManifest = FileSystem.Load<GameManifest>("Assets/manifest.asset", true);
         foreach (GameManifest.PrefabProperties prefabProperty in GameManifest.loadedManifest.prefabProperties)
             GameManifest.guidToPath.Add(prefabProperty.guid, prefabProperty.name);
-        //DebugE.Log((object)GameManifest.GetMetadataStatus(), StackTraceLogType.None);
     }
-/*
-    public static void LoadAssets()
-    {
-        if (Skinnable.All != null)
-            return;
-        Skinnable.All = GameManifest.LoadSkinnableAssets();
-        DebugEx.Log((object)GameManifest.GetAssetStatus(), StackTraceLogType.None);
-    }
-
-    private static Skinnable[] LoadSkinnableAssets()
-    {
-        string[] skinnables = GameManifest.loadedManifest.skinnables;
-        Skinnable[] skinnableArray = new Skinnable[skinnables.Length];
-        for (int index = 0; index < skinnables.Length; ++index)
-            skinnableArray[index] = FileSystem.Load<Skinnable>(skinnables[index], true);
-        return skinnableArray;
-    }*/
 
     internal static Dictionary<string, string[]> LoadEffectDictionary()
     {

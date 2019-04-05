@@ -181,8 +181,6 @@ public class MapIO : MonoBehaviour {
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
                 break;
             case "topology":
-                //updated topology values
-                //selectedLandLayer.splatMap;
                 saveTopologyLayer();
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
                 selectedLandLayer.setData(topology.getSplatMap((int)topologyLayer), "topology");
@@ -208,7 +206,6 @@ public class MapIO : MonoBehaviour {
 
     private void cleanUpMap()
     {
-        //offset = 0;
         selectedLandLayer = null;
         foreach(PrefabDataHolder g in GameObject.FindObjectsOfType<PrefabDataHolder>())
         {
@@ -228,7 +225,6 @@ public class MapIO : MonoBehaviour {
     }
     public static Vector3 getMapOffset()
     {
-        //Debug.Log(0.5f * getTerrainSize());
         return 0.5f * getTerrainSize();
     }
     
@@ -1839,7 +1835,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1847,7 +1843,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1855,7 +1851,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1863,7 +1859,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1871,7 +1867,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1879,7 +1875,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1887,7 +1883,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1896,7 +1892,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1904,7 +1900,7 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":" + "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
                     });
                     lootCrateCount++;
                     break;
@@ -1924,7 +1920,6 @@ public class MapIO : MonoBehaviour {
     {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
-        
         cleanUpMap();
         
         var terrainPosition = 0.5f * terrains.size;
@@ -1954,10 +1949,8 @@ public class MapIO : MonoBehaviour {
 
         land.terrainData.alphamapResolution = terrains.resolution;
         land.terrainData.baseMapResolution = terrains.resolution - 1;
-        //land.terrainData.SetDetailResolution(terrains.resolution - 1, 8);
         water.terrainData.alphamapResolution = terrains.resolution;
         water.terrainData.baseMapResolution = terrains.resolution - 1;
-        //water.terrainData.SetDetailResolution(terrains.resolution - 1, 8);
 
         land.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
         water.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
@@ -2019,7 +2012,6 @@ public class MapIO : MonoBehaviour {
             List<GameObject> pathNodes = new List<GameObject>();
             for (int j = 0; j < terrains.pathData[i].nodes.Length; j++)
             {
-                //GameObject newObject = Instantiate(pathObj, averageLocation + terrainPosition, Quaternion.identity, pathsParent);
                 GameObject newNode = Instantiate(pathNodeObj, newObject.transform);
                 newNode.transform.position = terrains.pathData[i].nodes[j] + terrainPosition;
                 pathNodes.Add(newNode);
@@ -2059,7 +2051,6 @@ public class MapIO : MonoBehaviour {
         world.Save(path);
         EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
         EditorUtility.ClearProgressBar();
-        //Debug.Log("Map hash: " + world.Checksum);
     }
 
     public void newEmptyTerrain(int size)
@@ -2073,30 +2064,12 @@ public class MapIO : MonoBehaviour {
         setMinimumHeight(503f);
     }
 
-
     public string bundleFile = "No bundle file selected";
 
     public void StartPrefabLookup()
     {
         setPrefabLookup(new PrefabLookup(bundleFile, this));
     }
-    /*
-    public void Start()
-    {
-        if (bundleFile.Equals("No bundle file selected"))
-        {
-            Debug.LogError("No bundle file selected");
-            UnityEditor.EditorApplication.isPlaying = false;
-            return;
-        }
-        if (getPrefabLookUp() != null)
-        {
-            getPrefabLookUp().Dispose();
-            setPrefabLookup(null);
-        }
-        setPrefabLookup(new PrefabLookup(bundleFile, this));
-    }
-    */
     public void ReplacePrefabs()
     {
         if(prefabLookup == null)
@@ -2184,62 +2157,7 @@ public class MapIO : MonoBehaviour {
             go.transform.localScale = prefabData.scale;
             go.SetActive(true);
         }
-
         return go;
-    }
-
-    void OnApplicationQuit()
-    {
-        /*
-        var offset = getMapOffset();
-        Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        Dictionary<uint, GameObject> savedPrefabs = getPrefabs();
-
-        Debug.Log(GameObject.FindGameObjectsWithTag("LoadedPrefab").Length);
-
-        foreach (GameObject pdh in GameObject.FindGameObjectsWithTag("LoadedPrefab"))
-        {
-            PrefabData prefabData = pdh.GetComponent<PrefabDataHolder>().prefabData;
-            GameObject spawnObj;
-
-            if (savedPrefabs.ContainsKey(prefabData.id))
-            {
-                savedPrefabs.TryGetValue(prefabData.id, out spawnObj);
-            }
-            else
-            {
-                spawnObj = defaultObj;
-            }
-
-            GameObject go = GameObject.Instantiate(spawnObj, prefabData.position + offset, prefabData.rotation, prefabsParent);
-            PrefabUtility.InstantiatePrefab(go);
-            go.tag = "NotLoadedPrefab";
-            go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
-            Destroy(pdh);
-            
-        }
-        */
-        getPrefabLookUp().Dispose();
-        setPrefabLookup(null);
-        /*
-        Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
-        {
-            GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-            GameObject newObject = spawnPrefab(defaultObj, pdh.prefabData, prefabsParent);
-            
-
-            PrefabDataHolder prefabData = newObject.GetComponent<PrefabDataHolder>();
-            if (prefabData == null)
-            {
-                newObject.AddComponent<PrefabDataHolder>();
-            }
-            prefabData.prefabData = pdh.prefabData;
-
-            Destroy(pdh.gameObject);
-        }
-        */
     }
 
     public void SpawnPrefabs()
