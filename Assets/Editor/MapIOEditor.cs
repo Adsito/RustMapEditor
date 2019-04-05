@@ -106,6 +106,7 @@ public class MapIOEditor : Editor
                     switch (newMap)
                     {
                         case 0:
+                            script.loadPath = "New Map";
                             script.newEmptyTerrain(mapSize);
                             break;
                         case 1:
@@ -120,6 +121,7 @@ public class MapIOEditor : Editor
                             }
                             Debug.Log("Exported map " + saveFile);
                             script.Save(saveFile);
+                            script.loadPath = "New Map";
                             script.newEmptyTerrain(mapSize);
                             break;
                         default:
@@ -919,10 +921,13 @@ public class MapIOEditor : Editor
                 {
                     script.StartPrefabLookup();
                 }
-                if (GUILayout.Button("Unload Prefabs"))
+                if (script.getPrefabLookUp() != null)
                 {
-                    script.getPrefabLookUp().Dispose();
-                    script.setPrefabLookup(null);
+                    if (GUILayout.Button("Unload Prefabs"))
+                    {
+                        script.getPrefabLookUp().Dispose();
+                        script.setPrefabLookup(null);
+                    }
                 }
                 if (GUILayout.Button("Spawn Prefabs"))
                 {

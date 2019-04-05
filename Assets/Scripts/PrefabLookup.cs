@@ -19,8 +19,6 @@ public class PrefabLookup : System.IDisposable
 	{
 		get { return prefabsLoaded; }
 	}
-    //StreamWriter streamWriter2 = new StreamWriter("PrefabsLoaded.txt", false);
-    //StreamWriter streamWriter3 = new StreamWriter("PrefabsSpawned.txt", false);
     StreamWriter streamWriter4 = new StreamWriter("PrefabsMatched.txt", false);
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
@@ -50,13 +48,10 @@ public class PrefabLookup : System.IDisposable
                 loadPrefabs(line);
             }
         }
-        //streamWriter2.Close();
-        //streamWriter3.Close();
         streamWriter4.Close();
 
         SceneManager.SetActiveScene(oldScene);
-        mapIO.loadAssetPrefabs();
-        StaticBatchingUtility.Combine(GameObject.FindGameObjectsWithTag("LoadedPrefab"), GameObject.FindGameObjectWithTag("Prefabs"));
+        //StaticBatchingUtility.Combine(GameObject.FindGameObjectsWithTag("LoadedPrefab"), GameObject.FindGameObjectWithTag("Prefabs"));
         prefabsLoaded = true;
     }
 
@@ -70,6 +65,7 @@ public class PrefabLookup : System.IDisposable
         {
             GameObject.DestroyImmediate(prefab);
         }
+        prefabsLoaded = false;
 		backend.Dispose();
 		backend = null;
 	}
@@ -77,7 +73,6 @@ public class PrefabLookup : System.IDisposable
     {
         string[] subpaths = backend.FindAll(path);
         GameObject[] prefabs = new GameObject[subpaths.Length];
-        //var prefabName = "";
         for (int i = 0; i < subpaths.Length; i++)
         {
             if (subpaths[i].Contains(".prefab"))
@@ -86,38 +81,6 @@ public class PrefabLookup : System.IDisposable
                 createPrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
                 streamWriter4.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
             }
-            /*
-            streamWriter2.WriteLine(subpaths[i]);
-            for (int j = 0; j < prefabs.Length; j++)
-            {
-                //streamWriter3.WriteLine(prefabs[j].name);
-                if (subpaths[i].Contains(prefabs[j].name + ".prefab"))
-                {
-                    prefabs[i] = backend.LoadPrefab(subpaths[i]);
-                    //createPrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
-                    streamWriter4.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
-                }
-                
-                if (j > 0)
-                {
-                    if (subpaths[i].Contains(prefabs[j].name + ".prefab") && prefabs[j].name != prefabName)
-                    {
-                        prefabName = prefabs[j].name;
-                        //createPrefab(prefabs[j], subpaths[i], lookup[subpaths[i]]);
-                        streamWriter4.WriteLine(prefabs[j].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
-                    }
-                }
-                else
-                {
-                    if (subpaths[i].Contains(prefabs[j].name + ".prefab"))
-                    {
-                        prefabs[i] = backend.LoadPrefab(subpaths[i]);
-                        createPrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
-                        streamWriter4.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
-                    }
-                }
-            }
-            */
         }
     }
     public void createPrefab(GameObject go, string name, uint rustid)
@@ -139,7 +102,6 @@ public class PrefabLookup : System.IDisposable
 			{
 				throw new System.Exception("Prefab not found: " + uid + " - assets not fully loaded yet?");
 			}
-
 			return res;
 		}
 	}
