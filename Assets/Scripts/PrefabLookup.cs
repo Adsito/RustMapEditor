@@ -19,7 +19,7 @@ public class PrefabLookup : System.IDisposable
 	{
 		get { return prefabsLoaded; }
 	}
-    StreamWriter streamWriter4 = new StreamWriter("PrefabsMatched.txt", false);
+    StreamWriter streamWriter4 = new StreamWriter("PrefabsLoaded.txt", false);
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
         backend = new AssetBundleBackend(bundlename);
@@ -51,7 +51,6 @@ public class PrefabLookup : System.IDisposable
         streamWriter4.Close();
 
         SceneManager.SetActiveScene(oldScene);
-        //StaticBatchingUtility.Combine(GameObject.FindGameObjectsWithTag("LoadedPrefab"), GameObject.FindGameObjectWithTag("Prefabs"));
         prefabsLoaded = true;
     }
 
