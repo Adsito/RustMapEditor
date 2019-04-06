@@ -2110,31 +2110,6 @@ public class MapIO : MonoBehaviour {
             }
         }
     }
-    public void loadAssetPrefabs()
-    {
-        Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-
-
-        foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
-        {
-            if (pdh.gameObject.tag == "LoadedPrefab")
-                continue;
-
-            loadAssetPrefab(pdh, prefabsParent);
-        }
-    }
-    public void loadAssetPrefab(PrefabDataHolder pdh, Transform prefabsParent)
-    {
-        PrefabData prefabData = pdh.prefabData;
-        string name = null;
-        if (!pdh.gameObject.name.StartsWith("DefaultPrefab"))
-            name = pdh.gameObject.name;
-        GameObject go = SpawnPrefab(prefabData, prefabsParent, name);
-        go.tag = "LoadedPrefab";
-        go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
-
-        Destroy(pdh.gameObject);
-    }
     private void setChildrenUnmoveable(GameObject root)
     {
         for(int i = 0; i < root.transform.childCount; i++)
@@ -2159,32 +2134,6 @@ public class MapIO : MonoBehaviour {
         }
         return go;
     }
-
-    public void SpawnPrefabs()
-    {
-        Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-
-
-
-        WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
-        SpawnPrefabs(world, prefabLookup);
-    }
-
-    private void SpawnPrefabs(WorldSerialization blob, PrefabLookup prefabs)
-    {
-        var offset = getMapOffset();
-        foreach (var prefab in blob.world.prefabs)
-        {
-            var go = GameObject.Instantiate(prefabs[prefab.id], prefab.position+offset, prefab.rotation);
-            if (go)
-            {
-                go.transform.localScale = prefab.scale;
-                go.SetActive(true);
-            }
-        }
-    }
-
     public Dictionary<uint, GameObject> getPrefabs()
     {
         Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
