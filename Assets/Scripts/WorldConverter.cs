@@ -170,7 +170,7 @@ public class WorldConverter {
     {
         MapInfo terrains = new MapInfo();
 
-        // Puts prefabs object in middle of map for any size up to 6000.
+        // Puts prefabs object in middle of map.
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
@@ -187,20 +187,8 @@ public class WorldConverter {
         var topologyMap = new TerrainMap<int>(blob.GetMap("topology").data, 1);
         var biomeMap = new TerrainMap<byte>(blob.GetMap("biome").data, 4);
         var alphaMap = new TerrainMap<byte>(blob.GetMap("alpha").data, 1);
-
         
         terrains.topology = topologyMap;
-
-        /*
-        Debug.Log(terrainMap.res + " " + terrainMap.BytesTotal());
-        Debug.Log(heightMap.res + " " + heightMap.BytesTotal());
-        Debug.Log(waterMap.res + " " + waterMap.BytesTotal());
-        Debug.Log(splatMap.res + " " + splatMap.BytesTotal());
-        Debug.Log(topologyMap.res + " " + topologyMap.BytesTotal());
-        Debug.Log(biomeMap.res + " " + biomeMap.BytesTotal());
-        Debug.Log(alphaMap.res + " " + alphaMap.BytesTotal());
-        */
-
 
         terrains.pathData = blob.world.paths.ToArray();
         terrains.prefabData = blob.world.prefabs.ToArray();
@@ -213,14 +201,7 @@ public class WorldConverter {
         terrains.water.heights = TypeConverter.shortMapToFloatArray(waterMap);
 
         terrains = convertMaps(terrains, splatMap, biomeMap, alphaMap);
-
-        
-        
-        
-
-        
         return terrains;
-        
     }
     
 
