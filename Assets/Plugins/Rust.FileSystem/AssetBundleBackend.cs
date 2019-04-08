@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 {
@@ -15,7 +16,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 	{
         
 		isError = false;
-		assetPath = System.IO.Path.GetDirectoryName(assetRoot) + System.IO.Path.DirectorySeparatorChar;
+		assetPath = Path.GetDirectoryName(assetRoot) + Path.DirectorySeparatorChar.ToString();
 
 		rootBundle = AssetBundle.LoadFromFile(assetRoot);
 		if (rootBundle == null)
