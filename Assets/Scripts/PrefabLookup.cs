@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 public class PrefabLookup : System.IDisposable
 {
@@ -19,28 +20,25 @@ public class PrefabLookup : System.IDisposable
 	{
 		get { return prefabsLoaded; }
 	}
-    StreamWriter streamWriter4 = new StreamWriter("PrefabsLoaded.txt", false);
+    StreamWriter streamWriter = new StreamWriter("PrefabsManifest.txt", false);
+    StreamWriter streamWriter2 = new StreamWriter("PrefabsLoaded.txt", false);
+    
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
         backend = new AssetBundleBackend(bundlename);
         var lookupString = "";
         var manifest = backend.Load<GameManifest>(manifestPath);
-        StreamWriter streamWriter = new StreamWriter("PrefabsManifest.txt", false);
-        
         for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
         {
             lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
             streamWriter.WriteLine(manifest.pooledStrings[index].hash + "  :  " + manifest.pooledStrings[index].str);
         }
         lookup = new HashLookup(lookupString);
-        streamWriter.Close();
 
         scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
         Scene oldScene = SceneManager.GetActiveScene();
-        
         SceneManager.SetActiveScene(scene);
         var lines = File.ReadAllLines(assetsToLoadPath);
-
         foreach (var line in lines)
         {
             if (line.EndsWith("/") || line.EndsWith("\\"))
@@ -48,8 +46,9 @@ public class PrefabLookup : System.IDisposable
                 loadPrefabs(line);
             }
         }
-        streamWriter4.Close();
-
+        //assetDump();
+        streamWriter.Close();
+        streamWriter2.Close();
         SceneManager.SetActiveScene(oldScene);
         prefabsLoaded = true;
     }
@@ -74,13 +73,23 @@ public class PrefabLookup : System.IDisposable
         GameObject[] prefabs = new GameObject[subpaths.Length];
         for (int i = 0; i < subpaths.Length; i++)
         {
-            if (subpaths[i].Contains(".prefab"))
+            if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
                 createPrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
-                streamWriter4.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
+                streamWriter2.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
             }
         }
+    }
+    public void assetDump()
+    {
+        StreamWriter streamWriter3 = new StreamWriter("AssetDump.txt", false);
+        var assetDump = backend.FindAll("");
+        foreach (var item in assetDump)
+        {
+            streamWriter3.WriteLine(item);
+        }
+        streamWriter3.Close();
     }
     public void createPrefab(GameObject go, string name, uint rustid)
     {
@@ -88,6 +97,198 @@ public class PrefabLookup : System.IDisposable
         var prefabRot = new Quaternion(0, 0, 0, 0);
         GameObject loadedPrefab = GameObject.Instantiate(go, prefabPos, prefabRot);
         loadedPrefab.name = name;
+        if (loadedPrefab.GetComponentsInChildren<LODGroup>() != null)
+        {
+            foreach (var group in loadedPrefab.GetComponentsInChildren<LODGroup>())
+            {
+                GameObject.DestroyImmediate(group);
+            }
+        }
+        LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>(); //Setting LODGroup.
+        var lodMeshes = loadedPrefab.GetComponentsInChildren<MeshFilter>();
+        MeshRenderer[][] renderers = new MeshRenderer[6][];
+        int[] lodCount = new int[6];
+        for (int i = 0; i < 6; i++)
+        {
+            renderers[i] = new MeshRenderer[lodMeshes.GetLength(0) + 1];
+        }
+        
+        int lodNumber = 0;
+        for (int i = 0; i < lodMeshes.Length; i++)
+        {
+            bool counted = false;
+            if (lodMeshes[i].sharedMesh != null)
+            {
+                for (int j = 0; j < 6; j++) // Sorts out normal meshes into LOD groups
+                {
+                    if (lodMeshes[i].sharedMesh.name.EndsWith(j.ToString()))
+                    {
+                        lodCount[j]++;
+                        lodNumber = j;
+                        counted = true;
+                        break;
+                    }
+                }
+                if (lodMeshes[i].gameObject.GetComponent<MeshRenderer>() != null)
+                {
+                    foreach (Material item in lodMeshes[i].gameObject.GetComponent<MeshRenderer>().sharedMaterials)
+                    {
+                        if (item != null)
+                        {
+                            #region SetShaders
+                            switch (item.shader.name)
+                            {
+                                case "Standard":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Standard (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Core/Foliage":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Core/Generic":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Terrain Blend (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Core/Foliage Billboard":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Blend 4-Way":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Blend 4-Way (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Blend Layer":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Blend Layer (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Decal":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Decal (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Nature/Foliage":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Nature/Water/Lake":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Nature/Floating Ice Sheets":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Cloth":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard + Wind":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard + Wind (Specular setup)":
+                                    item.shader = Shader.Find("Standard(Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Standard Cloth (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Rust/Flare":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Custom/FoliageDisplace":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Custom/StandardWithDecal":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                case "Custom/Standard Refraction":
+                                    item.shader = Shader.Find("Standard");
+                                    item.SetShaderPassEnabled("Always", true);
+                                    break;
+                                default:
+                                    //Debug.Log("Shader: " + item.shader.name);
+                                    break;
+                            }
+                            #endregion
+                            if (!lodMeshes[i].sharedMesh.name.Contains("occluder"))
+                            {
+                                lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+                            }
+                            else
+                            {
+                                lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                            }
+                        }
+                        else
+                        {
+                            lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                    }
+                    if (counted == true)
+                    {
+                        renderers[lodNumber][lodCount[lodNumber]] = lodMeshes[i].gameObject.GetComponent<MeshRenderer>();
+                    }
+                    else // If its not a default naming scheme LOD we just add it to LOD0
+                    {
+                        lodCount[0]++;
+                        renderers[0][lodCount[0]] = lodMeshes[i].gameObject.GetComponent<MeshRenderer>();
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 6; i++) // Gets highest LOD number in object.
+        {
+            if (lodCount[i] == 0)
+            {
+                lodNumber = i;
+                break;
+            }
+        }
+        LOD[] lods = new LOD[lodNumber];
+        for (int i = 0; i < lodNumber; i++)
+        {
+            lods[i] = new LOD(1.0F / (i + 1.5f), renderers[i]);
+            if (lodNumber > 0)
+            {
+                lods[lodNumber - 1] = new LOD(0.175f, renderers[lodNumber - 1]);
+            }
+        }
+        lodGroup.SetLODs(lods);
+        lodGroup.fadeMode = LODFadeMode.SpeedTree;
+        lodGroup.RecalculateBounds();
         prefabs.Add(rustid, loadedPrefab);
         loadedPrefab.SetActive(false);
     }
