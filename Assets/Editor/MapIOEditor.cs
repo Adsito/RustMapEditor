@@ -917,22 +917,24 @@ public class MapIOEditor : Editor
             #endregion
             #region Prefabs
             case 2:
-                if (GUILayout.Button("Load Prefabs"))
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Load", GUILayout.MaxWidth(100)))
                 {
                     script.StartPrefabLookup();
                 }
                 if (script.getPrefabLookUp() != null)
                 {
-                    if (GUILayout.Button("Unload Prefabs"))
+                    if (GUILayout.Button("Unload", GUILayout.MaxWidth(100)))
                     {
                         script.getPrefabLookUp().Dispose();
                         script.setPrefabLookup(null);
                     }
+                    if (GUILayout.Button("Replace", GUILayout.MaxWidth(100)))
+                    {
+                        script.ReplacePrefabs();
+                    }
                 }
-                if (GUILayout.Button("Spawn Prefabs"))
-                {
-                    script.ReplacePrefabs();
-                }
+                EditorGUILayout.EndHorizontal();
                 break;
             #endregion
             default:
