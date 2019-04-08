@@ -67,7 +67,7 @@ public class MapIOEditor : Editor
             case 0:
                 GUILayout.Label("Map Options", EditorStyles.boldLabel);
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Load", GUILayout.MaxWidth(45)))
+                if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), GUILayout.MaxWidth(45)))
                 {
                     loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
 
@@ -82,7 +82,7 @@ public class MapIOEditor : Editor
                     EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                     script.Load(blob);
                 }
-                if (GUILayout.Button("Save", GUILayout.MaxWidth(45)))
+                if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), GUILayout.MaxWidth(45)))
                 {
                     saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
                     if (saveFile == "")
@@ -95,7 +95,7 @@ public class MapIOEditor : Editor
                     EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                     script.Save(saveFile);
                 }
-                if (GUILayout.Button("New", GUILayout.MaxWidth(45)))
+                if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), GUILayout.MaxWidth(45)))
                 {
                     int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
                     if (mapSize < 1000 & mapSize > 6000)
@@ -129,16 +129,11 @@ public class MapIOEditor : Editor
                             break;
                     }
                 }
-                GUILayout.Label("Size", GUILayout.MaxWidth(30));
+                GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map."), GUILayout.MaxWidth(30));
                 mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
                 
-                
-                if (GUILayout.Button("Select Bundle File", GUILayout.MaxWidth(125)))
-                {
-                    script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
-                }
                 EditorGUILayout.EndHorizontal();
-                GUILayout.TextArea(script.bundleFile);
+                
                 
                 if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
                     "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
@@ -285,40 +280,43 @@ public class MapIOEditor : Editor
                             #endregion
                             #region HeightMap
                             case 1:
-                                GUIContent[] heightMapMenu = new GUIContent[3];
-                                heightMapMenu[0] = new GUIContent("Offset");
-                                heightMapMenu[1] = new GUIContent("Heights");
-                                heightMapMenu[2] = new GUIContent("Debug Tools");
+                                GUIContent[] heightMapMenu = new GUIContent[2];
+                                heightMapMenu[0] = new GUIContent("Heights");
+                                heightMapMenu[1] = new GUIContent("Debug Tools");
                                 heightMapOptions = GUILayout.Toolbar(heightMapOptions, heightMapMenu);
 
                                 switch (heightMapOptions)
                                 {
                                     case 0:
-                                        GUILayout.Label("Heightmap Offset (Increase or Decrease)");
+                                        GUILayout.Label("Heightmap Offset (Increase or Decrease)", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
-                                        offset = EditorGUILayout.FloatField(offset, GUILayout.MaxWidth(35));
-                                        checkHeight = EditorGUILayout.ToggleLeft("In bounds", checkHeight, GUILayout.MaxWidth(75));
-                                        setWaterMap = EditorGUILayout.ToggleLeft("Water Heightmap", setWaterMap, GUILayout.MaxWidth(125));
+                                        offset = EditorGUILayout.FloatField(offset, GUILayout.MaxWidth(40));
+                                        checkHeight = EditorGUILayout.ToggleLeft(new GUIContent("Prevent Flattening", "Prevents the flattening effect if you raise or lower the heightmap" +
+                                            " by too large a value."), checkHeight, GUILayout.MaxWidth(125));
+                                        setWaterMap = EditorGUILayout.ToggleLeft(new GUIContent("Water Heightmap", "If toggled it will raise or lower the water heightmap as well as the " +
+                                            "land heightmap."), setWaterMap, GUILayout.MaxWidth(125));
                                         EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button("Offset Heightmap"))
+                                        if (GUILayout.Button(new GUIContent("Offset Heightmap", "Raises or lowers the height of the entire heightmap by " + offset.ToString() + " metres. " +
+                                            "A positive offset will raise the heightmap, a negative offset will lower the heightmap.")))
                                         {
                                             script.offsetHeightmap(offset, checkHeight, setWaterMap);
                                         }
-                                        break;
-                                    case 1:
+                                        GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
-                                        heightToSet = EditorGUILayout.FloatField(heightToSet, GUILayout.MaxWidth(35));
-                                        if (GUILayout.Button("Set Minimum Height", GUILayout.MaxWidth(130)))
+                                        heightToSet = EditorGUILayout.FloatField(heightToSet, GUILayout.MaxWidth(40));
+                                        if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
+                                            " metres."), GUILayout.MaxWidth(130)))
                                         {
                                             script.setMinimumHeight(heightToSet);
                                         }
-                                        if (GUILayout.Button("Set Maximum Height", GUILayout.MaxWidth(130)))
+                                        if (GUILayout.Button(new GUIContent("Set Maximum Height", "Lowers any of the land above " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
+                                            " metres."), GUILayout.MaxWidth(130)))
                                         {
                                             script.setMaximumHeight(heightToSet);
                                         }
                                         EditorGUILayout.EndHorizontal();
 
-                                        GUILayout.Label("Edges to set:");
+                                        GUILayout.Label("Edge of Map Height", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
                                         top = EditorGUILayout.ToggleLeft("Top ", top, GUILayout.MaxWidth(60));
                                         left = EditorGUILayout.ToggleLeft("Left ", left, GUILayout.MaxWidth(60));
@@ -326,57 +324,56 @@ public class MapIOEditor : Editor
                                         right = EditorGUILayout.ToggleLeft("Right ", right, GUILayout.MaxWidth(60));
                                         EditorGUILayout.EndHorizontal();
 
-                                        if (GUILayout.Button("Set Edge Pixel Height"))
+                                        if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
                                         {
                                             script.setEdgePixel(heightToSet, top, left, right, bottom);
                                         }
                                         break;
-                                    case 2:
+                                    case 1:
                                         EditorGUILayout.BeginHorizontal();
-                                        if (GUILayout.Button("Debug Alpha"))
+                                        if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
                                         {
                                             script.changeLayer("Ground");
                                             script.alphaDebug("Ground");
                                         }
-                                        if (GUILayout.Button("Debug Water"))
+                                        if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
                                         {
                                             script.debugWaterLevel();
                                         }
                                         EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button("Remove Broken Prefabs"))
+                                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
+                                            " errors loading a map on a server.")))
                                         {
                                             script.removeBrokenPrefabs();
                                         }
                                         break;
                                 }
-                                
                                 break;
                             #endregion
                             #region Textures
                             case 2:
                                 GUILayout.Label("Copy Textures", EditorStyles.boldLabel);
-                                GUILayout.Label("Copies the texture selected, and paints the selected \n texture."); //ToDo: Have this make sense and not look like a chimp wrote it.
                                 string[] layerList = { "Ground", "Biome", "Topology" };
-                                landLayerFrom = EditorGUILayout.Popup("Land Layer To Copy From:", landLayerFrom, layerList);
+                                landLayerFrom = EditorGUILayout.Popup("Layer:", landLayerFrom, layerList);
                                 switch (landLayerFrom) // Get texture list from the currently selected landLayer.
                                 {
                                     default:
                                         Debug.Log("Layer doesn't exist");
                                         break;
                                     case 0:
-                                        script.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.groundLayerFrom);
+                                        script.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", script.groundLayerFrom);
                                         textureFrom = 0;
                                         break;
                                     case 1:
-                                        script.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.biomeLayerFrom);
+                                        script.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", script.biomeLayerFrom);
                                         textureFrom = 1;
                                         break;
                                     case 2:
-                                        script.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Texture To Copy From:", script.topologyLayerFrom);
+                                        script.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Copy:", script.topologyLayerFrom);
                                         textureFrom = 2;
                                         break;
                                 }
-                                landLayerToPaint = EditorGUILayout.Popup("Land Layer To Paint to:", landLayerToPaint, layerList);
+                                landLayerToPaint = EditorGUILayout.Popup("Layer:", landLayerToPaint, layerList);
                                 switch (landLayerToPaint) // Get texture list from the currently selected landLayer.
                                 {
                                     default:
@@ -391,23 +388,20 @@ public class MapIOEditor : Editor
                                         textureToPaint = 1;
                                         break;
                                     case 2:
-                                        script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.topologyLayerToPaint);
+                                        script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Paint:", script.topologyLayerToPaint);
                                         textureToPaint = 2;
                                         break;
                                 }
-                                if (GUILayout.Button("Copy textures to new layer"))
+                                if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + layerList[landLayerFrom] + " layer and " +
+                                    "paints it on the " + layerList[landLayerToPaint] + " layer.")))
                                 {
                                     script.textureCopy(layerList[landLayerFrom], layerList[landLayerToPaint], textureFrom, textureToPaint);
                                 }
-
-                                GUILayout.Label("Conditions To Paint", EditorStyles.boldLabel);
-                                GUILayout.Label("EARLY VERSION. Performance varies \n on the amount of checks. ", EditorStyles.boldLabel);
+                                GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
                                 string[] landLayerList = { "Ground", "Biome", "Alpha", "Topology" };
                                 string[] activeTextureAlpha = { "Visible", "Invisible" };
                                 string[] activeTextureTopo = { "Active", "Inactive" };
                                 int[] values = { 0, 1 };
-
-                                
 
                                 GUIContent[] conditionalPaintMenu = new GUIContent[5];
                                 conditionalPaintMenu[0] = new GUIContent("Ground");
@@ -504,9 +498,8 @@ public class MapIOEditor : Editor
                                         }
                                         break;
                                 }
-                                GUILayout.Space(10f);
                                 GUILayout.Label("Texture To Paint:", EditorStyles.boldLabel);
-                                layerConditionalInt = EditorGUILayout.Popup("Land Layer To Paint to:", layerConditionalInt, landLayerList);
+                                layerConditionalInt = EditorGUILayout.Popup("Layer:", layerConditionalInt, landLayerList);
                                 switch (layerConditionalInt)
                                 {
                                     default:
@@ -524,11 +517,11 @@ public class MapIOEditor : Editor
                                         texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureAlpha, values);
                                         break;
                                     case 3:
-                                        script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Layer To Paint:", script.topologyLayerToPaint);
+                                        script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", script.topologyLayerToPaint);
                                         texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureTopo, values);
                                         break;
                                 }
-                                if (GUILayout.Button("Paint Conditional"))
+                                if (GUILayout.Button(new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set.")))
                                 {
                                     List<Conditions> conditions = new List<Conditions>();
                                     conditions.Add(new Conditions()
@@ -553,11 +546,11 @@ public class MapIOEditor : Editor
                     #endregion
                     #region Layer Tools
                     case 1:
-                        GUILayout.Label("Land Layer To Select", EditorStyles.boldLabel);
+                        GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
 
                         string oldLandLayer = script.landLayer;
                         string[] options = { "Ground", "Biome", "Alpha", "Topology" };
-                        script.landSelectIndex = EditorGUILayout.Popup("Select Land Layer:", script.landSelectIndex, options);
+                        script.landSelectIndex = EditorGUILayout.Popup("Layer:", script.landSelectIndex, options);
                         script.landLayer = options[script.landSelectIndex];
                         if (script.landLayer != oldLandLayer)
                         {
@@ -595,18 +588,17 @@ public class MapIOEditor : Editor
                         #region Ground Layer
                         if (script.landLayer.Equals("Ground"))
                         {
-                            GUILayout.Label("Ground Layer Paint", EditorStyles.boldLabel);
-                            script.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture to paint: ", script.terrainLayer);
+                            script.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", script.terrainLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
                                 script.paintLayer("Ground", 0);
                             }
                             EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Rotate 90°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
                                 script.rotateGroundmap(true);
                             }
-                            if (GUILayout.Button("Rotate 270°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
                                 script.rotateGroundmap(false);
                             }
@@ -671,14 +663,13 @@ public class MapIOEditor : Editor
                         #region Biome Layer
                         if (script.landLayer.Equals("Biome"))
                         {
-                            GUILayout.Label("Biome Layer Paint", EditorStyles.boldLabel);
-                            script.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Select biome to paint:", script.biomeLayer);
+                            script.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Biome To Paint:", script.biomeLayer);
                             EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Rotate 90°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
                                 script.rotateBiomemap(true);
                             }
-                            if (GUILayout.Button("Rotate 270°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
                                 script.rotateBiomemap(false);
                             }
@@ -729,15 +720,13 @@ public class MapIOEditor : Editor
                         #region Alpha Layer
                         if (script.landLayer.Equals("Alpha"))
                         {
-                            GUILayout.Label("Alpha Layer Paint", EditorStyles.boldLabel);
                             GUILayout.Label("Green = Terrain Visible, Purple = Terrain Invisible", EditorStyles.boldLabel);
-                            GUILayout.Space(10f);
                             EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Rotate 90°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
                                 script.rotateAlphamap(true);
                             }
-                            if (GUILayout.Button("Rotate 270°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
                                 script.rotateAlphamap(false);
                             }
@@ -789,33 +778,30 @@ public class MapIOEditor : Editor
                         #region Topology Layer
                         if (script.landLayer.Equals("Topology"))
                         {
-                            GUILayout.Label("Topology Layer Paint", EditorStyles.boldLabel);
                             GUILayout.Label("Green = Topology Active, Purple = Topology Inactive", EditorStyles.boldLabel);
-                            GUILayout.Space(10f);
                             script.oldTopologyLayer = script.topologyLayer;
-                            script.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Select Topology Layer:", script.topologyLayer);
+                            script.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", script.topologyLayer);
                             if (script.topologyLayer != script.oldTopologyLayer)
                             {
                                 script.changeLandLayer();
                                 Repaint();
                             }
-                            GUILayout.Label("Rotate seperately or all at once");
                             EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Rotate 90°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
                                 script.rotateTopologymap(true);
                             }
-                            if (GUILayout.Button("Rotate 270°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
                                 script.rotateTopologymap(false);
                             }
-                            if (GUILayout.Button("Rotate all 90°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate all Topology layers 90° ClockWise.")))
                             {
                                 script.rotateAllTopologymap(true);
                             }
-                            if (GUILayout.Button("Rotate all 270°"))
+                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate all Topology layers 90° Counter ClockWise.")))
                             {
-                                script.rotateAllTopologymap(true);
+                                script.rotateAllTopologymap(false);
                             }
                             EditorGUILayout.EndHorizontal();
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
@@ -918,23 +904,48 @@ public class MapIOEditor : Editor
             #region Prefabs
             case 2:
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Load", GUILayout.MaxWidth(100)))
+                if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
+                    "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
                 {
                     script.StartPrefabLookup();
                 }
-                if (script.getPrefabLookUp() != null)
+                if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
                 {
-                    if (GUILayout.Button("Unload", GUILayout.MaxWidth(100)))
+                    if (script.getPrefabLookUp() != null)
                     {
                         script.getPrefabLookUp().Dispose();
                         script.setPrefabLookup(null);
                     }
-                    if (GUILayout.Button("Replace", GUILayout.MaxWidth(100)))
+                    else
                     {
-                        script.ReplacePrefabs();
+                        EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
+                    }
+                }
+                if (GUILayout.Button(new GUIContent("Replace", "Replaces all of the placeholder cube prefabs on the map with the Rust Assets"), GUILayout.MaxWidth(100)))
+                {
+                    if (script.getPrefabLookUp() != null)
+                    {
+                        if (script.loadPath != "")
+                        {
+                            script.ReplacePrefabs();
+                        }
+                        else
+                        {
+                            EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No map loaded.", "Ok");
+                        }
+                    }
+                    else
+                    {
+                        EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No prefabs loaded.", "Ok");
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+
+                if (GUILayout.Button(new GUIContent("Select Bundle File", "Select the bundles files located in your steamapps/common/Rust/Bundles directory."), GUILayout.MaxWidth(125)))
+                {
+                    script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
+                }
+                GUILayout.TextArea(script.bundleFile);
                 break;
             #endregion
             default:
