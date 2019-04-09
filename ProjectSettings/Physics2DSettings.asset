@@ -21,7 +21,7 @@ Physics2DSettings:
   m_DefaultContactOffset: 0.01
   m_JobOptions:
     serializedVersion: 2
-    useMultithreading: 0
+    useMultithreading: 1
     useConsistencySorting: 0
     m_InterpolationPosesPerJob: 100
     m_NewContactsPerJob: 30
@@ -38,10 +38,10 @@ Physics2DSettings:
     m_IslandSolverJointCostScale: 10
     m_IslandSolverBodiesPerJob: 50
     m_IslandSolverContactsPerJob: 50
-  m_AutoSimulation: 1
-  m_QueriesHitTriggers: 1
-  m_QueriesStartInColliders: 1
-  m_CallbacksOnDisable: 1
+  m_AutoSimulation: 0
+  m_QueriesHitTriggers: 0
+  m_QueriesStartInColliders: 0
+  m_CallbacksOnDisable: 0
   m_ReuseCollisionCallbacks: 0
   m_AutoSyncTransforms: 0
   m_AlwaysShowColliders: 0
