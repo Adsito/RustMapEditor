@@ -19,6 +19,6 @@ Library/*
 /.vs/
 /obj/
 *.sln
-PrefabManifest.txt
 AssetDump.txt
 PrefabsLoaded.txt
+PrefabsManifest.txt
