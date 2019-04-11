@@ -25,6 +25,7 @@ public class MapIOEditor : Editor
     int layerConditionalInt, texture = 0;
     bool AlphaVisible = false, AlphaInvisible = false;
     bool TopoActive = false, TopoInactive = false;
+    bool deletePrefabs = false;
 
     bool checkHeightCndtl = false, checkSlopeCndtl = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
@@ -133,17 +134,18 @@ public class MapIOEditor : Editor
                 mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
                 
                 EditorGUILayout.EndHorizontal();
-                
-                
+
+                deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
+                    "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
                 if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
-                    "NOTE: Currently on map load the lootcrates will be spawned twice, due to them not being deleted before saving the map. This will be fixed soon :)")))
+                    "If you don't delete them after export they will duplicate on first map load.")))
                 {
                     prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
                     if (prefabSaveFile == "")
                     {
                         return;
                     }
-                    script.exportLootCrates(prefabSaveFile);
+                    script.exportLootCrates(prefabSaveFile, deletePrefabs);
                 }
             break;
             #endregion
