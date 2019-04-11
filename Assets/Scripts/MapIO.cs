@@ -1817,7 +1817,7 @@ public class MapIO : MonoBehaviour {
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
 
-    public void exportLootCrates(string prefabFilePath)
+    public void exportLootCrates(string prefabFilePath, bool deletePrefabs)
     {
         StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
         streamWriter.WriteLine("{");
@@ -1829,62 +1829,90 @@ public class MapIO : MonoBehaviour {
             switch (p.prefabData.id)
             {
                 default:
-                    // Not a lootcrate
+                    // Not a lootcrate.
                     break;
                 case 1603759333:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 3286607235:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 1071933290:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 2857304752:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 1546200557:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 2066926276:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 1791916628:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 1892026534:
@@ -1892,16 +1920,24 @@ public class MapIO : MonoBehaviour {
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
                 case 3852690109:
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")" + ":" + p.transform.rotation
+                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    if (deletePrefabs == true)
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
                     lootCrateCount++;
                     break;
             }
