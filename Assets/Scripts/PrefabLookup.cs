@@ -35,9 +35,6 @@ public class PrefabLookup : System.IDisposable
         }
         lookup = new HashLookup(lookupString);
 
-        scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
-        Scene oldScene = SceneManager.GetActiveScene();
-        SceneManager.SetActiveScene(scene);
         var lines = File.ReadAllLines(assetsToLoadPath);
         foreach (var line in lines)
         {
@@ -49,10 +46,8 @@ public class PrefabLookup : System.IDisposable
         //assetDump();
         streamWriter.Close();
         streamWriter2.Close();
-        SceneManager.SetActiveScene(oldScene);
         prefabsLoaded = true;
     }
-
     public void Dispose()
 	{
 		if (!isLoaded)
@@ -71,12 +66,13 @@ public class PrefabLookup : System.IDisposable
     {
         string[] subpaths = backend.FindAll(path);
         GameObject[] prefabs = new GameObject[subpaths.Length];
+        Transform prefabParent = GameObject.Find("PrefabsLoaded").transform;
         for (int i = 0; i < subpaths.Length; i++)
         {
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
-                createPrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
+                createPrefab(prefabs[i], prefabParent, subpaths[i], lookup[subpaths[i]]);
                 streamWriter2.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
             }
         }
@@ -91,12 +87,13 @@ public class PrefabLookup : System.IDisposable
         }
         streamWriter3.Close();
     }
-    public void createPrefab(GameObject go, string name, uint rustid)
+    public void createPrefab(GameObject go, Transform prefabParent, string name, uint rustid) // Creates prefab, setting the LOD Group and gathering the LOD's.
     {
         var prefabPos = new Vector3(0, 0, 0);
         var prefabRot = new Quaternion(0, 0, 0, 0);
         GameObject loadedPrefab = GameObject.Instantiate(go, prefabPos, prefabRot);
         loadedPrefab.name = name;
+        loadedPrefab.transform.SetParent(prefabParent);
         if (loadedPrefab.GetComponentsInChildren<LODGroup>() != null)
         {
             foreach (var group in loadedPrefab.GetComponentsInChildren<LODGroup>())
