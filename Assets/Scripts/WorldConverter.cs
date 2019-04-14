@@ -166,7 +166,7 @@ public class WorldConverter {
         return terrains;
     }
 
-    public static MapInfo worldToTerrain(WorldSerialization blob)
+    public static MapInfo worldToTerrain(WorldSerialization blob) // Loads maps
     {
         MapInfo terrains = new MapInfo();
 
@@ -205,7 +205,7 @@ public class WorldConverter {
     }
     
 
-    public static WorldSerialization terrainToWorld(Terrain land, Terrain water)
+    public static WorldSerialization terrainToWorld(Terrain land, Terrain water) // Saves maps
     {
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;

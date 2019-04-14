@@ -9,7 +9,6 @@ using UnityEngine;
 public class PrefabDataHolder : MonoBehaviour {
     
     public WorldSerialization.PrefabData prefabData;
-    public bool spawnOnPlay;
     public bool showBtn = false;
 
     void Update ()

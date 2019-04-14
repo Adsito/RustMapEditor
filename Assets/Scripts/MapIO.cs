@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.IMGUI.Controls;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -108,12 +109,14 @@ public class MapIO : MonoBehaviour {
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
+    public bool prefabNamesSet = false;
     public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
     public float progressBar = 0f;
     static TopologyMesh topology;
     float progressValue = 1f;
+    private Dictionary<uint, String> prefabNames = new Dictionary<uint, String>();
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -160,7 +163,6 @@ public class MapIO : MonoBehaviour {
         }
         topology.top = topologyMap.ToByteArray();
     }
-    
     public void changeLandLayer()
     {
         if (topology == null)
@@ -188,19 +190,32 @@ public class MapIO : MonoBehaviour {
         }
         selectedLandLayer.setLayer();
     }
-
-
-
+    public void getPrefabNames()
+    {
+        if (File.Exists("PrefabsLoaded.txt"))
+        {
+            var lines = File.ReadAllLines("PrefabsLoaded.txt");
+            foreach (var line in lines)
+            {
+                var linesSplit = line.Split(':');
+                prefabNames.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[0]);
+            }
+            prefabNamesSet = true;
+        }
+    }
     public GameObject spawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
         Vector3 pos = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z);
         Vector3 scale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
         Quaternion rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
-
         
         GameObject newObj = Instantiate(g, pos + getMapOffset(), rotation, parent);
         newObj.transform.localScale = scale;
-
+        prefabNames.TryGetValue(prefabData.id, out string prefabName); // Sets the prefab name to the string if the user has previously loaded the game bundles.
+        if (prefabName != null)
+        {
+            newObj.name = prefabName;
+        }
         return newObj;
     }
 
@@ -437,24 +452,61 @@ public class MapIO : MonoBehaviour {
     #endregion
 
     #region HeightMap Methods
-    public float scale = 1f;
-    public void scaleHeightmap()
+    public void scaleHeightmap(float scale)
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
-        land.terrainData.SetHeights(0, 0, MapTransformations.scale(heightMap, scale));
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        float[,] waterHeightMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
+        land.terrainData.SetHeights(0, 0, MapTransformations.scale(landHeightMap, scale));
+        water.terrainData.SetHeights(0, 0, MapTransformations.scale(waterHeightMap, scale));
     }
     public void flipHeightmap()
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
-        land.terrainData.SetHeights(0, 0, MapTransformations.flip(heightMap));
+        float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        land.terrainData.SetHeights(0, 0, MapTransformations.flip(landHeightMap));
     }
     public void transposeHeightmap()
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
-        land.terrainData.SetHeights(0, 0, MapTransformations.transpose(heightMap));
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        float[,] waterHeightMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
+        land.terrainData.SetHeights(0, 0, MapTransformations.transpose(landHeightMap));
+        water.terrainData.SetHeights(0, 0, MapTransformations.transpose(waterHeightMap));
+    }
+    public void normaliseHeightmap(float normaliseLow, float normaliseHigh, float normaliseBlend)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        float highestPoint = 0f, lowestPoint = 1f, currentHeight = 0f, heightRange = 0f, normalisedHeightRange = 0f, normalisedHeight = 0f;
+        for (int i = 0; i < landHeightMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < landHeightMap.GetLength(1); j++)
+            {
+                currentHeight = landHeightMap[i, j];
+                if (currentHeight < lowestPoint)
+                {
+                    lowestPoint = currentHeight;
+                }
+                else if (currentHeight > highestPoint)
+                {
+                    highestPoint = currentHeight;
+                }
+            }
+        }
+        heightRange = highestPoint - lowestPoint;
+        normalisedHeightRange = normaliseHigh - normaliseLow;
+        for (int i = 0; i < landHeightMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < landHeightMap.GetLength(1); j++)
+            {
+                normalisedHeight = ((landHeightMap[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
+                landHeightMap[i, j] = normaliseLow + normalisedHeight;
+            }
+        }
+        land.terrainData.SetHeights(0, 0, landHeightMap);
     }
     public void moveHeightmap()
     {
@@ -1957,7 +2009,10 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
-        
+        if (prefabNamesSet == false)
+        {
+            getPrefabNames();
+        }
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2209,4 +2264,76 @@ public class MapIO : MonoBehaviour {
         return prefabFiles;
     }
 
+}
+public class PrefabHierachy : TreeView
+{
+    public PrefabHierachy(TreeViewState treeViewState)
+        : base(treeViewState)
+    {
+        Reload();
+    }
+    protected override bool CanStartDrag(CanStartDragArgs args)
+    {
+        return true;
+    }
+    protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
+    {
+        DragAndDrop.PrepareStartDrag();
+        if (args.draggedItemIDs[0] > 10) // Only drag prefabs not the treeview parents.
+        {
+            DragAndDrop.StartDrag("Spawn Prefab");
+            DragAndDrop.visualMode = DragAndDropVisualMode.Move;
+        }
+    }
+    protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
+    {
+        Debug.Log("Dropped");
+        return DragAndDropVisualMode.Move;
+    }
+    Dictionary<string, TreeViewItem> treeviewParents = new Dictionary<string, TreeViewItem>();
+    List<TreeViewItem> allItems = new List<TreeViewItem>();
+    protected override TreeViewItem BuildRoot()
+    {
+        var root = new TreeViewItem { id = 0, depth = -1, displayName = "Root" };
+        allItems.Add(new TreeViewItem { id = 1, depth = 0, displayName = "Editor Tools" });
+        // Add other editor shit like custom prefabs here.
+        if (File.Exists("PrefabsLoaded.txt"))
+        {
+            var lines = File.ReadAllLines("PrefabsLoaded.txt");
+            var parentId = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
+            foreach (var line in lines)
+            {
+                var linesSplit = line.Split(':');
+                var assetNameSplit = linesSplit[1].Split('/');
+                for (int i = 0; i < assetNameSplit.Length; i++)
+                {
+                    var treePath = "";
+                    for (int j = 0; j <= i; j++)
+                    {
+                        treePath += assetNameSplit[j];
+                    }
+                    if (!treeviewParents.ContainsKey(treePath))
+                    {
+                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
+                        var shortenedId = linesSplit[2].Substring(2);
+                        if (i != assetNameSplit.Length - 1)
+                        {
+                            var treeviewItem = new TreeViewItem { id = parentId, depth = i, displayName = assetNameSplit[i] };
+                            allItems.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
+                            parentId++;
+                        }
+                        else
+                        {
+                            var treeviewItem = new TreeViewItem { id = int.Parse(shortenedId), depth = i, displayName = prefabName };
+                            allItems.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
+                        }
+                    }
+                }
+            }
+        }
+        SetupParentsAndChildrenFromDepths(root, allItems);
+        return root;
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class TerrainTransparency : MonoBehaviour {
 
-    public float alpha = 1;
+    public float alpha = 0.5f;
     Material mat;
     public float oldValue = 1;
 }
