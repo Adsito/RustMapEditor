@@ -53,17 +53,14 @@ public class MapTransformations {
 
     public static float[,] flip(float[,] array)
     {
-        float[,] tempArray = new float[array.GetLength(0), array.GetLength(1)];
-
         for (int i = 0; i < array.GetLength(0); i++)
         {
             for (int j = 0; j < array.GetLength(1); j++)
             {
-                tempArray[i, j] = array[i, array.GetLength(0) - j - 1];
+                array[i, j] = 1 - array[i, j];
             }
         }
-
-        return array = tempArray;
+        return array;
     }
 
     public static float[,] transpose(float[,] array)

@@ -36,6 +36,7 @@ public class PrefabLookup : System.IDisposable
         lookup = new HashLookup(lookupString);
 
         var lines = File.ReadAllLines(assetsToLoadPath);
+        
         foreach (var line in lines)
         {
             if (line.EndsWith("/") || line.EndsWith("\\"))
@@ -43,20 +44,21 @@ public class PrefabLookup : System.IDisposable
                 loadPrefabs(line);
             }
         }
-        //assetDump();
+        assetDump();
         streamWriter.Close();
         streamWriter2.Close();
         prefabsLoaded = true;
     }
     public void Dispose()
 	{
+        LODGroup[] prefabsLoadedChildren = GameObject.Find("PrefabsLoaded").GetComponentsInChildren<LODGroup>(true);
 		if (!isLoaded)
 		{
 			throw new System.Exception("Cannot unload assets before fully loaded!");
 		}
-        foreach (GameObject prefab in scene.GetRootGameObjects())
+        foreach (var prefab in prefabsLoadedChildren)
         {
-            GameObject.DestroyImmediate(prefab);
+            GameObject.DestroyImmediate(prefab.gameObject);
         }
         prefabsLoaded = false;
 		backend.Dispose();
@@ -77,7 +79,7 @@ public class PrefabLookup : System.IDisposable
             }
         }
     }
-    public void assetDump()
+    public void assetDump() // Dumps every asset found in the Rust bundle to a text file.
     {
         StreamWriter streamWriter3 = new StreamWriter("AssetDump.txt", false);
         var assetDump = backend.FindAll("");
