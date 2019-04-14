@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.IMGUI.Controls;
 
 [CustomEditor(typeof(MapIO))]
 public class MapIOEditor : Editor
@@ -12,13 +13,14 @@ public class MapIOEditor : Editor
     string mapName = "";
     string prefabSaveFile = "";
     //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
-    int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0;
-    float heightToSet = 450f, scale = 50f, offset = 0f;
+    int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
+    float heightToSet = 450f, scale = 50f, offset = 0f, mapScale = 1f;
     bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
     bool allLayers = false, ground = false, biome = false, alpha = false, topology = false, heightmap = false, prefabs = false, paths = false;
     float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f, blendStrength = 5f;
     float minBlendLowHeight = 0f, maxBlendHighHeight = 1000f;
+    float normaliseLow = 450f, normaliseHigh = 1000f, normaliseBlend = 1f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
@@ -161,16 +163,18 @@ public class MapIOEditor : Editor
                 {
                     #region Map Tools
                     case 0:
-                        GUIContent[] mapToolsMenu = new GUIContent[3];
-                        mapToolsMenu[0] = new GUIContent("Rotate Map");
+                        GUIContent[] mapToolsMenu = new GUIContent[4];
+                        mapToolsMenu[0] = new GUIContent("Transform");
                         mapToolsMenu[1] = new GUIContent("HeightMap");
                         mapToolsMenu[2] = new GUIContent("Textures");
+                        mapToolsMenu[3] = new GUIContent("Misc");
                         mapToolsOptions = GUILayout.Toolbar(mapToolsOptions, mapToolsMenu);
 
                         switch (mapToolsOptions)
                         {
                             #region Rotate Map
                             case 0:
+                                GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
                                 GUILayout.Label("Layers to Rotate", EditorStyles.boldLabel);
                                 EditorGUILayout.BeginHorizontal();
                                 allLayers = EditorGUILayout.ToggleLeft("Rotate All", allLayers, GUILayout.MaxWidth(75));
@@ -284,7 +288,7 @@ public class MapIOEditor : Editor
                             case 1:
                                 GUIContent[] heightMapMenu = new GUIContent[2];
                                 heightMapMenu[0] = new GUIContent("Heights");
-                                heightMapMenu[1] = new GUIContent("Debug Tools");
+                                heightMapMenu[1] = new GUIContent("Misc");
                                 heightMapOptions = GUILayout.Toolbar(heightMapOptions, heightMapMenu);
 
                                 switch (heightMapOptions)
@@ -332,21 +336,38 @@ public class MapIOEditor : Editor
                                         }
                                         break;
                                     case 1:
+                                        GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
+                                        EditorGUILayout.LabelField("Scale", GUILayout.MaxWidth(60));
+                                        mapScale = EditorGUILayout.Slider(mapScale, 0.01f, 10f);
+                                        EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
+                                        if (GUILayout.Button(new GUIContent("Rescale", "Scales the heightmap by " + mapScale.ToString() + " %.")))
                                         {
-                                            script.changeLayer("Ground");
-                                            script.alphaDebug("Ground");
+                                            script.scaleHeightmap(mapScale);
                                         }
-                                        if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
+                                        if (GUILayout.Button(new GUIContent("Flip", "Flips the heightmap in on itself.")))
                                         {
-                                            script.debugWaterLevel();
+                                            script.flipHeightmap();
                                         }
                                         EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
-                                            " errors loading a map on a server.")))
+                                        GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Low", "The lowest point on the map after being normalised."), GUILayout.MaxWidth(40));
+                                        normaliseLow = EditorGUILayout.Slider(normaliseLow, 0f, 1000f);
+                                        EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("High", "The highest point on the map after being normalised."), GUILayout.MaxWidth(40));
+                                        normaliseHigh = EditorGUILayout.Slider(normaliseHigh, 0f, 1000f);
+                                        EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Blend", "The amount of blending to occur during normalisation. The higher the value the" +
+                                            "smoother the result will be."), GUILayout.MaxWidth(40));
+                                        normaliseBlend = EditorGUILayout.Slider(normaliseBlend, 0f, 1f);
+                                        EditorGUILayout.EndHorizontal();
+                                        if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
-                                            script.removeBrokenPrefabs();
+                                            script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
                                         }
                                         break;
                                 }
@@ -541,6 +562,22 @@ public class MapIOEditor : Editor
                                     });
                                     script.paintConditional(landLayerList[layerConditionalInt], texture, conditions);
                                 }
+                                break;
+                            #endregion
+                            #region Misc
+                            case 3:
+                                EditorGUILayout.BeginHorizontal();
+                                if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
+                                {
+                                    script.changeLayer("Ground");
+                                    script.alphaDebug("Ground");
+                                }
+                                if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
+                                {
+                                    script.debugWaterLevel();
+                                }
+                                EditorGUILayout.EndHorizontal();
+                                
                                 break;
                             #endregion
                         }
@@ -905,49 +942,76 @@ public class MapIOEditor : Editor
             #endregion
             #region Prefabs
             case 2:
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
-                    "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
-                {
-                    script.StartPrefabLookup();
-                }
-                if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
-                {
-                    if (script.getPrefabLookUp() != null)
-                    {
-                        script.getPrefabLookUp().Dispose();
-                        script.setPrefabLookup(null);
-                    }
-                    else
-                    {
-                        EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
-                    }
-                }
-                if (GUILayout.Button(new GUIContent("Replace", "Replaces all of the placeholder cube prefabs on the map with the Rust Assets"), GUILayout.MaxWidth(100)))
-                {
-                    if (script.getPrefabLookUp() != null)
-                    {
-                        if (script.loadPath != "")
-                        {
-                            script.ReplacePrefabs();
-                        }
-                        else
-                        {
-                            EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No map loaded.", "Ok");
-                        }
-                    }
-                    else
-                    {
-                        EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No prefabs loaded.", "Ok");
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
+                GUIContent[] prefabsOptionsMenu = new GUIContent[3];
+                prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
+                prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
+                prefabsOptionsMenu[2] = new GUIContent("Prefab Tools");
+                prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
-                if (GUILayout.Button(new GUIContent("Select Bundle File", "Select the bundles files located in your steamapps/common/Rust/Bundles directory."), GUILayout.MaxWidth(125)))
+                switch (prefabOptions)
                 {
-                    script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
+                    case 0:
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
+                            "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
+                        {
+                            script.StartPrefabLookup();
+                        }
+                        if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
+                        {
+                            if (script.getPrefabLookUp() != null)
+                            {
+                                script.getPrefabLookUp().Dispose();
+                                script.setPrefabLookup(null);
+                            }
+                            else
+                            {
+                                EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
+                            }
+                        }
+                        if (GUILayout.Button(new GUIContent("Replace", "Replaces all of the placeholder cube prefabs on the map with the Rust Assets"), GUILayout.MaxWidth(100)))
+                        {
+                            if (script.getPrefabLookUp() != null)
+                            {
+                                if (script.loadPath != "")
+                                {
+                                    script.ReplacePrefabs();
+                                }
+                                else
+                                {
+                                    EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No map loaded.", "Ok");
+                                }
+                            }
+                            else
+                            {
+                                EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No prefabs loaded.", "Ok");
+                            }
+                        }
+                        EditorGUILayout.EndHorizontal();
+
+                        if (GUILayout.Button(new GUIContent("Select Bundle File", "Select the bundles files located in your steamapps/common/Rust/Bundles directory."), GUILayout.MaxWidth(125)))
+                        {
+                            script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
+                        }
+                        GUILayout.TextArea(script.bundleFile);
+                        break;
+                    case 1:
+                        if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
+                        {
+                            PrefabHierachyEditor.ShowWindow();
+                        }
+                        break;
+                    case 2:
+                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
+                                    " errors loading a map on a server.")))
+                        {
+                            script.removeBrokenPrefabs();
+                        }
+                        break;
+                    default:
+                        prefabOptions = 0;
+                        break;
                 }
-                GUILayout.TextArea(script.bundleFile);
                 break;
             #endregion
             default:
@@ -955,5 +1019,46 @@ public class MapIOEditor : Editor
                 break;
         }
         #endregion
+    }
+}
+public class PrefabHierachyEditor : EditorWindow
+{
+    [SerializeField] TreeViewState m_TreeViewState;
+
+    PrefabHierachy m_TreeView;
+    SearchField m_SearchField;
+
+    void OnEnable()
+    {
+        if (m_TreeViewState == null)
+            m_TreeViewState = new TreeViewState();
+
+        m_TreeView = new PrefabHierachy(m_TreeViewState);
+        m_SearchField = new SearchField();
+        m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
+    }
+    void OnGUI()
+    {
+        DoToolbar();
+        DoTreeView();
+    }
+    void DoToolbar()
+    {
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Space(100);
+        GUILayout.FlexibleSpace();
+        m_TreeView.searchString = m_SearchField.OnToolbarGUI(m_TreeView.searchString);
+        GUILayout.EndHorizontal();
+    }
+    void DoTreeView()
+    {
+        Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
+        m_TreeView.OnGUI(rect);
+    }
+    public static void ShowWindow()
+    {
+        var window = GetWindow<PrefabHierachyEditor>();
+        window.titleContent = new GUIContent("Prefabs");
+        window.Show();
     }
 }
