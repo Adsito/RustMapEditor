@@ -66,4 +66,51 @@ public class UIValues : MonoBehaviour
         EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
         script.Load(blob);
     }
+    public void SaveMap()
+    {
+        saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+        if (saveFile == "")
+        {
+            return;
+        }
+        Debug.Log("Exported map " + saveFile);
+        script.savePath = saveFile;
+        prefabSaveFile = saveFile;
+        EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
+        script.Save(saveFile);
+    }
+    public void NewMap()
+    {
+        int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
+        if (mapSize < 1000 & mapSize > 6000)
+        {
+            EditorUtility.DisplayDialog("Error", "Map size must be between 1000 - 6000", "Ok");
+            return;
+        }
+        switch (newMap)
+        {
+            case 0:
+                script.loadPath = "New Map";
+                script.newEmptyTerrain(mapSize);
+                break;
+            case 1:
+                // User cancelled
+                break;
+            case 2:
+                saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+                if (saveFile == "")
+                {
+                    EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
+                    return;
+                }
+                Debug.Log("Exported map " + saveFile);
+                script.Save(saveFile);
+                script.loadPath = "New Map";
+                script.newEmptyTerrain(mapSize);
+                break;
+            default:
+                Debug.Log("Create New Map option outofbounds");
+                break;
+        }
+    }
 }
