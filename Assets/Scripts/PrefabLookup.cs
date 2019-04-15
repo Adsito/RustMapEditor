@@ -10,7 +10,7 @@ public class PrefabLookup : System.IDisposable
 	private HashLookup lookup;
 	private Scene scene;
 
-	private Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
+	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
 
     private static string manifestPath = "Assets/manifest.asset";
     private static string assetsToLoadPath = "AssetsList.txt";
@@ -58,7 +58,10 @@ public class PrefabLookup : System.IDisposable
 		}
         foreach (var prefab in prefabsLoadedChildren)
         {
-            GameObject.DestroyImmediate(prefab.gameObject);
+            if (prefab.gameObject != null)
+            {
+                GameObject.DestroyImmediate(prefab.gameObject);
+            }
         }
         prefabsLoaded = false;
 		backend.Dispose();
@@ -69,6 +72,13 @@ public class PrefabLookup : System.IDisposable
         string[] subpaths = backend.FindAll(path);
         GameObject[] prefabs = new GameObject[subpaths.Length];
         Transform prefabParent = GameObject.Find("PrefabsLoaded").transform;
+        foreach (var item in prefabParent.GetComponentsInChildren<MeshFilter>())
+        {
+            if (item.gameObject != null)
+            {
+                GameObject.DestroyImmediate(item.gameObject);
+            }
+        }
         for (int i = 0; i < subpaths.Length; i++)
         {
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
@@ -104,6 +114,8 @@ public class PrefabLookup : System.IDisposable
             }
         }
         LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>(); //Setting LODGroup.
+        PrefabDataHolder prefabDataHolder = loadedPrefab.AddComponent<PrefabDataHolder>();
+        prefabDataHolder.saveWithMap = false;
         var lodMeshes = loadedPrefab.GetComponentsInChildren<MeshFilter>();
         MeshRenderer[][] renderers = new MeshRenderer[6][];
         int[] lodCount = new int[6];

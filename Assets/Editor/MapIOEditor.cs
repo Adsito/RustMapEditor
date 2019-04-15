@@ -46,6 +46,17 @@ public class MapIOEditor : Editor
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
+    void OnSceneGUI()
+    {
+        DragAndDrop.AcceptDrag();
+        if (DragAndDrop.objectReferences != null && Event.current.button == 0 && Event.current.type == EventType.MouseUp)
+        {
+            Debug.Log("Dropped Prefab");
+            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+            DragAndDrop.PrepareStartDrag();
+        }
+    }
+
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
@@ -198,25 +209,21 @@ public class MapIOEditor : Editor
                                     }
                                     if (ground == true)
                                     {
-                                        script.changeLayer("Ground");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
                                         script.rotateGroundmap(true);
                                     }
                                     if (biome == true)
                                     {
-                                        script.changeLayer("Biome");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
                                         script.rotateBiomemap(true);
                                     }
                                     if (alpha == true)
                                     {
-                                        script.changeLayer("Alpha");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
                                         script.rotateAlphamap(true);
                                     }
                                     if (topology == true)
                                     {
-                                        script.changeLayer("Topology");
                                         script.rotateAllTopologymap(true);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
@@ -241,25 +248,21 @@ public class MapIOEditor : Editor
                                     }
                                     if (ground == true)
                                     {
-                                        script.changeLayer("Ground");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
                                         script.rotateGroundmap(false);
                                     }
                                     if (biome == true)
                                     {
-                                        script.changeLayer("Biome");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
                                         script.rotateBiomemap(false);
                                     }
                                     if (alpha == true)
                                     {
-                                        script.changeLayer("Alpha");
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
                                         script.rotateAlphamap(false);
                                     }
                                     if (topology == true)
                                     {
-                                        script.changeLayer("Topology");
                                         script.rotateAllTopologymap(false);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
