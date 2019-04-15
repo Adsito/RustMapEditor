@@ -293,6 +293,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
     {
+        changeLayer("Ground");
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         float[,,] newGround = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
         float[,,] oldGround = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
@@ -336,6 +337,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateBiomemap(bool CW) //Rotates Biomemap 90 degrees for CW true.
     {
+        changeLayer("Biome");
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         float[,,] newBiome = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
         float[,,] oldBiome = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
@@ -371,6 +373,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateAlphamap(bool CW) //Rotates Alphamap 90 degrees for CW true.
     {
+        changeLayer("Alpha");
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         float[,,] newAlpha = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
         float[,,] oldAlpha = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
@@ -433,6 +436,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
     {
+        changeLayer("Topology");
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
         float[,,] newTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
         float[,,] oldTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
@@ -2256,11 +2260,11 @@ public class PrefabHierachy : TreeView
         {
             if (mapIO.prefabReference.ContainsKey(args.draggedItemIDs[0].ToString()))
             {
-                DragAndDrop.PrepareStartDrag();
                 Debug.Log("Prefab Found");
                 mapIO.prefabReference.TryGetValue(args.draggedItemIDs[0].ToString(), out GameObject prefabDragged);
-                UnityEngine.Object[] objectArray = new GameObject[1];
-                objectArray[0] = prefabDragged;
+                GameObject newPrefab = prefabDragged;
+                UnityEngine.Object[] objectArray = new UnityEngine.Object[1];
+                objectArray[0] = newPrefab;
                 DragAndDrop.objectReferences = objectArray;
                 DragAndDrop.StartDrag("Prefab");
             }
