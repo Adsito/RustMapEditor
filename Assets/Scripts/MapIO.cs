@@ -109,14 +109,15 @@ public class MapIO : MonoBehaviour {
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
-    public bool prefabNamesSet = false;
+    public bool prefabNamesSet = false, defaultPrefabsCreated = false;
     public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
     public float progressBar = 0f;
     static TopologyMesh topology;
     float progressValue = 1f;
-    private Dictionary<uint, String> prefabNames = new Dictionary<uint, String>();
+    private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
+    public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -222,9 +223,13 @@ public class MapIO : MonoBehaviour {
     private void cleanUpMap()
     {
         selectedLandLayer = null;
-        foreach(PrefabDataHolder g in GameObject.FindObjectsOfType<PrefabDataHolder>())
+        GameObject mapPrefabs = GameObject.Find("Objects");
+        foreach(PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
         {
-            DestroyImmediate(g.gameObject);
+            if (g.saveWithMap == true)
+            {
+                DestroyImmediate(g.gameObject);
+            }
         }
 
         foreach (PathDataHolder g in GameObject.FindObjectsOfType<PathDataHolder>())
@@ -232,7 +237,6 @@ public class MapIO : MonoBehaviour {
             DestroyImmediate(g.gameObject);
         }
     }
-
 
     public static Vector3 getTerrainSize()
     {
@@ -289,6 +293,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
     {
+        changeLayer("Ground");
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         float[,,] newGround = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
         float[,,] oldGround = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
@@ -332,6 +337,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateBiomemap(bool CW) //Rotates Biomemap 90 degrees for CW true.
     {
+        changeLayer("Biome");
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         float[,,] newBiome = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
         float[,,] oldBiome = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
@@ -367,6 +373,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateAlphamap(bool CW) //Rotates Alphamap 90 degrees for CW true.
     {
+        changeLayer("Alpha");
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         float[,,] newAlpha = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
         float[,,] oldAlpha = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
@@ -429,6 +436,7 @@ public class MapIO : MonoBehaviour {
     }
     public void rotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
     {
+        changeLayer("Topology");
         LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
         float[,,] newTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
         float[,,] oldTopology = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
@@ -2013,6 +2021,10 @@ public class MapIO : MonoBehaviour {
         {
             getPrefabNames();
         }
+        if (defaultPrefabsCreated == false && getPrefabLookUp() == null)
+        {
+            createDefaultPrefabs();
+        }
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2066,25 +2078,15 @@ public class MapIO : MonoBehaviour {
 
         EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
 
-        Dictionary<uint, GameObject> savedPrefabs = getPrefabs();
-
         for (int i = 0; i < terrains.prefabData.Length; i++)
         {
-            GameObject spawnObj;
-            if (savedPrefabs.ContainsKey(terrains.prefabData[i].id))
-            {
-                savedPrefabs.TryGetValue(terrains.prefabData[i].id, out spawnObj);
-            }
-            else
-            {
-                spawnObj = defaultObj;
-            }
-
-            GameObject newObj = spawnPrefab(spawnObj, terrains.prefabData[i], prefabsParent);
+            GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
             newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+            newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+            prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+            newObj.name = prefabName;
         }
-
-
+        
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
@@ -2156,6 +2158,30 @@ public class MapIO : MonoBehaviour {
     }
 
     public string bundleFile = "No bundle file selected";
+    public void createDefaultPrefabs()
+    {
+        var prefabParent = GameObject.Find("PrefabsLoaded").GetComponent<Transform>();
+        if (File.Exists("PrefabsLoaded.txt"))
+        {
+            var lines = File.ReadAllLines("PrefabsLoaded.txt");
+            foreach (var line in lines)
+            {
+                var linesSplit = line.Split(':');
+                GameObject prefabSpawned = Instantiate(Resources.Load<GameObject>("Prefabs/DefaultPrefab"), prefabParent);
+                var pdh = prefabSpawned.GetComponent<PrefabDataHolder>();
+                prefabSpawned.name = linesSplit[1];
+                var prefabNameSplit = linesSplit[1].Split('/');
+                var prefabName = prefabNameSplit[prefabNameSplit.Length - 1].Replace(".prefab", "");
+                pdh.saveWithMap = false;
+                pdh.prefabData = new PrefabData();
+                pdh.prefabData.id = uint.Parse(linesSplit[2]);
+                var shortenedId = linesSplit[2].Substring(2);
+                prefabReference.Add(shortenedId, prefabSpawned);
+                prefabNames.Add(uint.Parse(linesSplit[2]), prefabName);
+            }
+        }
+        defaultPrefabsCreated = true;
+    }
 
     public void StartPrefabLookup()
     {
@@ -2175,28 +2201,19 @@ public class MapIO : MonoBehaviour {
                 Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
                 foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
                 {
-                    if (pdh.gameObject.tag == "LoadedPrefab")
-                        continue;
-
-                    if (DragAndDrop.objectReferences.Length > 0)
+                    if (pdh.gameObject.tag == "LoadedPrefab" && pdh.saveWithMap == true)
                     {
-                        if (DragAndDrop.objectReferences[0].name.Equals(pdh.gameObject.name))
-                        {
-                            continue;
-                        }
+                        PrefabData prefabData = pdh.prefabData;
+                        GameObject go = SpawnPrefab(prefabData, prefabsParent);
+                        go.tag = "LoadedPrefab";
+                        go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
+
+                        DestroyImmediate(pdh.gameObject);
+
+                        setChildrenUnmoveable(go);
                     }
 
-                    PrefabData prefabData = pdh.prefabData;
-                    string name = null;
-                    if (!pdh.gameObject.name.StartsWith("DefaultPrefab"))
-                        name = pdh.gameObject.name;
-                    GameObject go = SpawnPrefab(prefabData, prefabsParent, name);
-                    go.tag = "LoadedPrefab";
-                    go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
                     
-                    DestroyImmediate(pdh.gameObject);
-
-                    setChildrenUnmoveable(go);
                 }
             }
         }
@@ -2212,61 +2229,21 @@ public class MapIO : MonoBehaviour {
         }
     }
 
-    private GameObject SpawnPrefab(PrefabData prefabData, Transform parent, string name = null)
+    private GameObject SpawnPrefab(PrefabData prefabData, Transform parent)
     {
         var offset = getMapOffset();
         var go = GameObject.Instantiate(prefabLookup[prefabData.id], prefabData.position + offset, prefabData.rotation, parent);
         if (go)
         {
-            if (name != null)
-                go.name = name;
             go.transform.localScale = prefabData.scale;
             go.SetActive(true);
         }
         return go;
     }
-    public Dictionary<uint, GameObject> getPrefabs()
-    {
-        Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
-        var prefabFiles = getPrefabFiles("Assets/Resources/Prefabs");
-        foreach(string s in prefabFiles)
-        {
-            GameObject prefabObject = Resources.Load<GameObject>(s);
-            uint key = prefabObject.GetComponent<PrefabDataHolder>().prefabData.id;
-            if (prefabs.ContainsKey(key))
-            {
-                GameObject existingObj;
-                prefabs.TryGetValue(key, out existingObj);
-                Debug.LogError(prefabObject.name + " Prefab ID conflicts with " + existingObj.name + ". Loading " + prefabObject.name + " as ID " + key + " instead of " + existingObj.name);
-            }
-            prefabs.Add(key, prefabObject);
-        }
-        return prefabs;
-    }
-
-    private List<string> getPrefabFiles(string dir)
-    {
-        List<string> prefabFiles = new List<string>();
-
-        // Process the list of files found in the directory.
-        string[] fileEntries = Directory.GetFiles(dir);
-        foreach (string fileName in fileEntries)
-        {
-            if(fileName.EndsWith(".prefab"))
-                prefabFiles.Add(fileName.Substring(17, fileName.Length - 7 - 17)); //17 to remove the "Assets/Resouces/" part, 7 to remove the ".prefab" part
-        }
-
-        // Recurse into subdirectories of this directory.
-        string[] subdirectoryEntries = Directory.GetDirectories(dir);
-        foreach (string subdirectory in subdirectoryEntries)
-            prefabFiles.AddRange(getPrefabFiles(subdirectory));
-        
-        return prefabFiles;
-    }
-
 }
 public class PrefabHierachy : TreeView
 {
+    MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
     public PrefabHierachy(TreeViewState treeViewState)
         : base(treeViewState)
     {
@@ -2279,16 +2256,31 @@ public class PrefabHierachy : TreeView
     protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
     {
         DragAndDrop.PrepareStartDrag();
-        if (args.draggedItemIDs[0] > 10) // Only drag prefabs not the treeview parents.
+        if (args.draggedItemIDs[0] > 100) // Only drag prefabs not the treeview parents.
         {
-            DragAndDrop.StartDrag("Spawn Prefab");
-            DragAndDrop.visualMode = DragAndDropVisualMode.Move;
+            if (mapIO.prefabReference.ContainsKey(args.draggedItemIDs[0].ToString()))
+            {
+                Debug.Log("Prefab Found");
+                mapIO.prefabReference.TryGetValue(args.draggedItemIDs[0].ToString(), out GameObject prefabDragged);
+                GameObject newPrefab = prefabDragged;
+                UnityEngine.Object[] objectArray = new UnityEngine.Object[1];
+                objectArray[0] = newPrefab;
+                DragAndDrop.objectReferences = objectArray;
+                DragAndDrop.StartDrag("Prefab");
+            }
+            else
+            {
+                Debug.Log("Prefab not found.");
+            }
         }
     }
     protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
     {
-        Debug.Log("Dropped");
-        return DragAndDropVisualMode.Move;
+        if (args.performDrop)
+        {
+            Debug.Log("Dropped");
+        }
+        return DragAndDropVisualMode.Copy;
     }
     Dictionary<string, TreeViewItem> treeviewParents = new Dictionary<string, TreeViewItem>();
     List<TreeViewItem> allItems = new List<TreeViewItem>();
