@@ -28,12 +28,22 @@ public class CameraMovement : MonoBehaviour
         {
             mainSpeed = lastSpeed;
         }
-        if (Input.GetKey (KeyCode.Mouse1)){
-        lastMouse = Input.mousePosition - lastMouse ;
-        lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
-        lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x , transform.eulerAngles.y + lastMouse.y, 0);
-        transform.eulerAngles = lastMouse;
-        lastMouse =  Input.mousePosition;
+        if (Input.GetKey (KeyCode.Mouse1))
+        {
+            lastMouse = Input.mousePosition - lastMouse ;
+            lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
+            var mouseX = transform.eulerAngles.x + lastMouse.x;
+            if (mouseX > 90f && mouseX < 95f)
+            {
+                mouseX = 90f;
+            }
+            else if (mouseX > 265f && mouseX < 270f)
+            {
+                mouseX = 270f;
+            }
+            lastMouse = new Vector3(mouseX, transform.eulerAngles.y + lastMouse.y, 0);
+            transform.eulerAngles = lastMouse;
+            lastMouse = Input.mousePosition;
         }
         else
         {
@@ -42,7 +52,6 @@ public class CameraMovement : MonoBehaviour
         //Mouse  camera angle done.  
        
         //Keyboard commands
-        float f = 0.0f;
         Vector3 p = GetBaseInput();
         if (Input.GetKey (KeyCode.LeftShift)){
             totalRun += Time.deltaTime;
