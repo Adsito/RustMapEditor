@@ -19,11 +19,13 @@ public class CameraMovement : MonoBehaviour
         mainSpeed = moveSpeed;
     }
     void Update () {
-        if (Input.GetKey (KeyCode.LeftControl)) {
+        if (Input.GetKeyDown (KeyCode.LeftControl))
+        {
             lastSpeed = mainSpeed;
             mainSpeed = 10.0f;
         }
-        else {
+        if (Input.GetKeyUp (KeyCode.LeftControl))
+        {
             mainSpeed = lastSpeed;
         }
         if (Input.GetKey (KeyCode.Mouse1)){
