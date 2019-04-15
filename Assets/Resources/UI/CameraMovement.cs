@@ -5,16 +5,27 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     float mainSpeed = 100.0f; //regular speed
+    float lastSpeed = 100.0f;
     float shiftAdd = 250.0f; //multiplied by how long shift is held.  Basically running
     float maxShift = 1000.0f; //Maximum speed when holdin gshift
     public float camSens = 0.25f; //How sensitive it with mouse
     private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
     private float totalRun= 1.0f;
     
-    public void ChangeCamera (float Camsensi) {
-        camSens = Camsensi;
+    public void ChangeCamera (float camSensi) {
+        camSens = camSensi;
+    }
+    public void ChangeSpeed (float moveSpeed) {
+        mainSpeed = moveSpeed;
     }
     void Update () {
+        if (Input.GetKey (KeyCode.LeftControl)) {
+            lastSpeed = mainSpeed;
+            mainSpeed = 10.0f;
+        }
+        else {
+            mainSpeed = lastSpeed;
+        }
         if (Input.GetKey (KeyCode.Mouse1)){
         lastMouse = Input.mousePosition - lastMouse ;
         lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0 );
