@@ -32,19 +32,11 @@ public class WorldConverter {
     public static MapInfo emptyWorld(int size)
     {
         MapInfo terrains = new MapInfo();
-
         
         var terrainSize = new Vector3(size, 1000, size);
 
         int resolution = Mathf.NextPowerOfTwo((int)(size * 0.50f));
-        /*
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[,] landHeight = land.terrainData.GetHeights(0, 0, (int)land.terrainData.size.x, (int)land.terrainData.size.y);
-        Debug.Log(landHeight.GetLength(0));
-        MapTransformations.resize(landHeight, size);
-
-        Debug.Log(landHeight.GetLength(0));
-        */
+        
         var terrainMap  = new TerrainMap<short> (new byte[(int)Mathf.Pow((resolution + 1), 2) * 2 * 1], 1); //2 bytes 1 channel
         var heightMap   = new TerrainMap<short> (new byte[(int)Mathf.Pow((resolution + 1), 2) * 2 * 1], 1); //2 bytes 1 channel
         var waterMap    = new TerrainMap<short> (new byte[(int)Mathf.Pow((resolution + 1), 2) * 2 * 1], 1); //2 bytes 1 channel
@@ -77,25 +69,11 @@ public class WorldConverter {
         terrainMap.FromByteArray(landHeightBytes);
         heightMap.FromByteArray(landHeightBytes);
         waterMap.FromByteArray(waterHeightBytes);
-        /*
-        Debug.Log(terrainMap.res + " " + terrainMap.BytesTotal());
-        Debug.Log(heightMap.res + " " + heightMap.BytesTotal());
-        Debug.Log(waterMap.res + " " + waterMap.BytesTotal());
-        Debug.Log(splatMap.res + " " + splatMap.BytesTotal());
-        Debug.Log(topologyMap.res + " " + topologyMap.BytesTotal());
-        Debug.Log(biomeMap.res + " " + biomeMap.BytesTotal());
-        Debug.Log(alphaMap.res + " " + alphaMap.BytesTotal());
-        */
 
         terrains.topology = topologyMap;
 
         List<PathData> paths = new List<PathData>();
-        //foreach (PathDataHolder pathHolder in GameObject.FindObjectsOfType<PathDataHolder>())
-            //paths.Add(pathHolder.pathData);
-
         List<PrefabData> prefabs = new List<PrefabData>();
-        //foreach (PrefabDataHolder prefabHolder in GameObject.FindObjectsOfType<PrefabDataHolder>())
-            //prefabs.Add(prefabHolder.prefabData);
 
         terrains.pathData = paths.ToArray();
         terrains.prefabData = prefabs.ToArray();
@@ -274,7 +252,12 @@ public class WorldConverter {
         foreach (PrefabDataHolder p in prefabs)
         {
             if (p.prefabData != null)
-                world.world.prefabs.Insert(0,p.prefabData);
+            {
+                if (p.saveWithMap == true)
+                {
+                    world.world.prefabs.Insert(0, p.prefabData);
+                }
+            }
         }
 
         PathDataHolder[] paths = GameObject.FindObjectsOfType<PathDataHolder>();
@@ -292,8 +275,6 @@ public class WorldConverter {
                 world.world.paths.Insert(0, p.pathData);
             }
         }
-
-       
         return world;
     }
 
