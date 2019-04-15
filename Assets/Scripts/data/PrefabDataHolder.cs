@@ -10,6 +10,7 @@ public class PrefabDataHolder : MonoBehaviour {
     
     public WorldSerialization.PrefabData prefabData;
     public bool showBtn = false;
+    public bool saveWithMap = false;
 
     void Update ()
     {
