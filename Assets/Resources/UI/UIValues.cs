@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class UIValues : MonoBehaviour
 {
@@ -59,8 +60,10 @@ public class UIValues : MonoBehaviour
         {
             return;
         }
+        EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
         blob.Load(loadFile);
         script.loadPath = loadFile;
+        EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
         script.Load(blob);
     }
 }
