@@ -19,6 +19,10 @@ public class CameraMovement : MonoBehaviour
         transform.eulerAngles = lastMouse;
         lastMouse =  Input.mousePosition;
         }
+        else
+        {
+            lastMouse = Input.mousePosition;
+        }
         //Mouse  camera angle done.  
        
         //Keyboard commands
