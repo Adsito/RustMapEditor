@@ -90,7 +90,6 @@ public class Conditions : List<Conditions>
         get; set;
     }
 }
-[ExecuteInEditMode]
 public class MapIO : MonoBehaviour {
     #region LayersFrom
     public TerrainTopology.Enum topologyLayerFrom;
@@ -110,7 +109,6 @@ public class MapIO : MonoBehaviour {
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
-    public bool prefabNamesSet = false, defaultPrefabsCreated = false;
     public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     LandData selectedLandLayer;
     private PrefabLookup prefabLookup;
@@ -119,12 +117,6 @@ public class MapIO : MonoBehaviour {
     float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
-
-    void Awake()
-    {
-        prefabNamesSet = false;
-        defaultPrefabsCreated = false;
-    }
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -208,7 +200,6 @@ public class MapIO : MonoBehaviour {
                 var linesSplit = line.Split(':');
                 prefabNames.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[0]);
             }
-            prefabNamesSet = true;
         }
     }
     public GameObject spawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
@@ -2024,15 +2015,12 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
-
-        if (prefabNamesSet == false)
-        {
-            getPrefabNames();
-        }
-        if (defaultPrefabsCreated == false && getPrefabLookUp() == null)
+        
+        if (prefabReference.Count == 0 && getPrefabLookUp() == null)
         {
             createDefaultPrefabs();
         }
+        
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2188,7 +2176,6 @@ public class MapIO : MonoBehaviour {
                 prefabNames.Add(uint.Parse(linesSplit[2]), prefabName);
             }
         }
-        defaultPrefabsCreated = true;
     }
 
     public void StartPrefabLookup()
@@ -2204,24 +2191,16 @@ public class MapIO : MonoBehaviour {
         }
         if (prefabLookup.isLoaded)
         {
-            if(GameObject.FindObjectsOfType<PrefabDataHolder>().Length > 0) { 
-
-                Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-                foreach (PrefabDataHolder pdh in GameObject.FindObjectsOfType<PrefabDataHolder>())
+            Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+            foreach (PrefabDataHolder pdh in prefabsParent.gameObject.GetComponentsInChildren<PrefabDataHolder>())
+            {
+                if (pdh.saveWithMap == true)
                 {
-                    if (pdh.gameObject.tag == "LoadedPrefab" && pdh.saveWithMap == true)
-                    {
-                        PrefabData prefabData = pdh.prefabData;
-                        GameObject go = SpawnPrefab(prefabData, prefabsParent);
-                        go.tag = "LoadedPrefab";
-                        go.AddComponent<PrefabDataHolder>().prefabData = prefabData;
-
-                        DestroyImmediate(pdh.gameObject);
-
-                        setChildrenUnmoveable(go);
-                    }
-
-                    
+                    GameObject go = SpawnPrefab(pdh.prefabData, prefabsParent);
+                    go.tag = "LoadedPrefab";
+                    go.AddComponent<PrefabDataHolder>().prefabData = pdh.prefabData;
+                    DestroyImmediate(pdh.gameObject);
+                    setChildrenUnmoveable(go);
                 }
             }
         }
