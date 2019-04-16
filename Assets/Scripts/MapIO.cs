@@ -90,6 +90,7 @@ public class Conditions : List<Conditions>
         get; set;
     }
 }
+[ExecuteInEditMode]
 public class MapIO : MonoBehaviour {
     #region LayersFrom
     public TerrainTopology.Enum topologyLayerFrom;
@@ -118,6 +119,12 @@ public class MapIO : MonoBehaviour {
     float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
+
+    void Awake()
+    {
+        prefabNamesSet = false;
+        defaultPrefabsCreated = false;
+    }
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -2017,6 +2024,7 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
+
         if (prefabNamesSet == false)
         {
             getPrefabNames();
