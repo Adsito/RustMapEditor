@@ -2029,7 +2029,6 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
-        Debug.Log("Loading map");
         if (Application.isEditor)
         {
             if (prefabReference.Count == 0 && getPrefabLookUp() == null)
@@ -2041,7 +2040,6 @@ public class MapIO : MonoBehaviour {
         {
             if (getPrefabLookUp() == null)
             {
-                Debug.Log("Starting prefab lookup.");
                 StartPrefabLookup();
             }
         }
@@ -2110,7 +2108,6 @@ public class MapIO : MonoBehaviour {
         }
         if (Application.isPlaying)
         {
-            Debug.Log("Spawning map prefabs");
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
                 prefabLookup.prefabs.TryGetValue(terrains.prefabData[i].id, out GameObject prefab);
