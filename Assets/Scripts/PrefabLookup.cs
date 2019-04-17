@@ -26,6 +26,10 @@ public class PrefabLookup : System.IDisposable
         backend = new AssetBundleBackend(bundlename);
         var lookupString = "";
         var manifest = backend.Load<GameManifest>(manifestPath);
+        if (manifest == null)
+        {
+            Debug.Log("Manifest is null");
+        }
         for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
         {
             lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
