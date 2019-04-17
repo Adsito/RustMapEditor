@@ -242,13 +242,9 @@ public class MapIO : MonoBehaviour {
         GameObject mapPrefabs = GameObject.Find("Objects");
         foreach(PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
         {
-            if (g.saveWithMap == true)
-            {
-                DestroyImmediate(g.gameObject);
-            }
+            DestroyImmediate(g.gameObject);
         }
-
-        foreach (PathDataHolder g in GameObject.FindObjectsOfType<PathDataHolder>())
+        foreach (PathDataHolder g in mapPrefabs.GetComponentsInChildren<PathDataHolder>())
         {
             DestroyImmediate(g.gameObject);
         }
@@ -2033,12 +2029,22 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
-
-        if (prefabReference.Count == 0 && getPrefabLookUp() == null)
+        Debug.Log("Loading map");
+        if (Application.isEditor)
         {
-            createDefaultPrefabs();
+            if (prefabReference.Count == 0 && getPrefabLookUp() == null)
+            {
+                createDefaultPrefabs();
+            }
         }
-        
+        if (Application.isPlaying)
+        {
+            if (getPrefabLookUp() == null)
+            {
+                Debug.Log("Starting prefab lookup.");
+                StartPrefabLookup();
+            }
+        }
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2089,18 +2095,30 @@ public class MapIO : MonoBehaviour {
 
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
 
-        for (int i = 0; i < terrains.prefabData.Length; i++)
+        if (Application.isEditor)
         {
-            GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-            newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-            newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
-            prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-            newObj.name = prefabName;
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+                newObj.name = prefabName;
+            }
         }
-        
+        if (Application.isPlaying)
+        {
+            Debug.Log("Spawning map prefabs");
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                prefabLookup.prefabs.TryGetValue(terrains.prefabData[i].id, out GameObject prefab);
+                GameObject newObj = spawnPrefab(prefab, terrains.prefabData[i], prefabsParent);
+                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+            }
+        }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
@@ -2195,7 +2213,6 @@ public class MapIO : MonoBehaviour {
             }
         }
     }
-
     public void StartPrefabLookup()
     {
         setPrefabLookup(new PrefabLookup(bundleFile, this));
