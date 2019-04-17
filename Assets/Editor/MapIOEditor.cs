@@ -46,17 +46,6 @@ public class MapIOEditor : Editor
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
-    void OnSceneGUI()
-    {
-        DragAndDrop.AcceptDrag();
-        if (DragAndDrop.objectReferences != null && Event.current.button == 0 && Event.current.type == EventType.MouseUp)
-        {
-            Debug.Log("Dropped Prefab");
-            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-            DragAndDrop.PrepareStartDrag();
-        }
-    }
-
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;

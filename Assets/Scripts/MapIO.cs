@@ -2015,7 +2015,7 @@ public class MapIO : MonoBehaviour {
         if (MapIO.topology == null)
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         cleanUpMap();
-        
+
         if (prefabReference.Count == 0 && getPrefabLookUp() == null)
         {
             createDefaultPrefabs();
@@ -2227,10 +2227,18 @@ public class MapIO : MonoBehaviour {
         }
         return go;
     }
+    public void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            //Debug.Log("Prefab Placed.");
+        }
+    }
 }
 public class PrefabHierachy : TreeView
 {
     MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
+    
     public PrefabHierachy(TreeViewState treeViewState)
         : base(treeViewState)
     {
@@ -2266,8 +2274,9 @@ public class PrefabHierachy : TreeView
         if (args.performDrop)
         {
             Debug.Log("Dropped");
+            return DragAndDropVisualMode.Copy;
         }
-        return DragAndDropVisualMode.Copy;
+        return DragAndDropVisualMode.None;
     }
     Dictionary<string, TreeViewItem> treeviewParents = new Dictionary<string, TreeViewItem>();
     List<TreeViewItem> allItems = new List<TreeViewItem>();
