@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ public class PrefabLookup : System.IDisposable
 {
 	private AssetBundleBackend backend;
 	private HashLookup lookup;
-	private Scene scene;
 
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
 
@@ -104,8 +102,11 @@ public class PrefabLookup : System.IDisposable
         var prefabPos = new Vector3(0, 0, 0);
         var prefabRot = new Quaternion(0, 0, 0, 0);
         GameObject loadedPrefab = GameObject.Instantiate(go, prefabPos, prefabRot);
-        loadedPrefab.name = name;
+        var prefabPath = name.Split('/');
+        var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
+        loadedPrefab.name = prefabName;
         loadedPrefab.transform.SetParent(prefabParent);
+        
         if (loadedPrefab.GetComponentsInChildren<LODGroup>() != null)
         {
             foreach (var group in loadedPrefab.GetComponentsInChildren<LODGroup>())
@@ -151,103 +152,78 @@ public class PrefabLookup : System.IDisposable
                             {
                                 case "Standard":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Standard (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Core/Foliage":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Core/Generic":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Terrain Blend (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Core/Foliage Billboard":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Blend 4-Way":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Blend 4-Way (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Blend Layer":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Blend Layer (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Decal":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Decal (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Nature/Foliage":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Nature/Water/Lake":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Nature/Floating Ice Sheets":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Cloth":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard + Wind":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard + Wind (Specular setup)":
                                     item.shader = Shader.Find("Standard(Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Standard Cloth (Specular setup)":
                                     item.shader = Shader.Find("Standard (Specular setup)");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Rust/Flare":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Custom/FoliageDisplace":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Custom/StandardWithDecal":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 case "Custom/Standard Refraction":
                                     item.shader = Shader.Find("Standard");
-                                    item.SetShaderPassEnabled("Always", true);
                                     break;
                                 default:
                                     //Debug.Log("Shader: " + item.shader.name);
