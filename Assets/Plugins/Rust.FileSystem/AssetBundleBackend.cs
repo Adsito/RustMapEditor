@@ -26,6 +26,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 		}
 
 		var manifestList = rootBundle.LoadAllAssets<AssetBundleManifest>();
+        Debug.Log(manifestList.Length);
 		if (manifestList.Length != 1)
 		{
 			LoadError("Couldn't find AssetBundleManifest - " + manifestList.Length);
@@ -37,7 +38,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 		foreach (var ab in manifest.GetAllAssetBundles())
 		{
 			LoadBundle(ab);
-
+            Debug.Log("Getting asset bundles");
 			if (isError) return;
 		}
 
@@ -66,6 +67,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 		foreach (var bundle in bundles)
 		{
+            Debug.Log("Build file index");
 			if (bundle.Key.StartsWith("content", System.StringComparison.InvariantCultureIgnoreCase))
 				continue;
 
