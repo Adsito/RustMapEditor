@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+using Crosstales.FB;
 
 public class UIValues : MonoBehaviour
 {
@@ -53,34 +53,30 @@ public class UIValues : MonoBehaviour
 
     public void LoadMap()
     {
-        loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
-
+        loadFile = FileBrowser.OpenSingleFile("Import Map File", loadFile, "map");
         var blob = new WorldSerialization();
         if (loadFile == "")
         {
             return;
         }
-        EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
         blob.Load(loadFile);
         script.loadPath = loadFile;
-        EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
         script.Load(blob);
     }
     public void SaveMap()
     {
-        saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+        saveFile = FileBrowser.SaveFile("Export Map File", saveFile, mapName, "map");
         if (saveFile == "")
         {
             return;
         }
-        Debug.Log("Exported map " + saveFile);
         script.savePath = saveFile;
         prefabSaveFile = saveFile;
-        EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
         script.Save(saveFile);
     }
     public void NewMap()
     {
+        /*
         int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
         if (mapSize < 1000 & mapSize > 6000)
         {
@@ -112,5 +108,6 @@ public class UIValues : MonoBehaviour
                 Debug.Log("Create New Map option outofbounds");
                 break;
         }
+        */
     }
 }

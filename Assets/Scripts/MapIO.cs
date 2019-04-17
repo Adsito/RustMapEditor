@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
-using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using System.Threading;
 using static WorldConverter;
 using static WorldSerialization;
+using System.IO;
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
+#endif
 
 [Serializable]
 public class PrefabExport
@@ -117,6 +120,21 @@ public class MapIO : MonoBehaviour {
     float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
+
+
+    public void ProgressBar(string title, string info, float progress)
+    {
+        #if UNITY_EDITOR
+        EditorUtility.DisplayProgressBar(title, info, progress);
+        #endif
+    }
+    public void ClearProgressBar()
+    {
+        #if UNITY_EDITOR
+        EditorUtility.ClearProgressBar();
+        #endif
+    }
+
 
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -447,10 +465,10 @@ public class MapIO : MonoBehaviour {
             changeLandLayer();
             oldTopologyLayer = topo;
             progressBar += progressValue;
-            EditorUtility.DisplayProgressBar("Rotating Map", "Rotating " + topo.ToString() + " Topology", progressBar);
+            ProgressBar("Rotating Map", "Rotating " + topo.ToString() + " Topology", progressBar);
             rotateTopologymap(CW);
         }
-        EditorUtility.ClearProgressBar();
+        ClearProgressBar();
         progressBar = 0f; progressValue = 0f;
         topologyLayer = oldTopologyLayer2;
         changeLandLayer();
@@ -829,7 +847,7 @@ public class MapIO : MonoBehaviour {
         float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
         float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
         int  alphaTexture = 0, topologyTexture = 0;
-        EditorUtility.DisplayProgressBar("Conditional Painter FIRST VERSION", "Preparing SplatMaps", 0.025f);
+        ProgressBar("Conditional Painter FIRST VERSION", "Preparing SplatMaps", 0.025f);
         switch (landLayer)
         {
             case "Ground":
@@ -886,10 +904,10 @@ public class MapIO : MonoBehaviour {
             {
                 slopes = getSlopes();
             }
-            EditorUtility.DisplayProgressBar("Conditional Painter", "Checking Conditions", 0.05f);
+            ProgressBar("Conditional Painter", "Checking Conditions", 0.05f);
             for (int i = 0; i < groundSplatMap.GetLength(0); i++)
             {
-                EditorUtility.DisplayProgressBar("Conditional Painter", "If this hangs too long close Unity. \n" +
+                ProgressBar("Conditional Painter", "If this hangs too long close Unity. \n" +
                     "A performance update will come soon.", 0.5f);
                 for (int j = 0; j < groundSplatMap.GetLength(1); j++)
                 {
@@ -1003,7 +1021,7 @@ public class MapIO : MonoBehaviour {
                     }
                 }
             }
-            EditorUtility.ClearProgressBar();
+            ClearProgressBar();
             progressValue = 0f; progressBar = 0f;
             switch (landLayer)
             {
@@ -1381,113 +1399,113 @@ public class MapIO : MonoBehaviour {
         changeLayer("Topology");
         if (wipeLayer == true) //Wipes layer then paints on active textures.
         {
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
+            ProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             oldTopologyLayer = TerrainTopology.Enum.Offshore; //If wiping layers we don't need to get the current layers splatmap detail, so we just wipe it clean then repaint.
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintHeight("Topology", 0, 475, 0, 475, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
+            ProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintHeight("Topology", 0, 498, 0, 498, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
+            ProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             oldTopologyLayer = TerrainTopology.Enum.Beach;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintHeight("Topology", 500, 502, 500, 502, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
+            ProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintHeight("Topology", 500, 502, 500, 502, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
+            ProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintHeight("Topology", 500, 1000, 500, 1000, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
+            ProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintSlope("Topology", 45f, 90f, 45f, 90f, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
+            ProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintArea("Topology", 0, splatMap.GetLength(0) / 3 , 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
+            ProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
+            ProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.ClearProgressBar();
+            ClearProgressBar();
             changeLandLayer();
         }
         else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
             oldTopologyLayer2 = topologyLayer; //This saves the currently selected topology layer so we can swap back to it at the end, ensuring we don't accidentally erase anything.
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
+            ProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
             changeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
             oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
             paintHeight("Topology", 0, 475, 0, 475, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
+            ProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             topologyLayer = TerrainTopology.Enum.Ocean;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             paintHeight("Topology", 0, 498, 0, 498, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Beach", 0.3f);
+            ProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             topologyLayer = TerrainTopology.Enum.Beach;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
             paintHeight("Topology", 500, 502, 500, 502, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
+            ProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             topologyLayer = TerrainTopology.Enum.Oceanside;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
             paintHeight("Topology", 500, 502, 500, 502, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
+            ProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             topologyLayer = TerrainTopology.Enum.Mainland;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             paintHeight("Topology", 500, 1000, 500, 1000, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
+            ProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintSlope("Topology", 45f, 90f, 45, 90f, 0, 1);
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
+            ProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             topologyLayer = TerrainTopology.Enum.Tier0;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             paintArea("Topology", 0, splatMap.GetLength(0) / 3, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
+            ProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             topologyLayer = TerrainTopology.Enum.Tier1;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             paintArea("Topology", splatMap.GetLength(0) / 3, splatMap.GetLength(0) / 3 * 2, 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.DisplayProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
+            ProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             topologyLayer = TerrainTopology.Enum.Tier2;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            EditorUtility.ClearProgressBar();
+            ClearProgressBar();
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
         }
@@ -1497,30 +1515,30 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Forest;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.15f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.15f);
         generateTwoLayersNoise("Ground", 50f, 0, 4);
 
         terrainLayer = TerrainSplat.Enum.Grass;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.3f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.3f);
         paintSlope("Ground", 35f, 45, 20f, 50f, 0, 2f);
 
         terrainLayer = TerrainSplat.Enum.Dirt;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.4f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.4f);
         paintSlope("Ground", 20, 20, 10, 30, 0, 0.5f);
 
         terrainLayer = TerrainSplat.Enum.Snow;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.6f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.6f);
         paintHeight("Ground", 700, 1000, 650, 1000, 0, 3f);
 
         terrainLayer = TerrainSplat.Enum.Rock;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.8f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.8f);
         paintSlope("Ground", 50f, 90f, 40f, 90f, 0, 4.5f);
 
         terrainLayer = TerrainSplat.Enum.Sand;
-        EditorUtility.DisplayProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.9f);
+        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.9f);
         paintHeight("Ground", 0, 502, 0, 505, 0, 2);
 
-        EditorUtility.ClearProgressBar();
+        ClearProgressBar();
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {
@@ -1535,12 +1553,12 @@ public class MapIO : MonoBehaviour {
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
-        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.3f);
+        ProgressBar("Debug Alpha", "Debugging", 0.3f);
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
-        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.5f);
+        ProgressBar("Debug Alpha", "Debugging", 0.5f);
 
         for (int i = 0; i < alphaSplatMap.GetLength(0); i++)
         {
@@ -1556,16 +1574,16 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
-        EditorUtility.DisplayProgressBar("Debug Alpha", "Debugging", 0.7f);
+        ProgressBar("Debug Alpha", "Debugging", 0.7f);
         landData.setData(splatMap, landLayer);
         landData.setLayer();
-        EditorUtility.DisplayProgressBar("Debug Alpha", "Done", 1f);
-        EditorUtility.ClearProgressBar();
+        ProgressBar("Debug Alpha", "Done", 1f);
+        ClearProgressBar();
     }
     public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
-        EditorUtility.DisplayProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
+        ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
         switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
         {
             default:
@@ -1587,7 +1605,7 @@ public class MapIO : MonoBehaviour {
         }
         LandData landDataFrom = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerFrom).GetComponent<LandData>();
         float[,,] splatMapFrom = TypeConverter.singleToMulti(landDataFrom.splatMap, textureCount(landLayerFrom)); // Land layer to copy from.
-        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.5f);
+        ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.5f);
         switch (landLayerToPaint) // Gathers the information on which texture we are painting to in the landlayer.
         {
             default:
@@ -1612,7 +1630,7 @@ public class MapIO : MonoBehaviour {
         }
         LandData landDataToPaint = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayerToPaint).GetComponent<LandData>();
         float[,,] splatMapTo = TypeConverter.singleToMulti(landDataToPaint.splatMap, textureCount(landLayerToPaint)); //  Land layer to paint to.
-        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.75f);
+        ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.75f);
         for (int i = 0; i < splatMapFrom.GetLength(0); i++)
         {
             for (int j = 0; j < splatMapFrom.GetLength(1); j++)
@@ -1627,7 +1645,7 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
-        EditorUtility.DisplayProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
+        ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
         landDataToPaint.setData(splatMapTo, landLayerToPaint);
         landDataToPaint.setLayer();
         if (landLayerToPaint == "Topology")
@@ -1635,7 +1653,7 @@ public class MapIO : MonoBehaviour {
             topologyLayer = oldTopologyLayer2;
             saveTopologyLayer();
         }
-        EditorUtility.ClearProgressBar();
+        ClearProgressBar();
     }
     public void generateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
@@ -2034,7 +2052,7 @@ public class MapIO : MonoBehaviour {
         land.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.3f);
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.3f);
         topology.InitMesh(terrains.topology);
 
         land.terrainData.heightmapResolution = terrains.resolution;
@@ -2056,23 +2074,23 @@ public class MapIO : MonoBehaviour {
         land.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
         water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         groundLandData.setData(terrains.splatMap, "ground");
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.5f);
+        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.5f);
         biomeLandData.setData(terrains.biomeMap, "biome");
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.6f);
+        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.6f);
         alphaLandData.setData(terrains.alphaMap, "alpha");
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.7f);
+        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.7f);
         topologyLandData.setData(topology.getSplatMap((int)topologyLayer), "topology");
         changeLandLayer();
 
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
 
-        EditorUtility.DisplayProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
+        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
 
         for (int i = 0; i < terrains.prefabData.Length; i++)
         {
@@ -2086,7 +2104,7 @@ public class MapIO : MonoBehaviour {
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
-        EditorUtility.DisplayProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.9f);
+        ProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.9f);
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
 
@@ -2107,7 +2125,7 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        EditorUtility.ClearProgressBar();
+        ClearProgressBar();
     }
 
     public void Load(WorldSerialization blob)
@@ -2133,13 +2151,13 @@ public class MapIO : MonoBehaviour {
             Debug.Log("Land not enabled");
         Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
-        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
+        ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
+        ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
         WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
-        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
+        ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
-        EditorUtility.DisplayProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
-        EditorUtility.ClearProgressBar();
+        ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
+        ClearProgressBar();
     }
 
     public void newEmptyTerrain(int size)
@@ -2235,6 +2253,7 @@ public class MapIO : MonoBehaviour {
         }
     }
 }
+#if UNITY_EDITOR
 public class PrefabHierachy : TreeView
 {
     MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
@@ -2325,3 +2344,4 @@ public class PrefabHierachy : TreeView
         return root;
     }
 }
+#endif
