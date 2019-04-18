@@ -60,14 +60,16 @@ public abstract class FileSystemBackend
         
 		if (cache.ContainsKey(filePath))
 		{
-			val = cache[filePath] as T;
+            val = cache[filePath] as T;
         }
 		else
 		{
 			val = LoadAsset<T>(filePath);
+            Debug.Log("Loading manifest");
             if (val != null)
 			{
-				cache.Add(filePath, val);
+                Debug.Log("Manifest found");
+                cache.Add(filePath, val);
             }
 		}
 		return val;
