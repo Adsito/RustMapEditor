@@ -10,7 +10,7 @@ public class PrefabLookup : System.IDisposable
 
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
 
-    private static string manifestPath = "Assets/manifest.asset";
+    private static string manifestPath = "assets/manifest.asset";
     private static string assetsToLoadPath = "AssetsList.txt";
     public bool prefabsLoaded = false;
 
@@ -20,15 +20,19 @@ public class PrefabLookup : System.IDisposable
 	}
     StreamWriter streamWriter = new StreamWriter("PrefabsManifest.txt", false);
     StreamWriter streamWriter2 = new StreamWriter("PrefabsLoaded.txt", false);
-    
+    GameManifest manifest;
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
         backend = new AssetBundleBackend(bundlename);
         var lookupString = "";
-        var manifest = backend.Load<GameManifest>(manifestPath);
+        //manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
-            Debug.Log("Manifest is null");
+            manifest = GameManifest.Current;
+        }
+        else
+        {
+            Debug.Log(manifest);
         }
         for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
         {
@@ -38,14 +42,14 @@ public class PrefabLookup : System.IDisposable
         lookup = new HashLookup(lookupString);
 
         var lines = File.ReadAllLines(assetsToLoadPath);
-        
+        /*
         foreach (var line in lines)
         {
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
                 loadPrefabs(line);
             }
-        }
+        }*/
         assetDump();
         streamWriter.Close();
         streamWriter2.Close();

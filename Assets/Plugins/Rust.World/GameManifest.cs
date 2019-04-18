@@ -25,15 +25,17 @@ public class GameManifest : ScriptableObject
     {
         get
         {
-            if ((UnityEngine.Object)GameManifest.loadedManifest != (UnityEngine.Object)null)
-                return GameManifest.loadedManifest;
+            if (loadedManifest != null)
+            {
+                return loadedManifest;
+            }
             GameManifest.Load();
             return GameManifest.loadedManifest;
         }
     }
     public static void Load(GameManifest loadedManifest)
     {
-        if ((UnityEngine.Object)GameManifest.loadedManifest != (UnityEngine.Object)null)
+        if (GameManifest.loadedManifest != null)
             return;
         GameManifest.loadedManifest = loadedManifest;
         foreach (GameManifest.PrefabProperties prefabProperty in GameManifest.loadedManifest.prefabProperties)
@@ -41,11 +43,11 @@ public class GameManifest : ScriptableObject
     }
     public static void Load()
     {
-        if ((UnityEngine.Object)GameManifest.loadedManifest != (UnityEngine.Object)null)
-            return;
-        GameManifest.loadedManifest = FileSystem.Load<GameManifest>("Assets/manifest.asset", true);
-        foreach (GameManifest.PrefabProperties prefabProperty in GameManifest.loadedManifest.prefabProperties)
-            GameManifest.guidToPath.Add(prefabProperty.guid, prefabProperty.name);
+        loadedManifest = FileSystem.Load<GameManifest>("assets/manifest.asset", true);
+        foreach (PrefabProperties prefabProperty in loadedManifest.prefabProperties)
+        {
+            guidToPath.Add(prefabProperty.guid, prefabProperty.name);
+        }
     }
 
     internal static Dictionary<string, string[]> LoadEffectDictionary()
