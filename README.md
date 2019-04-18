@@ -18,8 +18,6 @@ https://www.patreon.com/dezinated
 Also using Assets from:
 -https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
 
--https://assetstore.unity.com/packages/tools/terrain/terrain-toolkit-2017-83490 for Terrain Toolkit 2017.
-
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
 - Importing and exporting .map files.
