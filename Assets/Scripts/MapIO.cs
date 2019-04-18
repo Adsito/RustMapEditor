@@ -2110,10 +2110,11 @@ public class MapIO : MonoBehaviour {
         {
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
-                prefabLookup.prefabs.TryGetValue(terrains.prefabData[i].id, out GameObject prefab);
-                GameObject newObj = spawnPrefab(prefab, terrains.prefabData[i], prefabsParent);
-                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                GameObject go = SpawnPrefab(terrains.prefabData[i], prefabsParent);
+                go.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                go.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+                go.name = prefabName;
             }
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
