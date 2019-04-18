@@ -20,36 +20,35 @@ public class PrefabLookup : System.IDisposable
 	}
     StreamWriter streamWriter = new StreamWriter("PrefabsManifest.txt", false);
     StreamWriter streamWriter2 = new StreamWriter("PrefabsLoaded.txt", false);
-    GameManifest manifest;
+
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
         backend = new AssetBundleBackend(bundlename);
         var lookupString = "";
-        //manifest = backend.Load<GameManifest>(manifestPath);
+        var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
-            manifest = GameManifest.Current;
+            Debug.Log("manifest is null");
         }
         else
         {
-            Debug.Log(manifest);
+            for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
+            {
+                lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
+                streamWriter.WriteLine(manifest.pooledStrings[index].hash + "  :  " + manifest.pooledStrings[index].str);
+            }
         }
-        for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
-        {
-            lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
-            streamWriter.WriteLine(manifest.pooledStrings[index].hash + "  :  " + manifest.pooledStrings[index].str);
-        }
+        
         lookup = new HashLookup(lookupString);
 
         var lines = File.ReadAllLines(assetsToLoadPath);
-        /*
         foreach (var line in lines)
         {
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
                 loadPrefabs(line);
             }
-        }*/
+        }
         assetDump();
         streamWriter.Close();
         streamWriter2.Close();
