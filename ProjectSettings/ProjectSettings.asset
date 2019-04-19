@@ -303,7 +303,7 @@ PlayerSettings:
     m_EncodingQuality: 2
   m_BuildTargetGroupLightmapSettings:
   - m_BuildTarget: Standalone
-    m_TextureStreamingEnabled: 0
+    m_TextureStreamingEnabled: 1
     m_TextureStreamingPriority: 0
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0
@@ -546,12 +546,12 @@ PlayerSettings:
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
   managedStrippingLevel:
-    Standalone: 0
+    Standalone: 3
   incrementalIl2cppBuild: {}
   allowUnsafeCode: 0
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
-  gcIncremental: 0
+  gcIncremental: 1
   gcWBarrierValidation: 0
   apiCompatibilityLevelPerPlatform:
     Standalone: 3
