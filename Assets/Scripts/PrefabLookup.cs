@@ -28,7 +28,7 @@ public class PrefabLookup : System.IDisposable
         var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
-            Debug.LogError("manifest is null");
+            Debug.Log("manifest is null");
         }
         else
         {
@@ -38,7 +38,9 @@ public class PrefabLookup : System.IDisposable
                 streamWriter.WriteLine(manifest.pooledStrings[index].hash + "  :  " + manifest.pooledStrings[index].str);
             }
         }
+        
         lookup = new HashLookup(lookupString);
+
         var lines = File.ReadAllLines(assetsToLoadPath);
         foreach (var line in lines)
         {
@@ -47,11 +49,10 @@ public class PrefabLookup : System.IDisposable
                 loadPrefabs(line);
             }
         }
-        //assetDump();
+        assetDump();
         streamWriter.Close();
         streamWriter2.Close();
         prefabsLoaded = true;
-        StaticBatchingUtility.Combine(GameObject.FindGameObjectsWithTag("LoadedPrefab"), GameObject.Find("PrefabsLoaded"));
     }
     public void Dispose()
 	{
@@ -103,37 +104,184 @@ public class PrefabLookup : System.IDisposable
         }
         streamWriter3.Close();
     }
-    public void createPrefab(GameObject go, Transform prefabParent, string path, uint rustid) // Creates prefab, setting the LOD Group and gathering the LOD's.
+    public void createPrefab(GameObject go, Transform prefabParent, string name, uint rustid) // Creates prefab, setting the LOD Group and gathering the LOD's.
     {
-        var prefabPath = path.Split('/');
+        var prefabPos = new Vector3(0, 0, 0);
+        var prefabRot = new Quaternion(0, 0, 0, 0);
+        GameObject loadedPrefab = GameObject.Instantiate(go, prefabPos, prefabRot);
+        var prefabPath = name.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        GameObject loadedPrefab = go;
-        loadedPrefab.tag = "LoadedPrefab";
-        PrefabDataHolder prefabDataHolder = loadedPrefab.AddComponent<PrefabDataHolder>();
-        loadedPrefab.transform.parent = prefabParent;
-        prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
-        var meshRenderers = loadedPrefab.GetComponentsInChildren<MeshRenderer>();
-        MeshRenderer[] meshRenderer = new MeshRenderer[meshRenderers.Length];
-        for (int i = 0; i < meshRenderer.Length; i++)
+        loadedPrefab.name = prefabName;
+        loadedPrefab.transform.SetParent(prefabParent);
+        
+        if (loadedPrefab.GetComponentsInChildren<LODGroup>() != null)
         {
-            if (meshRenderers[i].enabled == true)
+            foreach (var group in loadedPrefab.GetComponentsInChildren<LODGroup>())
             {
-                if (meshRenderers[i].gameObject.name.Contains("occluder"))
-                {
-                    meshRenderers[i].enabled = false;
-                }
-                meshRenderer[i] = meshRenderers[i];
+                GameObject.DestroyImmediate(group);
             }
         }
-        if (loadedPrefab.GetComponent<LODGroup>())
+        LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>(); //Setting LODGroup.
+        PrefabDataHolder prefabDataHolder = loadedPrefab.AddComponent<PrefabDataHolder>();
+        prefabDataHolder.saveWithMap = false;
+        var lodMeshes = loadedPrefab.GetComponentsInChildren<MeshFilter>();
+        MeshRenderer[][] renderers = new MeshRenderer[6][];
+        int[] lodCount = new int[6];
+        for (int i = 0; i < 6; i++)
         {
-            GameObject.DestroyImmediate(loadedPrefab.GetComponent<LODGroup>(), true);
+            renderers[i] = new MeshRenderer[lodMeshes.GetLength(0) + 1];
         }
-        LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>();
-        LOD[] lods = new LOD[1];
-        lods[0] = new LOD(0.075f, meshRenderer);
+        
+        int lodNumber = 0;
+        for (int i = 0; i < lodMeshes.Length; i++)
+        {
+            bool counted = false;
+            if (lodMeshes[i].sharedMesh != null)
+            {
+                for (int j = 0; j < 6; j++) // Sorts out normal meshes into LOD groups
+                {
+                    if (lodMeshes[i].sharedMesh.name.EndsWith(j.ToString()))
+                    {
+                        lodCount[j]++;
+                        lodNumber = j;
+                        counted = true;
+                        break;
+                    }
+                }
+                if (lodMeshes[i].gameObject.GetComponent<MeshRenderer>() != null)
+                {
+                    foreach (Material item in lodMeshes[i].gameObject.GetComponent<MeshRenderer>().sharedMaterials)
+                    {
+                        if (item != null)
+                        {
+                            #region SetShaders
+                            switch (item.shader.name)
+                            {
+                                case "Standard":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Standard (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Rust/Standard":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Core/Foliage":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Core/Generic":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Terrain Blend (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Core/Foliage Billboard":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Blend 4-Way":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Blend 4-Way (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Rust/Standard Blend Layer":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Blend Layer (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Rust/Standard Decal":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Decal (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Nature/Foliage":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Nature/Water/Lake":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Nature/Floating Ice Sheets":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard Cloth":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard + Wind":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Rust/Standard + Wind (Specular setup)":
+                                    item.shader = Shader.Find("Standard(Specular setup)");
+                                    break;
+                                case "Rust/Standard Cloth (Specular setup)":
+                                    item.shader = Shader.Find("Standard (Specular setup)");
+                                    break;
+                                case "Rust/Flare":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Custom/FoliageDisplace":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Custom/StandardWithDecal":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                case "Custom/Standard Refraction":
+                                    item.shader = Shader.Find("Standard");
+                                    break;
+                                default:
+                                    //Debug.Log("Shader: " + item.shader.name);
+                                    break;
+                            }
+                            #endregion
+                            if (!lodMeshes[i].sharedMesh.name.Contains("occluder"))
+                            {
+                                lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+                            }
+                            else
+                            {
+                                lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                            }
+                        }
+                        else
+                        {
+                            lodMeshes[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                    }
+                    if (counted == true)
+                    {
+                        renderers[lodNumber][lodCount[lodNumber]] = lodMeshes[i].gameObject.GetComponent<MeshRenderer>();
+                    }
+                    else // If its not a default naming scheme LOD we just add it to LOD0
+                    {
+                        lodCount[0]++;
+                        renderers[0][lodCount[0]] = lodMeshes[i].gameObject.GetComponent<MeshRenderer>();
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 6; i++) // Gets highest LOD number in object.
+        {
+            if (lodCount[i] == 0)
+            {
+                lodNumber = i;
+                break;
+            }
+        }
+        LOD[] lods = new LOD[lodNumber];
+        for (int i = 0; i < lodNumber; i++)
+        {
+            lods[i] = new LOD(1.0F / (i + 1.5f), renderers[i]);
+            if (lodNumber > 0)
+            {
+                lods[lodNumber - 1] = new LOD(0.175f, renderers[lodNumber - 1]);
+            }
+        }
         lodGroup.SetLODs(lods);
-        lodGroup.fadeMode = LODFadeMode.None;
+        lodGroup.fadeMode = LODFadeMode.SpeedTree;
         lodGroup.RecalculateBounds();
         prefabs.Add(rustid, loadedPrefab);
         loadedPrefab.SetActive(false);
