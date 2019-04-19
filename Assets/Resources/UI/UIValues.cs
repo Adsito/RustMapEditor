@@ -110,4 +110,10 @@ public class UIValues : MonoBehaviour
         }
         */
     }
+    public void LODBias(float lodBias)
+    {
+        /*
+        QualitySettings.lodBias = lodBias;
+        */
+    }
 }
