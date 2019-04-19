@@ -65,8 +65,10 @@ public abstract class FileSystemBackend
 		else
 		{
 			val = LoadAsset<T>(filePath);
+            Debug.Log("Loading manifest");
             if (val != null)
 			{
+                Debug.Log("Manifest found");
                 cache.Add(filePath, val);
             }
 		}
