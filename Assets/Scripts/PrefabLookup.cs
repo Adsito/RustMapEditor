@@ -153,7 +153,7 @@ public class PrefabLookup : System.IDisposable
         }
         LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>();
         LOD[] lods = new LOD[1];
-        lods[0] = new LOD(0.3f, meshRenderer);
+        lods[0] = new LOD(0.25f, meshRenderer);
         lodGroup.SetLODs(lods);
         lodGroup.fadeMode = LODFadeMode.None;
         lodGroup.RecalculateBounds();

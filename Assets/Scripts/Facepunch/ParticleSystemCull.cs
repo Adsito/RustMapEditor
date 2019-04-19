@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class ParticleSystemCull : MonoBehaviour
 {
-    private ParticleSystem particleSystem;
+    private ParticleSystem particle;
 
     protected void Awake()
     {
-        particleSystem = GetComponent<ParticleSystem>();
-        particleSystem.Stop();
+        particle = GetComponent<ParticleSystem>();
+        particle.Stop();
     }
 }
