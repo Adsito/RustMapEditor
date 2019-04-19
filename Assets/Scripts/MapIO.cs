@@ -2033,7 +2033,7 @@ public class MapIO : MonoBehaviour {
         {
             if (prefabReference.Count == 0 && getPrefabLookUp() == null)
             {
-                createDefaultPrefabs();
+                //createDefaultPrefabs();
             }
         }
         if (Application.isPlaying)
@@ -2094,11 +2094,13 @@ public class MapIO : MonoBehaviour {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
-
         if (Application.isEditor)
         {
+            float progressValue = 0f;
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
+                progressValue += 0.1f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
                 GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
                 newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
                 newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
@@ -2108,13 +2110,14 @@ public class MapIO : MonoBehaviour {
         }
         if (Application.isPlaying)
         {
+            float progressValue = 0f;
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
+                progressValue += 0.1f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
                 GameObject go = SpawnPrefab(terrains.prefabData[i], prefabsParent);
                 go.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
                 go.GetComponent<PrefabDataHolder>().saveWithMap = true;
-                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-                go.name = prefabName;
             }
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
