@@ -113,16 +113,11 @@ public class PrefabLookup : System.IDisposable
         loadedPrefab.transform.parent = prefabParent;
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         var meshRenderers = loadedPrefab.GetComponentsInChildren<MeshRenderer>();
-        var particles = loadedPrefab.GetComponentsInChildren<ParticleSystem>();
         MeshRenderer[] meshRenderer = new MeshRenderer[meshRenderers.Length + 1];
         MeshFilter[] meshFilters = new MeshFilter[meshRenderers.Length];
         CombineInstance[] combine = new CombineInstance[meshRenderers.Length];
         MeshFilter meshFilter = new MeshFilter();
         bool combineMeshes = false;
-        foreach (var item in particles)
-        {
-            GameObject.DestroyImmediate(item, true);
-        }
         if (loadedPrefab.GetComponent<MeshFilter>() == null)
         {
             meshFilter = loadedPrefab.AddComponent<MeshFilter>();
