@@ -2094,7 +2094,6 @@ public class MapIO : MonoBehaviour {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
-        /*
         if (Application.isEditor)
         {
             float progressValue = 0f;
@@ -2108,7 +2107,7 @@ public class MapIO : MonoBehaviour {
                 prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
                 newObj.name = prefabName;
             }
-        }*/
+        }
         if (Application.isPlaying)
         {
             float progressValue = 0f;
