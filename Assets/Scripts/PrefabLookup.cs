@@ -113,17 +113,8 @@ public class PrefabLookup : System.IDisposable
         loadedPrefab.transform.parent = prefabParent;
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         var meshRenderers = loadedPrefab.GetComponentsInChildren<MeshRenderer>();
-        MeshRenderer[] meshRenderer = new MeshRenderer[meshRenderers.Length + 1];
-        MeshFilter[] meshFilters = new MeshFilter[meshRenderers.Length];
-        CombineInstance[] combine = new CombineInstance[meshRenderers.Length];
-        MeshFilter meshFilter = new MeshFilter();
-        bool combineMeshes = false;
-        if (loadedPrefab.GetComponent<MeshFilter>() == null)
-        {
-            meshFilter = loadedPrefab.AddComponent<MeshFilter>();
-            combineMeshes = true;
-        }
-        for (int i = 0; i < meshRenderers.Length; i++)
+        MeshRenderer[] meshRenderer = new MeshRenderer[meshRenderers.Length];
+        for (int i = 0; i < meshRenderer.Length; i++)
         {
             if (meshRenderers[i].enabled == true)
             {
@@ -131,25 +122,8 @@ public class PrefabLookup : System.IDisposable
                 {
                     meshRenderers[i].enabled = false;
                 }
-                if (meshRenderers[i].gameObject.name.Contains("occluder"))
-                {
-                    //meshRenderers[i].enabled = false;
-                }
-                else
-                {
-                    if (meshRenderers[i].gameObject.GetComponent<MeshFilter>() != null)
-                    {
-                        meshRenderer[i] = meshRenderers[i];
-                        combine[i].mesh = meshRenderers[i].gameObject.GetComponent<MeshFilter>().sharedMesh;
-                        combine[i].transform = meshRenderers[i].transform.localToWorldMatrix;
-                    }
-                }
+                meshRenderer[i] = meshRenderers[i];
             }
-        }
-        if (combineMeshes)
-        {
-            meshFilter.mesh = new Mesh();
-            meshFilter.mesh.CombineMeshes(combine, true);
         }
         if (loadedPrefab.GetComponent<LODGroup>())
         {
@@ -157,7 +131,7 @@ public class PrefabLookup : System.IDisposable
         }
         LODGroup lodGroup = loadedPrefab.AddComponent<LODGroup>();
         LOD[] lods = new LOD[1];
-        lods[0] = new LOD(0.25f, meshRenderer);
+        lods[0] = new LOD(0.075f, meshRenderer);
         lodGroup.SetLODs(lods);
         lodGroup.fadeMode = LODFadeMode.None;
         lodGroup.RecalculateBounds();
