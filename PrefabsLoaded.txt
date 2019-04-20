@@ -2716,6 +2716,57 @@ divesite_a : assets/prefabs/misc/divesite/divesite_a.prefab : 2419904621
 divesite_b : assets/prefabs/misc/divesite/divesite_b.prefab : 2048371271
 divesite_c : assets/prefabs/misc/divesite/divesite_c.prefab : 1891214172
 DoorCloser : assets/prefabs/misc/doorcloser/doorcloser.prefab : 1831641807
+hat.bunnyears : assets/prefabs/misc/easter/bunny ears/hat.bunnyears.prefab : 1025596244
+hat.bunnyears.world : assets/prefabs/misc/easter/bunny ears/hat.bunnyears.world.prefab : 3991026943
+Suit.EasterOnesie : assets/prefabs/misc/easter/bunny onesie/suit.easteronesie.prefab : 1869593166
+Suit.EasterOnesie.viewmodel : assets/prefabs/misc/easter/bunny onesie/suit.easteronesie.viewmodel.prefab : 2518241330
+Suit.EasterOnesie.World : assets/prefabs/misc/easter/bunny onesie/suit.easteronesie.world.prefab : 3556739282
+ChocolateEgg_Blue : assets/prefabs/misc/easter/chocolate egg/chocolateegg_blue.prefab : 3251392751
+ChocolateEgg_Gold : assets/prefabs/misc/easter/chocolate egg/chocolateegg_gold.prefab : 1603565448
+ChocolateEgg_Green : assets/prefabs/misc/easter/chocolate egg/chocolateegg_green.prefab : 1016985361
+ChocolateEgg_Pink : assets/prefabs/misc/easter/chocolate egg/chocolateegg_pink.prefab : 1114937783
+ChocolateEggGibs : assets/prefabs/misc/easter/chocolate egg/chocolateegggibs.prefab : 3429137212
+easter_door_wreath_deployed : assets/prefabs/misc/easter/door_wreath/easter_door_wreath_deployed.prefab : 3375996320
+basket.viewmodel : assets/prefabs/misc/easter/easter basket/basket.viewmodel.prefab : 1495986321
+easter_basket.entity : assets/prefabs/misc/easter/easter basket/easter_basket.entity.prefab : 557749706
+EasterEggProjectile : assets/prefabs/misc/easter/easter basket/eastereggprojectile.prefab : 3721260684
+add_egg : assets/prefabs/misc/easter/easter basket/effects/add_egg.prefab : 1884234879
+aim : assets/prefabs/misc/easter/easter basket/effects/aim.prefab : 2847751034
+aim_cancel : assets/prefabs/misc/easter/easter basket/effects/aim_cancel.prefab : 2621387513
+deploy : assets/prefabs/misc/easter/easter basket/effects/deploy.prefab : 3567810049
+EggExplosion : assets/prefabs/misc/easter/easter basket/effects/eggexplosion.prefab : 2172435534
+grab_egg_start : assets/prefabs/misc/easter/easter basket/effects/grab_egg_start.prefab : 1730748618
+place : assets/prefabs/misc/easter/easter basket/effects/place.prefab : 1832232035
+place_grab_egg : assets/prefabs/misc/easter/easter basket/effects/place_grab_egg.prefab : 1482962400
+raise : assets/prefabs/misc/easter/easter basket/effects/raise.prefab : 719523750
+settle : assets/prefabs/misc/easter/easter basket/effects/settle.prefab : 1521146069
+throw : assets/prefabs/misc/easter/easter basket/effects/throw.prefab : 1000028058
+v_Basket : assets/prefabs/misc/easter/easter basket/v_basket.prefab : 1242986847
+w_Basket : assets/prefabs/misc/easter/easter basket/w_basket.prefab : 4195033153
+EggHunt : assets/prefabs/misc/easter/egghunt.prefab : 3376609576
+faberge_egg_a.worldmodel : assets/prefabs/misc/easter/faberge_egg_a/faberge_egg_a.worldmodel.prefab : 3077404341
+faberge_egg_a_shell : assets/prefabs/misc/easter/faberge_egg_a/models/faberge_egg_a_shell.prefab : 800071772
+RustigeEgg_A.deployed : assets/prefabs/misc/easter/faberge_egg_a/rustigeegg_a.deployed.prefab : 2952734041
+Spotlight : assets/prefabs/misc/easter/faberge_egg_a/spotlight.prefab : 3626647248
+faberge_egg_b.worldmodel : assets/prefabs/misc/easter/faberge_egg_b/faberge_egg_b.worldmodel.prefab : 1401793332
+RustigeEgg_B.deployed : assets/prefabs/misc/easter/faberge_egg_b/rustigeegg_b.deployed.prefab : 2769334849
+bronzeegg.worldmodel : assets/prefabs/misc/easter/painted eggs/bronzeegg.worldmodel.prefab : 3968587392
+CollectableEgg : assets/prefabs/misc/easter/painted eggs/collectableegg.prefab : 2492538492
+bronze_open : assets/prefabs/misc/easter/painted eggs/effects/bronze_open.prefab : 1359277052
+egg_upgrade : assets/prefabs/misc/easter/painted eggs/effects/egg_upgrade.prefab : 3706492323
+EggPickup : assets/prefabs/misc/easter/painted eggs/effects/eggpickup.prefab : 2583435096
+gold_open : assets/prefabs/misc/easter/painted eggs/effects/gold_open.prefab : 2490779471
+silver_open : assets/prefabs/misc/easter/painted eggs/effects/silver_open.prefab : 3724734401
+Egg 1 : assets/prefabs/misc/easter/painted eggs/egg 1.prefab : 2393932171
+Egg 2 : assets/prefabs/misc/easter/painted eggs/egg 2.prefab : 4216102296
+Egg 3 : assets/prefabs/misc/easter/painted eggs/egg 3.prefab : 3177973756
+goldegg.worldmodel : assets/prefabs/misc/easter/painted eggs/goldegg.worldmodel.prefab : 1512070091
+PaintedEgg1 : assets/prefabs/misc/easter/painted eggs/paintedegg1.prefab : 1888085881
+PaintedEgg2 : assets/prefabs/misc/easter/painted eggs/paintedegg2.prefab : 4083479738
+PaintedEgg3 : assets/prefabs/misc/easter/painted eggs/paintedegg3.prefab : 803819946
+paintedeggs.worldmodel : assets/prefabs/misc/easter/painted eggs/paintedeggs.worldmodel.prefab : 1728443604
+silveregg.worldmodel : assets/prefabs/misc/easter/painted eggs/silveregg.worldmodel.prefab : 3509327202
+BunnyEntry : assets/prefabs/misc/easter/ui/bunnyentry.prefab : 3165482671
 Candles : assets/prefabs/misc/halloween/candles.prefab : 3065497305
 LargeCandleSet : assets/prefabs/misc/halloween/candles/largecandleset.prefab : 3049520350
 SmallCandleSet : assets/prefabs/misc/halloween/candles/smallcandleset.prefab : 3435611199

@@ -51,7 +51,6 @@ public class PrefabLookup : System.IDisposable
         streamWriter.Close();
         streamWriter2.Close();
         prefabsLoaded = true;
-        StaticBatchingUtility.Combine(GameObject.FindGameObjectsWithTag("LoadedPrefab"), GameObject.Find("PrefabsLoaded"));
     }
     public void Dispose()
 	{
