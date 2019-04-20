@@ -1,4 +1,3 @@
-// ParticleSystemLOD
 using System;
 using UnityEngine;
 

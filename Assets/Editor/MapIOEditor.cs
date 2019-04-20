@@ -15,7 +15,8 @@ public class MapIOEditor : Editor
     //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
     float heightToSet = 450f, scale = 50f, offset = 0f, mapScale = 1f;
-    bool top = false, left = false, right = false, bottom = false, checkHeight = true, setWaterMap = false;
+    bool[] sides = new bool[4]; 
+    bool checkHeight = true, setWaterMap = false;
     bool allLayers = false, ground = false, biome = false, alpha = false, topology = false, heightmap = false, prefabs = false, paths = false;
     float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
     float minBlendLow = 25f, maxBlendLow = 40f, minBlendHigh = 60f, maxBlendHigh = 75f, blendStrength = 5f;
@@ -316,15 +317,15 @@ public class MapIOEditor : Editor
 
                                         GUILayout.Label("Edge of Map Height", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
-                                        top = EditorGUILayout.ToggleLeft("Top ", top, GUILayout.MaxWidth(60));
-                                        left = EditorGUILayout.ToggleLeft("Left ", left, GUILayout.MaxWidth(60));
-                                        bottom = EditorGUILayout.ToggleLeft("Bottom ", bottom, GUILayout.MaxWidth(60));
-                                        right = EditorGUILayout.ToggleLeft("Right ", right, GUILayout.MaxWidth(60));
+                                        sides[0] = EditorGUILayout.ToggleLeft("Top ", sides[0], GUILayout.MaxWidth(60));
+                                        sides[3] = EditorGUILayout.ToggleLeft("Left ", sides[3], GUILayout.MaxWidth(60));
+                                        sides[2] = EditorGUILayout.ToggleLeft("Bottom ", sides[2], GUILayout.MaxWidth(60));
+                                        sides[1] = EditorGUILayout.ToggleLeft("Right ", sides[1], GUILayout.MaxWidth(60));
                                         EditorGUILayout.EndHorizontal();
 
                                         if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
                                         {
-                                            script.setEdgePixel(heightToSet, top, left, right, bottom);
+                                            script.setEdgePixel(heightToSet, sides);
                                         }
                                         break;
                                     case 1:
