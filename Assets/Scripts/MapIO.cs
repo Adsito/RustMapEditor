@@ -120,7 +120,7 @@ public class MapIO : MonoBehaviour {
     float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
-
+    public string bundleFile = "No bundle file selected";
 
     public void ProgressBar(string title, string info, float progress)
     {
@@ -543,7 +543,7 @@ public class MapIO : MonoBehaviour {
         land.terrainData.SetHeights(0, 0, heightMap);
         land.transform.position = Vector3.zero;
     }
-    public void setEdgePixel(float heightToSet, bool top, bool left, bool right, bool bottom) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
+    public void setEdgePixel(float heightToSet, bool[] sides) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
     // option for sides.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
@@ -552,19 +552,19 @@ public class MapIO : MonoBehaviour {
         {
             for (int j = 0; j < land.terrainData.heightmapWidth; j++)
             {
-                if (i == 0 && bottom == true)
+                if (i == 0 && sides[2] == true)
                 {
                     heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (i == land.terrainData.heightmapHeight - 1 && top == true)
+                if (i == land.terrainData.heightmapHeight - 1 && sides[0] == true)
                 {
                     heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (j == 0 && left == true)
+                if (j == 0 && sides[3] == true)
                 {
                     heightMap[i, j] = heightToSet / 1000f;
                 }
-                if (j == land.terrainData.heightmapWidth - 1 && right == true)
+                if (j == land.terrainData.heightmapWidth - 1 && sides[1] == true)
                 {
                     heightMap[i, j] = heightToSet / 1000f;
                 }
@@ -2191,7 +2191,7 @@ public class MapIO : MonoBehaviour {
         setMinimumHeight(503f);
     }
 
-    public string bundleFile = "No bundle file selected";
+    
     public void createDefaultPrefabs()
     {
         var prefabParent = GameObject.Find("PrefabsLoaded").GetComponent<Transform>();
