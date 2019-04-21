@@ -14,7 +14,6 @@ public class MainMenu : MonoBehaviour
     public void LoadMap()
     {
         string loadFile = "";
-        Scene editor = SceneManager.GetSceneAt(1);
         loadFile = FileBrowser.OpenSingleFile("Import Map File", loadFile, "map");
         var blob = new WorldSerialization();
         if (loadFile == "")
@@ -24,8 +23,6 @@ public class MainMenu : MonoBehaviour
         blob.Load(loadFile);
         mapIO.loadPath = loadFile;
         mapIO.Load(blob);
-        SceneManager.SetActiveScene(editor);
-        SceneManager.UnloadSceneAsync(0);
     }
     public void Quit()
     {
