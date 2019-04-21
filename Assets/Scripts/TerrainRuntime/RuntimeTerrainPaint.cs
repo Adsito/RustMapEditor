@@ -14,17 +14,40 @@ public class RuntimeTerrainPaint : MonoBehaviour
     AnimationCurve strengthProfile = AnimationCurve.Linear(0, 1, 1, 1);
     AnimationCurve jitterProfile = AnimationCurve.Linear(0, 0, 1, 0);
     RaycastHit hit;
+    Ray ray;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && !Input.GetKey(KeyCode.LeftControl))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
+            lmb = true;
+            ctrl = false;
+            wasPainting = isPainting;
+            isPainting = true;
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 3500f))
             {
-                ProcessInput(terrain);
-                CloneTool(terrain, hit.point, MovementBehavior.Snap, 10f, true, true, hit.textureCoord, brushTexture, 1f, 100f, 0f);
+                UpdateBrushLocations(terrain, hit);
+                CloneTool(terrain, hit.point, MovementBehavior.Fixed, 0f, true, true, hit.textureCoord, brushTexture, 1f, 100f, 0f);
             }
+        }
+        else if(Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.LeftControl))
+        {
+            ctrl = true;
+            lmb = true;
+            isPainting = false;
+            wasPainting = isPainting;
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 3500f))
+            {
+                UpdateBrushLocations(terrain, hit);
+            }
+        }
+        else if(!Input.GetKey(KeyCode.Mouse0) && !Input.GetKey(KeyCode.LeftControl))
+        {
+            ctrl = false;
+            lmb = false;
+            wasPainting = isPainting;
+            isPainting = lmb && !ctrl;
         }
     }
     public void RaiseLowerHeight(Terrain terrain, bool invert, Vector2 textureCoord, Texture brushTexture, float brushStrength, float brushSize, float brushRotation)
@@ -337,48 +360,15 @@ public class RuntimeTerrainPaint : MonoBehaviour
             this.pos = pos;
         }
     }
-    private void ProcessInput(Terrain terrain)
+    private void UpdateBrushLocations(Terrain terrain, RaycastHit raycastHit)
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && hit.transform.gameObject.tag == "Land")
-        {
-            lmb = true;
-            Debug.Log("LMB True");
-        }
-        else if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            lmb = false;
-            Debug.Log("LMB False");
-        }
-        if (!isPainting)
-        {
-            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
-            {
-                ctrl = true;
-                Debug.Log("CTRL True");
-            }
-            else if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
-            {
-                ctrl = false;
-                Debug.Log("CTRL False");
-            }
-        }
-        wasPainting = isPainting;
-        isPainting = lmb && !ctrl;
-    }
-    private void UpdateBrushLocations(Terrain terrain, IOnSceneGUI editContext)
-    {
-        if (hit.transform.gameObject.tag != "Land")
-        {
-            Debug.Log("Raycast missed");
-            return;
-        }
         if (!isPainting)
         {
             if (lmb && ctrl)
             {
                 hasDoneFirstPaint = false;
-                sampleLocation.Set(terrain, editContext.raycastHit.point);
-                snapbackLocation.Set(terrain, editContext.raycastHit.point);
+                sampleLocation.Set(terrain, raycastHit.point);
+                snapbackLocation.Set(terrain, raycastHit.point);
             }
             if (movementBehavior == MovementBehavior.Snap)
             {
@@ -388,43 +378,12 @@ public class RuntimeTerrainPaint : MonoBehaviour
         else if (!wasPainting && isPainting) // first frame of user painting
         {
             hasDoneFirstPaint = true;
-            prevBrushLocation.Set(terrain, editContext.raycastHit.point);
+            prevBrushLocation.Set(terrain, raycastHit.point);
         }
         bool updateClone = (isPainting && movementBehavior != MovementBehavior.Fixed) ||
                             (isPainting && movementBehavior == MovementBehavior.FollowOnPaint) ||
                             (hasDoneFirstPaint && movementBehavior == MovementBehavior.FollowAlways);
-        if (updateClone)
-        {
-            HandleBrushCrossingSeams(ref sampleLocation, editContext.raycastHit.point, prevBrushLocation.pos);
-        }
-        prevBrushLocation.Set(terrain, editContext.raycastHit.point);
-    }
-    private void HandleBrushCrossingSeams(ref BrushLocationData brushLocation, Vector3 currBrushPos, Vector3 prevBrushPos)
-    {
-        if (brushLocation.terrain == null)
-        {
-            Debug.Log("Terrain missed");
-            return;
-        }
-        Vector3 deltaPos = currBrushPos - prevBrushPos;
-        brushLocation.Set(brushLocation.terrain, brushLocation.pos + deltaPos);
-        Vector2 currUV = TerrainUVFromBrushLocation(brushLocation.terrain, brushLocation.pos);
-        if (currUV.x >= 1.0f && brushLocation.terrain.rightNeighbor != null)
-        {
-            brushLocation.terrain = brushLocation.terrain.rightNeighbor;
-        }
-        else if (currUV.x < 0.0f && brushLocation.terrain.leftNeighbor != null)
-        {
-            brushLocation.terrain = brushLocation.terrain.leftNeighbor;
-        }
-        if (currUV.y >= 1.0f && brushLocation.terrain.topNeighbor != null)
-        {
-            brushLocation.terrain = brushLocation.terrain.topNeighbor;
-        }
-        else if (currUV.y < 0.0f && brushLocation.terrain.bottomNeighbor != null)
-        {
-            brushLocation.terrain = brushLocation.terrain.bottomNeighbor;
-        }
+        prevBrushLocation.Set(terrain, raycastHit.point);
     }
     private Vector2 TerrainUVFromBrushLocation(Terrain terrain, Vector3 posWS)
     {
