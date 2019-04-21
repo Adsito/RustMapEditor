@@ -27,7 +27,7 @@ public class RuntimeTerrainPaint : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 3500f))
             {
                 UpdateBrushLocations(terrain, hit);
-                CloneTool(terrain, hit.point, MovementBehavior.Fixed, 0f, true, true, hit.textureCoord, brushTexture, 1f, 100f, 0f);
+                CloneTool(terrain, hit.point, MovementBehavior.FollowAlways, 0f, true, true, hit.textureCoord, brushTexture, 1f, 100f, 0f);
             }
         }
         else if(Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.LeftControl))
@@ -383,6 +383,10 @@ public class RuntimeTerrainPaint : MonoBehaviour
         bool updateClone = (isPainting && movementBehavior != MovementBehavior.Fixed) ||
                             (isPainting && movementBehavior == MovementBehavior.FollowOnPaint) ||
                             (hasDoneFirstPaint && movementBehavior == MovementBehavior.FollowAlways);
+        if (updateClone)
+        {
+            HandleBrushCrossingSeams(ref sampleLocation, raycastHit.point, prevBrushLocation.pos);
+        }
         prevBrushLocation.Set(terrain, raycastHit.point);
     }
     private Vector2 TerrainUVFromBrushLocation(Terrain terrain, Vector3 posWS)
@@ -390,6 +394,23 @@ public class RuntimeTerrainPaint : MonoBehaviour
         Vector3 posTS = posWS - terrain.transform.position;
         Vector3 size = terrain.terrainData.size;
         return new Vector2(posTS.x / size.x, posTS.z / size.z);
+    }
+    private void HandleBrushCrossingSeams(ref BrushLocationData brushLocation, Vector3 currBrushPos, Vector3 prevBrushPos)
+    {
+        if (brushLocation.terrain == null)
+            return;
+        Vector3 deltaPos = currBrushPos - prevBrushPos;
+        brushLocation.Set(brushLocation.terrain, brushLocation.pos + deltaPos);
+        Vector2 currUV = TerrainUVFromBrushLocation(brushLocation.terrain, brushLocation.pos);
+        if (currUV.x >= 1.0f && brushLocation.terrain.rightNeighbor != null)
+            brushLocation.terrain = brushLocation.terrain.rightNeighbor;
+        else if (currUV.x < 0.0f && brushLocation.terrain.leftNeighbor != null)
+            brushLocation.terrain = brushLocation.terrain.leftNeighbor;
+
+        if (currUV.y >= 1.0f && brushLocation.terrain.topNeighbor != null)
+            brushLocation.terrain = brushLocation.terrain.topNeighbor;
+        else if (currUV.y < 0.0f && brushLocation.terrain.bottomNeighbor != null)
+            brushLocation.terrain = brushLocation.terrain.bottomNeighbor;
     }
     private void ApplyHeightmap(PaintContext sampleContext, PaintContext targetContext, BrushTransform targetXform, Terrain targetTerrain, Texture brushTexture, float brushStrength, float meshStampOffset)
     {
@@ -401,7 +422,7 @@ public class RuntimeTerrainPaint : MonoBehaviour
         TerrainPaintUtility.SetupTerrainToolMaterialProperties(targetContext, targetXform, paintMat);
         Graphics.Blit(targetContext.sourceRenderTexture, targetContext.destinationRenderTexture, paintMat, 0);
     }
-    private void PaintHeightmap(Terrain sampleTerrain, Terrain targetTerrain, BrushTransform sampleXform, BrushTransform targetXform, float brushStrength, float meshStampOffset, Material mat)
+    private void PaintHeightmap(Terrain sampleTerrain, Terrain targetTerrain, BrushTransform sampleXform, BrushTransform targetXform, float brushStrength, float meshStampOffset)
     {
         PaintContext sampleContext = TerrainPaintUtility.BeginPaintHeightmap(sampleTerrain, sampleXform.GetBrushXYBounds());
         PaintContext targetContext = TerrainPaintUtility.BeginPaintHeightmap(targetTerrain, targetXform.GetBrushXYBounds());
@@ -451,7 +472,7 @@ public class RuntimeTerrainPaint : MonoBehaviour
             }
             if (paintHeightmap)
             {
-                PaintHeightmap(terrain, terrain, sampleBrushXform, targetBrushXform, brushStrength, meshStampOffset, mat);
+                PaintHeightmap(terrain, terrain, sampleBrushXform, targetBrushXform, brushStrength, meshStampOffset);
             }
         }
     }
