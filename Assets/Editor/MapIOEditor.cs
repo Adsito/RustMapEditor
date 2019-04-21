@@ -29,7 +29,6 @@ public class MapIOEditor : Editor
     bool AlphaVisible = false, AlphaInvisible = false;
     bool TopoActive = false, TopoInactive = false;
     bool deletePrefabs = false;
-
     bool checkHeightCndtl = false, checkSlopeCndtl = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
@@ -326,6 +325,10 @@ public class MapIOEditor : Editor
                                         if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
                                         {
                                             script.setEdgePixel(heightToSet, sides);
+                                        }
+                                        if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap")))
+                                        {
+                                            script.terraceErodeHeightmap(50f, 5f);
                                         }
                                         break;
                                     case 1:
