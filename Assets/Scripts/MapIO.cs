@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Threading;
+using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
 using static WorldSerialization;
 using System.IO;
@@ -111,6 +111,7 @@ public class MapIO : MonoBehaviour {
     public TerrainBiome.Enum conditionalBiome;
     public TerrainSplat.Enum terrainLayer;
     public TerrainSplat.Enum conditionalGround;
+    public Texture brushTexture;
     public int landSelectIndex = 0;
     public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     LandData selectedLandLayer;
@@ -134,8 +135,6 @@ public class MapIO : MonoBehaviour {
         EditorUtility.ClearProgressBar();
         #endif
     }
-
-
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
         this.prefabLookup = prefabLookup;
@@ -527,6 +526,21 @@ public class MapIO : MonoBehaviour {
             }
         }
         land.terrainData.SetHeights(0, 0, landHeightMap);
+    }
+    public void terraceErodeHeightmap(float featureSize, float interiorCornerWeight)
+    {
+        brushTexture = Resources.Load<Texture>("Resources/Textures/soft_blob");
+        Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
+        Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        Material mat = new Material(Shader.Find("TerrainToolSamples/TerraceErosion"));
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 100f, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
+        Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
+        mat.SetTexture("_BrushTex", brushTexture);
+        mat.SetVector("_BrushParams", brushParams);
+        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
+        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
+        TerrainPaintUtility.EndPaintHeightmap(paintContext, "RuntimeTerrainPaint - TerraceErosion");
     }
     public void moveHeightmap()
     {
