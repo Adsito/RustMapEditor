@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
-using UnityEditor.Experimental.TerrainAPI;
 
 public class RuntimeTerrainPaint : MonoBehaviour
 {
