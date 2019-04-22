@@ -24,6 +24,17 @@ public class MainMenu : MonoBehaviour
         mapIO.loadPath = loadFile;
         mapIO.Load(blob);
     }
+    public void SaveMap()
+    {
+        string saveFile = "";
+        saveFile = FileBrowser.SaveFile("Save Map File", saveFile, "Rust Map", "map");
+        if (saveFile == "")
+        {
+            return;
+        }
+        mapIO.savePath = saveFile;
+        mapIO.Save(saveFile);
+    }
     public void Quit()
     {
         Application.Quit();
