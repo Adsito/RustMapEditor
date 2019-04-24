@@ -1915,7 +1915,32 @@ public class MapIO : MonoBehaviour {
             switch (p.prefabData.id)
             {
                 default:
-                    // Not a lootcrate.
+                    // Not a lootcrate. If you want you to export everything uncomment this section.
+                    /*
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        PrefabProperty = prefabNames[p.prefabData.id] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                    });
+                    if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
+                    {
+                        DestroyImmediate(p.gameObject);
+                    }
+                    lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
+                    */
+                    break;
+                case 69: // THIS IS AN EXAMPLE FOR EXPORTING AN INDIVIDUAL PREFAB. Set this number to a prefab ID you want to export.
+                    prefabExports.Add(new PrefabExport()
+                    {
+                        PrefabNumber = lootCrateCount,
+                        // Set the number in prefabNames to be the prefabid, this just gets the prefab name for the data file to load ingame.
+                        PrefabProperty = prefabNames[69] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                    });
+                    if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
+                    {
+                        DestroyImmediate(p.gameObject); 
+                    }
+                    lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
                     break;
                 case 1603759333:
                     prefabExports.Add(new PrefabExport()
@@ -1935,6 +1960,7 @@ public class MapIO : MonoBehaviour {
                         PrefabNumber = lootCrateCount,
                         PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
+                    Debug.Log(prefabNames[3286607235]);
                     if (deletePrefabs == true)
                     {
                         DestroyImmediate(p.gameObject);
@@ -2049,6 +2075,10 @@ public class MapIO : MonoBehaviour {
             {
                 //createDefaultPrefabs();
             }
+            if (prefabNames.Count == 0)
+            {
+                getPrefabNames();
+            }
         }
         if (Application.isPlaying)
         {
@@ -2108,7 +2138,6 @@ public class MapIO : MonoBehaviour {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
-        /*
         if (Application.isEditor)
         {
             float progressValue = 0f;
@@ -2122,7 +2151,7 @@ public class MapIO : MonoBehaviour {
                 prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
                 newObj.name = prefabName;
             }
-        }*/
+        }
         if (Application.isPlaying)
         {
             float progressValue = 0f;
