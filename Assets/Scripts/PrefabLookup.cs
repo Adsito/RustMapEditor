@@ -35,7 +35,7 @@ public class PrefabLookup : System.IDisposable
             for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
             {
                 lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
-                streamWriter.WriteLine(manifest.pooledStrings[index].hash + "  :  " + manifest.pooledStrings[index].str);
+                streamWriter.WriteLine(manifest.pooledStrings[index].hash + ":" + manifest.pooledStrings[index].str);
             }
         }
         lookup = new HashLookup(lookupString);
@@ -88,7 +88,7 @@ public class PrefabLookup : System.IDisposable
             {
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
                 createPrefab(prefabs[i], prefabParent, subpaths[i], lookup[subpaths[i]]);
-                streamWriter2.WriteLine(prefabs[i].name + " : " + subpaths[i] + " : " + lookup[subpaths[i]]);
+                streamWriter2.WriteLine(prefabs[i].name + ":" + subpaths[i] + ":" + lookup[subpaths[i]]);
             }
         }
     }
