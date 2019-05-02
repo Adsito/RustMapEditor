@@ -120,6 +120,7 @@ public class MapIO : MonoBehaviour {
     static TopologyMesh topology;
     float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
+    private Dictionary<uint, string> prefabPaths = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public string bundleFile = "No bundle file selected";
 
@@ -216,6 +217,18 @@ public class MapIO : MonoBehaviour {
             {
                 var linesSplit = line.Split(':');
                 prefabNames.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[0]);
+            }
+        }
+    }
+    public void getPrefabPaths()
+    {
+        if (File.Exists("PrefabsLoaded.txt"))
+        {
+            var lines = File.ReadAllLines("PrefabsLoaded.txt");
+            foreach (var line in lines)
+            {
+                var linesSplit = line.Split(':');
+                prefabPaths.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[1]);
             }
         }
     }
@@ -1916,27 +1929,26 @@ public class MapIO : MonoBehaviour {
             {
                 default:
                     // Not a lootcrate. If you want you to export everything uncomment this section.
-                    /*
                     if (prefabNames[p.prefabData.id] != null)
                     {
                         prefabExports.Add(new PrefabExport()
                         {
                             PrefabNumber = lootCrateCount,
-                            PrefabProperty = prefabNames[p.prefabData.id] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                            PrefabProperty = prefabPaths[p.prefabData.id] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                         });
                         if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
                         {
                             DestroyImmediate(p.gameObject);
                         }
                         lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
-                    }*/
+                    }
                     break;
                 case 69: // THIS IS AN EXAMPLE FOR EXPORTING AN INDIVIDUAL PREFAB. Set this number to a prefab ID you want to export.
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
                         // Set the number in prefabNames to be the prefabid, this just gets the prefab name for the data file to load ingame.
-                        PrefabProperty = prefabNames[69] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabProperty = prefabPaths[69] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
                     });
                     if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
                     {
@@ -2079,6 +2091,10 @@ public class MapIO : MonoBehaviour {
             if (prefabNames.Count == 0)
             {
                 getPrefabNames();
+            }
+            if (prefabPaths.Count == 0)
+            {
+                getPrefabPaths();
             }
         }
         if (Application.isPlaying)
