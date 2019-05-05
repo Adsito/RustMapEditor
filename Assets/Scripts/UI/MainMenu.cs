@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿#if UNITY_STANDALONE
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Crosstales.FB;
 
 public class MainMenu : MonoBehaviour
@@ -40,3 +40,4 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 }
+#endif

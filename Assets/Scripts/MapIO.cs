@@ -767,7 +767,6 @@ public class MapIO : MonoBehaviour {
         return slopes;
     }
     #endregion
-
     #region SplatMap Methods
     List<int> ReturnSelectedElementsTopology()
     {
@@ -1887,7 +1886,6 @@ public class MapIO : MonoBehaviour {
         }
     }
     #endregion
-
     public void removeBrokenPrefabs()
     {
         PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
@@ -1915,7 +1913,6 @@ public class MapIO : MonoBehaviour {
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
-
     public void exportLootCrates(string prefabFilePath, bool deletePrefabs)
     {
         StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
@@ -1929,6 +1926,7 @@ public class MapIO : MonoBehaviour {
             {
                 default:
                     // Not a lootcrate. If you want you to export everything uncomment this section.
+                    /*
                     if (prefabNames[p.prefabData.id] != null)
                     {
                         prefabExports.Add(new PrefabExport()
@@ -1942,6 +1940,7 @@ public class MapIO : MonoBehaviour {
                         }
                         lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
                     }
+                    */
                     break;
                 case 69: // THIS IS AN EXAMPLE FOR EXPORTING AN INDIVIDUAL PREFAB. Set this number to a prefab ID you want to export.
                     prefabExports.Add(new PrefabExport()
@@ -2076,17 +2075,18 @@ public class MapIO : MonoBehaviour {
         streamWriter.Close();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
-
     private void loadMapInfo(MapInfo terrains)
     {
         if (MapIO.topology == null)
+        {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
+        }
         cleanUpMap();
         if (Application.isEditor)
         {
             if (prefabReference.Count == 0 && getPrefabLookUp() == null)
             {
-                //createDefaultPrefabs();
+                createDefaultPrefabs();
             }
             if (prefabNames.Count == 0)
             {
@@ -2207,19 +2207,15 @@ public class MapIO : MonoBehaviour {
         }
         ClearProgressBar();
     }
-
     public void Load(WorldSerialization blob)
     {
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
         loadMapInfo(terrains);
     }
-
-
     public void loadEmpty(int size)
     {
         loadMapInfo(WorldConverter.emptyWorld(size));
     }
-
     public void Save(string path)
     {
         if(selectedLandLayer != null)
@@ -2239,7 +2235,6 @@ public class MapIO : MonoBehaviour {
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
         ClearProgressBar();
     }
-
     public void newEmptyTerrain(int size)
     {
         loadMapInfo(WorldConverter.emptyWorld(size));
@@ -2250,8 +2245,6 @@ public class MapIO : MonoBehaviour {
         changeLayer("Ground");
         setMinimumHeight(503f);
     }
-
-    
     public void createDefaultPrefabs()
     {
         var prefabParent = GameObject.Find("PrefabsLoaded").GetComponent<Transform>();
