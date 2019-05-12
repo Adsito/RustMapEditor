@@ -1,10 +1,7 @@
 # Rust Map Making Unity Editor
+## [Installation](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
 
 **Make sure you're using Unity 2019.1 or above .**
-
-Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
-
-After installing Unity Hub, download the Unity from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
