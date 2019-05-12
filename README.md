@@ -6,6 +6,7 @@ After installing Unity Hub, download the Unity from here, clicking the Unity Hub
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
+
 https://rustmapmaking.github.io/Rust-Map-Editor-Unity/
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
