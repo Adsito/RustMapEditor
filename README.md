@@ -1,7 +1,5 @@
 # Rust Map Making Unity Editor
-## [Installation](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
-
-**Make sure you're using Unity 2019.1 or above .**
+## [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
