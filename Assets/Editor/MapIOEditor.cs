@@ -326,10 +326,11 @@ public class MapIOEditor : Editor
                                         {
                                             script.setEdgePixel(heightToSet, sides);
                                         }
+                                        /*
                                         if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap")))
                                         {
                                             script.terraceErodeHeightmap(50f, 5f);
-                                        }
+                                        }*/
                                         break;
                                     case 1:
                                         GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
@@ -626,7 +627,7 @@ public class MapIOEditor : Editor
                             script.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", script.terrainLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                script.paintLayer("Ground", 0);
+                                script.paintLayer("Ground", TerrainSplat.TypeToIndex((int)script.terrainLayer));
                             }
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
@@ -740,7 +741,7 @@ public class MapIOEditor : Editor
                             }
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                script.paintLayer("Biome", 0);
+                                script.paintLayer("Biome", TerrainBiome.TypeToIndex((int)script.biomeLayer));
                             }
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
                             GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
