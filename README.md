@@ -1,6 +1,6 @@
 # Rust Map Making Unity Editor
 
-**Make sure you're using Unity 2018.3.3f1 or above .**
+**Make sure you're using Unity 2019.1 or above .**
 Download Unity Hub: https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe
 After installing Unity Hub, download the Unity from here, clicking the Unity Hub button: https://unity3d.com/get-unity/download/archive
 
@@ -11,9 +11,7 @@ https://rustmapmaking.github.io/Rust-Map-Editor-Unity/
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
 ### Credits
-The foundations of this Editor is based on the hard work from Dezinated. He has put in a lot of work into this Editor, and he has a patreon if anyone would like to support his work.
-https://github.com/JasonM97/Rust-Map-Editor
-https://www.patreon.com/dezinated
+This editor originates from the codebase of the very first Rust Map Making Editor SDK, found here: https://github.com/JasonM97/Rust-Map-Editor
 
 Also using Assets from:
 -https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
