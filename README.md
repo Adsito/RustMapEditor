@@ -6,8 +6,6 @@ After installing Unity Hub, download the Unity from here, clicking the Unity Hub
 
 ### Rust Map Making
 https://discord.gg/VQruSpk
-
-https://rustmapmaking.github.io/Rust-Map-Editor-Unity/
 ### Contribute
 Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
 
@@ -108,7 +106,3 @@ Prefabs from the Assets/prefabs path do not load currently.
 	  eg: For every Grass texture on the Ground map, paint the biome to be Temperate.
 	- For topologies, copying and pasting will reference the active texture (The Green Texture)
 	- You cannot currently copy the inactive topology layer, this will be fixed soon.
-	
-				
-		
-	
