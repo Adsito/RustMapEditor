@@ -1148,14 +1148,6 @@ public class MapIO : MonoBehaviour {
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
-        if (landLayer == "Ground")
-        {
-            t = texture(landLayer); // Active texture to paint on layer.
-        }
-        else if (landLayer == "Biome")
-        {
-            t = texture(landLayer); // Active texture to paint on layer.
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -2243,6 +2235,7 @@ public class MapIO : MonoBehaviour {
         changeLayer("Biome");
         paintLayer("Biome", 0);
         changeLayer("Ground");
+        paintLayer("Ground", 4);
         setMinimumHeight(503f);
     }
     public void createDefaultPrefabs()
