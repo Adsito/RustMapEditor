@@ -924,14 +924,12 @@ public class MapIOEditor : Editor
                         {
                             script.autoGenerateGround();
                         }
-                        /*
                         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
                         GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
                         if (GUILayout.Button("Generate Perlin Heightmap"))
                         {
                             script.generatePerlinHeightmap(scale);
                         }
-                        */
                         break;
                         #endregion
                 }
@@ -952,7 +950,21 @@ public class MapIOEditor : Editor
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
                         {
+                            if (!script.bundleFile.Contains(@"steamapps\common\Rust\Bundles"))
+                            {
+                                script.bundleFile = script.bundleFile = EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
+                                if (script.bundleFile == "")
+                                {
+                                    return;
+                                }
+                                if (script.bundleFile.Contains(@"steamapps\common\Rust\Bundles"))
+                                {
+                                    EditorUtility.DisplayDialog("ERROR: Bundle File Invalid", @"Bundle file path invalid. It should be located within steamapps\common\Rust\Bundles", "Ok");
+                                    return;
+                                }
+                            }
                             script.StartPrefabLookup();
+                            script.ReplacePrefabs();
                         }
                         if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
                         {
@@ -966,31 +978,8 @@ public class MapIOEditor : Editor
                                 EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
                             }
                         }
-                        if (GUILayout.Button(new GUIContent("Replace", "Replaces all of the placeholder cube prefabs on the map with the Rust Assets"), GUILayout.MaxWidth(100)))
-                        {
-                            if (script.getPrefabLookUp() != null)
-                            {
-                                if (script.loadPath != "")
-                                {
-                                    script.ReplacePrefabs();
-                                }
-                                else
-                                {
-                                    EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No map loaded.", "Ok");
-                                }
-                            }
-                            else
-                            {
-                                EditorUtility.DisplayDialog("ERROR: Can't replace prefabs", "No prefabs loaded.", "Ok");
-                            }
-                        }
                         EditorGUILayout.EndHorizontal();
-
-                        if (GUILayout.Button(new GUIContent("Select Bundle File", "Select the bundles files located in your steamapps/common/Rust/Bundles directory."), GUILayout.MaxWidth(125)))
-                        {
-                            script.bundleFile = UnityEditor.EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
-                        }
-                        GUILayout.TextArea(script.bundleFile);
+                        script.bundleFile = GUILayout.TextArea(script.bundleFile);
                         break;
                     case 1:
                         if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
