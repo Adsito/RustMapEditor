@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Bug Reports with the Editor
-title: "[BUG]"
+title: "[BUG] Bug name goes here"
 labels: bug
 assignees: Adsitoz
 
@@ -16,9 +16,6 @@ Steps to reproduce the behaviour:
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
-
-**Expected behaviour**
-A clear description of what is supposed to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
