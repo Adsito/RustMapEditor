@@ -7,8 +7,8 @@ using UnityEditor.IMGUI.Controls;
 [CustomEditor(typeof(MapIO))]
 public class MapIOEditor : Editor
 {
+    string editorVersion = "v0.3-prerelease";
     string loadFile = "";
-
     string saveFile = "";
     string mapName = "";
     string prefabSaveFile = "";
@@ -134,22 +134,28 @@ public class MapIOEditor : Editor
                 }
                 GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map."), GUILayout.MaxWidth(30));
                 mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
-                
                 EditorGUILayout.EndHorizontal();
 
-                deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
-                    "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
-                if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
-                    "If you don't delete them after export they will duplicate on first map load.")))
+                GUILayout.Label("Editor Info", EditorStyles.boldLabel);
+                GUILayout.Label("OS: " + SystemInfo.operatingSystem);
+                GUILayout.Label("Unity Version: " + Application.unityVersion);
+                GUILayout.Label("Editor Version: " + editorVersion);
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), GUILayout.MaxWidth(75)))
                 {
-                    prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
-                    if (prefabSaveFile == "")
-                    {
-                        return;
-                    }
-                    script.exportLootCrates(prefabSaveFile, deletePrefabs);
+                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues/new?assignees=Adsitoz&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
                 }
-            break;
+                if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), GUILayout.MaxWidth(105)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues/new?assignees=Adsitoz&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
+                }
+                if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), GUILayout.MaxWidth(65)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/projects/1");
+                }
+                EditorGUILayout.EndHorizontal();
+                break;
             #endregion
             #region Tools
             case 1:
@@ -992,6 +998,18 @@ public class MapIOEditor : Editor
                                     " errors loading a map on a server.")))
                         {
                             script.removeBrokenPrefabs();
+                        }
+                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
+                            "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
+                        if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
+                            "If you don't delete them after export they will duplicate on first map load.")))
+                        {
+                            prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
+                            if (prefabSaveFile == "")
+                            {
+                                return;
+                            }
+                            script.exportLootCrates(prefabSaveFile, deletePrefabs);
                         }
                         break;
                     default:
