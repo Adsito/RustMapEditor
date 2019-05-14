@@ -20,7 +20,7 @@ Steps to reproduce the behaviour:
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Desktop (copy and paste the Editor Info from the main menu below):**
  - OS: [e.g. Windows 10, Linux]
  - Unity Version [e.g. 2018.3.3f1, 2019.1.2f1]
  - Editor Version [e.g. v0.3-prerelease]
