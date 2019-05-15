@@ -270,8 +270,25 @@ public class MapIO : MonoBehaviour {
     {
         return 0.5f * getTerrainSize();
     }
-    
+
     #region RotateMap Methods
+    public void rotateSplatMaps(bool CW)
+    {
+        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        Texture2D splatMap = land.terrainData.GetAlphamapTexture(0);
+        Texture2D splatMapNew = new Texture2D(splatMap.width, splatMap.height);
+        if (CW)
+        {
+            for (int i = 0; i < splatMap.height; i++)
+            {
+                for (int j = 0; j < splatMap.width; j++)
+                {
+                    splatMapNew.SetPixel(i, j, splatMap.GetPixel(j, splatMap.width - i - 1));
+                }
+            }
+        }
+    }
     public void rotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
