@@ -648,7 +648,7 @@ public class MapIOEditor : Editor
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.paintRiver("Ground", aboveTerrain, 0);
+                                script.paintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)script.terrainLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -671,7 +671,7 @@ public class MapIOEditor : Editor
                             }
                             if (GUILayout.Button("Paint slopes"))
                             {
-                                script.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, 0, blendStrength);
+                                script.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, TerrainSplat.TypeToIndex((int)script.terrainLayer), blendStrength);
                             }
                             GUILayout.Label("Custom height range");
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -689,7 +689,7 @@ public class MapIOEditor : Editor
                             }
                             if (GUILayout.Button("Paint Heights"))
                             {
-                                script.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, blendStrength);
+                                script.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, TerrainSplat.TypeToIndex((int)script.terrainLayer), blendStrength);
                             }
                             
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Ground textures");
@@ -735,7 +735,7 @@ public class MapIOEditor : Editor
                             heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
                             if (GUILayout.Button("Paint range"))
                             {
-                                script.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, 0, 1);
+                                script.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, TerrainBiome.TypeToIndex((int)script.biomeLayer), 1);
                             }
                             z1 = EditorGUILayout.IntField("From Z ", z1);
                             z2 = EditorGUILayout.IntField("To Z ", z2);
