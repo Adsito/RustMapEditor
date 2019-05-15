@@ -729,16 +729,8 @@ public class MapIO : MonoBehaviour {
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
-        for (int i = 0; i < land.terrainData.alphamapHeight; i++)
-        {
-            for (int j = 0; j < land.terrainData.alphamapHeight; j++)
-            {
-                float iNorm = (float)i / (float)land.terrainData.alphamapHeight;
-                float jNorm = (float)j / (float)land.terrainData.alphamapHeight;
-                heights[i, j] = land.terrainData.GetInterpolatedHeight(iNorm, jNorm);
-            }
-        }
+        float alphamapInterp = 1f / land.terrainData.alphamapWidth;
+        float[,] heights = land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapWidth, alphamapInterp, alphamapInterp);
         return heights;
     }
     public float getSlope(int x, int y)
@@ -937,7 +929,7 @@ public class MapIO : MonoBehaviour {
                     if (item.CheckSlope == true)
                     {
                         slope = slopes[j, i];
-                        if (slope > item.SlopeLow && slope < item.SlopeHigh)
+                        if (slope >= item.SlopeLow && slope <= item.SlopeHigh)
                         {
                         }
                         else
@@ -947,8 +939,8 @@ public class MapIO : MonoBehaviour {
                     }
                     if (item.CheckHeight == true)
                     {
-                        height = heights[j, i];
-                        if (height > item.HeightLow && height < item.HeightHigh)
+                        height = heights[i, j];
+                        if (height >= item.HeightLow && height <= item.HeightHigh)
                         {
                         }
                         else
