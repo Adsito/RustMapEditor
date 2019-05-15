@@ -1240,15 +1240,6 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
-        switch (landLayer)
-        {
-            case "Ground":
-                t = texture(landLayer);
-                break;
-            case "Biome":
-                t = texture(landLayer);
-                break;
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1256,7 +1247,7 @@ public class MapIO : MonoBehaviour {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
                 float slope = land.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
-                if (slope > slopeLow && slope < slopeHigh)
+                if (slope >= slopeLow && slope <= slopeHigh)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++) 
                     {
@@ -1264,7 +1255,7 @@ public class MapIO : MonoBehaviour {
                     }
                     splatMap[i, j, t] = 1;
                 }
-                else if (slope > minBlendLow && slope < slopeLow)
+                else if (slope >= minBlendLow && slope <= slopeLow)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
                     {
@@ -1281,7 +1272,7 @@ public class MapIO : MonoBehaviour {
                         splatMap[i, j, l] = splatMapLayers[l];
                     }         
                 }
-                else if (slope > slopeHigh && slope < maxBlendHigh)
+                else if (slope >= slopeHigh && slope <= maxBlendHigh)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
                     {
@@ -1316,15 +1307,6 @@ public class MapIO : MonoBehaviour {
     {
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
-        switch (landLayer)
-        {
-            case "Ground":
-                t = texture(landLayer);
-                break;
-            case "Biome":
-                t = texture(landLayer);
-                break;
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1356,15 +1338,6 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        switch (landLayer)
-        {
-            case "Ground":
-                t = texture(landLayer);
-                break;
-            case "Biome":
-                t = texture(landLayer);
-                break;
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
