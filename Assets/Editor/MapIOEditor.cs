@@ -7,7 +7,7 @@ using UnityEditor.IMGUI.Controls;
 [CustomEditor(typeof(MapIO))]
 public class MapIOEditor : Editor
 {
-    string editorVersion = "v0.5-prerelease";
+    string editorVersion = "v0.6-prerelease";
     string loadFile = "";
     string saveFile = "";
     string mapName = "";
