@@ -33,6 +33,10 @@ public class MapIOEditor : Editor
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
 
+    float filterStrength = 1f;
+    float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
+    float blurDirection = 1f;
+
     public TerrainBiome.Enum biomeLayerToPaint;
     public TerrainBiome.Enum biomeLayerConditional;
     public TerrainSplat.Enum groundLayerToPaint;
@@ -45,7 +49,7 @@ public class MapIOEditor : Editor
     bool[] topoTxtCndtl = new bool[2] { true, true };
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
-
+    
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
@@ -286,7 +290,7 @@ public class MapIOEditor : Editor
                             case 1:
                                 GUIContent[] heightMapMenu = new GUIContent[2];
                                 heightMapMenu[0] = new GUIContent("Heights");
-                                heightMapMenu[1] = new GUIContent("Misc");
+                                heightMapMenu[1] = new GUIContent("Filters");
                                 heightMapOptions = GUILayout.Toolbar(heightMapOptions, heightMapMenu);
 
                                 switch (heightMapOptions)
@@ -332,10 +336,7 @@ public class MapIOEditor : Editor
                                         {
                                             script.setEdgePixel(heightToSet, sides);
                                         }
-                                        if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap")))
-                                        {
-                                            script.terraceErodeHeightmap(150f, 0f);
-                                        }
+                                        
                                         break;
                                     case 1:
                                         GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
@@ -344,10 +345,11 @@ public class MapIOEditor : Editor
                                         mapScale = EditorGUILayout.Slider(mapScale, 0.01f, 10f);
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
+                                        /*
                                         if (GUILayout.Button(new GUIContent("Rescale", "Scales the heightmap by " + mapScale.ToString() + " %.")))
                                         {
                                             script.scaleHeightmap(mapScale);
-                                        }
+                                        }*/
                                         if (GUILayout.Button(new GUIContent("Flip", "Flips the heightmap in on itself.")))
                                         {
                                             script.flipHeightmap();
@@ -370,6 +372,33 @@ public class MapIOEditor : Editor
                                         if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
                                             script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                        }
+                                        GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.boldLabel);
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Strength", "The strength of the smoothing operation."), GUILayout.MaxWidth(85));
+                                        filterStrength = EditorGUILayout.Slider(filterStrength, 0f, 1f);
+                                        EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Blur Direction", "The direction the terrain should blur towards. Negative is down, " +
+                                            "positive is up."), GUILayout.MaxWidth(85));
+                                        blurDirection = EditorGUILayout.Slider(blurDirection, -1f, 1f);
+                                        EditorGUILayout.EndHorizontal();
+                                        if (GUILayout.Button(new GUIContent("Smooth Map", "Smoothes the heightmap.")))
+                                        {
+                                            script.smoothHeightmap(filterStrength, blurDirection);
+                                        }
+                                        GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Feature Size", "The higher the value the more terrace levels generated."), GUILayout.MaxWidth(85));
+                                        terraceErodeFeatureSize = EditorGUILayout.Slider(terraceErodeFeatureSize, 2f, 1000f);
+                                        EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.LabelField(new GUIContent("Corner Weight", "The strength of the corners of the terrace."), GUILayout.MaxWidth(85));
+                                        terraceErodeInteriorCornerWeight = EditorGUILayout.Slider(terraceErodeInteriorCornerWeight, 0f, 1f);
+                                        EditorGUILayout.EndHorizontal();
+                                        if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap.")))
+                                        {
+                                            script.terraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
                                         }
                                         break;
                                 }
