@@ -93,6 +93,7 @@ public class Conditions : List<Conditions>
         get; set;
     }
 }
+[ExecuteInEditMode]
 public class MapIO : MonoBehaviour {
     #region LayersFrom
     public TerrainTopology.Enum topologyLayerFrom;
@@ -122,7 +123,14 @@ public class MapIO : MonoBehaviour {
     private Dictionary<uint, string> prefabPaths = new Dictionary<uint, string>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public string bundleFile = "No bundle file selected";
-
+    public Texture terrainFilterTexture;
+    public Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
+    public Terrain terrain;
+    void Start()
+    {
+        terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+    }
     public void ProgressBar(string title, string info, float progress)
     {
         #if UNITY_EDITOR
@@ -143,7 +151,6 @@ public class MapIO : MonoBehaviour {
     {
         return prefabLookup;
     }
-
     public void changeLayer(string layer)
     {
         landLayer = layer;
@@ -558,18 +565,29 @@ public class MapIO : MonoBehaviour {
     }
     public void terraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
-        Texture brushTexture = Resources.Load<Texture>("Textures/soft_blob");
-        Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-        Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Material mat = new Material(Shader.Find("TerrainToolSamples/TerraceErosion"));
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 2500f, 0.0f);
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
-        mat.SetTexture("_BrushTex", brushTexture);
+        mat.SetTexture("_BrushTex", terrainFilterTexture);
         mat.SetVector("_BrushParams", brushParams);
         TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
-        TerrainPaintUtility.EndPaintHeightmap(paintContext, "RuntimeTerrainPaint - TerraceErosion");
+        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - TerraceErosion");
+    }
+    public void smoothHeightmap(float filterStrength, float blurDirection)
+    {
+        Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
+        Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
+        mat.SetTexture("_BrushTex", terrainFilterTexture);
+        mat.SetVector("_BrushParams", brushParams);
+        Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);                                          
+        mat.SetVector("_SmoothWeights", smoothWeights);
+        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
+        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
+        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
     }
     public void moveHeightmap()
     {
