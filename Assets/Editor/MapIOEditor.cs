@@ -332,11 +332,10 @@ public class MapIOEditor : Editor
                                         {
                                             script.setEdgePixel(heightToSet, sides);
                                         }
-                                        /*
                                         if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap")))
                                         {
-                                            script.terraceErodeHeightmap(50f, 5f);
-                                        }*/
+                                            script.terraceErodeHeightmap(150f, 0f);
+                                        }
                                         break;
                                     case 1:
                                         GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
