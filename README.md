@@ -1,10 +1,16 @@
 # Rust Map Making Unity Editor
-## [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
+[![HitCount](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity.svg)](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity)
+![GitHub All Releases](https://img.shields.io/github/downloads/RustMapMaking/Rust-Map-Editor-Unity/total.svg)
+![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Rust-Map-Editor-Unity.svg)
+![GitHub](https://img.shields.io/github/license/RustMapMaking/Rust-Map-Editor-Unity.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)
 
+## [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
 ### Rust Map Making
-https://discord.gg/VQruSpk
+![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)
 ### Contribute
-Anyone experienced in C# or Unity is welcome to help contribute and update the editor, if you have any questions feel free to check out the discord. https://discord.gg/VQruSpk
+
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues)
 
 ### Credits
 This editor originates from the codebase of the very first Rust Map Making Editor SDK, found here: https://github.com/JasonM97/Rust-Map-Editor
