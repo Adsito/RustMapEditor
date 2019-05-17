@@ -7,7 +7,7 @@
 
 ## [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
 ### Rust Map Making
-![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)
+[![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)](https://discord.gg/HPmTWVa)
 ### Contribute
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues)
