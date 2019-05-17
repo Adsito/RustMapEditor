@@ -518,6 +518,7 @@ public class MapIO : MonoBehaviour {
     }
     public void flipHeightmap()
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Flip Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         land.terrainData.SetHeights(0, 0, MapTransformations.flip(landHeightMap));
@@ -533,6 +534,7 @@ public class MapIO : MonoBehaviour {
     }
     public void normaliseHeightmap(float normaliseLow, float normaliseHigh, float normaliseBlend)
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Normalise Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         float highestPoint = 0f, lowestPoint = 1f, currentHeight = 0f, heightRange = 0f, normalisedHeightRange = 0f, normalisedHeight = 0f;
@@ -565,6 +567,7 @@ public class MapIO : MonoBehaviour {
     }
     public void terraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Terrace Terrain");
         Material mat = new Material(Shader.Find("TerrainToolSamples/TerraceErosion"));
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
@@ -577,6 +580,7 @@ public class MapIO : MonoBehaviour {
     }
     public void smoothHeightmap(float filterStrength, float blurDirection)
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Smooth Terrain");
         Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
@@ -591,6 +595,7 @@ public class MapIO : MonoBehaviour {
     }
     public void moveHeightmap()
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Move Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Vector3 difference = land.transform.position;
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
@@ -607,6 +612,7 @@ public class MapIO : MonoBehaviour {
     public void setEdgePixel(float heightToSet, bool[] sides) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
     // option for sides.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Set Edge Pixel");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         for (int i = 0; i < land.terrainData.heightmapHeight; i++)
@@ -635,6 +641,7 @@ public class MapIO : MonoBehaviour {
     }
     public void generatePerlinHeightmap(float scale) // Extremely basic first run of perlin map gen. In future this will have roughly 15 controllable elements.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Perlin Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
 
@@ -718,6 +725,7 @@ public class MapIO : MonoBehaviour {
     }
     public void setMinimumHeight(float minimumHeight) // Puts the heightmap level to the minimum if it's below.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Minimum Height Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] landMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         minimumHeight /= 1000f; // Normalise the input to a value between 0 and 1.
@@ -735,6 +743,7 @@ public class MapIO : MonoBehaviour {
     }
     public void setMaximumHeight(float maximumHeight) // Puts the heightmap level to the minimum if it's below.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Maximum Height Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] landMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
         maximumHeight /= 1000f; // Normalise the input to a value between 0 and 1.
@@ -877,6 +886,7 @@ public class MapIO : MonoBehaviour {
     }
     public void paintConditional(string landLayer, int texture, List<Conditions> conditions) // Todo: Optimisation and cleanup.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Conditional");
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
         LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
@@ -1097,6 +1107,7 @@ public class MapIO : MonoBehaviour {
     public void paintHeight(string landLayer, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Height");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
@@ -1172,6 +1183,7 @@ public class MapIO : MonoBehaviour {
     public void paintLayer(string landLayer, int t) // Sets whole layer to the active texture. 
     //Alpha layers are inverted because it's more logical to have clear Alpha = Terrain appears in game.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Layer");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1208,6 +1220,7 @@ public class MapIO : MonoBehaviour {
     public void clearLayer(string landLayer) // Sets whole layer to the inactive texture. Alpha and Topology only. 
     //Alpha layers are inverted because it's more logical to have clear Alpha = Terrain appears in game.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Clear Layer");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, texture(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1235,6 +1248,7 @@ public class MapIO : MonoBehaviour {
     }
     public void invertLayer(string landLayer) // Inverts the active and inactive textures. Alpha and Topology only. 
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Invert Layer");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1262,6 +1276,7 @@ public class MapIO : MonoBehaviour {
     }
     public void paintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Slope");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
@@ -1331,6 +1346,7 @@ public class MapIO : MonoBehaviour {
     // Note that the results of how much of the map is covered is dependant on the map size, a 2000 map size would paint almost the bottom half of the map, whereas a 4000 map would 
     // paint up nearly one quarter of the map, and across nearly half of the map.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Area");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1360,6 +1376,7 @@ public class MapIO : MonoBehaviour {
     public void paintRiver(string landLayer, bool aboveTerrain, int t) // Paints the splats wherever the water is above 500 and is above the terrain. Above terrain
     // true will paint only if water is above 500 and is also above the land terrain.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint River");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -1407,6 +1424,7 @@ public class MapIO : MonoBehaviour {
     public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. If wipeLayer == true it will wipe the existing topologies on the layer before painting
     // the new topologies.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Auto Generate Topologies");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
         changeLayer("Topology");
@@ -1525,6 +1543,7 @@ public class MapIO : MonoBehaviour {
     }
     public void autoGenerateGround() // Assigns terrain splats to these values. 
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Auto Generate Ground");
         changeLayer("Ground");
 
         terrainLayer = TerrainSplat.Enum.Forest;
@@ -1555,6 +1574,7 @@ public class MapIO : MonoBehaviour {
     } 
     public void autoGenerateBiome() // Assigns biome splats to these values.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Auto Generate Biome");
         changeLayer("Biome");
 
         biomeLayer = TerrainBiome.Enum.Arctic;
@@ -1566,6 +1586,7 @@ public class MapIO : MonoBehaviour {
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Alpha Debug");
         ProgressBar("Debug Alpha", "Debugging", 0.3f);
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
@@ -1596,6 +1617,7 @@ public class MapIO : MonoBehaviour {
     public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Texture Copy");
         ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
         switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
         {
@@ -1671,6 +1693,7 @@ public class MapIO : MonoBehaviour {
     public void generateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Two Layers Noise");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1710,6 +1733,7 @@ public class MapIO : MonoBehaviour {
     public void generateFourLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across four layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Four Layers Noise");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 4);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1755,6 +1779,7 @@ public class MapIO : MonoBehaviour {
     public void generateEightLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across eight layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Eight Layers Noise");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, 8);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1859,6 +1884,7 @@ public class MapIO : MonoBehaviour {
     }
     public void generateLayerNoise(string landLayer, int layers, float scale)
     {
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, layers.ToString() + " Layers Noise");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         float layerBlend = 1 / layers;
