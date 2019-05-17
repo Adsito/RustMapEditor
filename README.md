@@ -17,8 +17,11 @@ This editor originates from the codebase of the very first Rust Map Making Edito
 
 Also using Assets from:
 -https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
+
 -https://github.com/Roland09/Terrain-Stamps for some extra stamps.
+
 -https://github.com/Siccity/xNode for the node system.
+
 -https://github.com/Roland09/PrefabPainter for some prefab modules.
 
 ## Features
