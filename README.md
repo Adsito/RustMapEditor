@@ -21,7 +21,6 @@ Also using Assets from:
 
 -https://github.com/Siccity/xNode for the node system.
 
--https://github.com/Roland09/PrefabPainter for some prefab modules.
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
