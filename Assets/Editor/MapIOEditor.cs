@@ -32,6 +32,7 @@ public class MapIOEditor : Editor
     bool checkHeightCndtl = false, checkSlopeCndtl = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
+    bool autoUpdate = false;
 
     float filterStrength = 1f;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
@@ -358,6 +359,7 @@ public class MapIOEditor : Editor
                                         GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
                                         EditorGUILayout.LabelField(new GUIContent("Low", "The lowest point on the map after being normalised."), GUILayout.MaxWidth(40));
+                                        EditorGUI.BeginChangeCheck();
                                         normaliseLow = EditorGUILayout.Slider(normaliseLow, 0f, 1000f);
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
@@ -368,11 +370,18 @@ public class MapIOEditor : Editor
                                         EditorGUILayout.LabelField(new GUIContent("Blend", "The amount of blending to occur during normalisation. The higher the value the" +
                                             "smoother the result will be."), GUILayout.MaxWidth(40));
                                         normaliseBlend = EditorGUILayout.Slider(normaliseBlend, 0f, 1f);
+                                        if (EditorGUI.EndChangeCheck() && autoUpdate == true)
+                                        {
+                                            script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                        }
                                         EditorGUILayout.EndHorizontal();
+                                        EditorGUILayout.BeginHorizontal();
                                         if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
                                             script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
                                         }
+                                        autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
+                                        EditorGUILayout.EndHorizontal();
                                         GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
                                         EditorGUILayout.LabelField(new GUIContent("Strength", "The strength of the smoothing operation."), GUILayout.MaxWidth(85));
