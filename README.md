@@ -1,6 +1,5 @@
 # Rust Map Making Unity Editor
 [![HitCount](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity.svg)](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity)
-[![GitHub All Releases](https://img.shields.io/github/downloads/RustMapMaking/Rust-Map-Editor-Unity/total.svg)](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/releases)
 ![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Rust-Map-Editor-Unity.svg)
 ![GitHub](https://img.shields.io/github/license/RustMapMaking/Rust-Map-Editor-Unity.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)
