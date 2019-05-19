@@ -127,6 +127,7 @@ public class MapIO : MonoBehaviour {
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        RefreshAssetList();
     }
     public void ProgressBar(string title, string info, float progress)
     {
