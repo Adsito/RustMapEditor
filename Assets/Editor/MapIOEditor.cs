@@ -973,6 +973,10 @@ public class MapIOEditor : Editor
                         {
                             script.generatePerlinHeightmap(scale);
                         }
+                        if (GUILayout.Button("Open Terrain Gen Asset"))
+                        {
+                            AssetDatabase.OpenAsset(-2606);
+                        }
                         break;
                         #endregion
                 }
