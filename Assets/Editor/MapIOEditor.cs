@@ -8,7 +8,7 @@ using Rotorz.ReorderableList;
 [CustomEditor(typeof(MapIO))]
 public class MapIOEditor : Editor
 {
-    string editorVersion = "v0.7-prerelease";
+    string editorVersion = "v0.9-prerelease";
     string loadFile = "";
     string saveFile = "";
     string mapName = "";
