@@ -34,7 +34,7 @@ public class MapIOEditor : Editor
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false, itemValueSet = false;
-    string itemValueOld = "", assetDirectory = "Assets/Editor/Node/";
+    string itemValueOld = "", assetDirectory = "Assets/Nodes/";
     Vector2 scrollPos = new Vector2(0, 0);
 
     float filterStrength = 1f;
@@ -54,8 +54,6 @@ public class MapIOEditor : Editor
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
-    List<string> generationPresetList = new List<string>();
-    Dictionary<string, Object> generationPresetLookup = new Dictionary<string, Object>();
 
     public override void OnInspectorGUI()
     {
@@ -982,11 +980,11 @@ public class MapIOEditor : Editor
                         GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
                         if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
                         {
-                            RefreshAssetList();
+                            script.RefreshAssetList();
                         }
                         scrollPos = GUILayout.BeginScrollView(scrollPos);
                         ReorderableListGUI.Title("Generation Presets");
-                        ReorderableListGUI.ListField(generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
+                        ReorderableListGUI.ListField(script.generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
                         GUILayout.EndScrollView();
                         break;
                         #endregion
@@ -1077,23 +1075,9 @@ public class MapIOEditor : Editor
         #endregion
     }
     #region Methods
-    
-    void RefreshAssetList()
-    {
-        var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
-        generationPresetList.Clear();
-        generationPresetLookup.Clear();
-        foreach (var item in list)
-        {
-            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
-            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
-            generationPresetList.Add(itemNameSplit);
-            generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
-        }
-    }
-    
     private string AutoGenerationPresetDrawer(Rect position, string itemValue)
-    { 
+    {
+        MapIO script = (MapIO)target;
         if (itemValueSet == false)
         {
             itemValueOld = itemValue;
@@ -1109,10 +1093,17 @@ public class MapIOEditor : Editor
         itemValue = EditorGUI.TextField(position, itemValue);
         if (EditorGUI.EndChangeCheck())
         {
-            if (itemValue != "") // Case for renaming an asset to empty path.
+            if (itemValue != "" && script.generationPresetList.Contains(itemValue) == false) // Case for renaming an asset to empty path.
             {
-                AssetDatabase.RenameAsset(assetDirectory + itemValueOld + ".asset", itemValue);
-                RefreshAssetList();
+                if (!itemValue.EndsWith(".asset"))
+                {
+                    AssetDatabase.RenameAsset(assetDirectory + itemValueOld + ".asset", itemValue);
+                }
+                else
+                {
+                    AssetDatabase.RenameAsset(assetDirectory + itemValueOld, itemValue);
+                }
+                script.RefreshAssetList();
                 itemValueSet = false;
             }
         }
@@ -1120,7 +1111,7 @@ public class MapIOEditor : Editor
         position.width = 38;
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
         {
-            generationPresetLookup.TryGetValue(itemValue, out Object preset);
+            script.generationPresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
                 AssetDatabase.OpenAsset(preset.GetInstanceID());

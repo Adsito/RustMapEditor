@@ -2325,8 +2325,22 @@ public class MapIO : MonoBehaviour {
             //Debug.Log("Prefab Placed.");
         }
     }
+    public List<string> generationPresetList = new List<string>();
+    public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
+    public void RefreshAssetList()
+    {
+        var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
+        generationPresetList.Clear();
+        generationPresetLookup.Clear();
+        foreach (var item in list)
+        {
+            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
+            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
+            generationPresetList.Add(itemNameSplit);
+            generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+        }
+    }
 }
-#if UNITY_EDITOR
 public class PrefabHierachy : TreeView
 {
     MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
@@ -2417,4 +2431,3 @@ public class PrefabHierachy : TreeView
         return root;
     }
 }
-#endif
