@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.IMGUI.Controls;
+using Rotorz.ReorderableList;
 
 [CustomEditor(typeof(MapIO))]
 public class MapIOEditor : Editor
@@ -32,7 +33,9 @@ public class MapIOEditor : Editor
     bool checkHeightCndtl = false, checkSlopeCndtl = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
-    bool autoUpdate = false;
+    bool autoUpdate = false, itemValueSet = false;
+    string itemValueOld = "", assetDirectory = "Assets/Editor/Node/";
+    Vector2 scrollPos = new Vector2(0, 0);
 
     float filterStrength = 1f;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
@@ -50,7 +53,10 @@ public class MapIOEditor : Editor
     bool[] topoTxtCndtl = new bool[2] { true, true };
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
-    
+
+    List<string> generationPresetList = new List<string>();
+    Dictionary<string, Object> generationPresetLookup = new Dictionary<string, Object>();
+
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
@@ -706,7 +712,7 @@ public class MapIOEditor : Editor
                                 GUILayout.Label("Blend Strength: ");
                                 blendStrength = EditorGUILayout.Slider(blendStrength, 0f, 10f);
                             }
-                            if (GUILayout.Button("Paint slopes"))
+                            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + script.landLayer + " layer within the slope range.")))
                             {
                                 script.paintSlope("Ground", slopeLow, slopeHigh, minBlendLow, maxBlendHigh, TerrainSplat.TypeToIndex((int)script.terrainLayer), blendStrength);
                             }
@@ -724,7 +730,7 @@ public class MapIOEditor : Editor
                                 GUILayout.Label("Blend Strength: ");
                                 blendStrength = EditorGUILayout.Slider(blendStrength, 0f, 10f);
                             }
-                            if (GUILayout.Button("Paint Heights"))
+                            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + script.landLayer + " layer within the height range.")))
                             {
                                 script.paintHeight("Ground", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, TerrainSplat.TypeToIndex((int)script.terrainLayer), blendStrength);
                             }
@@ -763,14 +769,14 @@ public class MapIOEditor : Editor
                             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-                            if (GUILayout.Button("Paint slopes"))
+                            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + script.landLayer + " layer within the slope range.")))
                             {
                                 script.paintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
                             }
                             GUILayout.Label("Custom height range");
                             heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
                             heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
-                            if (GUILayout.Button("Paint range"))
+                            if (GUILayout.Button(new GUIContent("Paint Height", "Paints the terrain on the " + script.landLayer + " layer within the height range.")))
                             {
                                 script.paintHeight("Biome", heightLow, heightHigh, minBlendLowHeight, maxBlendHighHeight, TerrainBiome.TypeToIndex((int)script.biomeLayer), 1);
                             }
@@ -894,7 +900,7 @@ public class MapIOEditor : Editor
                             GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
-                            if (GUILayout.Button("Paint slopes"))
+                            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + script.landLayer + " layer within the slope range.")))
                             {
                                 script.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
                             }
@@ -902,11 +908,11 @@ public class MapIOEditor : Editor
                             heightLow = EditorGUILayout.FloatField("Bottom", heightLow);
                             heightHigh = EditorGUILayout.FloatField("Top", heightHigh);
                             EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Paint range"))
+                            if (GUILayout.Button(new GUIContent("Paint Range", "Paints the slopes within the slope range with the ACTIVE topology texture.")))
                             {
                                 script.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, 1);
                             }
-                            if (GUILayout.Button("Erase range"))
+                            if (GUILayout.Button(new GUIContent("Erase Range", "Paints the slopes within the slope range with the INACTIVE topology texture.")))
                             {
                                 script.paintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, 1);
                             }
@@ -955,28 +961,33 @@ public class MapIOEditor : Editor
                     #endregion
                     #region Generation
                     case 2:
-                        if (GUILayout.Button("Default Topologies"))
+                        if (GUILayout.Button(new GUIContent("Default Topologies", "Generates default topologies on the map and paints over existing topologies without wiping them.")))
                         {
                             script.autoGenerateTopology(false);
                         }
-                        if (GUILayout.Button("Wipe & Default Topologies"))
+                        if (GUILayout.Button(new GUIContent("Wipe & Default Topologies", "Generates default topologies on the map and paints over existing topologies after wiping them.")))
                         {
                             script.autoGenerateTopology(true);
                         }
-                        if (GUILayout.Button("Default Ground Textures"))
+                        if (GUILayout.Button(new GUIContent("Default Ground Textures", "Generates default ground textures and paints over existing textures after wiping them.")))
                         {
                             script.autoGenerateGround();
                         }
                         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
                         GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
-                        if (GUILayout.Button("Generate Perlin Heightmap"))
+                        if (GUILayout.Button(new GUIContent("Generate Perlin Heightmap", "Really basic perlin doesn't do much rn.")))
                         {
                             script.generatePerlinHeightmap(scale);
                         }
-                        if (GUILayout.Button("Open Terrain Gen Asset"))
+                        GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
+                        if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
                         {
-                            AssetDatabase.OpenAsset(-2606);
+                            RefreshAssetList();
                         }
+                        scrollPos = GUILayout.BeginScrollView(scrollPos);
+                        ReorderableListGUI.Title("Generation Presets");
+                        ReorderableListGUI.ListField(generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
+                        GUILayout.EndScrollView();
                         break;
                         #endregion
                 }
@@ -1065,6 +1076,73 @@ public class MapIOEditor : Editor
         }
         #endregion
     }
+    #region Methods
+    
+    void RefreshAssetList()
+    {
+        var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
+        generationPresetList.Clear();
+        generationPresetLookup.Clear();
+        foreach (var item in list)
+        {
+            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
+            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
+            generationPresetList.Add(itemNameSplit);
+            generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+        }
+    }
+    
+    private string AutoGenerationPresetDrawer(Rect position, string itemValue)
+    { 
+        if (itemValueSet == false)
+        {
+            itemValueOld = itemValue;
+            itemValueSet = true;
+        }
+        if (itemValue == null)
+        {
+            itemValue = "";
+            itemValueOld = itemValue;
+        }
+        position.width -= 67;
+        EditorGUI.BeginChangeCheck();
+        itemValue = EditorGUI.TextField(position, itemValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            if (itemValue != "") // Case for renaming an asset to empty path.
+            {
+                AssetDatabase.RenameAsset(assetDirectory + itemValueOld + ".asset", itemValue);
+                RefreshAssetList();
+                itemValueSet = false;
+            }
+        }
+        position.x = position.xMax + 5;
+        position.width = 38;
+        if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
+        {
+            generationPresetLookup.TryGetValue(itemValue, out Object preset);
+            if (preset != null)
+            {
+                AssetDatabase.OpenAsset(preset.GetInstanceID());
+            }
+            else
+            {
+                Debug.LogError("The preset you are trying to open is null. Try refreshing the preset list.");
+            }
+        }
+        position.x = position.x + 40;
+        position.width = 30;
+        if (GUI.Button(position, "Run"))
+        {
+            
+        }
+        return itemValue;
+    }
+    private void DrawEmpty()
+    {
+        GUILayout.Label("No presets in list.", EditorStyles.miniLabel);
+    }
+    #endregion
 }
 public class PrefabHierachyEditor : EditorWindow
 {

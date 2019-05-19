@@ -7,11 +7,8 @@ using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
 using static WorldSerialization;
 using System.IO;
-
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-#endif
 
 [Serializable]
 public class PrefabExport
@@ -133,15 +130,11 @@ public class MapIO : MonoBehaviour {
     }
     public void ProgressBar(string title, string info, float progress)
     {
-        #if UNITY_EDITOR
         EditorUtility.DisplayProgressBar(title, info, progress);
-        #endif
     }
     public void ClearProgressBar()
     {
-        #if UNITY_EDITOR
         EditorUtility.ClearProgressBar();
-        #endif
     }
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -2114,13 +2107,6 @@ public class MapIO : MonoBehaviour {
                 getPrefabPaths();
             }
         }
-        if (Application.isPlaying)
-        {
-            if (getPrefabLookUp() == null)
-            {
-                StartPrefabLookup();
-            }
-        }
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2179,23 +2165,20 @@ public class MapIO : MonoBehaviour {
             {
                 progressValue += 0.1f / terrains.prefabData.Length;
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
-                GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
-                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-                newObj.name = prefabName;
-            }
-        }
-        if (Application.isPlaying)
-        {
-            float progressValue = 0f;
-            for (int i = 0; i < terrains.prefabData.Length; i++)
-            {
-                progressValue += 0.1f / terrains.prefabData.Length;
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
-                GameObject go = SpawnPrefab(terrains.prefabData[i], prefabsParent);
-                go.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                go.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                if (getPrefabLookUp() == null)
+                {
+                    GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                    prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+                    newObj.name = prefabName;
+                }
+                else
+                {
+                    GameObject newObj = spawnPrefab(prefabLookup.prefabs[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                }
             }
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
