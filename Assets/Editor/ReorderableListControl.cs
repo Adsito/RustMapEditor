@@ -1211,6 +1211,8 @@ namespace Rotorz.ReorderableList {
 						// Append item to list.
 						GUIUtility.keyboardControl = 0;
 						AddItem(adaptor);
+                        AssetDatabase.CreateAsset(AutoGenerationGraph.CreateInstance("AutoGenerationGraph"), "Assets/Nodes/AutoGenerationPreset.asset");
+                        GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().RefreshAssetList();
 					}
 				}
 
@@ -1926,7 +1928,6 @@ namespace Rotorz.ReorderableList {
 				return false;
 
 			adaptor.Remove(itemIndex);
-
 			GUI.changed = true;
 			ReorderableListGUI.IndexOfChangedItem = -1;
 
