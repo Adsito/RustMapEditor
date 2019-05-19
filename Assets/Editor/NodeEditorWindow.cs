@@ -169,7 +169,6 @@ namespace XNodeEditor {
         [OnOpenAsset(0)]
         public static bool OnOpen(int instanceID, int line) {
             XNode.NodeGraph nodeGraph = EditorUtility.InstanceIDToObject(instanceID) as XNode.NodeGraph;
-            Debug.Log(instanceID);
             if (nodeGraph != null) {
                 Open(nodeGraph);
                 return true;
