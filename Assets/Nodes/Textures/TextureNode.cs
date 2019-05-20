@@ -11,7 +11,6 @@ public class TextureNode : Node
     public NodeVariables.Texture.LandLayerEnum landLayer;
     public override object GetValue(NodePort port)
     {
-        Out.LandLayer = (int)landLayer;
-        return Out.LandLayer;
+        return Out;
     }
 }

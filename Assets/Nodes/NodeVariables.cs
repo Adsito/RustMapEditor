@@ -20,6 +20,10 @@ namespace NodeVariables
         {
             get; set;
         }
+        public int TopologyLayer
+        {
+            get; set;
+        }
         public int GroundTexture
         {
             get; set;

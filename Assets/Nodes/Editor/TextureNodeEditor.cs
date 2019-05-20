@@ -37,6 +37,11 @@ public class TextureNodeEditor : NodeEditor
                 topologyEnum = (NodeVariables.Texture.TopologyEnum)EditorGUILayout.EnumPopup("Texture", topologyEnum);
                 break;
         }
-        EditorGUILayout.IntField((int)node.landLayer);
+        node.Out.LandLayer = (int)node.landLayer;
+        node.Out.TopologyLayer = TerrainTopology.TypeToIndex((int)topologyLayer);
+        node.Out.GroundTexture = (int)groundEnum;
+        node.Out.BiomeTexture = (int)biomeEnum;
+        node.Out.AlphaTexture = (int)alphaEnum;
+        node.Out.TopologyTexture = (int)topologyEnum;
     }
 }
