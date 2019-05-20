@@ -7,11 +7,8 @@ using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
 using static WorldSerialization;
 using System.IO;
-
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-#endif
 
 [Serializable]
 public class PrefabExport
@@ -124,24 +121,38 @@ public class MapIO : MonoBehaviour {
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public string bundleFile = "No bundle file selected";
     public Texture terrainFilterTexture;
-    public Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
+    public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     public Terrain terrain;
+    #region Editor Input Manager
+    [InitializeOnLoadMethod]
+    static void EditorInit()
+    {
+        System.Reflection.FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+
+        EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
+
+        value += EditorGlobalKeyPress;
+
+        info.SetValue(null, value);
+    }
+    static void EditorGlobalKeyPress()
+    {
+        //Debug.Log("KEY CHANGE " + Event.current.keyCode);
+    }
+    #endregion
     void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        RefreshAssetList();
     }
     public void ProgressBar(string title, string info, float progress)
     {
-        #if UNITY_EDITOR
         EditorUtility.DisplayProgressBar(title, info, progress);
-        #endif
     }
     public void ClearProgressBar()
     {
-        #if UNITY_EDITOR
         EditorUtility.ClearProgressBar();
-        #endif
     }
     public void setPrefabLookup(PrefabLookup prefabLookup)
     {
@@ -160,12 +171,12 @@ public class MapIO : MonoBehaviour {
     public void saveTopologyLayer()
     {
         if (topology == null)
+        {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
-
+        }
         LandData topologyData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
         TerrainMap<int> topologyMap = new TerrainMap<int>(topology.top,1);
         float[,,] splatMap = TypeConverter.singleToMulti(topologyData.splatMap,2);
-
         if (splatMap == null)
         {
             Debug.LogError("Splatmap is null");
@@ -190,11 +201,13 @@ public class MapIO : MonoBehaviour {
     public void changeLandLayer()
     {
         if (topology == null)
+        {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
-
+        }
         if (selectedLandLayer != null)
+        {
             selectedLandLayer.save();
-
+        }
         switch (landLayer.ToLower())
         {
             case "ground":
@@ -2114,13 +2127,6 @@ public class MapIO : MonoBehaviour {
                 getPrefabPaths();
             }
         }
-        if (Application.isPlaying)
-        {
-            if (getPrefabLookUp() == null)
-            {
-                StartPrefabLookup();
-            }
-        }
         var terrainPosition = 0.5f * terrains.size;
         
         LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
@@ -2179,23 +2185,20 @@ public class MapIO : MonoBehaviour {
             {
                 progressValue += 0.1f / terrains.prefabData.Length;
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
-                GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
-                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-                newObj.name = prefabName;
-            }
-        }
-        if (Application.isPlaying)
-        {
-            float progressValue = 0f;
-            for (int i = 0; i < terrains.prefabData.Length; i++)
-            {
-                progressValue += 0.1f / terrains.prefabData.Length;
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
-                GameObject go = SpawnPrefab(terrains.prefabData[i], prefabsParent);
-                go.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                go.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                if (getPrefabLookUp() == null)
+                {
+                    GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                    prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+                    newObj.name = prefabName;
+                }
+                else
+                {
+                    GameObject newObj = spawnPrefab(prefabLookup.prefabs[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                }
             }
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
@@ -2335,15 +2338,35 @@ public class MapIO : MonoBehaviour {
         }
         return go;
     }
-    public void Update()
+    public List<string> generationPresetList = new List<string>();
+    public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
+    public void RefreshAssetList()
     {
-        if (Input.GetKeyUp(KeyCode.Mouse0))
+        var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
+        generationPresetList.Clear();
+        generationPresetLookup.Clear();
+        foreach (var item in list)
         {
-            //Debug.Log("Prefab Placed.");
+            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
+            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
+            generationPresetList.Add(itemNameSplit);
+            generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+        }
+    }
+    public void ParseNodeGraph(XNode.NodeGraph graph)
+    {
+        foreach (var node in graph.nodes)
+        {
+            foreach (var output in node.Outputs)
+            {
+                if (output.ValueType == typeof(NodeVariables.NextTask))
+                {
+                    Debug.Log("Output found next task.");
+                }
+            }
         }
     }
 }
-#if UNITY_EDITOR
 public class PrefabHierachy : TreeView
 {
     MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
@@ -2434,4 +2457,3 @@ public class PrefabHierachy : TreeView
         return root;
     }
 }
-#endif
