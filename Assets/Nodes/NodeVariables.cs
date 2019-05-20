@@ -13,20 +13,40 @@ namespace NodeVariables
     {
 
     }
-    public class NodeVariables : MonoBehaviour
+    [System.Serializable]
+    public class Texture
     {
-
-    }
-    public enum GroundTexture
-    {
-        Grass, Dirt, Forest, Sand, Snow, Gravel, Stones, Rock
-    }
-    public enum BiomeTexture
-    {
-        Temperate, Arid, Arctic, Tundra
-    }
-    public enum AlphaTexture
-    {
-        Active, InActive
+        public int LandLayer
+        {
+            get; set;
+        }
+        public int GroundTexture
+        {
+            get; set;
+        }
+        public int BiomeTexture
+        {
+            get; set;
+        }
+        public int AlphaTexture
+        {
+            get; set;
+        }
+        public int TopologyTexture
+        {
+            get; set;
+        }
+        public enum LandLayerEnum
+        {
+            Ground, Biome, Alpha, Topology
+        }
+        public enum AlphaEnum
+        {
+            InActive, Active
+        }
+        public enum TopologyEnum
+        {
+            Active, InActive
+        }
     }
 }

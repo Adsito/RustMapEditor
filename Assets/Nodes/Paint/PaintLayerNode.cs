@@ -7,10 +7,10 @@ using NodeVariables;
 [CreateNodeMenu("Paint/Paint Layer")]
 public class PaintLayerNode : Node
 {
-    [Input] public InputAllTypes textureInput;
+    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture In;
     [Output] public NextTask nextTask;
-    public override object GetValue(NodePort port)
+    public NodeVariables.Texture GetValue()
     {
-        return nextTask;
+        return In;
     }
 }
