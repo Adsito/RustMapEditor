@@ -5,7 +5,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)
 ![GitHub repo size](https://img.shields.io/github/repo-size/RustMapMaking/Rust-Map-Editor-Unity.svg)
 
-## [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
+# [Installation and Editor Guide](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Unity-Editor-Guide)
 ### Rust Map Making
 [![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)](https://discord.gg/HPmTWVa)
 ### Contribute
