@@ -4,11 +4,11 @@ using UnityEngine;
 using XNode;
 using NodeVariables;
 
-[CreateNodeMenu("Textures/Biome Texture")]
-public class BiomeTextureNode : Node
+[CreateNodeMenu("Texture")]
+public class TextureNode : Node
 {
-    [Output] public BiomeTexture Out;
-    public BiomeTexture Texture;
+    [Output] public NodeVariables.Texture Out;
+    public NodeVariables.Texture.LandLayerEnum landLayer;
     public override object GetValue(NodePort port)
     {
         return Out;
