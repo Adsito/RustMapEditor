@@ -13,10 +13,12 @@ public class PaintLayerNodeEditor : NodeEditor
         base.OnBodyGUI();
         PaintLayerNode node = target as PaintLayerNode;
         AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
-        NodeVariables.Texture texture = node.GetValue();
+        NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         if (texture != null)
         {
-            EditorGUILayout.IntField(texture.LandLayer);
+            EditorGUILayout.LabelField(texture.LandLayer.ToString());
+            EditorGUILayout.LabelField(texture.TopologyLayer.ToString());
+            EditorGUILayout.LabelField(texture.TopologyTexture.ToString());
         }
     }
 }
