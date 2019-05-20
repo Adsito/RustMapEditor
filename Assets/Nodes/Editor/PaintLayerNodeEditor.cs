@@ -14,7 +14,7 @@ public class PaintLayerNodeEditor : NodeEditor
         PaintLayerNode node = target as PaintLayerNode;
         AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
-        if (texture != null)
+        if (texture != null && !Event.current.isMouse) // Check for mouse control event error.
         {
             EditorGUILayout.LabelField(texture.LandLayer.ToString());
             EditorGUILayout.LabelField(texture.TopologyLayer.ToString());
