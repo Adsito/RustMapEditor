@@ -17,6 +17,7 @@ RustWorldSDK: https://github.com/Facepunch/Rust.World
 This editor originates from the codebase of the very first Rust Map Making community editor, found here: https://github.com/JasonM97/Rust-Map-Editor
 
 Using resources from:
+
 -https://github.com/Roland09/Terrain-Stamps for some extra stamps.
 
 -https://github.com/Siccity/xNode for the node system.
