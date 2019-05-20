@@ -1122,7 +1122,8 @@ public class MapIOEditor : Editor
             }
             else
             {
-                Debug.LogError("The preset you are trying to open is null. Try refreshing the preset list.");
+                script.RefreshAssetList();
+                Debug.LogError("The preset you are trying to open is null.");
             }
         }
         position.x = position.x + 40;
