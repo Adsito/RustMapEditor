@@ -20,7 +20,6 @@ namespace XNodeEditor {
             if (graph == null) return;
             ValidateGraphEditor();
             Controls();
-
             DrawGrid(position, zoom, panOffset);
             DrawConnections();
             DrawDraggedConnection();

@@ -6,5 +6,5 @@ using XNode;
 [CreateAssetMenu(fileName = "Auto Generation Preset", menuName = "AutoGenPreset")]
 public class AutoGenerationGraph : NodeGraph
 { 
-	
+    
 }
