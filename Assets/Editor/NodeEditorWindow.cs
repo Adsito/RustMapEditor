@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace XNodeEditor {
     [InitializeOnLoad]
-    public partial class NodeEditorWindow : EditorWindow {
+    public partial class NodeEditorWindow : EditorWindow, IHasCustomMenu
+    {
         public static NodeEditorWindow current;
 
         /// <summary> Stores node positions for all nodePorts. </summary>
@@ -30,7 +31,16 @@ namespace XNodeEditor {
                 return _node.GetPort(_name);
             }
         }
-
+        void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
+        {
+            GUIContent content = new GUIContent("Run Terrain Generation", "Runs the Terrain Generation of the graph currently in view.");
+            menu.AddItem(content, false, RunNodeGraph);
+        }
+        private void RunNodeGraph()
+        {
+            MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
+            mapIO.ParseNodeGraph(this.graph);
+        }
         private void OnDisable() {
             // Cache portConnectionPoints before serialization starts
             int count = portConnectionPoints.Count;
@@ -43,7 +53,6 @@ namespace XNodeEditor {
                 index++;
             }
         }
-
         private void OnEnable() {
             // Reload portConnectionPoints if there are any
             int length = _references.Length;
@@ -95,6 +104,7 @@ namespace XNodeEditor {
 
         /// <summary> Create editor window </summary>
         public static NodeEditorWindow Init() {
+            
             NodeEditorWindow w = CreateInstance<NodeEditorWindow>();
             w.titleContent = new GUIContent("Node Generation");
             w.wantsMouseMove = true;
@@ -179,7 +189,6 @@ namespace XNodeEditor {
         /// <summary>Open the provided graph in the NodeEditor</summary>
         public static void Open(XNode.NodeGraph graph) {
             if (!graph) return;
-
             NodeEditorWindow w = GetWindow(typeof(NodeEditorWindow), false, "Node Generation", true) as NodeEditorWindow;
             w.wantsMouseMove = true;
             w.graph = graph;

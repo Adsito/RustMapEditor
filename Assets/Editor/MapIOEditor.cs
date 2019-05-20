@@ -54,7 +54,6 @@ public class MapIOEditor : Editor
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
-
     public override void OnInspectorGUI()
     {
         MapIO script = (MapIO)target;
@@ -1072,6 +1071,9 @@ public class MapIOEditor : Editor
                 mainMenuOptions = 0;
                 break;
         }
+        #endregion
+        #region InspectorGUIInput
+        Event e = Event.current;
         #endregion
     }
     #region Methods

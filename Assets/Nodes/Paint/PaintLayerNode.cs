@@ -7,8 +7,8 @@ using NodeVariables;
 [CreateNodeMenu("Paint/Paint Layer")]
 public class PaintLayerNode : Node
 {
-    [Input] public Anything textureInput;
-    [Output] public Anything nextTask;
+    [Input] public InputAllTypes textureInput;
+    [Output] public NextTask nextTask;
     public override object GetValue(NodePort port)
     {
         return nextTask;
