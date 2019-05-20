@@ -1,6 +1,5 @@
 # Rust Map Making Unity Editor
 [![HitCount](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity.svg)](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity)
-![GitHub All Releases](https://img.shields.io/github/downloads/RustMapMaking/Rust-Map-Editor-Unity/total.svg)
 ![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Rust-Map-Editor-Unity.svg)
 ![GitHub](https://img.shields.io/github/license/RustMapMaking/Rust-Map-Editor-Unity.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)
@@ -17,9 +16,11 @@ This editor originates from the codebase of the very first Rust Map Making Edito
 
 Also using Assets from:
 -https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
+
 -https://github.com/Roland09/Terrain-Stamps for some extra stamps.
+
 -https://github.com/Siccity/xNode for the node system.
--https://github.com/Roland09/PrefabPainter for some prefab modules.
+
 
 ## Features
 - Extended SDK that allows Prefab loading direct from game content files.
