@@ -121,8 +121,25 @@ public class MapIO : MonoBehaviour {
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public string bundleFile = "No bundle file selected";
     public Texture terrainFilterTexture;
-    public Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
+    public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     public Terrain terrain;
+    #region Editor Input Manager
+    [InitializeOnLoadMethod]
+    static void EditorInit()
+    {
+        System.Reflection.FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+
+        EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
+
+        value += EditorGlobalKeyPress;
+
+        info.SetValue(null, value);
+    }
+    static void EditorGlobalKeyPress()
+    {
+        //Debug.Log("KEY CHANGE " + Event.current.keyCode);
+    }
+    #endregion
     void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
@@ -154,12 +171,12 @@ public class MapIO : MonoBehaviour {
     public void saveTopologyLayer()
     {
         if (topology == null)
+        {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
-
+        }
         LandData topologyData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
         TerrainMap<int> topologyMap = new TerrainMap<int>(topology.top,1);
         float[,,] splatMap = TypeConverter.singleToMulti(topologyData.splatMap,2);
-
         if (splatMap == null)
         {
             Debug.LogError("Splatmap is null");
@@ -184,11 +201,13 @@ public class MapIO : MonoBehaviour {
     public void changeLandLayer()
     {
         if (topology == null)
+        {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
-
+        }
         if (selectedLandLayer != null)
+        {
             selectedLandLayer.save();
-
+        }
         switch (landLayer.ToLower())
         {
             case "ground":
@@ -2319,13 +2338,6 @@ public class MapIO : MonoBehaviour {
         }
         return go;
     }
-    public void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            //Debug.Log("Prefab Placed.");
-        }
-    }
     public List<string> generationPresetList = new List<string>();
     public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
     public void RefreshAssetList()
@@ -2339,6 +2351,19 @@ public class MapIO : MonoBehaviour {
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
             generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+        }
+    }
+    public void ParseNodeGraph(XNode.NodeGraph graph)
+    {
+        foreach (var node in graph.nodes)
+        {
+            foreach (var output in node.Outputs)
+            {
+                if (output.ValueType == typeof(NodeVariables.NextTask))
+                {
+                    Debug.Log("Output found next task.");
+                }
+            }
         }
     }
 }

@@ -4,7 +4,12 @@ using UnityEngine;
 namespace NodeVariables
 {
     [System.Serializable]
-    public class Anything
+    public class InputAllTypes
+    {
+
+    }
+    [System.Serializable]
+    public class NextTask
     {
 
     }
