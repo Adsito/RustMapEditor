@@ -12,14 +12,16 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues)
 
 ### Credits
-This editor originates from the codebase of the very first Rust Map Making Editor SDK, found here: https://github.com/JasonM97/Rust-Map-Editor
+RustWorldSDK: https://github.com/Facepunch/Rust.World
 
-Also using Assets from:
--https://assetstore.unity.com/packages/2d/textures-materials/floors/yughues-free-ground-materials-13001 for the Grass Texture.
+This editor originates from the codebase of the very first Rust Map Making community editor, found here: https://github.com/JasonM97/Rust-Map-Editor
 
+Using resources from:
 -https://github.com/Roland09/Terrain-Stamps for some extra stamps.
 
 -https://github.com/Siccity/xNode for the node system.
+
+-https://bitbucket.org/rotorz/reorderable-list-editor-field-for-unity/src/master/ for the draggable UI framework.
 
 
 ## Features
