@@ -2194,9 +2194,20 @@ public class MapIO : MonoBehaviour {
             }
             else
             {
-                GameObject newObj = spawnPrefab(prefabLookup.prefabs[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
-                newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-                newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                if (prefabLookup.prefabs[terrains.prefabData[i].id] != null)
+                {
+                    GameObject newObj = spawnPrefab(prefabLookup.prefabs[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                }
+                else
+                {
+                    GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                    newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+                    newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
+                    prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
+                    newObj.name = prefabName;
+                }
             }
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
