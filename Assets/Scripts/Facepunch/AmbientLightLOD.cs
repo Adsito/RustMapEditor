@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class AmbientLightLOD : MonoBehaviour
 {
 	private Light lightComponent;

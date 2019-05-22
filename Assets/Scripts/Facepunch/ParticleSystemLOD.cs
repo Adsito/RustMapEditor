@@ -1,6 +1,6 @@
-using System;
 using UnityEngine;
 
+[ExecuteAlways]
 public class ParticleSystemLOD : MonoBehaviour
 {
     private ParticleSystem particle;
