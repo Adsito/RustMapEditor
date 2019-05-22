@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class RendererLOD : MonoBehaviour
 {
     private Renderer[] renderers;
