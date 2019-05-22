@@ -23,6 +23,7 @@ public class PrefabLookup : System.IDisposable
 
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
+        float progress = 0f;
         backend = new AssetBundleBackend(bundlename);
         var lookupString = "";
         var manifest = backend.Load<GameManifest>(manifestPath);
@@ -40,14 +41,19 @@ public class PrefabLookup : System.IDisposable
         }
         lookup = new HashLookup(lookupString);
         var lines = File.ReadAllLines(assetsToLoadPath);
+        float linesAmount = lines.Length;
+        progress = 1f / linesAmount;
         foreach (var line in lines)
         {
+            mapIO.ProgressBar("Prefab Warmup", "Loading: " + line, progress);
+            progress += progress;
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
                 loadPrefabs(line);
             }
         }
-        //assetDump();
+        mapIO.ClearProgressBar();
+        assetDump();
         streamWriter.Close();
         streamWriter2.Close();
         prefabsLoaded = true;
