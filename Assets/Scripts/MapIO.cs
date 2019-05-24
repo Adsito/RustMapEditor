@@ -289,7 +289,6 @@ public class MapIO : MonoBehaviour {
     {
         return 0.5f * getTerrainSize();
     }
-
     #region RotateMap Methods
     public void rotateSplatMaps(bool CW)
     {
@@ -518,7 +517,6 @@ public class MapIO : MonoBehaviour {
         changeLandLayer();
     }
     #endregion
-
     #region HeightMap Methods
     public void scaleHeightmap(float scale)
     {

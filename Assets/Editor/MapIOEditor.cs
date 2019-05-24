@@ -548,9 +548,21 @@ public class MapIOEditor : Editor
                                         checkSlopeCndtl = EditorGUILayout.Toggle("Check Slopes:", checkSlopeCndtl);
                                         if (checkSlopeCndtl == true)
                                         {
+                                            if (slopeLowCndtl > slopeHighCndtl)
+                                            {
+                                                slopeLowCndtl = slopeHighCndtl - 0.05f;
+                                            }
+                                            if (slopeLowCndtl < 0)
+                                            {
+                                                slopeLowCndtl = 0f;
+                                            }
+                                            if (slopeHighCndtl > 90f)
+                                            {
+                                                slopeHighCndtl = 90f;
+                                            }
                                             EditorGUILayout.BeginHorizontal();
-                                            GUILayout.Label("From: " + slopeLowCndtl.ToString() + "°", EditorStyles.boldLabel);
-                                            GUILayout.Label("To: " + slopeHighCndtl.ToString() + "°", EditorStyles.boldLabel);
+                                            slopeLowCndtl = EditorGUILayout.FloatField(slopeLowCndtl);
+                                            slopeHighCndtl = EditorGUILayout.FloatField(slopeHighCndtl);
                                             EditorGUILayout.EndHorizontal();
                                             EditorGUILayout.MinMaxSlider(ref slopeLowCndtl, ref slopeHighCndtl, 0f, 90f);
                                         }
@@ -558,9 +570,21 @@ public class MapIOEditor : Editor
                                         checkHeightCndtl = EditorGUILayout.Toggle("Check Heights:", checkHeightCndtl);
                                         if (checkHeightCndtl == true)
                                         {
+                                            if (heightLowCndtl > heightHighCndtl)
+                                            {
+                                                heightLowCndtl = heightHighCndtl - 0.05f;
+                                            }
+                                            if (heightLowCndtl < 0)
+                                            {
+                                                heightLowCndtl = 0f;
+                                            }
+                                            if (heightHighCndtl > 1000f)
+                                            {
+                                                heightHighCndtl = 1000f;
+                                            }
                                             EditorGUILayout.BeginHorizontal();
-                                            GUILayout.Label("From: " + heightLowCndtl.ToString(), EditorStyles.boldLabel);
-                                            GUILayout.Label("To: " + heightHighCndtl.ToString(), EditorStyles.boldLabel);
+                                            heightLowCndtl = EditorGUILayout.FloatField(heightLowCndtl);
+                                            heightHighCndtl = EditorGUILayout.FloatField(heightHighCndtl);
                                             EditorGUILayout.EndHorizontal();
                                             EditorGUILayout.MinMaxSlider(ref heightLowCndtl, ref heightHighCndtl, 0f, 1000f);
                                         }
@@ -1078,14 +1102,14 @@ public class MapIOEditor : Editor
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
                         {
-                            if (!script.bundleFile.Contains(@"steamapps\common\Rust\Bundles"))
+                            if (!script.bundleFile.Contains(@"steamapps/common/Rust/Bundles/Bundles"))
                             {
                                 script.bundleFile = script.bundleFile = EditorUtility.OpenFilePanel("Select Bundle File", script.bundleFile, "");
                                 if (script.bundleFile == "")
                                 {
                                     return;
                                 }
-                                if (!script.bundleFile.Contains(@"steamapps\common\Rust\Bundles"))
+                                if (!script.bundleFile.Contains(@"steamapps/common/Rust/Bundles/Bundles"))
                                 {
                                     EditorUtility.DisplayDialog("ERROR: Bundle File Invalid", @"Bundle file path invalid. It should be located within steamapps\common\Rust\Bundles", "Ok");
                                     return;
