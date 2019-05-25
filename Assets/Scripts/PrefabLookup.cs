@@ -4,12 +4,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+public class PrefabAttributes : List<PrefabAttributes>
+{
+    public GameObject Prefab
+    {
+        get; set;
+    }
+    public string Path
+    {
+        get; set;
+    }
+}
 public class PrefabLookup : System.IDisposable
 {
 	private AssetBundleBackend backend;
 	private HashLookup lookup;
 
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
+    public List<Material> materials = new List<Material>();
+    public List<Mesh> meshes = new List<Mesh>();
+    public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
 
     private static string manifestPath = "assets/manifest.asset";
     private static string assetsToLoadPath = "AssetsList.txt";
@@ -102,9 +116,10 @@ public class PrefabLookup : System.IDisposable
             {
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
                 streamWriter2.WriteLine(prefabs[i].name + ":" + subpaths[i] + ":" + lookup[subpaths[i]]);
-                SavePrefabToAsset(prefabs[i], subpaths[i], lookup[subpaths[i]]);
+                PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
             }
         }
+        SavePrefabsToAsset();
     }
     public void assetDump() // Dumps every asset found in the Rust bundle to a text file.
     {
@@ -116,19 +131,58 @@ public class PrefabLookup : System.IDisposable
         }
         streamWriter3.Close();
     }
-    public void SavePrefabToAsset(GameObject go, string path, uint rustid) // Saves the prefab loaded from the game file into the project as an asset.
+    public void PreparePrefab(GameObject go, string path, uint rustid) // Saves the prefab loaded from the game file into the project as an asset.
     {
-        var prefabToSave = GameObject.Instantiate(go);
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
+        var prefabToSave = GameObject.Instantiate(go);
+        var prefabRenderers = prefabToSave.GetComponentsInChildren<MeshRenderer>();
+        var prefabMeshes = prefabToSave.GetComponentsInChildren<MeshFilter>();
+        for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials to the list to save to the project later.
+        {
+            var prefabMaterials = prefabRenderers[i].sharedMaterials;
+            for (int j = 0; j < prefabMaterials.Length; j++)
+            {
+                if (!materials.Contains(prefabMaterials[j]))
+                {
+                    materials.Add(prefabMaterials[j]);
+                }
+            }
+        }
+        for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
+        {
+            if (!meshes.Contains(prefabMeshes[i].sharedMesh))
+            {
+                meshes.Add(prefabMeshes[i].sharedMesh);
+            }
+        }
         prefabToSave.tag = "LoadedPrefab";
         prefabToSave.name = prefabName;
         PrefabDataHolder prefabDataHolder = prefabToSave.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
-        GameObjectUtility.RemoveMonoBehavioursWithMissingScript(prefabToSave);
-        PrefabUtility.SaveAsPrefabAsset(prefabToSave, path);
-        //GameObject.DestroyImmediate(go, true);
+        prefabsList.Add(new PrefabAttributes()
+        {
+            Prefab = prefabToSave,
+            Path = path
+        });
+    }
+    public void SavePrefabsToAsset()
+    {
+        foreach (var material in materials)
+        {
+            AssetDatabase.ExtractAsset(material, "Assets/Materials/Rust/Materials/" + material.name + ".mat");
+            Debug.Log(material.name);
+        }
+        /*
+        foreach (var mesh in meshes)
+        {
+            AssetDatabase.CreateAsset(mesh, "Assets/Materials/Rust/Meshes/" + mesh.name);
+        }
+        foreach (var prefab in prefabsList)
+        {
+            PrefabUtility.SaveAsPrefabAsset(prefab.Prefab, prefab.Path);
+        }*/
     }
     public GameObject this[uint uid]
 	{
