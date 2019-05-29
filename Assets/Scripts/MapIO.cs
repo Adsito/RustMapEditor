@@ -579,7 +579,7 @@ public class MapIO : MonoBehaviour {
     public void terraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Terrace Terrain");
-        Material mat = new Material(Shader.Find("TerrainToolSamples/TerraceErosion"));
+        Material mat = new Material(Shader.Find("Hidden/TerrainTools/TerraceErosion"));
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, terrain.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
