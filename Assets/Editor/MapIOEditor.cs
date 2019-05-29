@@ -17,7 +17,8 @@ public class MapIOEditor : Editor
     string prefabSaveFile = "";
     //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
-    float heightToSet = 450f, scale = 50f, offset = 0f, mapScale = 1f;
+    float heightToSet = 450f, scale = 50f, offset = 0f;
+    //float mapScale = 1f; Comment back in when used.
     bool[] sides = new bool[4]; 
     bool checkHeight = true, setWaterMap = false;
     bool allLayers = false, ground = false, biome = false, alpha = false, topology = false, heightmap = false, prefabs = false, paths = false;
@@ -347,8 +348,8 @@ public class MapIOEditor : Editor
                                     case 1:
                                         GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField("Scale", GUILayout.MaxWidth(60));
-                                        mapScale = EditorGUILayout.Slider(mapScale, 0.01f, 10f);
+                                        //EditorGUILayout.LabelField("Scale", GUILayout.MaxWidth(60));
+                                        //mapScale = EditorGUILayout.Slider(mapScale, 0.01f, 10f);
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
                                         /*
@@ -356,7 +357,7 @@ public class MapIOEditor : Editor
                                         {
                                             script.scaleHeightmap(mapScale);
                                         }*/
-                                        if (GUILayout.Button(new GUIContent("Flip", "Flips the heightmap in on itself.")))
+                                        if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself.")))
                                         {
                                             script.flipHeightmap();
                                         }
@@ -1073,6 +1074,7 @@ public class MapIOEditor : Editor
                         {
                             script.generatePerlinHeightmap(scale);
                         }
+                        /*
                         GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
                         if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
                         {
@@ -1082,6 +1084,7 @@ public class MapIOEditor : Editor
                         ReorderableListGUI.Title("Generation Presets");
                         ReorderableListGUI.ListField(script.generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
                         GUILayout.EndScrollView();
+                        */
                         break;
                         #endregion
                 }
@@ -1089,10 +1092,10 @@ public class MapIOEditor : Editor
             #endregion
             #region Prefabs
             case 2:
-                GUIContent[] prefabsOptionsMenu = new GUIContent[3];
+                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
-                prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
-                prefabsOptionsMenu[2] = new GUIContent("Prefab Tools");
+                //prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
+                prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
                 prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
                 switch (prefabOptions)
@@ -1133,13 +1136,13 @@ public class MapIOEditor : Editor
                         EditorGUILayout.EndHorizontal();
                         script.bundleFile = GUILayout.TextArea(script.bundleFile);
                         break;
-                    case 1:
+                    case 2:
                         if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
                         {
                             PrefabHierachyEditor.ShowWindow();
                         }
                         break;
-                    case 2:
+                    case 1:
                         if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
                                     " errors loading a map on a server.")))
                         {
