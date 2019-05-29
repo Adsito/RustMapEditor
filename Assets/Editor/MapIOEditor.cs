@@ -413,7 +413,7 @@ public class MapIOEditor : Editor
                                         EditorGUILayout.EndHorizontal();
                                         if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap.")))
                                         {
-                                            script.terraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
+                                            script.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
                                         }
                                         break;
                                 }
