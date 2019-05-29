@@ -65,7 +65,6 @@ public class MapIOEditor : Editor
         {
             groundLayerToPaint = TerrainSplat.Enum.Grass;
             biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-            script.changeLayer("Ground");
             layerSet = true;
         }
 
