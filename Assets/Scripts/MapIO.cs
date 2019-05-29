@@ -529,10 +529,10 @@ public class MapIO : MonoBehaviour {
     }
     public void flipHeightmap()
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Flip Terrain");
+        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Invert Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[,] landHeightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
-        land.terrainData.SetHeights(0, 0, MapTransformations.flip(landHeightMap));
+        land.terrainData.SetHeights(0, 0, MapTransformations.Invert(landHeightMap));
     }
     public void transposeHeightmap()
     {
@@ -580,7 +580,7 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Terrace Terrain");
         Material mat = new Material(Shader.Find("TerrainToolSamples/TerraceErosion"));
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, terrain.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
         mat.SetTexture("_BrushTex", terrainFilterTexture);
@@ -2110,21 +2110,6 @@ public class MapIO : MonoBehaviour {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         }
         cleanUpMap();
-        if (getPrefabLookUp() == null)
-        {
-            if (prefabReference.Count == 0)
-            {
-                createDefaultPrefabs();
-            }
-            if (prefabNames.Count == 0)
-            {
-                getPrefabNames();
-            }
-            if (prefabPaths.Count == 0)
-            {
-                getPrefabPaths();
-            }
-        }
         
         var terrainPosition = 0.5f * terrains.size;
         
@@ -2187,8 +2172,6 @@ public class MapIO : MonoBehaviour {
                 GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
                 newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
                 newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
-                prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-                newObj.name = prefabName;
             }
             else
             {
@@ -2203,8 +2186,6 @@ public class MapIO : MonoBehaviour {
                     GameObject newObj = spawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
                     newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
                     newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
-                    prefabNames.TryGetValue(terrains.prefabData[i].id, out string prefabName);
-                    newObj.name = prefabName;
                 }
             }
         }

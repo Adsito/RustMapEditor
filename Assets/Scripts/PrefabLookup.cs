@@ -14,6 +14,10 @@ public class PrefabAttributes : List<PrefabAttributes>
     {
         get; set;
     }
+    public uint RustID
+    {
+        get; set;
+    }
 }
 public class PrefabLookup : System.IDisposable
 {
@@ -23,6 +27,7 @@ public class PrefabLookup : System.IDisposable
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
     public List<Material> materials = new List<Material>();
     public List<Mesh> meshes = new List<Mesh>();
+    public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
 
     private static string manifestPath = "assets/manifest.asset";
@@ -34,7 +39,6 @@ public class PrefabLookup : System.IDisposable
 		get { return prefabsLoaded; }
 	}
     StreamWriter streamWriter = new StreamWriter("PrefabsManifest.txt", false);
-    StreamWriter streamWriter2 = new StreamWriter("PrefabsLoaded.txt", false);
 
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
@@ -44,7 +48,9 @@ public class PrefabLookup : System.IDisposable
         var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
-            Debug.LogError("manifest is null");
+            Debug.LogError("Manifest is null");
+            backend = null;
+            return;
         }
         else
         {
@@ -58,6 +64,7 @@ public class PrefabLookup : System.IDisposable
         var lines = File.ReadAllLines(assetsToLoadPath);
         float linesAmount = lines.Length;
         progress = 1f / linesAmount;
+        AssetBundleLookup();
         foreach (var line in lines)
         {
             mapIO.ProgressBar("Prefab Warmup", "Loading: " + line, progress);
@@ -67,10 +74,9 @@ public class PrefabLookup : System.IDisposable
                 LoadPrefabs(line);
             }
         }
+        PrefabsLoadedDump();
         mapIO.ClearProgressBar();
-        assetDump();
         streamWriter.Close();
-        streamWriter2.Close();
         prefabsLoaded = true;
     }
     public void Dispose()
@@ -93,6 +99,9 @@ public class PrefabLookup : System.IDisposable
 	}
     public void LoadPrefabs(string path)
     {
+        assetsList.Clear();
+        meshes.Clear();
+        materials.Clear();
         string[] subpaths = backend.FindAll(path);
         foreach (var directory in subpaths) // Checks if directory exists in the project, if not creates one so we can save prefabs to it.
         {
@@ -115,21 +124,37 @@ public class PrefabLookup : System.IDisposable
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
-                streamWriter2.WriteLine(prefabs[i].name + ":" + subpaths[i] + ":" + lookup[subpaths[i]]);
                 PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
             }
         }
         SavePrefabsToAsset();
     }
-    public void assetDump() // Dumps every asset found in the Rust bundle to a text file.
+    public void AssetBundleLookup() // Dumps every asset found in the Rust bundle to a text file.
     {
-        StreamWriter streamWriter3 = new StreamWriter("AssetDump.txt", false);
-        var assetDump = backend.FindAll("");
-        foreach (var item in assetDump)
+        var assets = backend.FindAll("");
+        assetsList.Clear();
+        foreach (var asset in assets)
         {
-            streamWriter3.WriteLine(item);
+            assetsList.Add(asset);
         }
-        streamWriter3.Close();
+    }
+    public void AssetDump()
+    {
+        StreamWriter streamWriter = new StreamWriter("AssetDump.txt", false);
+        foreach (var item in assetsList)
+        {
+            streamWriter.WriteLine(item);
+        }
+        streamWriter.Close();
+    }
+    public void PrefabsLoadedDump()
+    {
+        StreamWriter streamWriter = new StreamWriter("PrefabsLoaded.txt", false);
+        foreach (var item in prefabsList)
+        {
+            streamWriter.WriteLine(item.Prefab.name + ":" + item.Path + ":" + item.RustID);
+        }
+        streamWriter.Close();
     }
     public void PreparePrefab(GameObject go, string path, uint rustid) // Saves the prefab loaded from the game file into the project as an asset.
     {
@@ -143,7 +168,7 @@ public class PrefabLookup : System.IDisposable
             var prefabMaterials = prefabRenderers[i].sharedMaterials;
             for (int j = 0; j < prefabMaterials.Length; j++)
             {
-                if (!materials.Contains(prefabMaterials[j]))
+                if (!materials.Contains(prefabMaterials[j]) && prefabRenderers[i].sharedMaterials != null)
                 {
                     materials.Add(prefabMaterials[j]);
                 }
@@ -151,7 +176,7 @@ public class PrefabLookup : System.IDisposable
         }
         for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
         {
-            if (!meshes.Contains(prefabMeshes[i].sharedMesh))
+            if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null)
             {
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
@@ -164,25 +189,30 @@ public class PrefabLookup : System.IDisposable
         prefabsList.Add(new PrefabAttributes()
         {
             Prefab = prefabToSave,
-            Path = path
+            Path = path,
+            RustID = rustid
         });
     }
     public void SavePrefabsToAsset()
     {
         foreach (var material in materials)
         {
-            AssetDatabase.ExtractAsset(material, "Assets/Materials/Rust/Materials/" + material.name + ".mat");
-            Debug.Log(material.name);
+            AssetDatabase.RemoveObjectFromAsset(material);
+            AssetDatabase.CreateAsset(material, "Assets/Materials/Rust/Materials/" + material.name + ".mat");
         }
-        /*
         foreach (var mesh in meshes)
         {
-            AssetDatabase.CreateAsset(mesh, "Assets/Materials/Rust/Meshes/" + mesh.name);
+            AssetDatabase.RemoveObjectFromAsset(mesh);
+            AssetDatabase.CreateAsset(mesh, "Assets/Materials/Rust/Meshes/" + mesh.name + ".fbx");
         }
         foreach (var prefab in prefabsList)
         {
+            AssetDatabase.RemoveObjectFromAsset(prefab.Prefab);
+            prefab.Prefab.SetActive(true);
+            GameObjectUtility.RemoveMonoBehavioursWithMissingScript(prefab.Prefab);
             PrefabUtility.SaveAsPrefabAsset(prefab.Prefab, prefab.Path);
-        }*/
+            GameObject.DestroyImmediate(prefab.Prefab);
+        }
     }
     public GameObject this[uint uid]
 	{
