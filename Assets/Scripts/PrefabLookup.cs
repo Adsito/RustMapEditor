@@ -27,7 +27,7 @@ public class PrefabLookup : System.IDisposable
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
     public List<Material> materials = new List<Material>();
     public List<Mesh> meshes = new List<Mesh>();
-    public List<Texture2D> textures = new List<Texture2D>();
+    public List<Texture> textures = new List<Texture>();
     public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
 
@@ -197,7 +197,7 @@ public class PrefabLookup : System.IDisposable
                 }
                 if (!textures.Contains(prefabMaterials[j].mainTexture) && prefabMaterials[j].mainTexture != null)
                 {
-                    textures.Add((Texture2D)prefabMaterials[j].mainTexture);
+                    textures.Add(prefabMaterials[j].mainTexture);
                 }
             }
         }
@@ -224,13 +224,12 @@ public class PrefabLookup : System.IDisposable
     {
         CreateRustDirectory();
         AssetDatabase.StartAssetEditing();
+        /*
         foreach (var texture in textures)
         {
-            byte[] bytes = texture.EncodeToTGA();
-            File.WriteAllBytes("Assets/Rust/Textures", bytes);
-            //AssetDatabase.RemoveObjectFromAsset(texture);
-            //AssetDatabase.CreateAsset(texture, "Assets/Rust/Textures/" + texture.name + ".tga");
-        }
+            AssetDatabase.RemoveObjectFromAsset(texture);
+            AssetDatabase.CreateAsset(texture, "Assets/Rust/Textures/" + texture.name + ".tga");
+        }*/
         foreach (var material in materials)
         {
             switch (material.shader.name)
