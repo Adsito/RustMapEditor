@@ -576,7 +576,7 @@ public class MapIO : MonoBehaviour {
         }
         land.terrainData.SetHeights(0, 0, landHeightMap);
     }
-    public void terraceErodeHeightmap(float featureSize, float interiorCornerWeight)
+    public void TerraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Terrace Terrain");
         Material mat = new Material(Shader.Find("Hidden/TerrainTools/TerraceErosion"));
