@@ -27,7 +27,7 @@ public class PrefabLookup : System.IDisposable
 	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
     public List<Material> materials = new List<Material>();
     public List<Mesh> meshes = new List<Mesh>();
-    public List<Texture> textures = new List<Texture>();
+    public List<Texture2D> textures = new List<Texture2D>();
     public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
 
@@ -197,7 +197,7 @@ public class PrefabLookup : System.IDisposable
                 }
                 if (!textures.Contains(prefabMaterials[j].mainTexture) && prefabMaterials[j].mainTexture != null)
                 {
-                    textures.Add(prefabMaterials[j].mainTexture);
+                    textures.Add((Texture2D)prefabMaterials[j].mainTexture);
                 }
             }
         }
@@ -223,13 +223,20 @@ public class PrefabLookup : System.IDisposable
     public void SavePrefabsToAsset() // Strip all the assets and save them to the project.
     {
         CreateRustDirectory();
-        AssetDatabase.StartAssetEditing();
-        /*
         foreach (var texture in textures)
         {
-            AssetDatabase.RemoveObjectFromAsset(texture);
-            AssetDatabase.CreateAsset(texture, "Assets/Rust/Textures/" + texture.name + ".tga");
-        }*/
+            RenderTexture tmp = RenderTexture.GetTemporary(textures[0].width, textures[0].height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            Graphics.Blit(textures[0], tmp);
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = tmp;
+            Texture2D newTexture = new Texture2D(textures[0].width, textures[0].height);
+            newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
+            newTexture.Apply();
+            RenderTexture.active = previous;
+            RenderTexture.ReleaseTemporary(tmp);
+            File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
+        }
+        AssetDatabase.StartAssetEditing();
         foreach (var material in materials)
         {
             switch (material.shader.name)
@@ -301,6 +308,9 @@ public class PrefabLookup : System.IDisposable
                     material.shader = Shader.Find("Standard");
                     break;
                 case "Custom/Standard Refraction":
+                    material.shader = Shader.Find("Standard");
+                    break;
+                default:
                     material.shader = Shader.Find("Standard");
                     break;
             }
