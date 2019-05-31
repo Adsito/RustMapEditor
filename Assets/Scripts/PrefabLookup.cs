@@ -236,6 +236,7 @@ public class PrefabLookup : System.IDisposable
             RenderTexture.ReleaseTemporary(tmp);
             File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
         }
+        AssetDatabase.Refresh():
         AssetDatabase.StartAssetEditing();
         for (int i = 0; i < materials.Count; i++)
         {
