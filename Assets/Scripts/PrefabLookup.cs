@@ -42,8 +42,10 @@ public class PrefabLookup : System.IDisposable
 
     public PrefabLookup(string bundlename, MapIO mapIO)
     {
-        float progress = 0f;
         backend = new AssetBundleBackend(bundlename);
+        AssetBundleLookup();
+        CreateRustDirectory();
+        float progress = 0f;
         var lookupString = "";
         var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
@@ -61,12 +63,10 @@ public class PrefabLookup : System.IDisposable
         }
         lookup = new HashLookup(lookupString);
         var lines = File.ReadAllLines(assetsToLoadPath);
-        float linesAmount = lines.Length;
-        progress = 1f / linesAmount;
-        AssetBundleLookup();
+        progress = 1f / lines.Length;
         foreach (var line in lines)
         {
-            mapIO.ProgressBar("Prefab Warmup", "Loading: " + line, progress);
+            mapIO.ProgressBar("Prefab Warmup", "Loading Directory: " + line, progress);
             progress += progress;
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
@@ -98,11 +98,7 @@ public class PrefabLookup : System.IDisposable
 	}
     public void LoadPrefabs(string path)
     {
-        assetsList.Clear();
-        meshes.Clear();
-        materials.Clear();
-        prefabsList.Clear();
-        string[] subpaths = backend.FindAll(path);
+        var subpaths = backend.FindAll(path);
         CreatePrefabDirectory(path);
         GameObject[] prefabs = new GameObject[subpaths.Length];
         for (int i = 0; i < subpaths.Length; i++)
@@ -143,11 +139,11 @@ public class PrefabLookup : System.IDisposable
         {
             AssetDatabase.CreateFolder("Assets/Rust", "Materials");
         }
-        if (!AssetDatabase.IsValidFolder("Assets/Rust"))
+        if (!AssetDatabase.IsValidFolder("Assets/Rust/Meshes"))
         {
             AssetDatabase.CreateFolder("Assets/Rust", "Meshes");
         }
-        if (!AssetDatabase.IsValidFolder("Assets/Rust"))
+        if (!AssetDatabase.IsValidFolder("Assets/Rust/Textures"))
         {
             AssetDatabase.CreateFolder("Assets/Rust", "Textures");
         }
@@ -163,21 +159,23 @@ public class PrefabLookup : System.IDisposable
     }
     public void AssetDump() // Dumps every asset found in the Rust bundle to a text file.
     {
-        StreamWriter streamWriter = new StreamWriter("AssetDump.txt", false);
-        foreach (var item in assetsList)
+        using (StreamWriter streamWriter = new StreamWriter("AssetDump.txt", false))
         {
-            streamWriter.WriteLine(item);
+            foreach (var item in assetsList)
+            {
+                streamWriter.WriteLine(item);
+            }
         }
-        streamWriter.Close();
     }
     public void PrefabsLoadedDump()
     {
-        StreamWriter streamWriter = new StreamWriter("PrefabsLoaded.txt", false);
-        foreach (var item in prefabsList)
+        using(StreamWriter streamWriter = new StreamWriter("PrefabsLoaded.txt", false))
         {
-            streamWriter.WriteLine(item.Prefab.name + ":" + item.Path + ":" + item.RustID);
+            foreach (var item in prefabsList)
+            {
+                streamWriter.WriteLine(item.Prefab.name + ":" + item.Path + ":" + item.RustID);
+            }
         }
-        streamWriter.Close();
     }
     public void PreparePrefab(GameObject go, string path, uint rustid) // Seperates the prefab components and adds them to list.
     {
@@ -191,13 +189,16 @@ public class PrefabLookup : System.IDisposable
             var prefabMaterials = prefabRenderers[i].sharedMaterials;
             for (int j = 0; j < prefabMaterials.Length; j++)
             {
-                if (!materials.Contains(prefabMaterials[j]) && prefabMaterials[j] != null)
+                if (!materials.Contains(prefabMaterials[j]))
                 {
                     materials.Add(prefabMaterials[j]);
                 }
-                if (!textures.Contains(prefabMaterials[j].mainTexture) && prefabMaterials[j].mainTexture != null)
+                if (prefabMaterials[j].HasProperty("_MainTex"))
                 {
-                    textures.Add((Texture2D)prefabMaterials[j].mainTexture);
+                    if (!textures.Contains(prefabMaterials[j].mainTexture))
+                    {
+                        textures.Add((Texture2D)prefabMaterials[j].mainTexture);
+                    }
                 }
             }
         }
@@ -222,14 +223,13 @@ public class PrefabLookup : System.IDisposable
     }
     public void SavePrefabsToAsset() // Strip all the assets and save them to the project.
     {
-        CreateRustDirectory();
         foreach (var texture in textures)
         {
-            RenderTexture tmp = RenderTexture.GetTemporary(textures[0].width, textures[0].height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
-            Graphics.Blit(textures[0], tmp);
+            RenderTexture tmp = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            Graphics.Blit(texture, tmp);
             RenderTexture previous = RenderTexture.active;
             RenderTexture.active = tmp;
-            Texture2D newTexture = new Texture2D(textures[0].width, textures[0].height);
+            Texture2D newTexture = new Texture2D(texture.width, texture.height);
             newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
             newTexture.Apply();
             RenderTexture.active = previous;
@@ -237,90 +237,54 @@ public class PrefabLookup : System.IDisposable
             File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
         }
         AssetDatabase.StartAssetEditing();
-        foreach (var material in materials)
+        for (int i = 0; i < materials.Count; i++)
         {
-            switch (material.shader.name)
+            AssetDatabase.RemoveObjectFromAsset(materials[i]);
+            switch (materials[i].shader.name)
             {
-                case "Rust/Standard":
-                    material.shader = Shader.Find("Standard");
+                case "Standard (Specular setup)":
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Core/Foliage":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Core/Generic":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard Terrain Blend (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Core/Foliage Billboard":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Rust/Standard Blend 4-Way":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard Blend 4-Way (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Rust/Standard Blend Layer":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard Blend Layer (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Rust/Standard Decal":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard Decal (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Nature/Foliage":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Nature/Water/Lake":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Nature/Floating Ice Sheets":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Rust/Standard Cloth":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Rust/Standard + Wind":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 case "Rust/Standard + Wind (Specular setup)":
-                    material.shader = Shader.Find("Standard(Specular setup)");
+                    materials[i].shader = Shader.Find("Standard(Specular setup)");
                     break;
                 case "Rust/Standard Cloth (Specular setup)":
-                    material.shader = Shader.Find("Standard (Specular setup)");
-                    break;
-                case "Rust/Flare":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Custom/FoliageDisplace":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Custom/StandardWithDecal":
-                    material.shader = Shader.Find("Standard");
-                    break;
-                case "Custom/Standard Refraction":
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard (Specular setup)");
                     break;
                 default:
-                    material.shader = Shader.Find("Standard");
+                    materials[i].shader = Shader.Find("Standard");
                     break;
             }
-            AssetDatabase.RemoveObjectFromAsset(material);
-            AssetDatabase.CreateAsset(material, "Assets/Rust/Materials/" + material.name + ".mat");
+            if (materials[i].mainTexture != null && materials[i].HasProperty("_MainTex"))
+            {
+                var texture = (Texture)AssetDatabase.LoadAssetAtPath("Assets/Rust/Textures/" + materials[i].mainTexture.name + ".tga", typeof(Texture));
+                if (texture != null)
+                {
+                    materials[i].mainTexture = texture;
+                    Debug.Log("Texture Changed!"); // For some reason reimport the tga after writing cause Unity referencing fucks up.
+                }
+            }
+            AssetDatabase.CreateAsset(materials[i], "Assets/Rust/Materials/" + materials[i].name + ".mat");
         }
         foreach (var mesh in meshes)
         {
             AssetDatabase.RemoveObjectFromAsset(mesh);
-            AssetDatabase.CreateAsset(mesh, "Assets/Rust/Meshes/" + mesh.name + ".fbx");
+            AssetDatabase.CreateAsset(mesh, "Assets/Rust/Meshes/" + mesh.name + ".asset");
         }
         foreach (var prefab in prefabsList)
         {
