@@ -2109,6 +2109,13 @@ public class MapIO : MonoBehaviour {
         {
             topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
         }
+        // Puts prefabs object in middle of map.
+        var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
+        worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
+        var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
+        worldCentrePath.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
+        var worldCentreMapIO = GameObject.FindGameObjectWithTag("MapIO");
+        worldCentreMapIO.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         cleanUpMap();
         
         var terrainPosition = 0.5f * terrains.size;
