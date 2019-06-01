@@ -237,7 +237,7 @@ public class PrefabLookup : System.IDisposable
         for (int i = 0; i < materials.Count; i++)
         {
             AssetDatabase.RemoveObjectFromAsset(materials[i]);
-            if (materials[i].mainTexture != null && materials[i].HasProperty("_MainTex"))
+            if (materials[i].HasProperty("_MainTex"))
             {
                 var texture = (Texture)AssetDatabase.LoadAssetAtPath("Assets/Rust/Textures/" + materials[i].mainTexture.name + ".tga", typeof(Texture));
                 if (texture != null)
