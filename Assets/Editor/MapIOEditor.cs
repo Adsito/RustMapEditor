@@ -1119,7 +1119,6 @@ public class MapIOEditor : Editor
                                 }
                             }
                             script.StartPrefabLookup();
-                            script.ReplacePrefabs();
                         }
                         if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
                         {

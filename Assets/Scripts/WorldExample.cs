@@ -162,18 +162,4 @@ public class WorldExample : MonoBehaviour
 
 		return sb.ToString();
 	}
-
-	private void SpawnPrefabs(WorldSerialization blob, PrefabLookup prefabs)
-	{
-		foreach (var prefab in blob.world.prefabs)
-		{
-			var go = GameObject.Instantiate(prefabs[prefab.id], prefab.position, prefab.rotation);
-
-			if (go)
-			{
-				go.transform.localScale = prefab.scale;
-				go.SetActive(true);
-			}
-		}
-	}
 }

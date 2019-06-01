@@ -11,7 +11,7 @@ TagManager:
   - Water
   - MapIO
   - LoadedPrefab
-  - NotLoadedPrefab
+  - DefaultPrefab
   layers:
   - Default
   - TransparentFX
