@@ -173,9 +173,8 @@ public class PrefabLookup : System.IDisposable
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        var prefabToSave = GameObject.Instantiate(go);
-        var prefabRenderers = prefabToSave.GetComponentsInChildren<MeshRenderer>();
-        var prefabMeshes = prefabToSave.GetComponentsInChildren<MeshFilter>();
+        var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
+        var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
         for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
         {
             var prefabMaterials = prefabRenderers[i].sharedMaterials;
@@ -190,7 +189,7 @@ public class PrefabLookup : System.IDisposable
             {
                 if (tex is Texture)
                 {
-                    if (!textures.Contains(tex))
+                    if (!textures.Contains(tex) && (Texture2D)tex)
                     {
                         textures.Add(tex as Texture2D);
                     }
@@ -204,14 +203,15 @@ public class PrefabLookup : System.IDisposable
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
         }
-        prefabToSave.tag = "LoadedPrefab";
-        prefabToSave.name = prefabName;
-        PrefabDataHolder prefabDataHolder = prefabToSave.AddComponent<PrefabDataHolder>();
+        go.tag = "LoadedPrefab";
+        go.name = prefabName;
+        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
+        go.SetActive(true);
         prefabsList.Add(new PrefabAttributes()
         {
-            Prefab = prefabToSave,
+            Prefab = go,
             Path = path,
             RustID = rustid
         });
@@ -220,19 +220,23 @@ public class PrefabLookup : System.IDisposable
     {
         foreach (var texture in textures)
         {
-            RenderTexture tmp = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
-            Graphics.Blit(texture, tmp);
-            RenderTexture.active = tmp;
-            Texture2D newTexture = new Texture2D(texture.width, texture.height);
-            newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
-            newTexture.Apply();
-            RenderTexture.ReleaseTemporary(tmp);
-            if (!File.Exists("Assets/Rust/Textures/" + texture.name + ".tga"))
+            if (texture.name.Contains("_diff"))
             {
-                File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
+                RenderTexture tmp = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+                Graphics.Blit(texture, tmp);
+                RenderTexture.active = tmp;
+                Texture2D newTexture = new Texture2D(texture.width, texture.height);
+                newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
+                newTexture.Apply();
+                RenderTexture.ReleaseTemporary(tmp);
+                if (AssetDatabase.FindAssets("Assets/Rust/Textures/" + texture.name + ".tga") != null)
+                {
+                    File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
+                }
+                Resources.UnloadAsset(texture);
+                Resources.UnloadAsset(tmp);
+                newTexture = null;
             }
-            Resources.UnloadAsset(texture);
-            newTexture = null;
         }
         textures.Clear();
         AssetDatabase.Refresh();
@@ -261,12 +265,12 @@ public class PrefabLookup : System.IDisposable
         foreach (var prefab in prefabsList)
         {
             AssetDatabase.RemoveObjectFromAsset(prefab.Prefab);
-            prefab.Prefab.SetActive(true);
             GameObjectUtility.RemoveMonoBehavioursWithMissingScript(prefab.Prefab);
             PrefabUtility.SaveAsPrefabAsset(prefab.Prefab, prefab.Path);
             GameObject.DestroyImmediate(prefab.Prefab);
         }
         prefabsList.Clear();
         AssetDatabase.StopAssetEditing();
+        Resources.UnloadUnusedAssets();
     }
 }
