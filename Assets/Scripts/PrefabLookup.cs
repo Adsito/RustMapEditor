@@ -24,7 +24,6 @@ public class PrefabLookup : System.IDisposable
 	private AssetBundleBackend backend;
 	private HashLookup lookup;
 
-	public Dictionary<uint, GameObject> prefabs = new Dictionary<uint, GameObject>();
     public List<Material> materials = new List<Material>();
     public List<Mesh> meshes = new List<Mesh>();
     public List<Texture2D> textures = new List<Texture2D>();
@@ -76,6 +75,7 @@ public class PrefabLookup : System.IDisposable
         PrefabsLoadedDump();
         SavePrefabsToAsset();
         mapIO.ClearProgressBar();
+        mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
         prefabsLoaded = true;
     }
     public void Dispose()
@@ -227,7 +227,10 @@ public class PrefabLookup : System.IDisposable
             newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
             newTexture.Apply();
             RenderTexture.ReleaseTemporary(tmp);
-            File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
+            if (!File.Exists("Assets/Rust/Textures/" + texture.name + ".tga"))
+            {
+                File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
+            }
             Resources.UnloadAsset(texture);
             newTexture = null;
         }
@@ -266,17 +269,4 @@ public class PrefabLookup : System.IDisposable
         prefabsList.Clear();
         AssetDatabase.StopAssetEditing();
     }
-    public GameObject this[uint uid]
-	{
-		get
-		{
-			GameObject res = null;
-
-			if (!prefabs.TryGetValue(uid, out res))
-			{
-				throw new System.Exception("Prefab not found: " + uid + " - assets not fully loaded yet?");
-			}
-			return res;
-		}
-	}
 }
