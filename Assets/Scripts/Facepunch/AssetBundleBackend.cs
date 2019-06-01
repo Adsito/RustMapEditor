@@ -89,7 +89,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 		if (rootBundle)
 		{
-			rootBundle.Unload(false);
+			rootBundle.Unload(true);
 			Object.DestroyImmediate(rootBundle);
 			rootBundle = null;
 		}

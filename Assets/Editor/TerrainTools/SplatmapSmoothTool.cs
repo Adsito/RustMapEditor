@@ -17,7 +17,7 @@ namespace UnityEditor.Experimental.TerrainAPI
 
         public override string GetName()
         {
-            return "Utility/Splatmap Smooth";
+            return "Splatmap Smooth";
         }
 
         public override string GetDesc()

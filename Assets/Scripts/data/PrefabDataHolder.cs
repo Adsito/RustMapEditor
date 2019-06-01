@@ -10,17 +10,11 @@ public class PrefabDataHolder : MonoBehaviour {
     
     public WorldSerialization.PrefabData prefabData;
     public bool showBtn = false;
-    public bool saveWithMap = false;
+    public bool saveWithMap = true;
 
-    void Start ()
+    void Start()
     {
-        if (prefabData == null)
-        {
-            Debug.LogError("Prefabdata may not be tagged with serialize in SDK");
-        }
-        prefabData.position = gameObject.transform.position - MapIO.getMapOffset();
-        prefabData.rotation = transform.rotation;
-        prefabData.scale = transform.localScale;
+        this.gameObject.transform.parent = GameObject.Find("Prefabs").transform;
     }
     public void MapSave()
     {
@@ -35,6 +29,5 @@ public class PrefabDataHolder : MonoBehaviour {
         newPos.y = y;
         transform.position = newPos;
     }
-
 }
 

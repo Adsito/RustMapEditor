@@ -10,8 +10,9 @@ public class PrefabDataHolderEditor : Editor
     { 
         PrefabDataHolder script = (PrefabDataHolder)target;
         if (script.prefabData == null)
+        {
             return;
-
+        }
         EditorGUILayout.LabelField("Category", script.prefabData.category);
         script.prefabData.id = uint.Parse(EditorGUILayout.TextField("Id", script.prefabData.id + ""));
         script.saveWithMap = EditorGUILayout.ToggleLeft("Save with Map", script.saveWithMap);
