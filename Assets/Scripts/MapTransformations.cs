@@ -51,7 +51,7 @@ public class MapTransformations {
         return array = tempArray;
     }
 
-    public static float[,] flip(float[,] array)
+    public static float[,] Invert(float[,] array)
     {
         for (int i = 0; i < array.GetLength(0); i++)
         {
