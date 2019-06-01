@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class AmbientLightLOD : MonoBehaviour
 {
 	private Light lightComponent;
@@ -9,7 +10,6 @@ public class AmbientLightLOD : MonoBehaviour
 		lightComponent = GetComponent<Light>();
         lightComponent.enabled = false;
 	}
-
 	private void ToggleLight(bool state)
 	{
 		lightComponent.enabled = state;

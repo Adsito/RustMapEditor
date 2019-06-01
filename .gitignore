@@ -7,9 +7,7 @@ Library/*
 *.info
 *.info
 /Temp/
-/Packages/
 /Logs/
-*.json
 *.log
 *.info
 *.log
@@ -21,3 +19,4 @@ Library/*
 *.sln
 AssetDump.txt
 PrefabsManifest.txt
+ProjectSettings/ProBuilderSettings.json

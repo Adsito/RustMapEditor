@@ -148,14 +148,10 @@ public class WorldConverter {
     {
         MapInfo terrains = new MapInfo();
 
-        // Puts prefabs object in middle of map.
-        var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
-        worldCentrePrefab.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
-        var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
-        worldCentrePath.transform.position = new Vector3(blob.world.size / 2, 500, blob.world.size / 2);
-
         if (blob.GetMap("terrain") == null)
+        {
             Debug.LogError("Old map file");
+        }
 
         var terrainSize = new Vector3(blob.world.size, 1000, blob.world.size);
         var terrainMap = new TerrainMap<short>(blob.GetMap("terrain").data, 1);
@@ -181,8 +177,6 @@ public class WorldConverter {
         terrains = convertMaps(terrains, splatMap, biomeMap, alphaMap);
         return terrains;
     }
-    
-
     public static WorldSerialization terrainToWorld(Terrain land, Terrain water) // Saves maps
     {
         WorldSerialization world = new WorldSerialization();
