@@ -68,10 +68,10 @@ public class MapIOEditor : Editor
             layerSet = true;
         }
 
-        GUIContent[] mainMenu = new GUIContent[3];
+        GUIContent[] mainMenu = new GUIContent[2];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Prefabs");
+        //mainMenu[2] = new GUIContent("Prefabs");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -400,7 +400,7 @@ public class MapIOEditor : Editor
                                         EditorGUILayout.EndHorizontal();
                                         if (GUILayout.Button(new GUIContent("Smooth Map", "Smoothes the heightmap.")))
                                         {
-                                            script.smoothHeightmap(filterStrength, blurDirection);
+                                            script.SmoothHeightmap(filterStrength, blurDirection);
                                         }
                                         GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
@@ -878,7 +878,7 @@ public class MapIOEditor : Editor
                         #region Alpha Layer
                         if (script.landLayer.Equals("Alpha"))
                         {
-                            GUILayout.Label("Green = Terrain Visible, Purple = Terrain Invisible", EditorStyles.boldLabel);
+                            GUILayout.Label("Green = Terrain Visible \nPurple = Terrain Invisible", EditorStyles.boldLabel);
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
@@ -950,7 +950,7 @@ public class MapIOEditor : Editor
                         #region Topology Layer
                         if (script.landLayer.Equals("Topology"))
                         {
-                            GUILayout.Label("Green = Active, Purple = Inactive", EditorStyles.boldLabel);
+                            GUILayout.Label("Green = Active \nPurple = Inactive", EditorStyles.boldLabel);
                             script.oldTopologyLayer = script.topologyLayer;
                             script.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", script.topologyLayer);
                             if (script.topologyLayer != script.oldTopologyLayer)
