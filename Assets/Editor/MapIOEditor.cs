@@ -9,7 +9,7 @@ using Rotorz.ReorderableList;
 public class MapIOEditor : Editor
 {
 
-    string editorVersion = "v1.1-prerelease";
+    string editorVersion = "v1.2-prerelease";
 
     string loadFile = "";
     string saveFile = "";
