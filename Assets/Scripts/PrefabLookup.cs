@@ -234,7 +234,6 @@ public class PrefabLookup : System.IDisposable
                     File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
                 }
                 Resources.UnloadAsset(texture);
-                Resources.UnloadAsset(tmp);
                 newTexture = null;
             }
         }
