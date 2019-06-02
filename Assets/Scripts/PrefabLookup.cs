@@ -91,12 +91,12 @@ public class PrefabLookup : System.IDisposable
     public void LoadPrefabs(string path)
     {
         var subpaths = backend.FindAll(path);
-        CreatePrefabDirectory(path);
         GameObject[] prefabs = new GameObject[subpaths.Length];
         for (int i = 0; i < subpaths.Length; i++)
         {
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
+                CreatePrefabDirectory(subpaths[i]);
                 prefabs[i] = backend.LoadPrefab(subpaths[i]);
                 PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
             }
@@ -104,41 +104,19 @@ public class PrefabLookup : System.IDisposable
     }
     public void CreatePrefabDirectory(string path)
     {
-        string[] subpaths = backend.FindAll(path);
-        foreach (var directory in subpaths) // Checks if directory exists in the project, if not creates one so we can save prefabs to it.
+        string[] folders = path.Split('/');
+        var folderDirectory = "Assets";
+        for (int i = 1; i < folders.Length - 1; i++) // Filters out the prefab path and gets the folder it's in.
         {
-            var folderDirectories = directory.Split('/');
-            var currentDirectory = "Assets"; // Store the new directory on the depth it currently is.
-            var oldDirectory = "";
-            for (int i = 1; i < folderDirectories.Length - 1; i++) // Only get the folders from the split, not the prefab name.
-            {
-                oldDirectory = currentDirectory;
-                currentDirectory += "/" + folderDirectories[i];
-                if (!AssetDatabase.IsValidFolder(currentDirectory)) // Creates new folder in the project if it does not exist.
-                {
-                    AssetDatabase.CreateFolder(oldDirectory, folderDirectories[i]);
-                }
-            }
+            folderDirectory += ("/" + folders[i]);
         }
+        Directory.CreateDirectory(folderDirectory);
     }
     public void CreateRustDirectory()
     {
-        if (!AssetDatabase.IsValidFolder("Assets/Rust"))
-        {
-            AssetDatabase.CreateFolder("Assets", "Rust");
-        }
-        if (!AssetDatabase.IsValidFolder("Assets/Rust/Materials"))
-        {
-            AssetDatabase.CreateFolder("Assets/Rust", "Materials");
-        }
-        if (!AssetDatabase.IsValidFolder("Assets/Rust/Meshes"))
-        {
-            AssetDatabase.CreateFolder("Assets/Rust", "Meshes");
-        }
-        if (!AssetDatabase.IsValidFolder("Assets/Rust/Textures"))
-        {
-            AssetDatabase.CreateFolder("Assets/Rust", "Textures");
-        }
+        Directory.CreateDirectory("Assets/Rust/Materials");
+        Directory.CreateDirectory("Assets/Rust/Meshes");
+        Directory.CreateDirectory("Assets/Rust/Textures");
     }
     public void AssetBundleLookup() 
     {
@@ -173,8 +151,9 @@ public class PrefabLookup : System.IDisposable
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
         var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
+        /*
+        var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
         {
             var prefabMaterials = prefabRenderers[i].sharedMaterials;
@@ -196,10 +175,10 @@ public class PrefabLookup : System.IDisposable
                     }
                 }
             }
-        }
+        }*/
         for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
         {
-            if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null)
+            if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null && prefabMeshes[i].sharedMesh.name != "Quad" && prefabMeshes[i].sharedMesh.name != "Sphere")
             {
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
