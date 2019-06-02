@@ -45,6 +45,7 @@ public class PrefabLookup : System.IDisposable
         AssetBundleLookup();
         CreateRustDirectory();
         float progress = 0f;
+        float progressInterval = 0f;
         var lookupString = "";
         var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
@@ -62,11 +63,11 @@ public class PrefabLookup : System.IDisposable
         }
         lookup = new HashLookup(lookupString);
         var lines = File.ReadAllLines(assetsToLoadPath);
-        progress = 1f / lines.Length;
+        progressInterval = 1f / lines.Length;
         foreach (var line in lines)
         {
             mapIO.ProgressBar("Prefab Warmup", "Loading Directory: " + line, progress);
-            progress += progress;
+            progress += progressInterval;
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
                 LoadPrefabs(line);
@@ -188,7 +189,10 @@ public class PrefabLookup : System.IDisposable
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
-        go.SetActive(true);
+        foreach (var item in go.GetComponentsInChildren<Transform>())
+        {
+            item.gameObject.SetActive(true);
+        }
         prefabsList.Add(new PrefabAttributes()
         {
             Prefab = go,
