@@ -1074,7 +1074,6 @@ public class MapIOEditor : Editor
                         {
                             script.generatePerlinHeightmap(scale);
                         }
-                        /*
                         GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
                         if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
                         {
@@ -1084,7 +1083,6 @@ public class MapIOEditor : Editor
                         ReorderableListGUI.Title("Generation Presets");
                         ReorderableListGUI.ListField(script.generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
                         GUILayout.EndScrollView();
-                        */
                         break;
                         #endregion
                 }
