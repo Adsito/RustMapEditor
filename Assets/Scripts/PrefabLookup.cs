@@ -153,7 +153,8 @@ public class PrefabLookup : System.IDisposable
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
         var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
-        if (prefabMeshes.Length == 0) // Don't want to save prefabs without any mesh.
+        var rectTransforms = go.GetComponentsInChildren<RectTransform>();
+        if (rectTransforms.Length > 0) // Remove UI prefabs.
         {
             return;
         }
