@@ -15,11 +15,14 @@ public class RendererLOD : MonoBehaviour
             {
                 foreach (Material material in renderer.sharedMaterials)
                 {
-                    if (material.shader != null)
+                    if (material != null)
                     {
-                        if (material.shader.name.Contains("Blend"))
+                        if (material.shader != null)
                         {
-                            material.shader = standard;
+                            if (material.shader.name.Contains("Blend"))
+                            {
+                                material.shader = standard;
+                            }
                         }
                     }
                 }
