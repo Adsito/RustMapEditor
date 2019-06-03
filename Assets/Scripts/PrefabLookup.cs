@@ -152,9 +152,12 @@ public class PrefabLookup : System.IDisposable
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        /*
         var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
-        
+        if (prefabMeshes.Length == 0) // Don't want to save prefabs without any mesh.
+        {
+            return;
+        }
+        /*
         var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
         {
@@ -190,10 +193,10 @@ public class PrefabLookup : System.IDisposable
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
-        var components = go.GetComponentsInChildren<Component>();
-        for (int i = 0; i < components.Length; i++)
+        var prefabChildren = go.GetComponentsInChildren<Transform>(true);
+        foreach (var item in prefabChildren)
         {
-            components[i].gameObject.SetActive(true);
+            item.gameObject.SetActive(true);
         }
         GameObject newObj = GameObject.Instantiate(go);
         prefabsList.Add(new PrefabAttributes()
