@@ -74,7 +74,7 @@ public class PrefabLookup : System.IDisposable
             }
         }
         PrefabsLoadedDump();
-        SavePrefabsToAsset();
+        //SavePrefabsToAsset();
         mapIO.ClearProgressBar();
         mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
         prefabsLoaded = true;
@@ -152,8 +152,9 @@ public class PrefabLookup : System.IDisposable
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
         /*
+        var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
+        
         var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
         {
@@ -176,24 +177,25 @@ public class PrefabLookup : System.IDisposable
                     }
                 }
             }
-        }*/
+        }
         for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
         {
             if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null && prefabMeshes[i].sharedMesh.name != "Quad" && prefabMeshes[i].sharedMesh.name != "Sphere")
             {
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
-        }
+        }*/
         go.tag = "LoadedPrefab";
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
-        var components = go.GetComponentsInChildren<Transform>();
+        var components = go.GetComponentsInChildren<Component>();
         for (int i = 0; i < components.Length; i++)
         {
             components[i].gameObject.SetActive(true);
         }
+        GameObject newObj = GameObject.Instantiate(go);
         prefabsList.Add(new PrefabAttributes()
         {
             Prefab = go,
