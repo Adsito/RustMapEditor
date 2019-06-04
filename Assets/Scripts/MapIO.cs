@@ -2308,7 +2308,19 @@ public class MapIO : MonoBehaviour {
         {
             if (node.name == "Start")
             {
-                Debug.Log("Test");
+                XNode.Node nodeIteration = node.GetOutputPort("NextTask").Connection.node;
+                do
+                {
+                    if (nodeIteration.GetOutputPort("NextTask").IsConnected)
+                    {
+                        nodeIteration = nodeIteration.GetOutputPort("NextTask").Connection.node;
+                    }
+                    else
+                    {
+                        nodeIteration = null;
+                    }
+                }
+                while (nodeIteration != null);
             }
         }
     }
