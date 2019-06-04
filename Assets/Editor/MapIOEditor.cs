@@ -1066,7 +1066,11 @@ public class MapIOEditor : Editor
                         }
                         if (GUILayout.Button(new GUIContent("Default Ground Textures", "Generates default ground textures and paints over existing textures after wiping them.")))
                         {
-                            script.autoGenerateGround();
+                            script.AutoGenerateGround();
+                        }
+                        if (GUILayout.Button(new GUIContent("Default Biome Textures", "Generates default biome textures and paints over existing textures after wiping them.")))
+                        {
+                            script.AutoGenerateBiome();
                         }
                         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
                         GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
