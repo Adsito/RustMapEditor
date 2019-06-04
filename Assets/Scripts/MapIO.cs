@@ -123,6 +123,7 @@ public class MapIO : MonoBehaviour {
     public Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     private Terrain terrain;
+    private SceneView sceneView;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -146,6 +147,9 @@ public class MapIO : MonoBehaviour {
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         RefreshAssetList(); // Refresh the auto gen asset presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
+        sceneView = SceneView.lastActiveSceneView;
+        sceneView.pivot = new Vector3(500f, 700f, 500f);
+        sceneView.LookAt(new Vector3(500f, 600f, 500f));
     }
     public void ProgressBar(string title, string info, float progress)
     {
