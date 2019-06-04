@@ -148,8 +148,11 @@ public class MapIO : MonoBehaviour {
         RefreshAssetList(); // Refresh the auto gen asset presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         sceneView = SceneView.lastActiveSceneView;
-        sceneView.pivot = new Vector3(500f, 700f, 500f);
-        sceneView.LookAt(new Vector3(500f, 600f, 500f));
+        if (sceneView != null)
+        {
+            sceneView.pivot = new Vector3(500f, 700f, 500f);
+            sceneView.LookAt(new Vector3(500f, 600f, 500f));
+        }
     }
     public void ProgressBar(string title, string info, float progress)
     {
