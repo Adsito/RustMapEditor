@@ -767,7 +767,7 @@ namespace Rotorz.ReorderableList {
 					s_RemoveButtonPosition.y -= 1;
 
 					if (DoRemoveButton(s_RemoveButtonPosition, isVisible))
-						RemoveItem(adaptor, itemIndex);
+						RemoveItem(adaptor, itemIndex); //Add node remove here.
 				}
 
 				// Check for context click?
@@ -1211,7 +1211,11 @@ namespace Rotorz.ReorderableList {
 						// Append item to list.
 						GUIUtility.keyboardControl = 0;
 						AddItem(adaptor);
-                        AssetDatabase.CreateAsset(AutoGenerationGraph.CreateInstance("AutoGenerationGraph"), "Assets/Nodes/AutoGenerationPreset.asset");
+                        if (!System.IO.Directory.Exists("Assets/AutoGenPresets"))
+                        {
+                            System.IO.Directory.CreateDirectory("Assets/AutoGenPresets");
+                        }
+                        AssetDatabase.CreateAsset(AutoGenerationGraph.CreateInstance("AutoGenerationGraph"), "Assets/AutoGenPresets/AutoGenerationPreset.asset");
                         GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().RefreshAssetList();
 					}
 				}

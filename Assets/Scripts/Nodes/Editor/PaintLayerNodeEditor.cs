@@ -14,11 +14,12 @@ public class PaintLayerNodeEditor : NodeEditor
         PaintLayerNode node = target as PaintLayerNode;
         AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
-        if (texture != null && !Event.current.isMouse) // Check for mouse control event error.
+        if (texture != null && Event.current.type != EventType.MouseUp) // Check for mouse control event error.
         {
-            EditorGUILayout.LabelField(texture.LandLayer.ToString());
-            EditorGUILayout.LabelField(texture.TopologyLayer.ToString());
-            EditorGUILayout.LabelField(texture.TopologyTexture.ToString());
+            if (GUILayout.Button(new GUIContent("Run Node", "Runs the current operation of only this node.")))
+            {
+                Debug.Log("test");
+            }
         }
     }
 }
