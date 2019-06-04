@@ -2235,7 +2235,7 @@ public class MapIO : MonoBehaviour {
             selectedLandLayer.save();
         }
         saveTopologyLayer();
-        foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Terrain>(true))
+        foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
         {
             item.gameObject.SetActive(true);
         }
