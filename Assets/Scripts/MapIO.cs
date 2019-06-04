@@ -1144,15 +1144,6 @@ public class MapIO : MonoBehaviour {
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
-        switch (landLayer)
-        {
-            case "Ground":
-                t = texture(landLayer);
-                break;
-            case "Biome":
-                t = texture(landLayer);
-                break;
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < (float)splatMap.GetLength(1); j++)
@@ -1573,47 +1564,46 @@ public class MapIO : MonoBehaviour {
             changeLandLayer();
         }
     }
-    public void autoGenerateGround() // Assigns terrain splats to these values. 
+    public void AutoGenerateGround() // Assigns terrain splats to these values. 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Auto Generate Ground");
         changeLayer("Ground");
 
-        terrainLayer = TerrainSplat.Enum.Forest;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.15f);
-        generateTwoLayersNoise("Ground", 50f, 0, 4);
+        ProgressBar("Generating Ground Textures", "Generating: Forest", 0.15f);
+        generateTwoLayersNoise("Ground", UnityEngine.Random.Range(45f, 55f), 0, 4);
 
-        terrainLayer = TerrainSplat.Enum.Grass;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.3f);
-        paintSlope("Ground", 35f, 45, 20f, 50f, 0, 2f);
+        ProgressBar("Generating Ground Textures", "Generating: Grass", 0.3f);
+        paintSlope("Ground", 35f, 45, 20f, 50f, 4, 2f);
 
-        terrainLayer = TerrainSplat.Enum.Dirt;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.4f);
+        ProgressBar("Generating Ground Textures", "Generating: Dirt", 0.4f);
         paintSlope("Ground", 20, 20, 10, 30, 0, 0.5f);
 
-        terrainLayer = TerrainSplat.Enum.Snow;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.6f);
-        paintHeight("Ground", 700, 1000, 650, 1000, 0, 3f);
+        ProgressBar("Generating Ground Textures", "Generating: Snow", 0.6f);
+        paintHeight("Ground", 700, 1000, 650, 1000, 1, 3f);
 
-        terrainLayer = TerrainSplat.Enum.Rock;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.8f);
-        paintSlope("Ground", 50f, 90f, 40f, 90f, 0, 4.5f);
+        ProgressBar("Generating Ground Textures", "Generating: Rock", 0.8f);
+        paintSlope("Ground", 50f, 90f, 40f, 90f, 3, 4.5f);
 
-        terrainLayer = TerrainSplat.Enum.Sand;
-        ProgressBar("Generating Ground Textures", "Generating: " + terrainLayer.ToString(), 0.9f);
-        paintHeight("Ground", 0, 502, 0, 505, 0, 2);
+        ProgressBar("Generating Ground Textures", "Generating: Sand", 0.9f);
+        paintHeight("Ground", 0, 502, 0, 503, 2, 2);
 
         ClearProgressBar();
     } 
-    public void autoGenerateBiome() // Assigns biome splats to these values.
+    public void AutoGenerateBiome() // Assigns biome splats to these values.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Auto Generate Biome");
         changeLayer("Biome");
 
-        biomeLayer = TerrainBiome.Enum.Arctic;
-        paintHeight("Biome", 750, 1000, 750, 1000, 0, 1);
+        ProgressBar("Generating Biome Textures", "Generating: Temperate", 0.2f);
+        paintHeight("Biome", 0, 550, 0, 675, 1, 1);
 
-        biomeLayer = TerrainBiome.Enum.Tundra;
-        paintHeight("Biome", 675, 750, 675, 750, 0, 1);
+        ProgressBar("Generating Biome Textures", "Generating: Arctic", 0.4f);
+        paintHeight("Biome", 750, 1000, 700, 1000, 3, 1);
+
+        ProgressBar("Generating Biome Textures", "Generating: Tundra", 0.8f);
+        paintHeight("Biome", 650, 750, 575, 800, 2, 1);
+
+        ClearProgressBar();
     }
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
@@ -1735,7 +1725,7 @@ public class MapIO : MonoBehaviour {
                 float i2 = i / scale;
                 float j2 = j / scale;
                 float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
-                if (perlin <= 0.15f)
+                if (perlin <= 0.2f)
                 {
                     for (int k = 0; k < textureCount(landLayer); k++)
                     {
@@ -2241,12 +2231,14 @@ public class MapIO : MonoBehaviour {
     public void Save(string path)
     {
         if(selectedLandLayer != null)
+        {
             selectedLandLayer.save();
+        }
         saveTopologyLayer();
-        if (GameObject.FindGameObjectWithTag("Water") == null)
-            Debug.Log("Water not enabled");
-        if (GameObject.FindGameObjectWithTag("Land") == null)
-            Debug.Log("Land not enabled");
+        foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Terrain>(true))
+        {
+            item.gameObject.SetActive(true);
+        }
         Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
@@ -2294,16 +2286,6 @@ public class MapIO : MonoBehaviour {
     public void StartPrefabLookup()
     {
         setPrefabLookup(new PrefabLookup(bundleFile, this));
-    }
-    private void setChildrenUnmoveable(GameObject root)
-    {
-        for(int i = 0; i < root.transform.childCount; i++)
-        {
-            Transform child = root.transform.GetChild(i);
-            child.gameObject.AddComponent<UnmoveablePrefab>();
-            if (child.childCount > 0)
-                setChildrenUnmoveable(child.gameObject);
-        }
     }
     public List<string> generationPresetList = new List<string>();
     public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
