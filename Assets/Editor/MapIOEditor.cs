@@ -6,10 +6,16 @@ using UnityEditor.IMGUI.Controls;
 using Rotorz.ReorderableList;
 
 [CustomEditor(typeof(MapIO))]
-public class MapIOEditor : Editor
+public class MapIOInspector : Editor
 {
-
-    string editorVersion = "v1.1-prerelease";
+    public override void OnInspectorGUI()
+    {
+        //Only override this to stop the MapIO public variables from being exposed when the object is selected.
+    }
+}
+public class MapIOEditor : EditorWindow
+{
+    string editorVersion = "v1.4-prerelease";
 
     string loadFile = "";
     string saveFile = "";
@@ -57,9 +63,14 @@ public class MapIOEditor : Editor
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
-    public override void OnInspectorGUI()
+    [MenuItem("Rust Map Editor/Main Menu")]
+    static void Initialize()
     {
-        MapIO script = (MapIO)target;
+        MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), true, "Rust Map Editor");
+    }
+    public void OnGUI()
+    {
+        MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
 
         if (layerSet == false)
         {
@@ -1177,10 +1188,22 @@ public class MapIOEditor : Editor
         Event e = Event.current;
         #endregion
     }
+    #region OtherMenus
+    [MenuItem("Rust Map Editor/Other/Wiki")]
+    static void OpenWiki()
+    {
+        Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
+    }
+    [MenuItem("Rust Map Editor/Other/Discord")]
+    static void OpenDiscord()
+    {
+        Application.OpenURL("https://discord.gg/HPmTWVa");
+    }
+    #endregion
     #region Methods
     private string AutoGenerationPresetDrawer(Rect position, string itemValue)
     {
-        MapIO script = (MapIO)target;
+        MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         if (itemValueSet == false)
         {
             itemValueOld = itemValue;
@@ -1238,6 +1261,10 @@ public class MapIOEditor : Editor
         GUILayout.Label("No presets in list.", EditorStyles.miniLabel);
     }
     #endregion
+}
+public class HelpMenuEditor : EditorWindow
+{
+    
 }
 public class PrefabHierachyEditor : EditorWindow
 {
