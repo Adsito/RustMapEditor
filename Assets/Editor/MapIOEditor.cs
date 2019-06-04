@@ -43,7 +43,7 @@ public class MapIOEditor : EditorWindow
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false, itemValueSet = false;
-    string itemValueOld = "", assetDirectory = "Assets/Nodes/";
+    string itemValueOld = "", assetDirectory = "Assets/AutoGenPresets/";
     Vector2 scrollPos = new Vector2(0, 0);
 
     float filterStrength = 1f;
@@ -66,7 +66,7 @@ public class MapIOEditor : EditorWindow
     [MenuItem("Rust Map Editor/Main Menu")]
     static void Initialize()
     {
-        MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), true, "Rust Map Editor");
+        MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
     }
     public void OnGUI()
     {
@@ -1237,6 +1237,7 @@ public class MapIOEditor : EditorWindow
         position.width = 38;
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
         {
+            script.RefreshAssetList();
             script.generationPresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
@@ -1244,7 +1245,6 @@ public class MapIOEditor : EditorWindow
             }
             else
             {
-                script.RefreshAssetList();
                 Debug.LogError("The preset you are trying to open is null.");
             }
         }
@@ -1252,7 +1252,12 @@ public class MapIOEditor : EditorWindow
         position.width = 30;
         if (GUI.Button(position, "Run"))
         {
-            
+            script.generationPresetLookup.TryGetValue(itemValue, out Object preset);
+            if (preset != null)
+            {
+                var graph = (XNode.NodeGraph)AssetDatabase.LoadAssetAtPath(assetDirectory + itemValue + ".asset", typeof(XNode.NodeGraph));
+                MapIO.ParseNodeGraph(graph);
+            }
         }
         return itemValue;
     }
@@ -1261,10 +1266,6 @@ public class MapIOEditor : EditorWindow
         GUILayout.Label("No presets in list.", EditorStyles.miniLabel);
     }
     #endregion
-}
-public class HelpMenuEditor : EditorWindow
-{
-    
 }
 public class PrefabHierachyEditor : EditorWindow
 {

@@ -8,7 +8,8 @@ using NodeVariables;
 public class PaintLayerNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture In;
-    [Output] public int nextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
+    [Output] public NodeVariables.NextTask NextTask;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture In = GetInputValue("In", this.In);

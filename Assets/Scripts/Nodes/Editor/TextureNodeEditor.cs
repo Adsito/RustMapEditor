@@ -10,11 +10,11 @@ using NodeVariables;
 public class TextureNodeEditor : NodeEditor
 {
     #region Fields
-    TerrainSplat.Enum groundEnum;
-    TerrainBiome.Enum biomeEnum;
-    NodeVariables.Texture.AlphaEnum alphaEnum;
-    TerrainTopology.Enum topologyLayer;
-    NodeVariables.Texture.TopologyEnum topologyEnum;
+    TerrainSplat.Enum groundEnum = TerrainSplat.Enum.Grass;
+    TerrainBiome.Enum biomeEnum = TerrainBiome.Enum.Temperate;
+    NodeVariables.Texture.AlphaEnum alphaEnum = NodeVariables.Texture.AlphaEnum.Active;
+    TerrainTopology.Enum topologyLayer = TerrainTopology.Enum.Beach;
+    NodeVariables.Texture.TopologyEnum topologyEnum = NodeVariables.Texture.TopologyEnum.Active;
     #endregion
     public override void OnBodyGUI()
     {
