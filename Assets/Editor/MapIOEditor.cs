@@ -1189,12 +1189,12 @@ public class MapIOEditor : EditorWindow
         #endregion
     }
     #region OtherMenus
-    [MenuItem("Rust Map Editor/Other/Wiki")]
+    [MenuItem("Rust Map Editor/Wiki")]
     static void OpenWiki()
     {
         Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
     }
-    [MenuItem("Rust Map Editor/Other/Discord")]
+    [MenuItem("Rust Map Editor/Discord")]
     static void OpenDiscord()
     {
         Application.OpenURL("https://discord.gg/HPmTWVa");
