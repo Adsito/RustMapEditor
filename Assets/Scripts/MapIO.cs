@@ -1297,13 +1297,12 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public void PaintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, float blendStrength) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Paint Slope");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        float[] splatMapLayers = new float[land.terrainData.alphamapLayers];
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1321,38 +1320,26 @@ public class MapIO : MonoBehaviour {
                 }
                 else if (slope >= minBlendLow && slope <= slopeLow)
                 {
+                    float normalisedSlope = slope - minBlendLow;
+                    float slopeRange = slopeLow - minBlendLow;
+                    float slopeBlend = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
                     for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
                     {
-                        splatMapLayers[k] = splatMap[i, j, k];
+                        splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
                     }
-                    float newSlope = slope - minBlendLow;
-                    float newSlopeLow = slopeLow - minBlendLow;
-                    float slopeBlend = newSlope / newSlopeLow; // Holds data about the texture weight between the blend ranges.
-                    splatMapLayers[t] = slopeBlend * blendStrength; // Assigns the texture we are painting to equal a value between 0 - 1, depending on how far away it is from the solid texture.
-                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
-                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
-                    {
-                        splatMapLayers[l] /= textureWeight; // Averages out all the texture weights. If you want a stronger blend adjust this value.
-                        splatMap[i, j, l] = splatMapLayers[l];
-                    }         
+                    splatMap[i, j, t] = slopeBlend;
                 }
                 else if (slope >= slopeHigh && slope <= maxBlendHigh)
                 {
-                    for (int k = 0; k < textureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
-                    {
-                        splatMapLayers[k] = splatMap[i, j, k];
-                    }
-                    float newSlope = slope - slopeHigh;
-                    float newMaxBlendHigh = maxBlendHigh - slopeHigh; 
-                    float slopeBlendInverted = newSlope / newMaxBlendHigh; // Holds data about the texture weight between the blend ranges.
+                    float normalisedSlope = slope - slopeHigh;
+                    float slopeRange = maxBlendHigh - slopeHigh; 
+                    float slopeBlendInverted = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
                     float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
-                    splatMapLayers[t] = slopeBlend * blendStrength;
-                    float textureWeight = splatMapLayers.Sum(); // Calculates the sum of all the textures.
-                    for (int l = 0; l < land.terrainData.alphamapLayers; l++)
+                    for (int k = 0; k < textureCount(landLayer); k++)
                     {
-                        splatMapLayers[l] /= textureWeight;
-                        splatMap[i, j, l] = splatMapLayers[l];
+                        splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
                     }
+                    splatMap[i, j, t] = slopeBlend;
                 }
             }
         }
@@ -1481,7 +1468,7 @@ public class MapIO : MonoBehaviour {
             ProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             paintHeight("Topology", 0, 1000, 0, 1000, 1, 1);
-            paintSlope("Topology", 45f, 90f, 45f, 90f, 0, 1);
+            PaintSlope("Topology", 45f, 90f, 45f, 90f, 0, 1);
 
             ProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
@@ -1539,7 +1526,7 @@ public class MapIO : MonoBehaviour {
             topologyLayer = TerrainTopology.Enum.Cliff;
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
-            paintSlope("Topology", 45f, 90f, 45, 90f, 0, 1);
+            PaintSlope("Topology", 45f, 90f, 45, 90f, 0, 1);
 
             ProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             topologyLayer = TerrainTopology.Enum.Tier0;
@@ -1573,16 +1560,16 @@ public class MapIO : MonoBehaviour {
         generateTwoLayersNoise("Ground", UnityEngine.Random.Range(45f, 55f), 0, 4);
 
         ProgressBar("Generating Ground Textures", "Generating: Grass", 0.3f);
-        paintSlope("Ground", 35f, 45, 20f, 50f, 4, 2f);
+        PaintSlope("Ground", 25f, 45, 5f, 50f, 4, 2f);
 
         ProgressBar("Generating Ground Textures", "Generating: Dirt", 0.4f);
-        paintSlope("Ground", 20, 20, 10, 30, 0, 0.5f);
+        PaintSlope("Ground", 20, 20, 10, 30, 0, 0.5f);
 
         ProgressBar("Generating Ground Textures", "Generating: Snow", 0.6f);
-        paintHeight("Ground", 700, 1000, 650, 1000, 1, 3f);
+        paintHeight("Ground", 650, 1000, 600, 1000, 1, 3f);
 
         ProgressBar("Generating Ground Textures", "Generating: Rock", 0.8f);
-        paintSlope("Ground", 50f, 90f, 40f, 90f, 3, 4.5f);
+        PaintSlope("Ground", 50f, 90f, 40f, 90f, 3, 4.5f);
 
         ProgressBar("Generating Ground Textures", "Generating: Sand", 0.9f);
         paintHeight("Ground", 0, 502, 0, 503, 2, 2);

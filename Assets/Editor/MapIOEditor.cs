@@ -767,7 +767,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + script.landLayer + " layer within the slope range.")))
                             {
-                                script.paintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)script.terrainLayer), slopeBlendStrength);
+                                script.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)script.terrainLayer), slopeBlendStrength);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 90
                             GUILayout.Label("Custom height range");
@@ -841,7 +841,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + script.landLayer + " layer within the slope range.")))
                             {
-                                script.paintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, TerrainSplat.TypeToIndex((int)script.biomeLayer), slopeBlendStrength);
+                                script.PaintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, TerrainSplat.TypeToIndex((int)script.biomeLayer), slopeBlendStrength);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             GUILayout.Label("Custom Height Range");
@@ -908,7 +908,7 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + script.landLayer + " layer within the slope range.")))
                             {
-                                script.paintSlope("Alpha", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
+                                script.PaintSlope("Alpha", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             GUILayout.Label("Custom Height Range"); 
@@ -1000,11 +1000,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + script.landLayer + " layer within the slope range.")))
                             {
-                                script.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
+                                script.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, 1);
                             }
                             if (GUILayout.Button(new GUIContent("Erase Slopes", "Paints the slopes within the slope range with the INACTIVE topology texture.")))
                             {
-                                script.paintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, 1);
+                                script.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, 1);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             GUILayout.Label("Custom Height Range");
