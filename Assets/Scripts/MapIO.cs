@@ -2290,7 +2290,7 @@ public class MapIO : MonoBehaviour {
     public List<string> generationPresetList = new List<string>();
     public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
     public void RefreshAssetList()
-    {
+    { 
         var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
         generationPresetList.Clear();
         generationPresetLookup.Clear();
@@ -2302,16 +2302,13 @@ public class MapIO : MonoBehaviour {
             generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
         }
     }
-    public void ParseNodeGraph(XNode.NodeGraph graph)
+    public static void ParseNodeGraph(XNode.NodeGraph graph)
     {
         foreach (var node in graph.nodes)
         {
-            foreach (var output in node.Outputs)
+            if (node.name == "Start")
             {
-                if (output.ValueType == typeof(NodeVariables.NextTask))
-                {
-                    Debug.Log("Output found next task.");
-                }
+                Debug.Log("Test");
             }
         }
     }
