@@ -2309,18 +2309,26 @@ public class MapIO : MonoBehaviour {
             if (node.name == "Start")
             {
                 XNode.Node nodeIteration = node.GetOutputPort("NextTask").Connection.node;
-                do
+                if (nodeIteration != null)
                 {
-                    if (nodeIteration.GetOutputPort("NextTask").IsConnected)
+                    do
                     {
-                        nodeIteration = nodeIteration.GetOutputPort("NextTask").Connection.node;
+                        if (nodeIteration.GetType() == typeof(PaintLayerNode))
+                        {
+                            var localNode = nodeIteration as PaintLayerNode;
+                            localNode.PaintLayer();
+                        }
+                        if (nodeIteration.GetOutputPort("NextTask").IsConnected)
+                        {
+                            nodeIteration = nodeIteration.GetOutputPort("NextTask").Connection.node;
+                        }
+                        else
+                        {
+                            nodeIteration = null;
+                        }
                     }
-                    else
-                    {
-                        nodeIteration = null;
-                    }
+                    while (nodeIteration != null);
                 }
-                while (nodeIteration != null);
             }
         }
     }
