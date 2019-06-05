@@ -40,3 +40,4 @@ Using resources from:
 - Simple painting tools to easily edit map features.
 - Spawn in prefabs such as monuments and decor.
 - Paint terrain based on height and slopes.
+- Integration with 3rd party assets.
