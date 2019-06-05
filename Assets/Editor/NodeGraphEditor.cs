@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using XNode;
 
 namespace XNodeEditor {
     /// <summary> Base class to derive custom Node Graph editors from. Use this to override how graphs are drawn in the editor. </summary>
@@ -13,10 +14,21 @@ namespace XNodeEditor {
         /// <summary> Are we currently renaming a node? </summary>
         protected bool isRenaming;
 
-        public virtual void OnGUI() { }
+        public virtual void OnGUI()
+        {
+            NodeGraph nodeGraph = target;
+            EditorGUI.DrawRect(new Rect(0, 0, 5000, 22), new Color32(194, 194, 194, 255));
+            if(GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), GUILayout.MaxWidth(100f)))
+            {
+                MapIO.ParseNodeGraph(nodeGraph);
+            }
+        }
 
         /// <summary> Called when opened by NodeEditorWindow </summary>
-        public virtual void OnOpen() { }
+        public virtual void OnOpen()
+        {
+            
+        }
 
         public virtual Texture2D GetGridTexture() {
             return NodeEditorPreferences.GetSettings().gridTexture;

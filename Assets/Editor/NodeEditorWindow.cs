@@ -38,8 +38,7 @@ namespace XNodeEditor {
         }
         private void RunNodeGraph()
         {
-            MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-            mapIO.ParseNodeGraph(this.graph);
+            MapIO.ParseNodeGraph(this.graph);
         }
         private void OnDisable() {
             // Cache portConnectionPoints before serialization starts
