@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class TypeConverter {
 
@@ -63,23 +64,25 @@ public static class TypeConverter {
     public static float[,,] singleToMulti(float[] singleArray, int texturesAmount)
     {
         int length = (int)Math.Sqrt(singleArray.Length / texturesAmount);
-
-
         float[,,] multiArray = new float[length, length, texturesAmount];
+        float[] splatWeights = new float[multiArray.GetLength(2)];
         for (int i = 0; i < multiArray.GetLength(0); i++)
         {
             for (int j = 0; j < multiArray.GetLength(1); j++)
             {
                 for (int k = 0; k < multiArray.GetLength(2); k++)
                 {
-                    multiArray[i, j, k] = singleArray[i * multiArray.GetLength(1) * multiArray.GetLength(2) + (j * multiArray.GetLength(2) + k)];
+                    multiArray[i, j, k] = Mathf.Clamp01(singleArray[i * multiArray.GetLength(1) * multiArray.GetLength(2) + (j * multiArray.GetLength(2) + k)]);
+                    splatWeights[k] = multiArray[i, j, k];
+                }
+                float normalisedWeights = splatWeights.Sum(); // Normalize so that sum of all texture weights = 1. Stops the black shit from the swamps.
+                for (int k = 0; k < multiArray.GetLength(2); k++) 
+                {
+                    splatWeights[k] /= normalisedWeights;
+                    multiArray[i, j, k] = splatWeights[k];
                 }
             }
         }
-
         return multiArray;
     }
-
-
-
 }
