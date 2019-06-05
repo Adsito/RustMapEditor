@@ -12,6 +12,7 @@ TagManager:
   - MapIO
   - LoadedPrefab
   - DefaultPrefab
+  - World
   layers:
   - Default
   - TransparentFX
