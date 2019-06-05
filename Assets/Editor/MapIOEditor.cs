@@ -64,7 +64,7 @@ public class MapIOEditor : EditorWindow
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
 
-    [MenuItem("Rust Map Editor/Main Menu")]
+    [MenuItem("Rust Map Editor/Main Menu", false, 0)]
     static void Initialize()
     {
         MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
@@ -1187,12 +1187,17 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.EndScrollView();
     }
     #region OtherMenus
-    [MenuItem("Rust Map Editor/Wiki")]
+    [MenuItem("Rust Map Editor/Terrain Tools", false, 1)]
+    static void OpenTerrainTools()
+    {
+        Selection.activeGameObject = GameObject.FindGameObjectWithTag("Land");
+    }
+    [MenuItem("Rust Map Editor/Wiki", false, 2)]
     static void OpenWiki()
     {
         Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
     }
-    [MenuItem("Rust Map Editor/Discord")]
+    [MenuItem("Rust Map Editor/Discord", false, 3)]
     static void OpenDiscord()
     {
         Application.OpenURL("https://discord.gg/HPmTWVa");
