@@ -391,13 +391,13 @@ public class MapIOEditor : EditorWindow
                                         normaliseBlend = EditorGUILayout.Slider(normaliseBlend, 0f, 1f);
                                         if (EditorGUI.EndChangeCheck() && autoUpdate == true)
                                         {
-                                            script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
                                         }
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
                                         if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
-                                            script.normaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
                                         }
                                         autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
                                         EditorGUILayout.EndHorizontal();
@@ -888,11 +888,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Layer"))
                             {
-                                script.PaintLayer("Alpha", 0);
+                                script.PaintLayer("Alpha", 1);
                             }
                             if (GUILayout.Button("Clear Layer"))
                             {
-                                script.ClearLayer("Alpha");
+                                script.PaintLayer("Alpha", 0);
                             }
                             if (GUILayout.Button("Invert Layer"))
                             {
@@ -964,6 +964,20 @@ public class MapIOEditor : EditorWindow
                                 Repaint();
                             }
                             EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Paint Layer"))
+                            {
+                                script.PaintLayer("Topology", 0);
+                            }
+                            if (GUILayout.Button("Clear Layer"))
+                            {
+                                script.ClearLayer("Topology");
+                            }
+                            if (GUILayout.Button("Invert Layer"))
+                            {
+                                script.InvertLayer("Topology");
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
                                 script.rotateTopologymap(true);
@@ -972,11 +986,13 @@ public class MapIOEditor : EditorWindow
                             {
                                 script.rotateTopologymap(false);
                             }
-                            if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate all Topology layers 90° ClockWise.")))
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90° ClockWise.")))
                             {
                                 script.rotateAllTopologymap(true);
                             }
-                            if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate all Topology layers 90° Counter ClockWise.")))
+                            if (GUILayout.Button(new GUIContent("Rotate All 270°", "Rotate all Topology layers 90° Counter ClockWise.")))
                             {
                                 script.rotateAllTopologymap(false);
                             }
@@ -1029,20 +1045,6 @@ public class MapIOEditor : EditorWindow
                             if (GUILayout.Button("Erase Area"))
                             {
                                 script.paintArea("Topology", z1, z2, x1, x2, 1);
-                            }
-                            EditorGUILayout.EndHorizontal();
-                            EditorGUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Paint Layer"))
-                            {
-                                script.PaintLayer("Topology", 0);
-                            }
-                            if (GUILayout.Button("Clear Layer"))
-                            {
-                                script.ClearLayer("Topology");
-                            }
-                            if (GUILayout.Button("Invert Layer"))
-                            {
-                                script.InvertLayer("Topology");
                             }
                             EditorGUILayout.EndHorizontal();
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");
