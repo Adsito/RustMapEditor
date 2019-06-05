@@ -81,10 +81,10 @@ public class MapIOEditor : EditorWindow
         }
 
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
-        GUIContent[] mainMenu = new GUIContent[2];
+        GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        //mainMenu[2] = new GUIContent("Prefabs");
+        mainMenu[2] = new GUIContent("Prefabs");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
@@ -1085,7 +1085,6 @@ public class MapIOEditor : EditorWindow
                         {
                             script.generatePerlinHeightmap(scale);
                         }
-                        /*
                         GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
                         if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
                         {
@@ -1094,7 +1093,7 @@ public class MapIOEditor : EditorWindow
                         presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
                         ReorderableListGUI.Title("Generation Presets");
                         ReorderableListGUI.ListField(script.generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
-                        GUILayout.EndScrollView();*/
+                        GUILayout.EndScrollView();
                         break;
                         #endregion
                 }
@@ -1102,9 +1101,9 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Prefabs
             case 2:
-                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
+                GUIContent[] prefabsOptionsMenu = new GUIContent[3];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
-                //prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
+                prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
                 prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
                 prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
