@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -1529,9 +1530,10 @@ public class MapIO : MonoBehaviour {
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             paintArea("Topology", splatMap.GetLength(0) / 3 * 2, splatMap.GetLength(0), 0, splatMap.GetLength(0), 0); // Gets thirds of Terrain
 
-            ClearProgressBar();
             topologyLayer = oldTopologyLayer2;
             changeLandLayer();
+            oldTopologyLayer = oldTopologyLayer2;
+            ClearProgressBar();
         }
     }
     public void AutoGenerateGround() // Assigns terrain splats to these values. 
@@ -1546,7 +1548,7 @@ public class MapIO : MonoBehaviour {
         PaintSlope("Ground", 25f, 45, 5f, 50f, 4);
 
         ProgressBar("Generating Ground Textures", "Generating: Dirt", 0.4f);
-        PaintSlope("Ground", 20, 20, 10, 30, 0);
+        PaintSlope("Ground", 20, 20, 15, 25, 0);
 
         ProgressBar("Generating Ground Textures", "Generating: Snow", 0.6f);
         PaintHeight("Ground", 650, 1000, 600, 1000, 1);
@@ -2275,7 +2277,7 @@ public class MapIO : MonoBehaviour {
             generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
         }
     }
-    public static void ParseNodeGraph(XNode.NodeGraph graph)
+    public void ParseNodeGraph(XNode.NodeGraph graph)
     {
         foreach (var node in graph.nodes)
         {
@@ -2286,11 +2288,8 @@ public class MapIO : MonoBehaviour {
                 {
                     do
                     {
-                        if (nodeIteration.GetType() == typeof(PaintLayerNode))
-                        {
-                            var localNode = nodeIteration as PaintLayerNode;
-                            localNode.PaintLayer();
-                        }
+                        MethodInfo runNode = nodeIteration.GetType().GetMethod("RunNode");
+                        runNode.Invoke(nodeIteration, null);
                         if (nodeIteration.GetOutputPort("NextTask").IsConnected)
                         {
                             nodeIteration = nodeIteration.GetOutputPort("NextTask").Connection.node;

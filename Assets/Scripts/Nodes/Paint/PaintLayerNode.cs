@@ -19,7 +19,7 @@ public class PaintLayerNode : Node
     {
         return GetInputValue<object>("In");
     }
-    public void PaintLayer()
+    public void RunNode()
     {
         var layer = (NodeVariables.Texture)GetValue();
         Debug.Log(layer.GroundTexture);
