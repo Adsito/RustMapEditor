@@ -49,7 +49,7 @@ public class MapIOEditor : EditorWindow
 
     float filterStrength = 1f;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
-    float blurDirection = 1f;
+    float blurDirection = 0f;
 
     public TerrainBiome.Enum biomeLayerToPaint;
     public TerrainBiome.Enum biomeLayerConditional;
@@ -1258,7 +1258,7 @@ public class MapIOEditor : EditorWindow
             if (preset != null)
             {
                 var graph = (XNode.NodeGraph)AssetDatabase.LoadAssetAtPath(assetDirectory + itemValue + ".asset", typeof(XNode.NodeGraph));
-                MapIO.ParseNodeGraph(graph);
+                script.ParseNodeGraph(graph);
             }
         }
         return itemValue;
