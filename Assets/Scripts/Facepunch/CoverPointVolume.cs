@@ -3,7 +3,7 @@
 namespace Rust.Ai
 {
     [ExecuteAlways]
-    public class AiLocationManager : MonoBehaviour
+    public class CoverPointVolume : MonoBehaviour
     {
         protected void Awake()
         {

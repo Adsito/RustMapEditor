@@ -195,9 +195,9 @@ public class PrefabLookup : System.IDisposable
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData();
         prefabDataHolder.prefabData.id = rustid;
         var prefabChildren = go.GetComponentsInChildren<Transform>(true);
-        foreach (var item in prefabChildren)
+        for (int i = 0; i < prefabChildren.Length; i++)
         {
-            item.gameObject.SetActive(true);
+            prefabChildren[i].gameObject.SetActive(true);
         }
         GameObject newObj = GameObject.Instantiate(go);
         prefabsList.Add(new PrefabAttributes()
