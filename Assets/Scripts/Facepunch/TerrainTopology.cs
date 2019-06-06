@@ -142,7 +142,7 @@ public class TerrainTopology
         { MAINLAND    , MAINLAND_IDX   },
         { HILLTOP     , HILLTOP_IDX    },
     };
-    public   static int TypeToIndex(int id)
+    public static int TypeToIndex(int id)
     {
         type2index.TryGetValue(id, out int value);
         return value;

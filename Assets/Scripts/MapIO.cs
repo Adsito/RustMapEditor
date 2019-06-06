@@ -1486,7 +1486,6 @@ public class MapIO : MonoBehaviour {
             changeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             PaintHeight("Topology", 0, 498, 0, 498, 0);
-            ClearLayer("Topology");
 
             ProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             topologyLayer = TerrainTopology.Enum.Beach;

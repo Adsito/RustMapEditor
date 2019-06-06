@@ -46,7 +46,7 @@ namespace NodeVariables
         }
         public enum AlphaEnum
         {
-            InActive, Active
+            Active, InActive
         }
         public enum TopologyEnum
         {
