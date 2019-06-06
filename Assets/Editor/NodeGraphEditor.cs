@@ -20,7 +20,7 @@ namespace XNodeEditor {
             EditorGUI.DrawRect(new Rect(0, 0, 5000, 22), new Color32(194, 194, 194, 255));
             if(GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), GUILayout.MaxWidth(100f)))
             {
-                MapIO.ParseNodeGraph(nodeGraph);
+                GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().ParseNodeGraph(nodeGraph);
             }
         }
 
