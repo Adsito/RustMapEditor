@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
-public class AiLocationSpawner : MonoBehaviour
+namespace Rust.Ai
 {
-    protected void Awake()
+    [ExecuteAlways]
+    public class AiLocationSpawner : MonoBehaviour
     {
-        DestroyImmediate(this);
+        protected void Awake()
+        {
+            DestroyImmediate(this);
+        }
     }
 }
