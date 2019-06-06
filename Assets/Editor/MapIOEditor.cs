@@ -1104,7 +1104,7 @@ public class MapIOEditor : EditorWindow
                 GUIContent[] prefabsOptionsMenu = new GUIContent[3];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
                 prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
-                prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
+                prefabsOptionsMenu[2] = new GUIContent("Prefab Tools");
                 prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
                 switch (prefabOptions)

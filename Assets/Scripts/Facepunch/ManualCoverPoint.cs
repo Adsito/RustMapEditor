@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
-public class ManualCoverPoint : MonoBehaviour
+namespace Rust.Ai
 {
-    protected void Awake()
+    [ExecuteAlways]
+    public class ManualCoverPoint : MonoBehaviour
     {
-        DestroyImmediate(this);
+        protected void Awake()
+        {
+            DestroyImmediate(this);
+        }
     }
 }
