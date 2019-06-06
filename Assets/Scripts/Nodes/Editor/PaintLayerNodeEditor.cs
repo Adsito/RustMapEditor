@@ -16,10 +16,7 @@ public class PaintLayerNodeEditor : NodeEditor
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         if (texture != null && Event.current.type != EventType.MouseUp) // Check for mouse control event error.
         {
-            if (GUILayout.Button(new GUIContent("Run Node", "Runs the current operation of only this node.")))
-            {
-                Debug.Log("test");
-            }
+            
         }
     }
 }
