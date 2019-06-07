@@ -676,8 +676,11 @@ public class MapIOEditor : EditorWindow
                         script.landLayer = options[script.landSelectIndex];
                         if (script.landLayer != oldLandLayer)
                         {
+                            MapIO.ProgressBar("Changing Layer", "Changing the selected layer to: " + script.landLayer, 0.1f);
                             script.changeLandLayer();
+                            MapIO.ProgressBar("Changing Layer", "Changing the selected layer to: " + script.landLayer, 0.9f);
                             Repaint();
+                            MapIO.ClearProgressBar();
                         }
                         if (slopeMinBlendHigh > slopeMaxBlendHigh)
                         {

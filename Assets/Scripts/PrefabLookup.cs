@@ -66,7 +66,7 @@ public class PrefabLookup : System.IDisposable
         progressInterval = 1f / lines.Length;
         foreach (var line in lines)
         {
-            mapIO.ProgressBar("Prefab Warmup", "Loading Directory: " + line, progress);
+            MapIO.ProgressBar("Prefab Warmup", "Loading Directory: " + line, progress);
             progress += progressInterval;
             if (line.EndsWith("/") || line.EndsWith("\\"))
             {
@@ -75,7 +75,7 @@ public class PrefabLookup : System.IDisposable
         }
         PrefabsLoadedDump();
         //SavePrefabsToAsset();
-        mapIO.ClearProgressBar();
+        MapIO.ClearProgressBar();
         mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
         prefabsLoaded = true;
     }

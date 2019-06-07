@@ -62,6 +62,7 @@ public class LandData : MonoBehaviour {
 
         terrain.terrainData.terrainLayers = textures;
         float[,,] splats = TypeConverter.singleToMulti(splatMap, textures.Length);
+        MapIO.ProgressBar("Changing Layer", "Painting textures to terrain.", 0.5f);
         terrain.terrainData.SetAlphamaps(0, 0, splats);
     }
 
