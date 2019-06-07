@@ -32,6 +32,10 @@ namespace XNodeEditor {
                     GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().RefreshAssetList();
                 }
             }
+            if (GUILayout.Button(new GUIContent("Rename Preset", "Rename this preset."), GUILayout.MaxWidth(100f)))
+            {
+                RenamePopup.Show(nodeGraph);
+            }
             EditorGUILayout.EndHorizontal();
         }
 
