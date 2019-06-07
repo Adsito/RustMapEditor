@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using XNode;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(PaintHeightNode))]
@@ -21,7 +18,6 @@ public class PaintHeightNodeEditor : NodeEditor
     {
         base.OnBodyGUI();
         PaintHeightNode node = target as PaintHeightNode;
-        AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         #region UpdateValues
         if (node.heightMinBlendLow > node.heightMaxBlendLow)

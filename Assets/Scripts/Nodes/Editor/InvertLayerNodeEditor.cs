@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using XNode;
+﻿using UnityEngine;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(InvertLayerNode))]
@@ -10,7 +6,7 @@ public class InvertLayerNodeEditor : NodeEditor
 {
     public override Color GetTint()
     {
-        return Color.magenta;
+        return Color.cyan;
     }
     public override void OnHeaderGUI()
     {

@@ -393,14 +393,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newGround.GetLength(1); j++)
                 {
-                    newGround[i, j, 0] = oldGround[j, oldGround.GetLength(1) - i - 1, 0];
-                    newGround[i, j, 1] = oldGround[j, oldGround.GetLength(1) - i - 1, 1];
-                    newGround[i, j, 2] = oldGround[j, oldGround.GetLength(1) - i - 1, 2];
-                    newGround[i, j, 3] = oldGround[j, oldGround.GetLength(1) - i - 1, 3];
-                    newGround[i, j, 4] = oldGround[j, oldGround.GetLength(1) - i - 1, 4];
-                    newGround[i, j, 5] = oldGround[j, oldGround.GetLength(1) - i - 1, 5];
-                    newGround[i, j, 6] = oldGround[j, oldGround.GetLength(1) - i - 1, 6];
-                    newGround[i, j, 7] = oldGround[j, oldGround.GetLength(1) - i - 1, 7];
+                    for (int k = 0; k < 8; k++)
+                    {
+                        newGround[i, j, k] = oldGround[j, oldGround.GetLength(1) - i - 1, k];
+                    }
                 }
             }
         }
@@ -410,14 +406,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newGround.GetLength(1); j++)
                 {
-                    newGround[i, j, 0] = oldGround[oldGround.GetLength(0) - j - 1, i, 0];
-                    newGround[i, j, 1] = oldGround[oldGround.GetLength(0) - j - 1, i, 1];
-                    newGround[i, j, 2] = oldGround[oldGround.GetLength(0) - j - 1, i, 2];
-                    newGround[i, j, 3] = oldGround[oldGround.GetLength(0) - j - 1, i, 3];
-                    newGround[i, j, 4] = oldGround[oldGround.GetLength(0) - j - 1, i, 4];
-                    newGround[i, j, 5] = oldGround[oldGround.GetLength(0) - j - 1, i, 5];
-                    newGround[i, j, 6] = oldGround[oldGround.GetLength(0) - j - 1, i, 6];
-                    newGround[i, j, 7] = oldGround[oldGround.GetLength(0) - j - 1, i, 7];
+                    for (int k = 0; k < 8; k++)
+                    {
+                        newGround[i, j, k] = oldGround[oldGround.GetLength(0) - j - 1, i, k];
+                    }
                 }
             }
         }
@@ -437,10 +429,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newBiome.GetLength(1); j++)
                 {
-                    newBiome[i, j, 0] = oldBiome[j, oldBiome.GetLength(1) - i - 1, 0];
-                    newBiome[i, j, 1] = oldBiome[j, oldBiome.GetLength(1) - i - 1, 1];
-                    newBiome[i, j, 2] = oldBiome[j, oldBiome.GetLength(1) - i - 1, 2];
-                    newBiome[i, j, 3] = oldBiome[j, oldBiome.GetLength(1) - i - 1, 3];
+                    for (int k = 0; k < 4; k++)
+                    {
+                        newBiome[i, j, k] = oldBiome[j, oldBiome.GetLength(1) - i - 1, k];
+                    }
                 }
             }
         }
@@ -450,10 +442,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newBiome.GetLength(1); j++)
                 {
-                    newBiome[i, j, 0] = oldBiome[oldBiome.GetLength(0) - j - 1, i, 0];
-                    newBiome[i, j, 1] = oldBiome[oldBiome.GetLength(0) - j - 1, i, 1];
-                    newBiome[i, j, 2] = oldBiome[oldBiome.GetLength(0) - j - 1, i, 2];
-                    newBiome[i, j, 3] = oldBiome[oldBiome.GetLength(0) - j - 1, i, 3];
+                    for (int k = 0; k < 4; k++)
+                    {
+                        newBiome[i, j, k] = oldBiome[oldBiome.GetLength(0) - j - 1, i, k];
+                    }
                 }
             }
         }
@@ -473,8 +465,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newAlpha.GetLength(1); j++)
                 {
-                    newAlpha[i, j, 0] = oldAlpha[j, oldAlpha.GetLength(1) - i - 1, 0];
-                    newAlpha[i, j, 1] = oldAlpha[j, oldAlpha.GetLength(1) - i - 1, 1];
+                    for (int k = 0; k < 2; k++)
+                    {
+                        newAlpha[i, j, k] = oldAlpha[j, oldAlpha.GetLength(1) - i - 1, k];
+                    }
                 }
             }
         }
@@ -484,8 +478,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newAlpha.GetLength(1); j++)
                 {
-                    newAlpha[i, j, 0] = oldAlpha[oldAlpha.GetLength(0) - j - 1, i, 0];
-                    newAlpha[i, j, 1] = oldAlpha[oldAlpha.GetLength(0) - j - 1, i, 1];
+                    for (int k = 0; k < 2; k++)
+                    {
+                        newAlpha[i, j, k] = oldAlpha[oldAlpha.GetLength(0) - j - 1, i, k];
+                    }
                 }
             }
         }
@@ -504,8 +500,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newTopology.GetLength(1); j++)
                 {
-                    newTopology[i, j, 0] = oldTopology[j, oldTopology.GetLength(1) - i - 1, 0];
-                    newTopology[i, j, 1] = oldTopology[j, oldTopology.GetLength(1) - i - 1, 1];
+                    for (int k = 0; k < 2; k++)
+                    {
+                        newTopology[i, j, k] = oldTopology[j, oldTopology.GetLength(1) - i - 1, k];
+                    }
                 }
             }
         }
@@ -515,8 +513,10 @@ public class MapIO : MonoBehaviour {
             {
                 for (int j = 0; j < newTopology.GetLength(1); j++)
                 {
-                    newTopology[i, j, 0] = oldTopology[oldTopology.GetLength(0) - j - 1, i, 0];
-                    newTopology[i, j, 1] = oldTopology[oldTopology.GetLength(0) - j - 1, i, 1];
+                    for (int k = 0; k < 2; k++)
+                    {
+                        newTopology[i, j, k] = oldTopology[oldTopology.GetLength(0) - j - 1, i, k];
+                    }
                 }
             }
         }
