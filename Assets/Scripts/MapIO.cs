@@ -257,7 +257,6 @@ public class MapIO : MonoBehaviour {
                 break;
         }
         selectedLandLayer.setLayer();
-        ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.75f);
     }
     public void GetPrefabNames()
     {
