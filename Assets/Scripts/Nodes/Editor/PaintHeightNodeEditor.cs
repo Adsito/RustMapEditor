@@ -13,6 +13,10 @@ public class PaintHeightNodeEditor : NodeEditor
     {
         return Color.magenta;
     }
+    public override void OnHeaderGUI()
+    {
+        GUILayout.Label(new GUIContent("Paint Height", "Paints the texture between the height values. Can also blend the textures out on the Ground and Biome layers."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+    }
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();

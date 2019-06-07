@@ -20,6 +20,10 @@ public class TextureNodeEditor : NodeEditor
     {
         return Color.green;   
     }
+    public override void OnHeaderGUI()
+    {
+        GUILayout.Label(new GUIContent("Texture", "Select the texture from this node, and input it into any accepting nodes to choose the texture to paint."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+    }
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();

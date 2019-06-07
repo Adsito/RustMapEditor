@@ -8,4 +8,8 @@ public class StartNodeEditor : NodeEditor
     {
         return Color.red;
     }
+    public override void OnHeaderGUI()
+    {
+        GUILayout.Label(new GUIContent("Start", "The starting point of the nodes in the graph. Only nodes connected to this node directly or through other nodes will be applied."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+    }
 }

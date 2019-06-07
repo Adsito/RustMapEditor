@@ -2282,6 +2282,10 @@ public class MapIO : MonoBehaviour {
         {
             if (node.name == "Start")
             {
+                if (node.GetOutputPort("NextTask").GetConnections().Count == 0) // Check for start node being in graph but not linked.
+                {
+                    return;
+                }
                 XNode.Node nodeIteration = node.GetOutputPort("NextTask").Connection.node;
                 if (nodeIteration != null)
                 {
