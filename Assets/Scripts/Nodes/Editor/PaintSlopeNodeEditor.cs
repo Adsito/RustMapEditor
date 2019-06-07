@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using XNode;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(PaintSlopeNode))]
 public class PaintSlopeNodeEditor : NodeEditor
 {
     bool blendSlopes = false;
+    public override Color GetTint()
+    {
+        return Color.magenta;
+    }
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
@@ -40,25 +41,22 @@ public class PaintSlopeNodeEditor : NodeEditor
             node.slopeMaxBlendHigh = node.slopeMinBlendHigh;
         }
         #endregion
-        if (texture != null && Event.current.type != EventType.DragExited) // Check for mouse control event error.
+        GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+        EditorGUILayout.BeginHorizontal();
+        blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+        // Todo: Toggle for check between heightrange.
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("From: " + node.slopeLow.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
+        GUILayout.Label("To: " + node.slopeHigh.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.MinMaxSlider(ref node.slopeLow, ref node.slopeHigh, 0f, 90f);
+        if (blendSlopes == true)
         {
-            GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
-            EditorGUILayout.BeginHorizontal();
-            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
-            // Todo: Toggle for check between heightrange.
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("From: " + node.slopeLow.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
-            GUILayout.Label("To: " + node.slopeHigh.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.MinMaxSlider(ref node.slopeLow, ref node.slopeHigh, 0f, 90f);
-            if (blendSlopes == true)
-            {
-                GUILayout.Label("Blend Low: " + node.slopeMinBlendLow + "°");
-                EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendLow, ref node.slopeMaxBlendLow, 0f, 90f);
-                GUILayout.Label("Blend High: " + node.slopeMaxBlendHigh + "°");
-                EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendHigh, ref node.slopeMaxBlendHigh, 0f, 90f);
-            }
+            GUILayout.Label("Blend Low: " + node.slopeMinBlendLow + "°");
+            EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendLow, ref node.slopeMaxBlendLow, 0f, 90f);
+            GUILayout.Label("Blend High: " + node.slopeMaxBlendHigh + "°");
+            EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendHigh, ref node.slopeMaxBlendHigh, 0f, 90f);
         }
     }
 }
