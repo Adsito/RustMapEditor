@@ -8,6 +8,10 @@ public class PaintLayerNodeEditor : NodeEditor
     {
         return Color.magenta;
     }
+    public override void OnHeaderGUI()
+    {
+        GUILayout.Label(new GUIContent("Paint Layer", "Paints the texture over the entire layer."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+    }
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
