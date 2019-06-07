@@ -2,8 +2,8 @@
 using UnityEditor;
 using XNodeEditor;
 
-[CustomNodeEditor(typeof(RotateLayerNode))]
-public class RotateLayerNodeEditor : NodeEditor
+[CustomNodeEditor(typeof(RotateHeightMapNode))]
+public class RotateHeightMapNodeEditor : NodeEditor
 {
     public override Color GetTint()
     {
@@ -16,7 +16,7 @@ public class RotateLayerNodeEditor : NodeEditor
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
-        RotateLayerNode node = target as RotateLayerNode;
-        node.CW = EditorGUILayout.ToggleLeft(new GUIContent(node.CW ? "Rotate Direction: 90°" : "Rotate Direction: 270°", "The direction which the layer will rotate, either 90° or 270°"), node.CW);
+        RotateHeightMapNode node = target as RotateHeightMapNode;
+        node.CW = EditorGUILayout.ToggleLeft(new GUIContent(node.CW ? "Rotate Direction: 90°" : "Rotate Direction: 270°", "The direction which the heightmap will rotate, either 90° or 270°"), node.CW);
     }
 }
