@@ -1,13 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Rotate HeightMap")]
-public class RotateHeightMapNode : Node
+[CreateNodeMenu("Functions/Invert HeightMap")]
+public class InvertHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public bool CW = true;
     public override object GetValue(NodePort port)
     {
         return null;
@@ -15,6 +13,6 @@ public class RotateHeightMapNode : Node
     public void RunNode()
     {
         MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.rotateHeightmap(CW);
+        mapIO.InvertHeightmap();
     }
 }

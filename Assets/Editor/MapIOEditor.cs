@@ -42,8 +42,8 @@ public class MapIOEditor : EditorWindow
     bool checkHeightCndtl = false, checkSlopeCndtl = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
-    bool autoUpdate = false, itemValueSet = false;
-    string itemValueOld = "", assetDirectory = "Assets/AutoGenPresets/";
+    bool autoUpdate = false;
+    string assetDirectory = "Assets/AutoGenPresets/";
     Vector2 scrollPos = new Vector2(0, 0);
     Vector2 presetScrollPos = new Vector2(0, 0);
 
@@ -372,7 +372,7 @@ public class MapIOEditor : EditorWindow
                                         }*/
                                         if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself.")))
                                         {
-                                            script.flipHeightmap();
+                                            script.InvertHeightmap();
                                         }
                                         EditorGUILayout.EndHorizontal();
                                         GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
