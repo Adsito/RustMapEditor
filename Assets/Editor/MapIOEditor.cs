@@ -1203,35 +1203,8 @@ public class MapIOEditor : EditorWindow
     private string AutoGenerationPresetDrawer(Rect position, string itemValue)
     {
         MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        if (itemValueSet == false)
-        {
-            itemValueOld = itemValue;
-            itemValueSet = true;
-        }
-        if (itemValue == null)
-        {
-            itemValue = "";
-            itemValueOld = itemValue;
-        }
         position.width -= 67;
-        EditorGUI.BeginChangeCheck();
-        itemValue = EditorGUI.TextField(position, itemValue);
-        if (EditorGUI.EndChangeCheck())
-        {
-            if (itemValue != "" && script.generationPresetList.Contains(itemValue) == false) // Case for renaming an asset to empty path.
-            {
-                if (!itemValue.EndsWith(".asset"))
-                {
-                    AssetDatabase.RenameAsset(assetDirectory + itemValueOld + ".asset", itemValue);
-                }
-                else
-                {
-                    AssetDatabase.RenameAsset(assetDirectory + itemValueOld, itemValue);
-                }
-                script.RefreshAssetList();
-                itemValueSet = false;
-            }
-        }
+        GUI.Label(position, itemValue);
         position.x = position.xMax + 5;
         position.width = 38;
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
