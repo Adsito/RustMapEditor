@@ -15,7 +15,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.4-prerelease";
+    string editorVersion = "v1.5-prerelease";
 
     string loadFile = "";
     string saveFile = "";
