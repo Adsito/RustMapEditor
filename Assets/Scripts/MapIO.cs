@@ -1366,7 +1366,7 @@ public class MapIO : MonoBehaviour {
             saveTopologyLayer();
         }
     }
-    public void paintRiver(string landLayer, bool aboveTerrain, int t) // Paints the splats wherever the water is above 500 and is above the terrain. Above terrain
+    public void PaintRiver(string landLayer, bool aboveTerrain, int t) // Paints the splats wherever the water is above 500 and is above the terrain. Above terrain
     // true will paint only if water is above 500 and is also above the land terrain.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint River");
