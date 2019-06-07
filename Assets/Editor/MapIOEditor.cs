@@ -746,7 +746,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.paintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)script.terrainLayer));
+                                script.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)script.terrainLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -819,7 +819,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.paintRiver("Biome", aboveTerrain, 0);
+                                script.PaintRiver("Biome", aboveTerrain, 0);
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -998,7 +998,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.paintRiver("Topology", aboveTerrain, 0);
+                                script.PaintRiver("Topology", aboveTerrain, 0);
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
