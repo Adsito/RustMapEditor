@@ -557,7 +557,7 @@ public class MapIO : MonoBehaviour {
         land.terrainData.SetHeights(0, 0, MapTransformations.scale(landHeightMap, scale));
         water.terrainData.SetHeights(0, 0, MapTransformations.scale(waterHeightMap, scale));
     }
-    public void flipHeightmap()
+    public void InvertHeightmap()
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Invert Terrain");
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
