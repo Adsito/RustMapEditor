@@ -155,11 +155,11 @@ public class MapIO : MonoBehaviour {
             sceneView.LookAt(new Vector3(500f, 600f, 500f));
         }
     }
-    public void ProgressBar(string title, string info, float progress)
+    public static void ProgressBar(string title, string info, float progress)
     {
         EditorUtility.DisplayProgressBar(title, info, progress);
     }
-    public void ClearProgressBar()
+    public static void ClearProgressBar()
     {
         EditorUtility.ClearProgressBar();
     }
@@ -239,20 +239,25 @@ public class MapIO : MonoBehaviour {
         {
             case "ground":
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
+                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 break;
             case "biome":
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
+                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 break;
             case "alpha":
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
+                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 break;
             case "topology":
                 saveTopologyLayer();
                 selectedLandLayer = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
+                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 selectedLandLayer.setData(topology.getSplatMap((int)topologyLayer), "topology");
                 break;
         }
         selectedLandLayer.setLayer();
+        ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.75f);
     }
     public void GetPrefabNames()
     {
