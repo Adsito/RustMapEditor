@@ -18,10 +18,21 @@ namespace XNodeEditor {
         {
             NodeGraph nodeGraph = target;
             EditorGUI.DrawRect(new Rect(0, 0, 5000, 22), new Color32(194, 194, 194, 255));
-            if(GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), GUILayout.MaxWidth(100f)))
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), GUILayout.MaxWidth(100f)))
             {
                 GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().ParseNodeGraph(nodeGraph);
             }
+            if (GUILayout.Button(new GUIContent("Delete Preset", "Delete this preset from Unity."), GUILayout.MaxWidth(100f)))
+            {
+                if (EditorUtility.DisplayDialog("Delete Preset", "Are you sure you wish to delete this preset? Once deleted it can't be undone.", "Ok", "Cancel"))
+                {
+                    NodeEditorWindow.focusedWindow.Close();
+                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeGraph));
+                    GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().RefreshAssetList();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
         }
 
         /// <summary> Called when opened by NodeEditorWindow </summary>
