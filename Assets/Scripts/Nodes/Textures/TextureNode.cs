@@ -7,10 +7,10 @@ using NodeVariables;
 [CreateNodeMenu("Texture")]
 public class TextureNode : Node
 {
-    [Output] public NodeVariables.Texture Out;
+    [Output] public NodeVariables.Texture Texture;
     public NodeVariables.Texture.LandLayerEnum landLayer;
     public override object GetValue(NodePort port)
     {
-        return Out;
+        return Texture;
     }
 }

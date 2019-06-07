@@ -2,13 +2,13 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Paint/Paint Slope")]
-public class PaintSlopeNode : Node
+[CreateNodeMenu("Paint/Paint Height")]
+public class PaintHeightNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public float slopeLow = 40f, slopeHigh = 60f, slopeMinBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeMaxBlendHigh = 75f;
+    [NonSerialized()] public float heightLow = 0f, heightHigh = 500f, heightMinBlendLow = 0f, heightMaxBlendLow = 500f, heightMinBlendHigh = 500f, heightMaxBlendHigh = 1000f;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);
@@ -30,15 +30,15 @@ public class PaintSlopeNode : Node
         {
             case 0: // Ground
                 mapIO.changeLayer("Ground");
-                mapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                mapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
                 mapIO.changeLayer("Biome");
-                mapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.GroundTexture));
+                mapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
                 mapIO.changeLayer("Alpha");
-                mapIO.PaintSlope("Alpha", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.AlphaTexture);
+                mapIO.PaintHeight("Alpha", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.AlphaTexture);
                 break;
             case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
                 mapIO.changeLayer("Topology");
@@ -47,7 +47,7 @@ public class PaintSlopeNode : Node
                 mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
                 mapIO.changeLandLayer();
                 mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.TopologyTexture);
+                mapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture);
 
                 mapIO.topologyLayer = mapIO.oldTopologyLayer2;
                 mapIO.changeLandLayer();
