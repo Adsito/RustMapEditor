@@ -770,7 +770,6 @@ public class MapIOEditor : EditorWindow
                                 script.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)script.terrainLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 90
-                            GUILayout.Label("Custom height range");
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("From: " + heightLow.ToString() + "m", EditorStyles.boldLabel);
@@ -844,7 +843,6 @@ public class MapIOEditor : EditorWindow
                                 script.PaintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, TerrainSplat.TypeToIndex((int)script.biomeLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
-                            GUILayout.Label("Custom Height Range");
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("From: " + heightLow.ToString() + "m", EditorStyles.boldLabel);
@@ -1017,7 +1015,6 @@ public class MapIOEditor : EditorWindow
                                 script.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
-                            GUILayout.Label("Custom Height Range");
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("From: " + heightLow.ToString() + "m", EditorStyles.boldLabel);
                             GUILayout.Label("To: " + heightHigh.ToString() + "m", EditorStyles.boldLabel);

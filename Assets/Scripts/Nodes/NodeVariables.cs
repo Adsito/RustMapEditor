@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace NodeVariables
+﻿namespace NodeVariables
 {
     [System.Serializable]
     public class InputAllTypes

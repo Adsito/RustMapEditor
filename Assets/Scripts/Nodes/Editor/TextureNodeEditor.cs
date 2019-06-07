@@ -16,6 +16,10 @@ public class TextureNodeEditor : NodeEditor
     TerrainTopology.Enum topologyLayer = TerrainTopology.Enum.Beach;
     NodeVariables.Texture.TopologyEnum topologyEnum = NodeVariables.Texture.TopologyEnum.Active;
     #endregion
+    public override Color GetTint()
+    {
+        return Color.green;   
+    }
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
@@ -37,11 +41,11 @@ public class TextureNodeEditor : NodeEditor
                 topologyEnum = (NodeVariables.Texture.TopologyEnum)EditorGUILayout.EnumPopup("Texture", topologyEnum);
                 break;
         }
-        node.Out.LandLayer = (int)node.landLayer;
-        node.Out.TopologyLayer = TerrainTopology.TypeToIndex((int)topologyLayer);
-        node.Out.GroundTexture = (int)groundEnum;
-        node.Out.BiomeTexture = (int)biomeEnum;
-        node.Out.AlphaTexture = (int)alphaEnum;
-        node.Out.TopologyTexture = (int)topologyEnum;
+        node.Texture.LandLayer = (int)node.landLayer;
+        node.Texture.TopologyLayer = TerrainTopology.TypeToIndex((int)topologyLayer);
+        node.Texture.GroundTexture = (int)groundEnum;
+        node.Texture.BiomeTexture = (int)biomeEnum;
+        node.Texture.AlphaTexture = (int)alphaEnum;
+        node.Texture.TopologyTexture = (int)topologyEnum;
     }
 }
