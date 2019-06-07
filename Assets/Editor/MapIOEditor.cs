@@ -678,9 +678,7 @@ public class MapIOEditor : EditorWindow
                         {
                             MapIO.ProgressBar("Changing Layer", "Changing the selected layer to: " + script.landLayer, 0.1f);
                             script.changeLandLayer();
-                            MapIO.ProgressBar("Changing Layer", "Changing the selected layer to: " + script.landLayer, 0.9f);
                             Repaint();
-                            MapIO.ClearProgressBar();
                         }
                         if (slopeMinBlendHigh > slopeMaxBlendHigh)
                         {
@@ -843,7 +841,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + script.landLayer + " layer within the slope range.")))
                             {
-                                script.PaintSlope("Biome", slopeLow, slopeHigh, slopeLow, slopeHigh, TerrainSplat.TypeToIndex((int)script.biomeLayer));
+                                script.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex((int)script.biomeLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);

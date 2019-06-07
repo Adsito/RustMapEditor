@@ -34,7 +34,7 @@ public class PaintSlopeNode : Node
                 break;
             case 1: // Biome
                 mapIO.changeLayer("Biome");
-                mapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.GroundTexture));
+                mapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
                 mapIO.changeLayer("Alpha");
