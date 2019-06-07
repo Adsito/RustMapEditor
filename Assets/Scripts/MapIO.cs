@@ -623,7 +623,7 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Smooth Terrain");
         Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, 6000f, 0.0f);
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(terrain, heightmapCentre, terrain.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(terrain, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
         mat.SetTexture("_BrushTex", terrainFilterTexture);
