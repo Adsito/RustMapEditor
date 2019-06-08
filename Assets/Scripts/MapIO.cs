@@ -1271,6 +1271,7 @@ public class MapIO : MonoBehaviour {
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
+                float[] normalised = new float[TextureCount(landLayer)];
                 float slope = terrain.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
                 if (slope >= slopeLow && slope <= slopeHigh)
                 {
@@ -1287,9 +1288,22 @@ public class MapIO : MonoBehaviour {
                     float slopeBlend = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
                     for (int k = 0; k < TextureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
                     {
-                        splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
+                        if (k == t)
+                        {
+                            splatMap[i, j, t] = slopeBlend;
+                        }
+                        else
+                        {
+                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
+                        }
+                        normalised[k] = splatMap[i, j, k];
                     }
-                    splatMap[i, j, t] = slopeBlend;
+                    float normalisedWeights = normalised.Sum();
+                    for (int k = 0; k < normalised.GetLength(0); k++)
+                    {
+                        normalised[k] /= normalisedWeights;
+                        splatMap[i, j, k] = normalised[k];
+                    }
                 }
                 else if (slope >= slopeHigh && slope <= maxBlendHigh)
                 {
@@ -1299,9 +1313,22 @@ public class MapIO : MonoBehaviour {
                     float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
                     for (int k = 0; k < TextureCount(landLayer); k++)
                     {
-                        splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
+                        if (k == t)
+                        {
+                            splatMap[i, j, t] = slopeBlend;
+                        }
+                        else
+                        {
+                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
+                        }
+                        normalised[k] = splatMap[i, j, k];
                     }
-                    splatMap[i, j, t] = slopeBlend;
+                    float normalisedWeights = normalised.Sum();
+                    for (int k = 0; k < normalised.GetLength(0); k++)
+                    {
+                        normalised[k] /= normalisedWeights;
+                        splatMap[i, j, k] = normalised[k];
+                    }
                 }
             }
         }
