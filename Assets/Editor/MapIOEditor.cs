@@ -103,10 +103,10 @@ public class MapIOEditor : EditorWindow
                     {
                         return;
                     }
-                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
+                    MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     blob.Load(loadFile);
                     script.loadPath = loadFile;
-                    EditorUtility.DisplayProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
+                    MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                     script.Load(blob);
                 }
                 if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), GUILayout.MaxWidth(45)))
@@ -119,7 +119,7 @@ public class MapIOEditor : EditorWindow
                     Debug.Log("Exported map " + saveFile);
                     script.savePath = saveFile;
                     prefabSaveFile = saveFile;
-                    EditorUtility.DisplayProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
+                    MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                     script.Save(saveFile);
                 }
                 if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), GUILayout.MaxWidth(45)))
@@ -676,7 +676,6 @@ public class MapIOEditor : EditorWindow
                         script.landLayer = options[script.landSelectIndex];
                         if (script.landLayer != oldLandLayer)
                         {
-                            MapIO.ProgressBar("Changing Layer", "Changing the selected layer to: " + script.landLayer, 0.1f);
                             script.changeLandLayer();
                             Repaint();
                         }
