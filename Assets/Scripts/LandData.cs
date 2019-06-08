@@ -59,7 +59,6 @@ public class LandData : MonoBehaviour {
     }
     public void setLayer(string layer)
     {
-        MapIO.ProgressBar("Getting Textures", "Getting textures to paint.", 0.5f);
         terrain = transform.parent.GetComponent<Terrain>();
         if (groundTextures == null || biomeTextures == null || alphaTextures == null)
         {
@@ -71,35 +70,30 @@ public class LandData : MonoBehaviour {
                 layerName = "ground";
                 Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = groundTextures;
-                MapIO.ProgressBar("Setting Textures", "Painting textures to terrain.", 0.75f);
                 terrain.terrainData.SetAlphamaps(0, 0, groundArray);
                 break;
             case "biome":
                 layerName = "biome";
                 Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = biomeTextures;
-                MapIO.ProgressBar("Setting Textures", "Painting textures to terrain.", 0.75f);
                 terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
                 break;
             case "alpha":
                 layerName = "alpha";
                 Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = alphaTextures;
-                MapIO.ProgressBar("Setting Textures", "Painting textures to terrain.", 0.75f);
                 terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
             case "topology":
                 layerName = "topology";
                 Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = alphaTextures;
-                MapIO.ProgressBar("Setting Textures", "Painting textures to terrain.", 0.75f);
                 terrain.terrainData.SetAlphamaps(0, 0, TypeConverter.singleToMulti(splatMap, 2));
                 break;
             default:
                 Debug.Log("Layer not set");
                 break;
         }
-        MapIO.ClearProgressBar();
     }
     public void save()
     {

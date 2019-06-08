@@ -148,7 +148,7 @@ public class MapIO : MonoBehaviour {
         landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
         RefreshAssetList(); // Refresh the auto gen asset presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
-        CentreSceneView();
+        CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
     }
     public static void CentreSceneView()
     {
@@ -243,23 +243,19 @@ public class MapIO : MonoBehaviour {
         {
             case "ground":
                 landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
-                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 landData.setLayer("ground");
                 break;
             case "biome":
                 landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
-                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 landData.setLayer("biome");
                 break;
             case "alpha":
                 landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
-                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 landData.setLayer("alpha");
                 break;
             case "topology":
                 saveTopologyLayer();
                 landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
-                ProgressBar("Changing Layer", "Changing the selected layer to: " + landLayer, 0.25f);
                 landData.setData(topology.getSplatMap((int)topologyLayer), "topology");
                 landData.setLayer("topology");
                 break;
@@ -2106,57 +2102,55 @@ public class MapIO : MonoBehaviour {
         CentreSceneView();
 
         var terrainPosition = 0.5f * terrains.size;
-        LandData landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
-
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
 
-        land.transform.position = terrainPosition;
+        terrain.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
 
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.3f);
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         topology.InitMesh(terrains.topology);
 
-        land.terrainData.heightmapResolution = terrains.resolution;
-        land.terrainData.size = terrains.size;
+        terrain.terrainData.heightmapResolution = terrains.resolution;
+        terrain.terrainData.size = terrains.size;
 
         water.terrainData.heightmapResolution = terrains.resolution;
         water.terrainData.size = terrains.size;
 
-        land.terrainData.SetHeights(0, 0, terrains.land.heights);
+        terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
         water.terrainData.SetHeights(0, 0, terrains.water.heights);
 
-        land.terrainData.alphamapResolution = terrains.resolution;
-        land.terrainData.baseMapResolution = terrains.resolution - 1;
+        terrain.terrainData.alphamapResolution = terrains.resolution;
+        terrain.terrainData.baseMapResolution = terrains.resolution - 1;
         water.terrainData.alphamapResolution = terrains.resolution;
         water.terrainData.baseMapResolution = terrains.resolution - 1;
 
-        land.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
+        terrain.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
         water.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
-        land.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
+        terrain.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
         water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
 
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
         landData.setData(terrains.splatMap, "ground");
 
-        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.5f);
+        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
         landData.setData(terrains.biomeMap, "biome");
 
-        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.6f);
+        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
         landData.setData(terrains.alphaMap, "alpha");
 
-        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.7f);
+        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
         landData.setData(topology.getSplatMap((int)topologyLayer), "topology");
         changeLandLayer();
 
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
+        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.9f);
         float progressValue = 0f;
         for (int i = 0; i < terrains.prefabData.Length; i++)
         {
             progressValue += 0.1f / terrains.prefabData.Length;
-            ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", progressValue + 0.8f);
+            ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.9f);
             if (prefabsLoaded.TryGetValue(terrains.prefabData[i].id, out GameObject newObj))
             {
                 newObj = SpawnPrefab(prefabsLoaded[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
@@ -2169,7 +2163,7 @@ public class MapIO : MonoBehaviour {
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
-        ProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.9f);
+        ProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.99f);
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
             Vector3 averageLocation = Vector3.zero;
@@ -2194,6 +2188,7 @@ public class MapIO : MonoBehaviour {
     public void Load(WorldSerialization blob)
     {
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
+        MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         loadMapInfo(terrains);
     }
     public void loadEmpty(int size)
