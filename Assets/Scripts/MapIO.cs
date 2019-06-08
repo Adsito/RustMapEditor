@@ -910,37 +910,29 @@ public class MapIO : MonoBehaviour {
     public void paintConditional(string landLayer, int texture, List<Conditions> conditions) // Todo: Optimisation and cleanup.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Conditional");
-        LandData groundLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>();
-        LandData biomeLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>();
-        LandData alphaLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>();
-        LandData topologyLandData = GameObject.FindGameObjectWithTag("Land").transform.Find("Topology").GetComponent<LandData>();
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        topology = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>();
+        topology = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>();
 
-        float[,,] groundSplatMap = TypeConverter.singleToMulti(groundLandData.splatMap, 8);
-        float[,,] biomeSplatMap = TypeConverter.singleToMulti(biomeLandData.splatMap, 4);
-        float[,,] alphaSplatMap = TypeConverter.singleToMulti(alphaLandData.splatMap, 2);
-        float[,,] topologySplatMap = TypeConverter.singleToMulti(topologyLandData.splatMap, 2);
-        float[,,] splatMapPaint = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, TextureCount(landLayer)];
-        float[,,] splatMapOld = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, TextureCount(landLayer)];
+        float[,,] groundSplatMap = GetSplatMap("ground");
+        float[,,] biomeSplatMap = GetSplatMap("biome");
+        float[,,] alphaSplatMap = GetSplatMap("alpha");
+        float[,,] topologySplatMap = TypeConverter.singleToMulti(landData.splatMap, 2);
+        float[,,] splatMapPaint = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight, TextureCount(landLayer)];
+        float[,,] splatMapOld = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight, TextureCount(landLayer)];
         bool paint = true;
         float slope, height;
-        float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
-        float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
+        float[,] heights = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
+        float[,] slopes = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
         int  alphaTexture = 0, topologyTexture = 0;
         ProgressBar("Conditional Painter FIRST VERSION", "Preparing SplatMaps", 0.025f);
         switch (landLayer)
         {
             case "Ground":
-                changeLayer(landLayer);
                 splatMapOld = groundSplatMap;
                 break;
             case "Biome":
-                changeLayer(landLayer);
                 splatMapOld = biomeSplatMap;
                 break;
             case "Alpha":
-                changeLayer(landLayer);
                 splatMapOld = alphaSplatMap;
                 break;
             case "Topology":
@@ -954,6 +946,7 @@ public class MapIO : MonoBehaviour {
         List<TopologyLayers> topologyLayers = new List<TopologyLayers>();
         List<GroundTextures> groundTexturesList = new List<GroundTextures>();
         List<BiomeTextures> biomeTexturesList = new List<BiomeTextures>();
+        ProgressBar("Conditional Painter", "Gathering Conditions", 0.05f);
         foreach (Conditions item in conditions)
         {
             foreach (var topologyLayerInt in ReturnSelectedElementsTopology())
@@ -985,11 +978,12 @@ public class MapIO : MonoBehaviour {
             {
                 slopes = getSlopes();
             }
-            ProgressBar("Conditional Painter", "Checking Conditions", 0.05f);
+            progressBar = 0f;
+            progressValue = 1f / groundSplatMap.GetLength(0);
             for (int i = 0; i < groundSplatMap.GetLength(0); i++)
             {
-                ProgressBar("Conditional Painter", "If this hangs too long close Unity. \n" +
-                    "A performance update will come soon.", 0.5f);
+                progressBar += progressValue;
+                ProgressBar("Conditional Painter", "Checking Conditions", progressBar);
                 for (int j = 0; j < groundSplatMap.GetLength(1); j++)
                 {
                     paint = true;
@@ -1104,26 +1098,12 @@ public class MapIO : MonoBehaviour {
             }
             ClearProgressBar();
             progressValue = 0f; progressBar = 0f;
-            switch (landLayer)
+            landData.setData(splatMapPaint, landLayer);
+            landData.setLayer(landLayer);
+            if (landLayer.ToLower() == "topology")
             {
-                case "Ground":
-                    groundLandData.setData(splatMapPaint, landLayer);
-                    groundLandData.setLayer(landLayer);
-                    break;
-                case "Biome":
-                    biomeLandData.setData(splatMapPaint, landLayer);
-                    biomeLandData.setLayer(landLayer);
-                    break;
-                case "Alpha":
-                    alphaLandData.setData(splatMapPaint, landLayer);
-                    alphaLandData.setLayer(landLayer);
-                    break;
-                case "Topology":
-                    topologyLandData.setData(splatMapPaint, landLayer);
-                    topologyLandData.setLayer(landLayer);
-                    topologyLayer = oldTopologyLayer2;
-                    saveTopologyLayer();
-                    break;
+                topologyLayer = oldTopologyLayer2;
+                saveTopologyLayer();
             }
         }
     }
@@ -1634,7 +1614,7 @@ public class MapIO : MonoBehaviour {
         ProgressBar("Debug Alpha", "Done", 1f);
         ClearProgressBar();
     }
-    public void textureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
+    public void TextureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
         ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
@@ -1665,12 +1645,10 @@ public class MapIO : MonoBehaviour {
                 Debug.Log("landLayerToPaint not found!");
                 break;
             case "Ground":
-                changeLayer("Ground");
                 Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = TerrainSplat.TypeToIndex((int)groundLayerToPaint); // Layer texture to copy from Ground Textures.
                 break;
             case "Biome":
-                changeLayer("Biome");
                 Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = TerrainBiome.TypeToIndex((int)biomeLayerToPaint); // Layer texture to copy from Biome Textures.
                 break;
