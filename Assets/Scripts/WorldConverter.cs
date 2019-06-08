@@ -1,12 +1,9 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static WorldSerialization;
 
-public class WorldConverter {
-    
-	// #fuckErrn
-	
+public class WorldConverter
+{
     public struct MapInfo
     {
         public int resolution;
@@ -113,6 +110,7 @@ public class WorldConverter {
                 }
             }
         }
+        terrains.splatMap = TypeConverter.MultiNormalised(terrains.splatMap, 8);
 
         terrains.biomeMap = new float[biomeMap.res, biomeMap.res, 4];
         for (int i = 0; i < terrains.biomeMap.GetLength(0); i++)
@@ -125,6 +123,8 @@ public class WorldConverter {
                 }
             }
         }
+        terrains.biomeMap = TypeConverter.MultiNormalised(terrains.biomeMap, 4);
+
         terrains.alphaMap = new float[alphaMap.res, alphaMap.res, 2];
         for (int i = 0; i < terrains.alphaMap.GetLength(0); i++)
         {
@@ -188,7 +188,7 @@ public class WorldConverter {
     
         var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 
-        float[,,] splatMapValues = TypeConverter.singleToMulti(GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>().splatMap, 8);
+        float[,,] splatMapValues = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>().groundArray;
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
 
@@ -205,7 +205,7 @@ public class WorldConverter {
 
         byte[] biomeBytes = new byte[textureResolution * textureResolution * 4];
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
-        float[,,] biomeArray = TypeConverter.singleToMulti(GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>().splatMap, 4);
+        float[,,] biomeArray = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>().biomeArray;
 
         for (int i = 0; i < 4; i++)
         {
@@ -221,7 +221,7 @@ public class WorldConverter {
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        float[,,] alphaArray = TypeConverter.singleToMulti(GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>().splatMap, 2);
+        float[,,] alphaArray = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>().alphaArray;
         for (int j = 0; j < textureResolution; j++)
         {
             for (int k = 0; k < textureResolution; k++)

@@ -14,6 +14,10 @@ public class LandData : MonoBehaviour {
     [SerializeField]
     public float[] splatMap;
 
+    public float[,,] groundArray;
+    public float[,,] biomeArray;
+    public float[,,] alphaArray;
+
     public TerrainLayer[] textures;
     Terrain terrain;
     [SerializeField]
@@ -26,13 +30,27 @@ public class LandData : MonoBehaviour {
 
     public void setData(float[,,] floatArray, string name)
     {
-        splatMap = TypeConverter.multiToSingle(floatArray);
+        switch (name.ToLower())
+        {
+            case "ground":
+                groundArray = floatArray;
+                break;
+            case "biome":
+                biomeArray = floatArray;
+                break;
+            case "alpha":
+                alphaArray = floatArray;
+                break;
+            case "topology":
+                splatMap = TypeConverter.multiToSingle(floatArray);
+                break;
+        }
         layerName = name;
     }
 
     public void getTextures()
     {
-        switch (layerName)
+        switch (layerName.ToLower())
         {
             case "ground":
                 textures = getGroundTextures();
@@ -54,25 +72,51 @@ public class LandData : MonoBehaviour {
 
     public void setLayer()
     {
-        if(terrain == null)
-            terrain = transform.parent.GetComponent<Terrain>();
-
-        if (textures == null)
-            getTextures();
-
-        terrain.terrainData.terrainLayers = textures;
         MapIO.ProgressBar("Getting Textures", "Getting textures to paint.", 0.5f);
-        float[,,] splats = TypeConverter.singleToMulti(splatMap, textures.Length);
+        terrain = transform.parent.GetComponent<Terrain>();
+        if (textures == null)
+        {
+            getTextures();
+        }
+        terrain.terrainData.terrainLayers = textures;
         MapIO.ProgressBar("Setting Textures", "Painting textures to terrain.", 0.75f);
-        terrain.terrainData.SetAlphamaps(0, 0, splats);
+        switch (layerName.ToLower())
+        {
+            case "ground":
+                terrain.terrainData.SetAlphamaps(0, 0, groundArray);
+                break;
+            case "biome":
+                terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
+                break;
+            case "alpha":
+                terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
+                break;
+            case "topology":
+                terrain.terrainData.SetAlphamaps(0, 0, TypeConverter.singleToMulti(splatMap, textures.Length));
+                break;
+        }
         MapIO.ClearProgressBar();
     }
 
 
     public void save()
     {
-        float[,,] alphaMaps = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
-        splatMap = TypeConverter.multiToSingle(terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight));
+        switch (layerName)
+        {
+            case "ground":
+                groundArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                break;
+            case "biome":
+                biomeArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                break;
+            case "alpha":
+                alphaArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                break;
+            case "topology":
+                float[,,] alphaMaps = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                splatMap = TypeConverter.multiToSingle(terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight));
+                break;
+        }
     }
 
     public float[] getSplat()

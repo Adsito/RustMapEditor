@@ -1261,6 +1261,10 @@ public class MapIO : MonoBehaviour {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Invert Layer");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
         float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        if (landLayer.ToLower() == "alpha")
+        {
+            splatMap = landData.alphaArray;
+        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1288,7 +1292,15 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Slope");
         LandData landData = GameObject.FindGameObjectWithTag("Land").transform.Find(landLayer).GetComponent<LandData>();
-        float[,,] splatMap = TypeConverter.singleToMulti(landData.splatMap, textureCount(landLayer));
+        float[,,] splatMap = new float[terrain.terrainData.alphamapResolution, terrain.terrainData.alphamapResolution, t];
+        switch (landLayer.ToLower())
+        {
+            case "ground":
+                splatMap = landData.groundArray;
+                break;
+            default:
+                break;
+        }
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
