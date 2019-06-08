@@ -124,7 +124,6 @@ public class MapIO : MonoBehaviour {
     public Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     private Terrain terrain;
-    private SceneView sceneView;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -149,11 +148,15 @@ public class MapIO : MonoBehaviour {
         landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
         RefreshAssetList(); // Refresh the auto gen asset presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
-        sceneView = SceneView.lastActiveSceneView;
+        CentreSceneView();
+    }
+    public static void CentreSceneView()
+    {
+        SceneView sceneView = SceneView.lastActiveSceneView;
         if (sceneView != null)
         {
-            sceneView.pivot = new Vector3(500f, 700f, 500f);
-            sceneView.LookAt(new Vector3(500f, 600f, 500f));
+            sceneView.pivot = new Vector3(500f, 1000f, 500f);
+            sceneView.LookAt(new Vector3(500f, 750f, 500f));
         }
     }
     public static void ProgressBar(string title, string info, float progress)
@@ -2100,9 +2103,9 @@ public class MapIO : MonoBehaviour {
         var worldCentreMapIO = GameObject.FindGameObjectWithTag("MapIO");
         worldCentreMapIO.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         CleanUpMap();
-        
+        CentreSceneView();
+
         var terrainPosition = 0.5f * terrains.size;
-        
         LandData landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
 
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
