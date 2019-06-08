@@ -867,7 +867,7 @@ public class MapIOEditor : EditorWindow
                             x2 = EditorGUILayout.IntField("To X ", x2);
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.paintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)script.biomeLayer));
+                                script.PaintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)script.biomeLayer));
                             }
                             
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
@@ -941,11 +941,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.paintArea("Alpha", z1, z2, x1, x2, 0);
+                                script.PaintArea("Alpha", z1, z2, x1, x2, 0);
                             }
                             if (GUILayout.Button("Erase Area"))
                             {
-                                script.paintArea("Alpha", z1, z2, x1, x2, 1);
+                                script.PaintArea("Alpha", z1, z2, x1, x2, 1);
                             }
                             EditorGUILayout.EndHorizontal();
                         }
@@ -1038,11 +1038,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.paintArea("Topology", z1, z2, x1, x2, 0);
+                                script.PaintArea("Topology", z1, z2, x1, x2, 0);
                             }
                             if (GUILayout.Button("Erase Area"))
                             {
-                                script.paintArea("Topology", z1, z2, x1, x2, 1);
+                                script.PaintArea("Topology", z1, z2, x1, x2, 1);
                             }
                             EditorGUILayout.EndHorizontal();
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");

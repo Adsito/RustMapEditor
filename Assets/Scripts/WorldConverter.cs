@@ -188,7 +188,7 @@ public class WorldConverter
     
         var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 
-        float[,,] splatMapValues = GameObject.FindGameObjectWithTag("Land").transform.Find("Ground").GetComponent<LandData>().groundArray;
+        float[,,] splatMapValues = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().groundArray;
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
 
@@ -205,7 +205,7 @@ public class WorldConverter
 
         byte[] biomeBytes = new byte[textureResolution * textureResolution * 4];
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
-        float[,,] biomeArray = GameObject.FindGameObjectWithTag("Land").transform.Find("Biome").GetComponent<LandData>().biomeArray;
+        float[,,] biomeArray = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().biomeArray;
 
         for (int i = 0; i < 4; i++)
         {
@@ -221,7 +221,7 @@ public class WorldConverter
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        float[,,] alphaArray = GameObject.FindGameObjectWithTag("Land").transform.Find("Alpha").GetComponent<LandData>().alphaArray;
+        float[,,] alphaArray = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().alphaArray;
         for (int j = 0; j < textureResolution; j++)
         {
             for (int k = 0; k < textureResolution; k++)
@@ -229,8 +229,7 @@ public class WorldConverter
                  alphaMap[0, j, k] = BitUtility.Float2Byte(alphaArray[j, k, 0]);
             }
         }
-
-        var topologyMap = GameObject.FindGameObjectWithTag("Topology").GetComponent<TopologyMesh>().getTerrainMap();
+        var topologyMap = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().getTerrainMap();
 
 
         world.AddMap("terrain", landHeightBytes);
