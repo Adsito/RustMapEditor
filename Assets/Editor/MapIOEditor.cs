@@ -15,7 +15,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.5-prerelease";
+    string editorVersion = "v1.6-prerelease";
 
     string loadFile = "";
     string saveFile = "";
@@ -828,8 +828,8 @@ public class MapIOEditor : EditorWindow
                             // Todo: Toggle for check between heightrange.
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.BeginHorizontal();
-                            GUILayout.Label("From: " + slopeLow.ToString() + "m", EditorStyles.boldLabel);
-                            GUILayout.Label("To: " + slopeHigh.ToString() + "m", EditorStyles.boldLabel);
+                            GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
+                            GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (blendSlopes == true)
