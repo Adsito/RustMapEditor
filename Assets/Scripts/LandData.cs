@@ -128,9 +128,9 @@ public class LandData : MonoBehaviour {
     {
         TerrainLayer[] textures = new TerrainLayer[2];
         textures[0] = Resources.Load<TerrainLayer>("Textures/Misc/Active");
-        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
+        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
         textures[1] = Resources.Load<TerrainLayer>("Textures/Misc/InActive");
-        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
+        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
         return textures;
     }
 
@@ -139,13 +139,13 @@ public class LandData : MonoBehaviour {
     {
         TerrainLayer[] textures = new TerrainLayer[4];
         textures[0] = Resources.Load<TerrainLayer>("Textures/Biome/Tundra");
-        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/tundra");
+        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/tundra");
         textures[1] = Resources.Load<TerrainLayer>("Textures/Biome/Temperate");
-        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/temperate");
+        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/temperate");
         textures[2] = Resources.Load<TerrainLayer>("Textures/Biome/Arid");
-        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arid");
+        //textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arid");
         textures[3] = Resources.Load<TerrainLayer>("Textures/Biome/Arctic");
-        textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arctic");
+        //textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arctic");
         return textures;
     }
 
@@ -153,21 +153,21 @@ public class LandData : MonoBehaviour {
     {
         TerrainLayer[] textures = new TerrainLayer[8];
         textures[0] = Resources.Load<TerrainLayer>("Textures/Ground/Dirt");
-        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/dirt");
+        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/dirt");
         textures[1] = Resources.Load<TerrainLayer>("Textures/Ground/Snow");
-        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/snow");
+        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/snow");
         textures[2] = Resources.Load<TerrainLayer>("Textures/Ground/Sand");
-        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/sand");
+        //textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/sand");
         textures[3] = Resources.Load<TerrainLayer>("Textures/Ground/Rock");
-        textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/rock");
+        //textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/rock");
         textures[4] = Resources.Load<TerrainLayer>("Textures/Ground/Grass");
-        textures[4].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/grass");
+        //textures[4].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/grass");
         textures[5] = Resources.Load<TerrainLayer>("Textures/Ground/Forest");
-        textures[5].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/forest");
+        //textures[5].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/forest");
         textures[6] = Resources.Load<TerrainLayer>("Textures/Ground/Stones");
-        textures[6].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/stones");
+        //textures[6].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/stones");
         textures[7] = Resources.Load<TerrainLayer>("Textures/Ground/Gravel");
-        textures[7].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/gravel");
+        //textures[7].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/gravel");
         return textures;
     }
 }
