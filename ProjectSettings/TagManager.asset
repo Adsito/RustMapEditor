@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - Prefabs
-  - Topology
   - Paths
   - Land
   - Water
@@ -13,6 +12,7 @@ TagManager:
   - LoadedPrefab
   - DefaultPrefab
   - World
+  - LandData
   layers:
   - Default
   - TransparentFX

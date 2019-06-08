@@ -6,6 +6,7 @@ using UnityEngine;
 [Serializable]
 public class TopologyMesh : MonoBehaviour {
     
+    [HideInInspector]
     [SerializeField]
     public byte[] top;
 
