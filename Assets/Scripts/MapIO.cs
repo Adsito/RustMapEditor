@@ -833,11 +833,11 @@ public class MapIO : MonoBehaviour {
     public int TextureCount(string landLayer) // Texture count in layer chosen, used for determining the size of the splatmap array.
     // Call method with the layer you are painting to.
     {
-        if(landLayer == "Ground")
+        if(landLayer.ToLower() == "ground")
         {
             return 8;
         }
-        else if (landLayer == "Biome")
+        else if (landLayer == "biome")
         {
             return 4;
         }
@@ -1042,17 +1042,18 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Height");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        int textureCount = TextureCount(landLayer);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < (float)splatMap.GetLength(1); j++)
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float[] normalised = new float[TextureCount(landLayer)];
+                float[] normalised = new float[textureCount];
                 float height = terrain.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
                 if (height > heightLow && height < heightHigh)
                 {
-                    for (int k = 0; k < TextureCount(landLayer); k++) // Erases the textures on all the layers.
+                    for (int k = 0; k < textureCount; k++) // Erases the textures on all the layers.
                     {
                         splatMap[i, j, k] = 0;
                     }
@@ -1063,7 +1064,7 @@ public class MapIO : MonoBehaviour {
                     float normalisedHeight = height - minBlendLow;
                     float heightRange = heightLow - minBlendLow;
                     float heightBlend = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
-                    for (int k = 0; k < TextureCount(landLayer); k++)
+                    for (int k = 0; k < textureCount; k++)
                     {
                         if (k == t)
                         {
@@ -1088,7 +1089,7 @@ public class MapIO : MonoBehaviour {
                     float heightRange = maxBlendHigh - heightHigh;
                     float heightBlendInverted = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
                     float heightBlend = 1 - heightBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
-                    for (int k = 0; k < TextureCount(landLayer); k++)
+                    for (int k = 0; k < textureCount; k++)
                     {
                         if (k == t)
                         {
@@ -1117,11 +1118,12 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Layer");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        int textureCount = TextureCount(landLayer);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                for (int k = 0; k < TextureCount(landLayer); k++)
+                for (int k = 0; k < textureCount; k++)
                 {
                     splatMap[i, j, k] = 0;
                 }
@@ -1205,17 +1207,18 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Slope");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        int textureCount = TextureCount(landLayer);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float[] normalised = new float[TextureCount(landLayer)];
+                float[] normalised = new float[textureCount];
                 float slope = terrain.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
                 if (slope >= slopeLow && slope <= slopeHigh)
                 {
-                    for (int k = 0; k < TextureCount(landLayer); k++) 
+                    for (int k = 0; k < textureCount; k++) 
                     {
                         splatMap[i, j, k] = 0;
                     }
@@ -1226,7 +1229,7 @@ public class MapIO : MonoBehaviour {
                     float normalisedSlope = slope - minBlendLow;
                     float slopeRange = slopeLow - minBlendLow;
                     float slopeBlend = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
-                    for (int k = 0; k < TextureCount(landLayer); k++) // Gets the weights of the textures in the pos. 
+                    for (int k = 0; k < textureCount; k++) // Gets the weights of the textures in the pos. 
                     {
                         if (k == t)
                         {
@@ -1251,7 +1254,7 @@ public class MapIO : MonoBehaviour {
                     float slopeRange = maxBlendHigh - slopeHigh; 
                     float slopeBlendInverted = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
                     float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
-                    for (int k = 0; k < TextureCount(landLayer); k++)
+                    for (int k = 0; k < textureCount; k++)
                     {
                         if (k == t)
                         {
@@ -1283,6 +1286,7 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        int textureCount = TextureCount(landLayer);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1291,7 +1295,7 @@ public class MapIO : MonoBehaviour {
                 {
                     if (j >= x1 && j <= x2)
                     {
-                        for (int k = 0; k < TextureCount(landLayer); k++)
+                        for (int k = 0; k < textureCount; k++)
                         {
                             splatMap[i, j, k] = 0;
                         }
@@ -1308,6 +1312,7 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint River");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        int textureCount = TextureCount(landLayer);
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -1322,7 +1327,7 @@ public class MapIO : MonoBehaviour {
                     case true:
                         if (waterHeight > 500 && waterHeight > landHeight)
                         {
-                            for (int k = 0; k < TextureCount(landLayer); k++)
+                            for (int k = 0; k < textureCount; k++)
                             {
                                 splatMap[i, j, k] = 0;
                             }
@@ -1332,7 +1337,7 @@ public class MapIO : MonoBehaviour {
                     case false:
                         if (waterHeight > 500)
                         {
-                            for (int k = 0; k < TextureCount(landLayer); k++)
+                            for (int k = 0; k < textureCount; k++)
                             {
                                 splatMap[i, j, k] = 0;
                             }
@@ -2094,9 +2099,12 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
+        // Will clean this up later, without the below the topology layer last selected is not saved to the array properly, and if ground selected it shows the topology until
+        // the layer is swapped.
         ChangeLayer("Ground");
         landData.setData(topology.getSplatMap((int)topologyLayer), "topology", TerrainTopology.TypeToIndex((int)topologyLayer));
         landData.setLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+        ChangeLayer("Ground");
         ClearProgressBar();
     }
     public void Load(WorldSerialization blob)
