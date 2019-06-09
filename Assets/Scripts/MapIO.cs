@@ -205,22 +205,19 @@ public class MapIO : MonoBehaviour {
             landData.save(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
         }
         Undo.ClearAll();
+        landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
         switch (landLayer.ToLower())
         {
             case "ground":
-                landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
                 landData.setLayer("ground");
                 break;
             case "biome":
-                landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
                 landData.setLayer("biome");
                 break;
             case "alpha":
-                landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
                 landData.setLayer("alpha");
                 break;
             case "topology":
-                landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
                 landData.setLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
         }
@@ -2083,6 +2080,8 @@ public class MapIO : MonoBehaviour {
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
         ChangeLayer("Ground");
+        landData.setData(topology.getSplatMap((int)topologyLayer), "topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+        landData.setLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
     }
     public void Load(WorldSerialization blob)
@@ -2118,11 +2117,19 @@ public class MapIO : MonoBehaviour {
     public void newEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
-        ClearLayer("Topology");
+        progressValue = 1f / TerrainTopology.COUNT;
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            progressBar += progressValue;
+            ClearLayer("Topology", i);
+            ProgressBar("Creating New Map", "Wiping layers", progressBar);
+        }
         ClearLayer("Alpha");
-        PaintLayer("Biome", 0);
+        PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         setMinimumHeight(503f);
+        ClearProgressBar();
+        progressBar = 0;
     }
     public void createDefaultPrefabs()
     {
