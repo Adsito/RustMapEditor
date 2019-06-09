@@ -143,6 +143,7 @@ public class MapIO : MonoBehaviour {
     #endregion
     void Start()
     {
+        loadPath = "";
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         landData = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>();
