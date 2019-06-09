@@ -28,20 +28,20 @@ public class InvertLayerNode : Node
         switch (layer.LandLayer)
         {
             case 2: // Alpha
-                mapIO.changeLayer("Alpha");
+                mapIO.ChangeLayer("Alpha");
                 mapIO.InvertLayer("Alpha");
                 break;
             case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.changeLayer("Topology");
+                mapIO.ChangeLayer("Topology");
                 mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
 
                 mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.changeLandLayer();
+                mapIO.ChangeLandLayer();
                 mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
                 mapIO.InvertLayer("Topology");
 
                 mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.changeLandLayer();
+                mapIO.ChangeLandLayer();
                 mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
                 break;
         }

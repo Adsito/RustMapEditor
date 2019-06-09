@@ -652,7 +652,7 @@ public class MapIOEditor : EditorWindow
                                 EditorGUILayout.BeginHorizontal();
                                 if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
                                 {
-                                    script.changeLayer("Ground");
+                                    script.ChangeLayer("Ground");
                                     script.alphaDebug("Ground");
                                 }
                                 if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
@@ -676,7 +676,7 @@ public class MapIOEditor : EditorWindow
                         script.landLayer = options[script.landSelectIndex];
                         if (script.landLayer != oldLandLayer)
                         {
-                            script.changeLandLayer();
+                            script.ChangeLandLayer();
                             Repaint();
                         }
                         if (slopeMinBlendHigh > slopeMaxBlendHigh)
@@ -958,7 +958,7 @@ public class MapIOEditor : EditorWindow
                             script.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", script.topologyLayer);
                             if (script.topologyLayer != script.oldTopologyLayer)
                             {
-                                script.changeLandLayer();
+                                script.ChangeLandLayer();
                                 Repaint();
                             }
                             EditorGUILayout.BeginHorizontal();
