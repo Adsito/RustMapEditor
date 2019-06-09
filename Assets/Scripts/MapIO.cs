@@ -291,7 +291,7 @@ public class MapIO : MonoBehaviour {
         return 0.5f * getTerrainSize();
     }
     #region RotateMap Methods
-    public void rotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
+    public void RotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
     {
         Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -310,7 +310,7 @@ public class MapIO : MonoBehaviour {
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(waterMap));
         }
     }
-    public void rotatePrefabs(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    public void RotatePrefabs(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
         if (CW)
@@ -322,7 +322,7 @@ public class MapIO : MonoBehaviour {
             prefabRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
-    public void rotatePaths(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    public void RotatePaths(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
     {
         var pathRotate = GameObject.FindGameObjectWithTag("Paths");
         if (CW)
@@ -334,7 +334,7 @@ public class MapIO : MonoBehaviour {
             pathRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
-    public void rotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
+    public void RotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
     {
         float[,,] newGround = landData.groundArray;
         float[,,] oldGround = landData.groundArray;
@@ -368,7 +368,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(newGround, "ground");
         landData.setLayer(landLayer);
     }
-    public void rotateBiomemap(bool CW) //Rotates Biomemap 90 degrees for CW true.
+    public void RotateBiomemap(bool CW) //Rotates Biomemap 90 degrees for CW true.
     {
         float[,,] newBiome = landData.biomeArray;
         float[,,] oldBiome = landData.biomeArray;
@@ -402,7 +402,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(newBiome, "biome");
         landData.setLayer(landLayer);
     }
-    public void rotateAlphamap(bool CW) //Rotates Alphamap 90 degrees for CW true.
+    public void RotateAlphamap(bool CW) //Rotates Alphamap 90 degrees for CW true.
     {
         float[,,] newAlpha = landData.alphaArray;
         float[,,] oldAlpha = landData.alphaArray;
@@ -436,7 +436,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(newAlpha, "alpha");
         landData.setLayer(landLayer);
     }
-    public void rotateTopologymap(bool CW) //Rotates Topology map 90 degrees for CW true.
+    public void RotateTopologymap(bool CW, int topology = 0) //Rotates Topology map 90 degrees for CW true.
     {
         float[,,] newTopology = landData.topologyArray[landData.topologyLayer];
         float[,,] oldTopology = landData.topologyArray[landData.topologyLayer];
@@ -466,23 +466,22 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
-        landData.setData(newTopology, "topology", (int)topologyLayer);
-        landData.setLayer(landLayer);
+        landData.setData(newTopology, "topology", topology);
+        landData.setLayer(landLayer, topology);
     }
-    public void rotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
+    public void RotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
     {
         float[,,] newTopology = landData.topologyArray[0];
         float[,,] oldTopology = landData.topologyArray[0];
-        progressValue /= TerrainTopology.COUNT;
-        foreach (TerrainTopology.Enum topo in (TerrainTopology.Enum[])Enum.GetValues(typeof(TerrainTopology.Enum)))
+        progressValue =  1f / TerrainTopology.COUNT;
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            topologyLayer = topo;
             progressBar += progressValue;
-            ProgressBar("Rotating Map", "Rotating " + topo.ToString() + " Topology", progressBar);
-            rotateTopologymap(CW);
+            ProgressBar("Rotating Map", "Rotating " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i) + " Topology", progressBar);
+            RotateTopologymap(CW, i);
         }
         ClearProgressBar();
-        progressBar = 0f; progressValue = 0f;
+        progressBar = 0f;
     }
     #endregion
     #region HeightMap Methods
@@ -1334,7 +1333,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(splatMap, landLayer, topology);
         landData.setLayer(landLayer, topology);
     }
-    public void autoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. If wipeLayer == true it will wipe the existing topologies on the layer before painting
+    public void AutoGenerateTopology(bool wipeLayer) // Assigns topology active to these values. If wipeLayer == true it will wipe the existing topologies on the layer before painting
     // the new topologies.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Auto Generate Topologies");
@@ -1586,8 +1585,8 @@ public class MapIO : MonoBehaviour {
             }
         }
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
-        landData.setData(splatMapTo, landLayerToPaint, (int)topologyLayerToPaint);
-        landData.setLayer(landLayer, (int)topologyLayerToPaint);
+        landData.setData(splatMapTo, landLayerToPaint, TerrainTopology.TypeToIndex((int)topologyLayerToPaint));
+        landData.setLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayerToPaint));
         ClearProgressBar();
     }
     public void generateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
@@ -1984,7 +1983,7 @@ public class MapIO : MonoBehaviour {
         streamWriter.Close();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
-    private void loadMapInfo(MapInfo terrains)
+    private void LoadMapInfo(MapInfo terrains)
     {
         if (MapIO.topology == null)
         {
@@ -2083,17 +2082,18 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
+        
         ClearProgressBar();
     }
     public void Load(WorldSerialization blob)
     {
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
-        loadMapInfo(terrains);
+        LoadMapInfo(terrains);
     }
     public void loadEmpty(int size)
     {
-        loadMapInfo(WorldConverter.emptyWorld(size));
+        LoadMapInfo(WorldConverter.emptyWorld(size));
     }
     public void Save(string path)
     {
@@ -2117,7 +2117,7 @@ public class MapIO : MonoBehaviour {
     }
     public void newEmptyTerrain(int size)
     {
-        loadMapInfo(WorldConverter.emptyWorld(size));
+        LoadMapInfo(WorldConverter.emptyWorld(size));
         ClearLayer("Topology");
         ClearLayer("Alpha");
         PaintLayer("Biome", 0);

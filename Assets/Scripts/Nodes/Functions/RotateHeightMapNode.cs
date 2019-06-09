@@ -15,6 +15,6 @@ public class RotateHeightMapNode : Node
     public void RunNode()
     {
         MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.rotateHeightmap(CW);
+        mapIO.RotateHeightmap(CW);
     }
 }
