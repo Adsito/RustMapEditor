@@ -193,12 +193,12 @@ public class MapIO : MonoBehaviour {
     {
         return prefabLookup;
     }
-    public void changeLayer(string layer)
+    public void ChangeLayer(string layer)
     {
         landLayer = layer;
-        changeLandLayer();
+        ChangeLandLayer();
     }
-    public void changeLandLayer()
+    public void ChangeLandLayer()
     {
         if (landData != null)
         {
@@ -1384,7 +1384,7 @@ public class MapIO : MonoBehaviour {
             PaintArea("Topology", terrain.terrainData.alphamapResolution / 3 * 2, terrain.terrainData.alphamapResolution, 0, terrain.terrainData.alphamapResolution, 0); // Gets thirds of Terrain
 
             ClearProgressBar();
-            changeLandLayer();
+            ChangeLandLayer();
         }
         else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
@@ -1392,67 +1392,67 @@ public class MapIO : MonoBehaviour {
 
             ProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
-            changeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
+            ChangeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
             oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
             PaintHeight("Topology", 0, 475, 0, 475, 0);
 
             ProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
             topologyLayer = TerrainTopology.Enum.Ocean;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Ocean;
             PaintHeight("Topology", 0, 498, 0, 498, 0);
 
             ProgressBar("Generating Topologies", "Generating Beach", 0.3f);
             topologyLayer = TerrainTopology.Enum.Beach;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Beach;
             PaintHeight("Topology", 500, 502, 500, 502, 0);
 
             ProgressBar("Generating Topologies", "Generating Oceanside", 0.4f);
             topologyLayer = TerrainTopology.Enum.Oceanside;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Oceanside;
             PaintHeight("Topology", 500, 502, 500, 502, 0);
 
             ProgressBar("Generating Topologies", "Generating Mainland", 0.5f);
             topologyLayer = TerrainTopology.Enum.Mainland;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Mainland;
             PaintHeight("Topology", 500, 1000, 500, 1000, 0);
 
             ProgressBar("Generating Topologies", "Generating Cliff", 0.6f);
             topologyLayer = TerrainTopology.Enum.Cliff;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Cliff;
             PaintSlope("Topology", 45f, 90f, 45, 90f, 0);
 
             ProgressBar("Generating Topologies", "Generating Tier 0", 0.7f);
             topologyLayer = TerrainTopology.Enum.Tier0;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier0;
             PaintArea("Topology", 0, terrain.terrainData.alphamapResolution / 3, 0, terrain.terrainData.alphamapResolution, 0); // Gets thirds of Terrain
 
             ProgressBar("Generating Topologies", "Generating Tier 1", 0.8f);
             topologyLayer = TerrainTopology.Enum.Tier1;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier1;
             PaintArea("Topology", terrain.terrainData.alphamapResolution / 3, terrain.terrainData.alphamapResolution / 3 * 2, 0, terrain.terrainData.alphamapResolution, 0); // Gets thirds of Terrain
 
             ProgressBar("Generating Topologies", "Generating Tier 2", 0.9f);
             topologyLayer = TerrainTopology.Enum.Tier2;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             PaintArea("Topology", terrain.terrainData.alphamapResolution / 3 * 2, terrain.terrainData.alphamapResolution, 0, terrain.terrainData.alphamapResolution, 0); // Gets thirds of Terrain
 
             topologyLayer = oldTopologyLayer2;
-            changeLandLayer();
+            ChangeLandLayer();
             oldTopologyLayer = oldTopologyLayer2;
             ClearProgressBar();
         }
     }
     public void AutoGenerateGround() // Assigns terrain splats to these values. 
     {
-        changeLayer("Ground");
+        ChangeLayer("Ground");
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Auto Generate Ground");
 
         ProgressBar("Generating Ground Textures", "Generating: Forest", 0.15f);
@@ -1477,7 +1477,7 @@ public class MapIO : MonoBehaviour {
     } 
     public void AutoGenerateBiome() // Assigns biome splats to these values.
     {
-        changeLayer("Biome");
+        ChangeLayer("Biome");
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Auto Generate Biome");
 
         ProgressBar("Generating Biome Textures", "Generating: Temperate", 0.2f);
@@ -1530,15 +1530,15 @@ public class MapIO : MonoBehaviour {
                 Debug.Log("landLayerFrom not found!");
                 break;
             case "Ground":
-                changeLayer("Ground");
+                ChangeLayer("Ground");
                 textureFrom = TerrainSplat.TypeToIndex((int)groundLayerFrom); // Layer texture to copy from Ground Textures.
                 break;
             case "Biome":
-                changeLayer("Biome");
+                ChangeLayer("Biome");
                 textureFrom = TerrainBiome.TypeToIndex((int)biomeLayerFrom); // Layer texture to copy from Biome Textures.
                 break;
             case "Topology":
-                changeLayer("Topology");
+                ChangeLayer("Topology");
                 textureFrom = 0;
                 topologyLayer = topologyLayerFrom;
                 break;
@@ -1559,12 +1559,12 @@ public class MapIO : MonoBehaviour {
                 textureToPaint = TerrainBiome.TypeToIndex((int)biomeLayerToPaint); // Layer texture to copy from Biome Textures.
                 break;
             case "Topology":
-                changeLayer("Topology");
+                ChangeLayer("Topology");
                 Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = 0;
                 oldTopologyLayer2 = topologyLayer;
                 topologyLayer = topologyLayerToPaint;
-                changeLandLayer();
+                ChangeLandLayer();
                 oldTopologyLayer = topologyLayerToPaint;
                 break;
         }
@@ -2082,7 +2082,7 @@ public class MapIO : MonoBehaviour {
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        
+        ChangeLayer("Ground");
         ClearProgressBar();
     }
     public void Load(WorldSerialization blob)
