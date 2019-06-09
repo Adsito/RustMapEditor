@@ -670,6 +670,11 @@ public class MapIOEditor : EditorWindow
                     case 1:
                         GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
 
+                        if (script.loadPath == "")
+                        {
+                            GUILayout.Label("Load a map first before accessing layers.", EditorStyles.boldLabel);
+                            break;
+                        }
                         string oldLandLayer = script.landLayer;
                         string[] options = { "Ground", "Biome", "Alpha", "Topology" };
                         script.landSelectIndex = EditorGUILayout.Popup("Layer:", script.landSelectIndex, options);
