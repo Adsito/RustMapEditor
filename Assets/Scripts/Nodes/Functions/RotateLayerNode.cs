@@ -29,13 +29,13 @@ public class RotateLayerNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.rotateGroundmap(CW);
+                mapIO.RotateGroundmap(CW);
                 break;
             case 1: // Biome
-                mapIO.rotateBiomemap(CW);
+                mapIO.RotateBiomemap(CW);
                 break;
             case 2: // Alpha
-                mapIO.rotateAlphamap(CW);
+                mapIO.RotateAlphamap(CW);
                 break;
             case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
                 mapIO.changeLayer("Topology");
@@ -44,7 +44,7 @@ public class RotateLayerNode : Node
                 mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
                 mapIO.changeLandLayer();
                 mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.rotateTopologymap(CW);
+                mapIO.RotateTopologymap(CW);
 
                 mapIO.topologyLayer = mapIO.oldTopologyLayer2;
                 mapIO.changeLandLayer();
