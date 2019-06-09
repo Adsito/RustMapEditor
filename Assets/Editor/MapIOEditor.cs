@@ -643,7 +643,7 @@ public class MapIOEditor : EditorWindow
                                         CheckHeight = checkHeightCndtl,
                                         CheckSlope = checkSlopeCndtl
                                     });
-                                    script.paintConditional(landLayerList[layerConditionalInt], texture, conditions);
+                                    script.PaintConditional(landLayerList[layerConditionalInt], texture, conditions);
                                 }
                                 break;
                             #endregion

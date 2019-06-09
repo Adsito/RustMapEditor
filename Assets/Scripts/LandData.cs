@@ -8,23 +8,21 @@ using UnityEngine;
 [Serializable]
 
 
-public class LandData : MonoBehaviour {
-    
-
-    [HideInInspector]
-    [SerializeField]
-    public float[] splatMap;
-
+public class LandData : MonoBehaviour
+{
     public float[,,] groundArray;
     public float[,,] biomeArray;
     public float[,,] alphaArray;
+    public float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
     public TerrainLayer[] groundTextures = null;
     public TerrainLayer[] biomeTextures = null;
-    public TerrainLayer[] alphaTextures = null;
+    public TerrainLayer[] miscTextures = null;
 
     Terrain terrain;
     string layerName = "";
+    [HideInInspector]
+    public int topologyLayer = 0;
 
     void Awake()
     {
@@ -32,7 +30,7 @@ public class LandData : MonoBehaviour {
         getTextures();
     }
 
-    public void setData(float[,,] floatArray, string name)
+    public void setData(float[,,] floatArray, string name, int topology = 0)
     {
         switch (name.ToLower())
         {
@@ -46,7 +44,7 @@ public class LandData : MonoBehaviour {
                 alphaArray = floatArray;
                 break;
             case "topology":
-                splatMap = TypeConverter.multiToSingle(floatArray);
+                topologyArray[topology] = floatArray; 
                 break;
         }
         layerName = name;
@@ -55,47 +53,44 @@ public class LandData : MonoBehaviour {
     {
         groundTextures = getGroundTextures();
         biomeTextures = getBiomeTextures();
-        alphaTextures = getAlphaTextures();
+        miscTextures = getAlphaTextures();
     }
-    public void setLayer(string layer)
+    public void setLayer(string layer, int topology = 0)
     {
         terrain = transform.parent.GetComponent<Terrain>();
-        if (groundTextures == null || biomeTextures == null || alphaTextures == null)
+        if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
             getTextures();
         }
+        Selection.activeGameObject = null;
         switch (layer.ToLower())
         {
             case "ground":
                 layerName = "ground";
-                Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = groundTextures;
                 terrain.terrainData.SetAlphamaps(0, 0, groundArray);
                 break;
             case "biome":
                 layerName = "biome";
-                Selection.activeGameObject = null;
                 terrain.terrainData.terrainLayers = biomeTextures;
                 terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
                 break;
             case "alpha":
                 layerName = "alpha";
-                Selection.activeGameObject = null;
-                terrain.terrainData.terrainLayers = alphaTextures;
+                terrain.terrainData.terrainLayers = miscTextures;
                 terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
             case "topology":
                 layerName = "topology";
-                Selection.activeGameObject = null;
-                terrain.terrainData.terrainLayers = alphaTextures;
-                terrain.terrainData.SetAlphamaps(0, 0, TypeConverter.singleToMulti(splatMap, 2));
+                terrain.terrainData.terrainLayers = miscTextures;
+                terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
             default:
                 Debug.Log("Layer not set");
                 break;
         }
     }
-    public void save()
+    public void save(int topologyLayer = 0)
     {
         switch (layerName)
         {
@@ -109,14 +104,9 @@ public class LandData : MonoBehaviour {
                 alphaArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
                 break;
             case "topology":
-                float[,,] alphaMaps = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
-                splatMap = TypeConverter.multiToSingle(terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight));
+                topologyArray[topologyLayer] = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
                 break;
         }
-    }
-    public float[] getSplat()
-    {
-        return splatMap;
     }
     public TerrainLayer[] getAlphaTextures()
     {
