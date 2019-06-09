@@ -1000,6 +1000,16 @@ public class MapIOEditor : EditorWindow
                                 script.RotateAllTopologymap(false);
                             }
                             EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers.")))
+                            {
+                                script.InvertAllLayers();
+                            }
+                            if (GUILayout.Button(new GUIContent("Clear All", "Clear all Topology layers.")))
+                            {
+                                script.ClearAllLayers();
+                            }
+                            EditorGUILayout.EndHorizontal();
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
