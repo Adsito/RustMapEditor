@@ -166,6 +166,7 @@ public class MapIO : MonoBehaviour {
     }
     public static void ClearProgressBar()
     {
+        GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
     public void setPrefabLookup(PrefabLookup prefabLookup)
@@ -291,20 +292,20 @@ public class MapIO : MonoBehaviour {
     #region RotateMap Methods
     public void RotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
     {
-        Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
 
-        float[,] heightMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight);
+        float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
 
         if (CW)
         {
-            land.terrainData.SetHeights(0, 0, MapTransformations.rotateCW(heightMap));
+            terrain.terrainData.SetHeights(0, 0, MapTransformations.rotateCW(heightMap));
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCW(waterMap));
         }
         else
         {
-            land.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(heightMap));
+            terrain.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(heightMap));
             water.terrainData.SetHeights(0, 0, MapTransformations.rotateCCW(waterMap));
         }
     }
@@ -334,9 +335,8 @@ public class MapIO : MonoBehaviour {
     }
     public void RotateGroundmap(bool CW) //Rotates Groundmap 90 degrees for CW true.
     {
-        float[,,] newGround = landData.groundArray;
         float[,,] oldGround = landData.groundArray;
-
+        float[,,] newGround = new float[oldGround.GetLength(0), oldGround.GetLength(1), 8];
         if (CW)
         {
             for (int i = 0; i < newGround.GetLength(0); i++)
@@ -368,9 +368,8 @@ public class MapIO : MonoBehaviour {
     }
     public void RotateBiomemap(bool CW) //Rotates Biomemap 90 degrees for CW true.
     {
-        float[,,] newBiome = landData.biomeArray;
         float[,,] oldBiome = landData.biomeArray;
-
+        float[,,] newBiome = new float[oldBiome.GetLength(0), oldBiome.GetLength(1), 4];
         if (CW)
         {
             for (int i = 0; i < newBiome.GetLength(0); i++)
@@ -402,9 +401,8 @@ public class MapIO : MonoBehaviour {
     }
     public void RotateAlphamap(bool CW) //Rotates Alphamap 90 degrees for CW true.
     {
-        float[,,] newAlpha = landData.alphaArray;
         float[,,] oldAlpha = landData.alphaArray;
-
+        float[,,] newAlpha = new float[oldAlpha.GetLength(0), oldAlpha.GetLength(1), 2];
         if (CW)
         {
             for (int i = 0; i < newAlpha.GetLength(0); i++)
@@ -436,8 +434,8 @@ public class MapIO : MonoBehaviour {
     }
     public void RotateTopologymap(bool CW, int topology = 0) //Rotates Topology map 90 degrees for CW true.
     {
-        float[,,] newTopology = landData.topologyArray[landData.topologyLayer];
-        float[,,] oldTopology = landData.topologyArray[landData.topologyLayer];
+        float[,,] oldTopology = landData.topologyArray[topology];
+        float[,,] newTopology = new float[oldTopology.GetLength(0), oldTopology.GetLength(1), 2];
         if (CW)
         {
             for (int i = 0; i < newTopology.GetLength(0); i++)
@@ -479,7 +477,6 @@ public class MapIO : MonoBehaviour {
             RotateTopologymap(CW, i);
         }
         ClearProgressBar();
-        progressBar = 0f;
     }
     #endregion
     #region HeightMap Methods
@@ -918,7 +915,6 @@ public class MapIO : MonoBehaviour {
             {
                 slopes = getSlopes();
             }
-            progressBar = 0f;
             progressValue = 1f / groundSplatMap.GetLength(0);
             for (int i = 0; i < groundSplatMap.GetLength(0); i++)
             {
@@ -1037,7 +1033,6 @@ public class MapIO : MonoBehaviour {
                 }
             }
             ClearProgressBar();
-            progressValue = 0f; progressBar = 0f;
             landData.setData(splatMapPaint, landLayer, topology);
             landData.setLayer(landLayer, topology);
         }
@@ -1141,11 +1136,12 @@ public class MapIO : MonoBehaviour {
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Clear Layer");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
+        var alpha = (landLayer.ToLower() == "alpha") ? true : false;
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                if (landLayer.ToLower() == "Alpha")
+                if (alpha)
                 {
                     splatMap[i, j, 0] = 1;
                     splatMap[i, j, 1] = 0;
@@ -1160,14 +1156,21 @@ public class MapIO : MonoBehaviour {
         landData.setData(splatMap, landLayer, topology);
         landData.setLayer(landLayer, topology);
     }
+    public void ClearAllLayers()
+    {
+        progressValue = 1f / TerrainTopology.COUNT;
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            ClearLayer("topology", i);
+        }
+        ClearProgressBar();
+    }
     public void InvertLayer(string landLayer, int topology = 0) // Inverts the active and inactive textures. Alpha and Topology only. 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Invert Layer");
         float[,,] splatMap = GetSplatMap(landLayer, topology);
-        if (landLayer.ToLower() == "alpha")
-        {
-            splatMap = landData.alphaArray;
-        }
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1186,6 +1189,17 @@ public class MapIO : MonoBehaviour {
         }
         landData.setData(splatMap, landLayer, topology);
         landData.setLayer(landLayer, topology);
+    }
+    public void InvertAllLayers()
+    {
+        progressValue = 1f / TerrainTopology.COUNT;
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            InvertLayer("topology", i);
+        }
+        ClearProgressBar();
     }
     public void PaintSlope(string landLayer, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
@@ -2123,14 +2137,13 @@ public class MapIO : MonoBehaviour {
         {
             progressBar += progressValue;
             ClearLayer("Topology", i);
-            ProgressBar("Creating New Map", "Wiping layers", progressBar);
+            ProgressBar("Creating New Map", "Wiping: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
         }
         ClearLayer("Alpha");
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         setMinimumHeight(503f);
         ClearProgressBar();
-        progressBar = 0;
     }
     public void createDefaultPrefabs()
     {
