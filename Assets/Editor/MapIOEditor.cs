@@ -183,6 +183,11 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Tools
             case 1:
+                if (script.loadPath == "")
+                {
+                    GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
+                    break;
+                }
                 GUIContent[] toolsOptionsMenu = new GUIContent[3];
                 toolsOptionsMenu[0] = new GUIContent("Map Tools");
                 toolsOptionsMenu[1] = new GUIContent("Layer Tools");
@@ -669,12 +674,7 @@ public class MapIOEditor : EditorWindow
                     #region Layer Tools
                     case 1:
                         GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
-
-                        if (script.loadPath == "")
-                        {
-                            GUILayout.Label("Load a map first before accessing layers.", EditorStyles.boldLabel);
-                            break;
-                        }
+                        
                         string oldLandLayer = script.landLayer;
                         string[] options = { "Ground", "Biome", "Alpha", "Topology" };
                         script.landSelectIndex = EditorGUILayout.Popup("Layer:", script.landSelectIndex, options);
@@ -1104,6 +1104,11 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Prefabs
             case 2:
+                if (script.loadPath == "")
+                {
+                    GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
+                    break;
+                }
                 GUIContent[] prefabsOptionsMenu = new GUIContent[3];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
                 prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
