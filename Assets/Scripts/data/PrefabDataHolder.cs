@@ -18,7 +18,7 @@ public class PrefabDataHolder : MonoBehaviour {
     }
     public void MapSave()
     {
-        prefabData.position = gameObject.transform.position - MapIO.getMapOffset();
+        prefabData.position = gameObject.transform.position - MapIO.GetMapOffset();
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
