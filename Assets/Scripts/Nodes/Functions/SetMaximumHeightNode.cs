@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Set Maximum Height")]
+[CreateNodeMenu("Functions/HeightMap/Set Maximum Height")]
 public class SetMaximumHeight : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;

@@ -2,7 +2,7 @@
 using UnityEditor;
 using XNodeEditor;
 
-[CustomNodeEditor(typeof(PaintRiverNode))]
+[CustomNodeEditor(typeof(PaintRiversNode))]
 public class PaintRiverNodeEditor : NodeEditor
 {
     public override Color GetTint()
@@ -16,7 +16,7 @@ public class PaintRiverNodeEditor : NodeEditor
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
-        PaintRiverNode node = target as PaintRiverNode;
+        PaintRiversNode node = target as PaintRiversNode;
         node.aboveTerrain = EditorGUILayout.ToggleLeft(new GUIContent("Above Terrain", "When ticked, only paints when the water is above 500 AND is above the height of" +
             "the terrain."), node.aboveTerrain);
     }

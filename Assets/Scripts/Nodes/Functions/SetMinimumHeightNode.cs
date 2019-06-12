@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Set Minimum Height")]
+[CreateNodeMenu("Functions/HeightMap/Set Minimum Height")]
 public class SetMinimumHeight : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;

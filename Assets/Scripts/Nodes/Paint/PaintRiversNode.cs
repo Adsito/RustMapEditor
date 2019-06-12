@@ -2,8 +2,8 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Paint/Paint River")]
-public class PaintRiverNode : Node
+[CreateNodeMenu("Paint/Paint Rivers")]
+public class PaintRiversNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;

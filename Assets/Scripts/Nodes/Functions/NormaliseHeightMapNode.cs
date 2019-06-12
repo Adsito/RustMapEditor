@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Normalise HeightMap")]
+[CreateNodeMenu("Functions/HeightMap/Normalise HeightMap")]
 public class NormaliseHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;

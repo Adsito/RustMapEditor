@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Smooth HeightMap")]
+[CreateNodeMenu("Functions/HeightMap/Smooth HeightMap")]
 public class SmoothHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
