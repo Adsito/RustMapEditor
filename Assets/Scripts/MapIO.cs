@@ -104,7 +104,6 @@ public class MapIO : MonoBehaviour {
     public TerrainTopology.Enum conditionalTopology;
     public TerrainTopology.Enum topologyLayersList;
     public TerrainTopology.Enum oldTopologyLayer;
-    public TerrainTopology.Enum oldTopologyLayer2;
     public TerrainBiome.Enum biomeLayer;
     public TerrainBiome.Enum conditionalBiome;
     public TerrainSplat.Enum terrainLayer;
@@ -1405,12 +1404,10 @@ public class MapIO : MonoBehaviour {
         }
         else if (wipeLayer == false) // Paints active texture on to layer whilst keeping the current layer's textures.
         {
-            oldTopologyLayer2 = topologyLayer; //This saves the currently selected topology layer so we can swap back to it at the end, ensuring we don't accidentally erase anything.
-
             ProgressBar("Generating Topologies", "Generating Offshore", 0.1f);
             topologyLayer = TerrainTopology.Enum.Offshore; // This sets the new current topology layer to offshore.
             ChangeLandLayer(); // This changes the topology layer to offshore. It also saves the previous layer for us.
-            oldTopologyLayer = TerrainTopology.Enum.Offshore; // This is the layer the paint the offshore height to.
+            oldTopologyLayer = TerrainTopology.Enum.Offshore;
             PaintHeight("Topology", 0, 475, 0, 475, 0);
 
             ProgressBar("Generating Topologies", "Generating Ocean", 0.2f);
@@ -1461,17 +1458,11 @@ public class MapIO : MonoBehaviour {
             oldTopologyLayer = TerrainTopology.Enum.Tier2;
             PaintArea("Topology", terrain.terrainData.alphamapResolution / 3 * 2, terrain.terrainData.alphamapResolution, 0, terrain.terrainData.alphamapResolution, 0); // Gets thirds of Terrain
 
-            topologyLayer = oldTopologyLayer2;
-            ChangeLandLayer();
-            oldTopologyLayer = oldTopologyLayer2;
             ClearProgressBar();
         }
     }
     public void AutoGenerateGround() // Assigns terrain splats to these values. 
     {
-        ChangeLayer("Ground");
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Auto Generate Ground");
-
         ProgressBar("Generating Ground Textures", "Generating: Forest", 0.15f);
         generateTwoLayersNoise("Ground", UnityEngine.Random.Range(45f, 55f), 0, 4);
 
@@ -1494,9 +1485,6 @@ public class MapIO : MonoBehaviour {
     } 
     public void AutoGenerateBiome() // Assigns biome splats to these values.
     {
-        ChangeLayer("Biome");
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Auto Generate Biome");
-
         ProgressBar("Generating Biome Textures", "Generating: Temperate", 0.2f);
         PaintHeight("Biome", 0, 550, 0, 675, 1);
 
@@ -1511,7 +1499,6 @@ public class MapIO : MonoBehaviour {
     public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Alpha Debug");
         ProgressBar("Debug Alpha", "Debugging", 0.3f);
         float[,,] splatMap = GetSplatMap("ground");
         float[,,] alphaSplatMap = GetSplatMap("alpha"); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
@@ -1547,17 +1534,13 @@ public class MapIO : MonoBehaviour {
                 Debug.Log("landLayerFrom not found!");
                 break;
             case "Ground":
-                ChangeLayer("Ground");
                 textureFrom = TerrainSplat.TypeToIndex((int)groundLayerFrom); // Layer texture to copy from Ground Textures.
                 break;
             case "Biome":
-                ChangeLayer("Biome");
                 textureFrom = TerrainBiome.TypeToIndex((int)biomeLayerFrom); // Layer texture to copy from Biome Textures.
                 break;
             case "Topology":
-                ChangeLayer("Topology");
                 textureFrom = 0;
-                topologyLayer = topologyLayerFrom;
                 break;
         }
         float[,,] splatMapFrom = GetSplatMap(landLayerFrom); // Land layer to copy from.
@@ -1568,21 +1551,13 @@ public class MapIO : MonoBehaviour {
                 Debug.Log("landLayerToPaint not found!");
                 break;
             case "Ground":
-                Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = TerrainSplat.TypeToIndex((int)groundLayerToPaint); // Layer texture to copy from Ground Textures.
                 break;
             case "Biome":
-                Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = TerrainBiome.TypeToIndex((int)biomeLayerToPaint); // Layer texture to copy from Biome Textures.
                 break;
             case "Topology":
-                ChangeLayer("Topology");
-                Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Texture Copy");
                 textureToPaint = 0;
-                oldTopologyLayer2 = topologyLayer;
-                topologyLayer = topologyLayerToPaint;
-                ChangeLandLayer();
-                oldTopologyLayer = topologyLayerToPaint;
                 break;
         }
         float[,,] splatMapTo = GetSplatMap(landLayerToPaint); //  Land layer to paint to.
@@ -2222,6 +2197,7 @@ public class MapIO : MonoBehaviour {
                         }
                     }
                     while (nodeIteration != null);
+                    ChangeLayer(landLayer);
                 }
             }
         }

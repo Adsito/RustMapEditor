@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Rotate Layer")]
+[CreateNodeMenu("Functions/Rotate/Rotate Layer")]
 public class RotateLayerNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
@@ -37,18 +37,8 @@ public class RotateLayerNode : Node
             case 2: // Alpha
                 mapIO.RotateAlphamap(CW);
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.ChangeLayer("Topology");
-                mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
-
-                mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.RotateTopologymap(CW);
-
-                mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
+            case 3: // Topology
+                mapIO.RotateTopologymap(CW, layer.TopologyLayer);
                 break;
         }
     }

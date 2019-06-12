@@ -2,7 +2,7 @@
 using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Rotate HeightMap")]
+[CreateNodeMenu("Functions/Rotate/Rotate HeightMap")]
 public class RotateHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
