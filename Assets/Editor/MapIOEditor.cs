@@ -135,7 +135,7 @@ public class MapIOEditor : EditorWindow
                     {
                         case 0:
                             script.loadPath = "New Map";
-                            script.newEmptyTerrain(mapSize);
+                            script.NewEmptyTerrain(mapSize);
                             break;
                         case 1:
                             // User cancelled
@@ -150,7 +150,7 @@ public class MapIOEditor : EditorWindow
                             Debug.Log("Exported map " + saveFile);
                             script.Save(saveFile);
                             script.loadPath = "New Map";
-                            script.newEmptyTerrain(mapSize);
+                            script.NewEmptyTerrain(mapSize);
                             break;
                         default:
                             Debug.Log("Create New Map option outofbounds");
@@ -333,7 +333,7 @@ public class MapIOEditor : EditorWindow
                                         if (GUILayout.Button(new GUIContent("Offset Heightmap", "Raises or lowers the height of the entire heightmap by " + offset.ToString() + " metres. " +
                                             "A positive offset will raise the heightmap, a negative offset will lower the heightmap.")))
                                         {
-                                            script.offsetHeightmap(offset, checkHeight, setWaterMap);
+                                            script.OffsetHeightmap(offset, checkHeight, setWaterMap);
                                         }
                                         GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
@@ -341,12 +341,12 @@ public class MapIOEditor : EditorWindow
                                         if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
                                             " metres."), GUILayout.MaxWidth(130)))
                                         {
-                                            script.setMinimumHeight(heightToSet);
+                                            script.SetMinimumHeight(heightToSet);
                                         }
                                         if (GUILayout.Button(new GUIContent("Set Maximum Height", "Lowers any of the land above " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
                                             " metres."), GUILayout.MaxWidth(130)))
                                         {
-                                            script.setMaximumHeight(heightToSet);
+                                            script.SetMaximumHeight(heightToSet);
                                         }
                                         EditorGUILayout.EndHorizontal();
 
@@ -360,7 +360,7 @@ public class MapIOEditor : EditorWindow
 
                                         if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
                                         {
-                                            script.setEdgePixel(heightToSet, sides);
+                                            script.SetEdgePixel(heightToSet, sides);
                                         }
                                         
                                         break;
@@ -659,11 +659,11 @@ public class MapIOEditor : EditorWindow
                                 if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
                                 {
                                     script.ChangeLayer("Ground");
-                                    script.alphaDebug("Ground");
+                                    script.AlphaDebug("Ground");
                                 }
                                 if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
                                 {
-                                    script.debugWaterLevel();
+                                    script.DebugWaterLevel();
                                 }
                                 EditorGUILayout.EndHorizontal();
                                 
@@ -1151,10 +1151,10 @@ public class MapIOEditor : EditorWindow
                         }
                         if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
                         {
-                            if (script.getPrefabLookUp() != null)
+                            if (script.GetPrefabLookUp() != null)
                             {
-                                script.getPrefabLookUp().Dispose();
-                                script.setPrefabLookup(null);
+                                script.GetPrefabLookUp().Dispose();
+                                script.SetPrefabLookup(null);
                             }
                             else
                             {
@@ -1174,7 +1174,7 @@ public class MapIOEditor : EditorWindow
                         if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
                                     " errors loading a map on a server.")))
                         {
-                            script.removeBrokenPrefabs();
+                            script.RemoveBrokenPrefabs();
                         }
                         deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
                             "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
@@ -1186,7 +1186,7 @@ public class MapIOEditor : EditorWindow
                             {
                                 return;
                             }
-                            script.exportLootCrates(prefabSaveFile, deletePrefabs);
+                            script.ExportLootCrates(prefabSaveFile, deletePrefabs);
                         }
                         break;
                     default:

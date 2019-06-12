@@ -168,7 +168,7 @@ public class MapIO : MonoBehaviour {
         GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
-    public void setPrefabLookup(PrefabLookup prefabLookup)
+    public void SetPrefabLookup(PrefabLookup prefabLookup)
     {
         this.prefabLookup = prefabLookup;
     }
@@ -190,7 +190,7 @@ public class MapIO : MonoBehaviour {
             }
         }
     }
-    public PrefabLookup getPrefabLookUp()
+    public PrefabLookup GetPrefabLookUp()
     {
         return prefabLookup;
     }
@@ -254,7 +254,7 @@ public class MapIO : MonoBehaviour {
         Quaternion rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
         GameObject newObj = (GameObject)PrefabUtility.InstantiatePrefab(g);
         newObj.transform.parent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        newObj.transform.position = pos + getMapOffset();
+        newObj.transform.position = pos + GetMapOffset();
         newObj.transform.rotation = rotation;
         newObj.transform.localScale = scale;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
@@ -280,13 +280,13 @@ public class MapIO : MonoBehaviour {
         }
     }
 
-    public static Vector3 getTerrainSize()
+    public static Vector3 GetTerrainSize()
     {
         return GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().terrainData.size;
     }
-    public static Vector3 getMapOffset()
+    public static Vector3 GetMapOffset()
     {
-        return 0.5f * getTerrainSize();
+        return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
     public void RotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
@@ -479,7 +479,7 @@ public class MapIO : MonoBehaviour {
     }
     #endregion
     #region HeightMap Methods
-    public void scaleHeightmap(float scale)
+    public void ScaleHeightmap(float scale)
     {
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -493,7 +493,7 @@ public class MapIO : MonoBehaviour {
         float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
         terrain.terrainData.SetHeights(0, 0, MapTransformations.Invert(landHeightMap));
     }
-    public void transposeHeightmap()
+    public void TransposeHeightmap()
     {
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -561,7 +561,7 @@ public class MapIO : MonoBehaviour {
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
         TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
     }
-    public void moveHeightmap()
+    public void MoveHeightmap()
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Move Terrain");
         Vector3 difference = terrain.transform.position;
@@ -576,7 +576,7 @@ public class MapIO : MonoBehaviour {
         terrain.terrainData.SetHeights(0, 0, heightMap);
         terrain.transform.position = Vector3.zero;
     }
-    public void setEdgePixel(float heightToSet, bool[] sides) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
+    public void SetEdgePixel(float heightToSet, bool[] sides) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
     // option for sides.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Set Edge Pixel");
@@ -605,7 +605,7 @@ public class MapIO : MonoBehaviour {
         }
         terrain.terrainData.SetHeights(0, 0, heightMap);
     }
-    public void generatePerlinHeightmap(float scale) // Extremely basic first run of perlin map gen. In future this will have roughly 15 controllable elements.
+    public void GeneratePerlinHeightmap(float scale) // Extremely basic first run of perlin map gen. In future this will have roughly 15 controllable elements.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Perlin Terrain");
         float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -622,7 +622,7 @@ public class MapIO : MonoBehaviour {
         }
         terrain.terrainData.SetHeights(0, 0, heightMap);
     }
-    public void offsetHeightmap(float offset, bool checkHeight, bool setWaterMap) // Increases or decreases the heightmap by the offset. Useful for moving maps up or down in the scene if the heightmap
+    public void OffsetHeightmap(float offset, bool checkHeight, bool setWaterMap) // Increases or decreases the heightmap by the offset. Useful for moving maps up or down in the scene if the heightmap
     // isn't at the right height. If checkHeight is enabled it will make sure that the offset does not flatten a part of the map because it hits the floor or ceiling.
     // If setWaterMap is enabled it will offset the water map as well, however if this goes below 500 the watermap will be broken.
     {
@@ -671,7 +671,7 @@ public class MapIO : MonoBehaviour {
             Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value." );
         }
     }
-    public void debugWaterLevel() // Puts the water level up to 500 if it's below 500 in height.
+    public void DebugWaterLevel() // Puts the water level up to 500 if it's below 500 in height.
     {
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
@@ -687,7 +687,7 @@ public class MapIO : MonoBehaviour {
         }
         water.terrainData.SetHeights(0, 0, waterMap);
     }
-    public void setMinimumHeight(float minimumHeight) // Puts the heightmap level to the minimum if it's below.
+    public void SetMinimumHeight(float minimumHeight) // Puts the heightmap level to the minimum if it's below.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Minimum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -704,7 +704,7 @@ public class MapIO : MonoBehaviour {
         }
         terrain.terrainData.SetHeights(0, 0, landMap);
     }
-    public void setMaximumHeight(float maximumHeight) // Puts the heightmap level to the minimum if it's below.
+    public void SetMaximumHeight(float maximumHeight) // Puts the heightmap level to the minimum if it's below.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Maximum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -721,27 +721,27 @@ public class MapIO : MonoBehaviour {
         }
         terrain.terrainData.SetHeights(0, 0, landMap);
     }
-    public float getHeight(int x, int y)
+    public float GetHeight(int x, int y)
     {
         float xNorm = (float)x / (float)terrain.terrainData.alphamapHeight;
         float yNorm = (float)y / (float)terrain.terrainData.alphamapHeight;
         float height = terrain.terrainData.GetInterpolatedHeight(xNorm, yNorm);
         return height;
     }
-    public float[,] getHeights()
+    public float[,] GetHeights()
     {
         float alphamapInterp = 1f / terrain.terrainData.alphamapWidth;
         float[,] heights = terrain.terrainData.GetInterpolatedHeights(0, 0, terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapWidth, alphamapInterp, alphamapInterp);
         return heights;
     }
-    public float getSlope(int x, int y)
+    public float GetSlope(int x, int y)
     {
         float xNorm = (float)x / terrain.terrainData.alphamapHeight;
         float yNorm = (float)y / terrain.terrainData.alphamapHeight;
         float slope = terrain.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
     }
-    public float[,] getSlopes()
+    public float[,] GetSlopes()
     {
         float[,] slopes = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
         for (int i = 0; i < terrain.terrainData.alphamapHeight; i++)
@@ -908,11 +908,11 @@ public class MapIO : MonoBehaviour {
             }
             if (item.CheckHeight == true)
             {
-                heights = getHeights();
+                heights = GetHeights();
             }
             if (item.CheckSlope == true)
             {
-                slopes = getSlopes();
+                slopes = GetSlopes();
             }
             progressValue = 1f / groundSplatMap.GetLength(0);
             for (int i = 0; i < groundSplatMap.GetLength(0); i++)
@@ -1464,7 +1464,7 @@ public class MapIO : MonoBehaviour {
     public void AutoGenerateGround() // Assigns terrain splats to these values. 
     {
         ProgressBar("Generating Ground Textures", "Generating: Forest", 0.15f);
-        generateTwoLayersNoise("Ground", UnityEngine.Random.Range(45f, 55f), 0, 4);
+        GenerateTwoLayersNoise("Ground", UnityEngine.Random.Range(45f, 55f), 0, 4);
 
         ProgressBar("Generating Ground Textures", "Generating: Grass", 0.3f);
         PaintSlope("Ground", 25f, 45, 5f, 50f, 4);
@@ -1496,7 +1496,7 @@ public class MapIO : MonoBehaviour {
 
         ClearProgressBar();
     }
-    public void alphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
+    public void AlphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
         ProgressBar("Debug Alpha", "Debugging", 0.3f);
@@ -1581,7 +1581,7 @@ public class MapIO : MonoBehaviour {
         landData.setLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayerToPaint));
         ClearProgressBar();
     }
-    public void generateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
+    public void GenerateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Two Layers Noise");
@@ -1616,7 +1616,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(splatMap, landLayer, (int)topologyLayer);
         landData.setLayer(landLayer, (int)topologyLayer);
     }
-    public void generateFourLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across four layers, the smaller the scale the smaller the blobs 
+    public void GenerateFourLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across four layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Four Layers Noise");
@@ -1661,7 +1661,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(splatMap, landLayer);
         landData.setLayer(landLayer);
     }
-    public void generateEightLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across eight layers, the smaller the scale the smaller the blobs 
+    public void GenerateEightLayersNoise(string landLayer, float scale) //Generates a layer of perlin noise across eight layers, the smaller the scale the smaller the blobs 
     // it generates will be. Wipes the current layer.
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Eight Layers Noise");
@@ -1766,7 +1766,7 @@ public class MapIO : MonoBehaviour {
         landData.setData(splatMap, landLayer);
         landData.setLayer(landLayer);
     }
-    public void generateLayerNoise(string landLayer, int layers, float scale)
+    public void GenerateLayerNoise(string landLayer, int layers, float scale)
     {
         float[,,] splatMap = GetSplatMap(landLayer);
         float layerBlend = 1 / layers;
@@ -1785,7 +1785,7 @@ public class MapIO : MonoBehaviour {
         }
     }
     #endregion
-    public void removeBrokenPrefabs()
+    public void RemoveBrokenPrefabs()
     {
         PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
         Undo.RegisterCompleteObjectUndo(prefabs, "Remove Broken Prefabs");
@@ -1813,7 +1813,7 @@ public class MapIO : MonoBehaviour {
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
-    public void exportLootCrates(string prefabFilePath, bool deletePrefabs)
+    public void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
     {
         StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
         streamWriter.WriteLine("{");
@@ -2088,7 +2088,7 @@ public class MapIO : MonoBehaviour {
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(terrains);
     }
-    public void loadEmpty(int size)
+    public void LoadEmpty(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
     }
@@ -2112,7 +2112,7 @@ public class MapIO : MonoBehaviour {
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
         ClearProgressBar();
     }
-    public void newEmptyTerrain(int size)
+    public void NewEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
         progressValue = 1f / TerrainTopology.COUNT;
@@ -2125,10 +2125,10 @@ public class MapIO : MonoBehaviour {
         ClearLayer("Alpha");
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
-        setMinimumHeight(503f);
+        SetMinimumHeight(503f);
         ClearProgressBar();
     }
-    public void createDefaultPrefabs()
+    public void CreateDefaultPrefabs()
     {
         var prefabParent = GameObject.Find("PrefabsLoaded").GetComponent<Transform>();
         if (File.Exists("PrefabsLoaded.txt"))
@@ -2153,7 +2153,7 @@ public class MapIO : MonoBehaviour {
     }
     public void StartPrefabLookup()
     {
-        setPrefabLookup(new PrefabLookup(bundleFile, this));
+        SetPrefabLookup(new PrefabLookup(bundleFile, this));
     }
     public List<string> generationPresetList = new List<string>();
     public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
