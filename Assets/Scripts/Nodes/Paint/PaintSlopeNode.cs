@@ -29,29 +29,16 @@ public class PaintSlopeNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.ChangeLayer("Ground");
                 mapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                mapIO.ChangeLayer("Biome");
                 mapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
-                mapIO.ChangeLayer("Alpha");
                 mapIO.PaintSlope("Alpha", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.AlphaTexture);
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.ChangeLayer("Topology");
-                mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
-
-                mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.TopologyTexture);
-
-                mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
+            case 3: // Topology
+                mapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

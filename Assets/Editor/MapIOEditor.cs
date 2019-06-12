@@ -23,7 +23,8 @@ public class MapIOEditor : EditorWindow
     string prefabSaveFile = "";
     //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
-    float heightToSet = 450f, scale = 50f, offset = 0f;
+    float heightToSet = 450f, offset = 0f;
+    //float scale = 50f;
     //float mapScale = 1f; Comment back in when used.
     bool[] sides = new bool[4]; 
     bool checkHeight = true, setWaterMap = false;
@@ -873,14 +874,14 @@ public class MapIOEditor : EditorWindow
                             {
                                 script.PaintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)script.biomeLayer));
                             }
-                            
+                            /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
                             GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
                             scale = GUILayout.HorizontalSlider(scale, 500f, 5000f);
                             if (GUILayout.Button("Generate random Biome map"))
                             {
                                 script.generateFourLayersNoise("Biome", scale);
-                            }
+                            }*/
                         }
                         #endregion
 
@@ -1059,13 +1060,14 @@ public class MapIOEditor : EditorWindow
                                 script.PaintArea("Topology", z1, z2, x1, x2, 1, TerrainTopology.TypeToIndex((int)script.topologyLayer));
                             }
                             EditorGUILayout.EndHorizontal();
+                            /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Topology");
                             GUILayout.Label(scale.ToString(), EditorStyles.boldLabel);
                             scale = GUILayout.HorizontalSlider(scale, 10f, 500f);
                             if (GUILayout.Button("Generate random topology map"))
                             {
                                 script.generateTwoLayersNoise("Topology", scale, 1, 0);
-                            }
+                            }*/
                         }
                         break;
                     #endregion

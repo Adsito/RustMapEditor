@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Paint/Paint Layer")]
-public class PaintLayerNode : Node
+[CreateNodeMenu("Functions/Invert/Invert All Layers")]
+public class InvertAllLayersNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
@@ -26,19 +26,11 @@ public class PaintLayerNode : Node
         }
         switch (layer.LandLayer)
         {
-            case 0: // Ground
-                mapIO.PaintLayer("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture));
-                break;
-            case 1: // Biome
-                mapIO.PaintLayer("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture));
-                break;
             case 2: // Alpha
-                mapIO.PaintLayer("Alpha", layer.AlphaTexture);
+                mapIO.InvertLayer("Alpha");
                 break;
             case 3: // Topology
-                mapIO.PaintLayer("Topology", layer.TopologyTexture, layer.TopologyLayer);
-                break;
-            default:
+                mapIO.InvertAllLayers();
                 break;
         }
     }
