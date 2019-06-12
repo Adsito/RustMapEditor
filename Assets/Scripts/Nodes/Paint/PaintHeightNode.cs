@@ -29,29 +29,16 @@ public class PaintHeightNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.ChangeLayer("Ground");
                 mapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                mapIO.ChangeLayer("Biome");
                 mapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
-                mapIO.ChangeLayer("Alpha");
                 mapIO.PaintHeight("Alpha", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.AlphaTexture);
                 break;
             case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.ChangeLayer("Topology");
-                mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
-
-                mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture);
-
-                mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
+                mapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Paint/Paint Layer")]
-public class PaintLayerNode : Node
+[CreateNodeMenu("Functions/Rotate/Rotate All Layers")]
+public class RotateAllLayersNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
+    [NonSerialized()] public bool CW = true;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);
@@ -27,18 +29,16 @@ public class PaintLayerNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.PaintLayer("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture));
+                mapIO.RotateGroundmap(CW);
                 break;
             case 1: // Biome
-                mapIO.PaintLayer("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                mapIO.RotateBiomemap(CW);
                 break;
             case 2: // Alpha
-                mapIO.PaintLayer("Alpha", layer.AlphaTexture);
+                mapIO.RotateAlphamap(CW);
                 break;
             case 3: // Topology
-                mapIO.PaintLayer("Topology", layer.TopologyTexture, layer.TopologyLayer);
-                break;
-            default:
+                mapIO.RotateAllTopologymap(CW);
                 break;
         }
     }

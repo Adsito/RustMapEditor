@@ -10,6 +10,6 @@ public class InvertLayerNodeEditor : NodeEditor
     }
     public override void OnHeaderGUI()
     {
-        GUILayout.Label(new GUIContent("Invert Layer", "Inverts the Alpha and Topology layer textures."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+        GUILayout.Label(new GUIContent("Invert Layer", "Inverts the selected layer's textures."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
     }
 }

@@ -25,29 +25,16 @@ public class PaintRiverNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.ChangeLayer("Ground");
                 mapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                mapIO.ChangeLayer("Biome");
                 mapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
-                mapIO.ChangeLayer("Alpha");
                 mapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.ChangeLayer("Topology");
-                mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
-
-                mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture);
-
-                mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
+            case 3: // Topology
+                mapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Invert HeightMap")]
+[CreateNodeMenu("Functions/Invert/Invert HeightMap")]
 public class InvertHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;

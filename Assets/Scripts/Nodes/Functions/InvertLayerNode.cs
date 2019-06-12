@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
-[CreateNodeMenu("Functions/Invert Layer")]
+[CreateNodeMenu("Functions/Invert/Invert Layer")]
 public class InvertLayerNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
@@ -28,21 +27,10 @@ public class InvertLayerNode : Node
         switch (layer.LandLayer)
         {
             case 2: // Alpha
-                mapIO.ChangeLayer("Alpha");
                 mapIO.InvertLayer("Alpha");
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.ChangeLayer("Topology");
-                mapIO.oldTopologyLayer2 = mapIO.topologyLayer;
-
-                mapIO.topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(layer.TopologyLayer);
-                mapIO.InvertLayer("Topology");
-
-                mapIO.topologyLayer = mapIO.oldTopologyLayer2;
-                mapIO.ChangeLandLayer();
-                mapIO.oldTopologyLayer = mapIO.oldTopologyLayer2;
+            case 3: // Topology
+                mapIO.InvertLayer("Topology", layer.TopologyLayer);
                 break;
         }
     }
