@@ -16,7 +16,7 @@ public class MapIOInspector : Editor
 public class MapIOEditor : EditorWindow
 {
     string editorVersion = "v1.6-prerelease";
-
+    string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
     string saveFile = "";
     string mapName = "";
@@ -35,8 +35,8 @@ public class MapIOEditor : EditorWindow
     float normaliseLow = 450f, normaliseHigh = 1000f, normaliseBlend = 1f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
-    int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
-    int layerConditionalInt, texture = 0;
+    int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint, topologyFrom, topologyToPaint;
+    int layerConditionalInt, texture = 0, topologyLayer = 0;
     bool AlphaVisible = false, AlphaInvisible = false;
     bool TopoActive = false, TopoInactive = false;
     bool deletePrefabs = false;
@@ -52,18 +52,15 @@ public class MapIOEditor : EditorWindow
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
     float blurDirection = 0f;
 
-    public TerrainBiome.Enum biomeLayerToPaint;
-    public TerrainBiome.Enum biomeLayerConditional;
-    public TerrainSplat.Enum groundLayerToPaint;
-    public TerrainSplat.Enum groundLayerConditional;
-
-    bool layerSet = false;
+    int[] values = { 0, 1 };
     bool[] groundTxtCndtl = new bool[8] { true, true, true, true, true, true, true, true };
     bool[] biomeTxtCndtl = new bool[4] { true, true, true, true };
     bool[] alphaTxtCndtl = new bool[2] { true, true };
     bool[] topoTxtCndtl = new bool[2] { true, true };
     string[] landLayersCndtl = new string[4] { "Ground", "Biome", "Alpha", "Topology" };
     int[] topoLayersCndtl = new int[] { };
+    string[] activeTextureAlpha = { "Visible", "Invisible" };
+    string[] activeTextureTopo = { "Active", "Inactive" };
 
     [MenuItem("Rust Map Editor/Main Menu", false, 0)]
     static void Initialize()
@@ -73,14 +70,6 @@ public class MapIOEditor : EditorWindow
     public void OnGUI()
     {
         MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-
-        if (layerSet == false)
-        {
-            groundLayerToPaint = TerrainSplat.Enum.Grass;
-            biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-            layerSet = true;
-        }
-
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
         GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
@@ -441,27 +430,26 @@ public class MapIOEditor : EditorWindow
                             #region Textures
                             case 2:
                                 GUILayout.Label("Copy Textures", EditorStyles.boldLabel);
-                                string[] layerList = { "Ground", "Biome", "Topology" };
-                                landLayerFrom = EditorGUILayout.Popup("Layer:", landLayerFrom, layerList);
+                                landLayerFrom = EditorGUILayout.Popup("Layer:", landLayerFrom, landLayers);
                                 switch (landLayerFrom) // Get texture list from the currently selected landLayer.
                                 {
-                                    default:
-                                        Debug.Log("Layer doesn't exist");
-                                        break;
                                     case 0:
                                         script.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", script.groundLayerFrom);
-                                        textureFrom = 0;
+                                        textureFrom = TerrainSplat.TypeToIndex((int)script.groundLayerFrom);
                                         break;
                                     case 1:
                                         script.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", script.biomeLayerFrom);
-                                        textureFrom = 1;
+                                        textureFrom = TerrainBiome.TypeToIndex((int)script.biomeLayerFrom);
                                         break;
                                     case 2:
+                                        textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureAlpha, values);
+                                        break;
+                                    case 3:
                                         script.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Copy:", script.topologyLayerFrom);
-                                        textureFrom = 2;
+                                        textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureTopo, values);
                                         break;
                                 }
-                                landLayerToPaint = EditorGUILayout.Popup("Layer:", landLayerToPaint, layerList);
+                                landLayerToPaint = EditorGUILayout.Popup("Layer:", landLayerToPaint, landLayers);
                                 switch (landLayerToPaint) // Get texture list from the currently selected landLayer.
                                 {
                                     default:
@@ -469,27 +457,26 @@ public class MapIOEditor : EditorWindow
                                         break;
                                     case 0:
                                         script.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.groundLayerToPaint);
-                                        textureToPaint = 0;
+                                        textureToPaint = TerrainSplat.TypeToIndex((int)script.groundLayerToPaint);
                                         break;
                                     case 1:
                                         script.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.biomeLayerToPaint);
-                                        textureToPaint = 1;
+                                        textureToPaint = TerrainBiome.TypeToIndex((int)script.biomeLayerToPaint);
                                         break;
                                     case 2:
+                                        textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureAlpha, values);
+                                        break;
+                                    case 3:
                                         script.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Paint:", script.topologyLayerToPaint);
-                                        textureToPaint = 2;
+                                        textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureTopo, values);
                                         break;
                                 }
-                                if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + layerList[landLayerFrom] + " layer and " +
-                                    "paints it on the " + layerList[landLayerToPaint] + " layer.")))
+                                if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[landLayerFrom] + " layer and " +
+                                    "paints it on the " + landLayers[landLayerToPaint] + " layer.")))
                                 {
-                                    script.TextureCopy(layerList[landLayerFrom], layerList[landLayerToPaint], textureFrom, textureToPaint);
+                                    script.TextureCopy(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, topologyFrom, topologyToPaint);
                                 }
                                 GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
-                                string[] landLayerList = { "Ground", "Biome", "Alpha", "Topology" };
-                                string[] activeTextureAlpha = { "Visible", "Invisible" };
-                                string[] activeTextureTopo = { "Active", "Inactive" };
-                                int[] values = { 0, 1 };
 
                                 GUIContent[] conditionalPaintMenu = new GUIContent[5];
                                 conditionalPaintMenu[0] = new GUIContent("Ground");
@@ -611,19 +598,19 @@ public class MapIOEditor : EditorWindow
                                         break;
                                 }
                                 GUILayout.Label("Texture To Paint:", EditorStyles.boldLabel);
-                                layerConditionalInt = EditorGUILayout.Popup("Layer:", layerConditionalInt, landLayerList);
+                                layerConditionalInt = EditorGUILayout.Popup("Layer:", layerConditionalInt, landLayers);
                                 switch (layerConditionalInt)
                                 {
                                     default:
                                         Debug.Log("Layer doesn't exist");
                                         break;
                                     case 0:
-                                        groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", groundLayerToPaint);
-                                        texture = TerrainSplat.TypeToIndex((int)groundLayerToPaint);
+                                        script.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.groundLayerToPaint);
+                                        texture = TerrainSplat.TypeToIndex((int)script.groundLayerToPaint);
                                         break;
                                     case 1:
-                                        biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", biomeLayerToPaint);
-                                        texture = TerrainBiome.TypeToIndex((int)biomeLayerToPaint);
+                                        script.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", script.biomeLayerToPaint);
+                                        texture = TerrainBiome.TypeToIndex((int)script.biomeLayerToPaint);
                                         break;
                                     case 2:
                                         texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureAlpha, values);
@@ -649,7 +636,7 @@ public class MapIOEditor : EditorWindow
                                         CheckHeight = checkHeightCndtl,
                                         CheckSlope = checkSlopeCndtl
                                     });
-                                    script.PaintConditional(landLayerList[layerConditionalInt], texture, conditions);
+                                    script.PaintConditional(landLayers[layerConditionalInt], texture, conditions);
                                 }
                                 break;
                             #endregion
@@ -677,9 +664,9 @@ public class MapIOEditor : EditorWindow
                         GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
                         
                         string oldLandLayer = script.landLayer;
-                        string[] options = { "Ground", "Biome", "Alpha", "Topology" };
-                        script.landSelectIndex = EditorGUILayout.Popup("Layer:", script.landSelectIndex, options);
-                        script.landLayer = options[script.landSelectIndex];
+                        
+                        script.landSelectIndex = EditorGUILayout.Popup("Layer:", script.landSelectIndex, landLayers);
+                        script.landLayer = landLayers[script.landSelectIndex];
                         if (script.landLayer != oldLandLayer)
                         {
                             script.ChangeLandLayer();
