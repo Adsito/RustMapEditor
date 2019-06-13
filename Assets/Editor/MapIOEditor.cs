@@ -474,7 +474,7 @@ public class MapIOEditor : EditorWindow
                                 if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[landLayerFrom] + " layer and " +
                                     "paints it on the " + landLayers[landLayerToPaint] + " layer.")))
                                 {
-                                    script.TextureCopy(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, topologyFrom, topologyToPaint);
+                                    script.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)script.topologyLayerFrom), TerrainTopology.TypeToIndex((int)script.topologyLayerToPaint));
                                 }
                                 GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
 
