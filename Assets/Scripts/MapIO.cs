@@ -92,34 +92,21 @@ public class Conditions : List<Conditions>
 }
 [ExecuteAlways]
 public class MapIO : MonoBehaviour {
-    #region LayersFrom
-    public TerrainTopology.Enum topologyLayerFrom;
-    public TerrainTopology.Enum topologyLayerToPaint;
-    public TerrainSplat.Enum groundLayerFrom;
-    public TerrainSplat.Enum groundLayerToPaint;
-    public TerrainBiome.Enum biomeLayerFrom;
-    public TerrainBiome.Enum biomeLayerToPaint;
+    #region Layers
+    public TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
+    public TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
+    public TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
-    public TerrainTopology.Enum topologyLayer;
-    public TerrainTopology.Enum conditionalTopology;
-    public TerrainTopology.Enum topologyLayersList;
-    public TerrainTopology.Enum oldTopologyLayer;
-    public TerrainBiome.Enum biomeLayer;
-    public TerrainBiome.Enum conditionalBiome;
-    public TerrainSplat.Enum terrainLayer;
-    public TerrainSplat.Enum conditionalGround;
     public int landSelectIndex = 0;
-    public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
+    public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "", bundleFile = "No bundle file selected";
     LandData landData;
     private PrefabLookup prefabLookup;
-    public float progressBar = 0f;
+    public float progressBar = 0f, progressValue = 1f;
     static TopologyMesh topology;
-    float progressValue = 1f;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     private Dictionary<uint, string> prefabPaths = new Dictionary<uint, string>();
     public Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
     public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
-    public string bundleFile = "No bundle file selected";
     public Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     private Terrain terrain;
@@ -149,6 +136,7 @@ public class MapIO : MonoBehaviour {
         RefreshAssetList(); // Refresh the auto gen asset presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
+        SetLayers(); // Resets all the layers to default values.
     }
     public static void CentreSceneView()
     {
@@ -158,6 +146,23 @@ public class MapIO : MonoBehaviour {
             sceneView.pivot = new Vector3(500f, 1000f, 500f);
             sceneView.LookAt(new Vector3(500f, 750f, 500f));
         }
+    }
+    public void SetLayers()
+    {
+        topologyLayerFrom = TerrainTopology.Enum.Beach;
+        topologyLayerToPaint = TerrainTopology.Enum.Beach;
+        groundLayerFrom = TerrainSplat.Enum.Grass;
+        groundLayerToPaint = TerrainSplat.Enum.Grass;
+        biomeLayerFrom = TerrainBiome.Enum.Temperate;
+        biomeLayerToPaint = TerrainBiome.Enum.Temperate;
+        topologyLayer = TerrainTopology.Enum.Beach;
+        conditionalTopology = (TerrainTopology.Enum)TerrainTopology.NOTHING;
+        topologyLayersList = TerrainTopology.Enum.Beach;
+        oldTopologyLayer = TerrainTopology.Enum.Beach;
+        biomeLayer = TerrainBiome.Enum.Temperate;
+        conditionalBiome = (TerrainBiome.Enum)TerrainBiome.NOTHING;
+        terrainLayer = TerrainSplat.Enum.Grass;
+        conditionalGround = (TerrainSplat.Enum)TerrainSplat.NOTHING;
     }
     public static void ProgressBar(string title, string info, float progress)
     {
@@ -798,26 +803,22 @@ public class MapIO : MonoBehaviour {
     }
     public float[,,] GetSplatMap(string landLayer, int topology = 0)
     {
-        float[,,] layer = null;
         switch (landLayer.ToLower())
         {
+            default:
+                return null;
             case "ground":
-                layer = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().groundArray;
-                break;
+                return GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().groundArray;
             case "biome":
-                layer = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().biomeArray;
-                break;
+                return GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().biomeArray;
             case "alpha":
-                layer = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().alphaArray;
-                break;
+                return GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().alphaArray;
             case "topology":
-                layer = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().topologyArray[topology];
-                break;
+                return GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().topologyArray[topology];
         }
-        return layer;
     }
     public int Texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
-    // Accepts "Ground", "Biome", "Alpha" and "Topology".
+    // Accepts "Ground" and "Biome".
     {
         if (landLayer == "Ground")
         {
@@ -827,7 +828,7 @@ public class MapIO : MonoBehaviour {
         {
             return TerrainBiome.TypeToIndex((int)biomeLayer); // Layer texture to paint from Biome Textures.
         }
-        return 2;
+        return 0;
     }
     public int TextureCount(string landLayer) // Texture count in layer chosen, used for determining the size of the splatmap array.
     // Call method with the layer you are painting to.
@@ -850,15 +851,13 @@ public class MapIO : MonoBehaviour {
     }
     public void PaintConditional(string landLayer, int texture, List<Conditions> conditions, int topology = 0) // Todo: Optimisation and cleanup.
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Conditional");
-
         float[,,] groundSplatMap = GetSplatMap("ground");
         float[,,] biomeSplatMap = GetSplatMap("biome");
         float[,,] alphaSplatMap = GetSplatMap("alpha");
         float[,,] topologySplatMap = GetSplatMap("topology", topology);
         float[,,] splatMapPaint = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight, TextureCount(landLayer)];
-        float[,,] splatMapOld = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight, TextureCount(landLayer)];
         bool paint = true;
+        int textureCount = TextureCount(landLayer);
         float slope, height;
         float[,] heights = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
         float[,] slopes = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
@@ -867,16 +866,16 @@ public class MapIO : MonoBehaviour {
         switch (landLayer)
         {
             case "Ground":
-                splatMapOld = groundSplatMap;
+                splatMapPaint = groundSplatMap;
                 break;
             case "Biome":
-                splatMapOld = biomeSplatMap;
+                splatMapPaint = biomeSplatMap;
                 break;
             case "Alpha":
-                splatMapOld = alphaSplatMap;
+                splatMapPaint = alphaSplatMap;
                 break;
             case "Topology":
-                splatMapOld = topologySplatMap;
+                splatMapPaint = topologySplatMap;
                 break;
         }
         List<TopologyLayers> topologyLayers = new List<TopologyLayers>();
@@ -1015,18 +1014,11 @@ public class MapIO : MonoBehaviour {
                         }
                         if (paint == true)
                         {
-                            for (int k = 0; k < TextureCount(landLayer); k++)
+                            for (int k = 0; k < textureCount; k++)
                             {
                                 splatMapPaint[i, j, k] = 0;
                             }
                             splatMapPaint[i, j, texture] = 1f;
-                        }
-                        else
-                        {
-                            for (int k = 0; k < TextureCount(landLayer); k++)
-                            {
-                                splatMapPaint[i, j, k] = splatMapOld[i, j, k];
-                            }
                         }
                     }
                 }
@@ -1524,51 +1516,21 @@ public class MapIO : MonoBehaviour {
         ProgressBar("Debug Alpha", "Done", 1f);
         ClearProgressBar();
     }
-    public void TextureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint) // This copies the selected texture on a landlayer 
+    public void TextureCopy(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
     {
-        ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.2f);
-        switch (landLayerFrom) // Gathers the information on which texture we are copying from in the landlayer.
-        {
-            default:
-                Debug.Log("landLayerFrom not found!");
-                break;
-            case "Ground":
-                textureFrom = TerrainSplat.TypeToIndex((int)groundLayerFrom); // Layer texture to copy from Ground Textures.
-                break;
-            case "Biome":
-                textureFrom = TerrainBiome.TypeToIndex((int)biomeLayerFrom); // Layer texture to copy from Biome Textures.
-                break;
-            case "Topology":
-                textureFrom = 0;
-                break;
-        }
-        float[,,] splatMapFrom = GetSplatMap(landLayerFrom); // Land layer to copy from.
+        ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.3f);
+        float[,,] splatMapFrom = GetSplatMap(landLayerFrom, topologyFrom); // Land layer to copy from.
+        float[,,] splatMapTo = GetSplatMap(landLayerToPaint, topologyToPaint); //  Land layer to paint to.
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.5f);
-        switch (landLayerToPaint) // Gathers the information on which texture we are painting to in the landlayer.
-        {
-            default:
-                Debug.Log("landLayerToPaint not found!");
-                break;
-            case "Ground":
-                textureToPaint = TerrainSplat.TypeToIndex((int)groundLayerToPaint); // Layer texture to copy from Ground Textures.
-                break;
-            case "Biome":
-                textureToPaint = TerrainBiome.TypeToIndex((int)biomeLayerToPaint); // Layer texture to copy from Biome Textures.
-                break;
-            case "Topology":
-                textureToPaint = 0;
-                break;
-        }
-        float[,,] splatMapTo = GetSplatMap(landLayerToPaint); //  Land layer to paint to.
-        ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.75f);
+        int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMapFrom.GetLength(0); i++)
         {
             for (int j = 0; j < splatMapFrom.GetLength(1); j++)
             {
                 if (splatMapFrom [i, j, textureFrom] > 0)
                 {
-                    for (int k = 0; k < TextureCount(landLayerToPaint); k++)
+                    for (int k = 0; k < textureCount; k++)
                     {
                         splatMapTo[i, j, k] = 0;
                     }
@@ -1577,8 +1539,8 @@ public class MapIO : MonoBehaviour {
             }
         }
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
-        landData.setData(splatMapTo, landLayerToPaint, TerrainTopology.TypeToIndex((int)topologyLayerToPaint));
-        landData.setLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayerToPaint));
+        landData.setData(splatMapTo, landLayerToPaint, topologyToPaint);
+        landData.setLayer(landLayer, topologyToPaint);
         ClearProgressBar();
     }
     public void GenerateTwoLayersNoise(string landLayer, float scale, int t1, int t2) //Generates a layer of perlin noise across two layers, the smaller the scale the smaller the blobs 
