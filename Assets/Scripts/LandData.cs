@@ -15,8 +15,11 @@ public class LandData : MonoBehaviour
     public float[,,] alphaArray;
     public float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
+    [HideInInspector]
     public TerrainLayer[] groundTextures = null;
+    [HideInInspector]
     public TerrainLayer[] biomeTextures = null;
+    [HideInInspector]
     public TerrainLayer[] miscTextures = null;
 
     Terrain terrain;
