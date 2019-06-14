@@ -33,8 +33,8 @@ namespace XNodeEditor {
         }
         void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
         {
-            GUIContent content = new GUIContent("Run Terrain Generation", "Runs the Terrain Generation of the graph currently in view.");
-            menu.AddItem(content, false, RunNodeGraph);
+            //GUIContent content = new GUIContent("Run Terrain Generation", "Runs the Terrain Generation of the graph currently in view.");
+            //menu.AddItem(content, false, RunNodeGraph);
         }
         private void RunNodeGraph()
         {
