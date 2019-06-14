@@ -20,42 +20,43 @@ public class PaintHeightNodeEditor : NodeEditor
         PaintHeightNode node = target as PaintHeightNode;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         #region UpdateValues
-        if (node.heightMinBlendLow > node.heightMaxBlendLow)
+        node.heightLow = Mathf.Clamp(node.heightLow, 0f, 999.99f);
+        node.heightMinBlendLow = Mathf.Clamp(node.heightMinBlendLow, 0f, node.heightLow);
+        node.heightMinBlendHigh = Mathf.Clamp(node.heightMinBlendHigh, node.heightMinBlendLow, node.heightLow);
+        node.heightHigh = Mathf.Clamp(node.heightHigh, 0.01f, 1000f);
+        node.heightMaxBlendHigh = Mathf.Clamp(node.heightMaxBlendHigh, node.heightHigh, 1000f);
+        if (node.heightLow > node.heightHigh)
         {
-            node.heightMinBlendLow = node.heightMaxBlendLow - 0.25f;
-            if (node.heightMinBlendLow < 0f)
-            {
-                node.heightMinBlendLow = 0f;
-            }
-        }
-        if (node.heightMinBlendHigh > node.heightMaxBlendHigh)
-        {
-            node.heightMaxBlendHigh = node.heightMinBlendHigh + 0.25f;
-            if (node.heightMaxBlendHigh > 1000f)
-            {
-                node.heightMaxBlendHigh = 1000f;
-            }
+            node.heightLow = node.heightHigh - 0.01f;
         }
         node.heightMaxBlendLow = node.heightLow;
         node.heightMinBlendHigh = node.heightHigh;
         if (blendHeights == false)
         {
-            node.heightMinBlendLow = node.heightLow;
             node.heightMaxBlendHigh = node.heightHigh;
+            node.heightMinBlendLow = node.heightLow;
         }
         #endregion
-        GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 90
-        blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
+        GUILayout.Label("Height Tools (Metres)", EditorStyles.boldLabel); // From 0 - 90
+        blendHeights = EditorGUILayout.ToggleLeft("Blend Heights", blendHeights);
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("From: " + node.heightLow.ToString() + "m", EditorStyles.boldLabel);
-        GUILayout.Label("To: " + node.heightHigh.ToString() + "m", EditorStyles.boldLabel);
+        GUILayout.Label("From: ", EditorStyles.boldLabel, GUILayout.MaxWidth(41f));
+        node.heightLow = EditorGUILayout.FloatField(node.heightLow, GUILayout.MaxWidth(50f));
+        GUILayout.Label("To: ", EditorStyles.boldLabel, GUILayout.MaxWidth(23f));
+        node.heightHigh = EditorGUILayout.FloatField(node.heightHigh, GUILayout.MaxWidth(50f));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref node.heightLow, ref node.heightHigh, 0f, 1000f);
         if (blendHeights == true)
         {
-            GUILayout.Label("Blend Low: " + node.heightMinBlendLow + "m");
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Blend Low: ");
+            node.heightMinBlendLow = EditorGUILayout.FloatField(node.heightMinBlendLow, GUILayout.MaxWidth(50f));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref node.heightMinBlendLow, ref node.heightMaxBlendLow, 0f, 1000f);
-            GUILayout.Label("Blend High: " + node.heightMaxBlendHigh + "m");
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Blend High: ");
+            node.heightMaxBlendHigh = EditorGUILayout.FloatField(node.heightMaxBlendHigh, GUILayout.MaxWidth(50f));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref node.heightMinBlendHigh, ref node.heightMaxBlendHigh, 0f, 1000f);
         }
     }
