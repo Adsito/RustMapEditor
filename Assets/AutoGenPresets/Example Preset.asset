@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -456, y: 56}
+  position: {x: -520, y: 8}
   ports:
     keys:
     - Texture
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -312, y: -264}
+  position: {x: -328, y: -264}
   ports:
     keys:
     - Texture
@@ -411,7 +411,7 @@ MonoBehaviour:
   m_Name: Paint Slope
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -40, y: -168}
+  position: {x: -72, y: -168}
   ports:
     keys:
     - Texture
