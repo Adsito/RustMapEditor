@@ -448,9 +448,10 @@ namespace XNodeEditor {
         private void DrawOnGUI()
         {
             GUI.EndGroup();
-            Rect rect = new Rect(new Vector2(-1f, 0f), new Vector2(Screen.width, Screen.height));
-            GUILayout.Space(20f);
+            Rect rect = new Rect(new Vector2(-1f, 20f), new Vector2(Screen.width, Screen.height));
+            GUI.BeginGroup(rect);
             graphEditor.OnGUI();
+            GUI.EndGroup();
             GUI.BeginGroup(new Rect(0.0f, topPadding - (topPadding * zoom), Screen.width, Screen.height));
         }
     }
