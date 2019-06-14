@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using XNode;
-using NodeVariables;
+﻿using XNode;
 
 [CreateNodeMenu("Texture")]
 public class TextureNode : Node
