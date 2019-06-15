@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Paint/Paint Height")]
@@ -8,7 +7,8 @@ public class PaintHeightNode : Node
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public float heightLow = 0f, heightHigh = 500f, heightMinBlendLow = 0f, heightMaxBlendLow = 500f, heightMinBlendHigh = 500f, heightMaxBlendHigh = 1000f;
+    [HideInInspector] public float heightLow = 500f, heightHigh = 750f, heightMinBlendLow = 250f, heightMaxBlendLow = 500f, heightMinBlendHigh = 750f, heightMaxBlendHigh = 1000f;
+    [HideInInspector] public bool blendHeights = false;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);

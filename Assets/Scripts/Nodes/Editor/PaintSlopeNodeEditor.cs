@@ -5,7 +5,6 @@ using XNodeEditor;
 [CustomNodeEditor(typeof(PaintSlopeNode))]
 public class PaintSlopeNodeEditor : NodeEditor
 {
-    bool blendSlopes = false;
     public override Color GetTint()
     {
         return Color.magenta;
@@ -21,45 +20,46 @@ public class PaintSlopeNodeEditor : NodeEditor
         AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         #region UpdateValues
-        if (node.slopeMinBlendHigh > node.slopeMaxBlendHigh)
+        node.slopeLow = Mathf.Clamp(node.slopeLow, 0f, 89.99f);
+        node.slopeMinBlendLow = Mathf.Clamp(node.slopeMinBlendLow, 0f, node.slopeLow);
+        node.slopeMinBlendHigh = Mathf.Clamp(node.slopeMinBlendHigh, node.slopeMinBlendLow, node.slopeLow);
+        node.slopeHigh = Mathf.Clamp(node.slopeHigh, 0.01f, 90f);
+        node.slopeMaxBlendHigh = Mathf.Clamp(node.slopeMaxBlendHigh, node.slopeHigh, 90f);
+        if (node.slopeLow > node.slopeHigh)
         {
-            node.slopeMaxBlendHigh = node.slopeMinBlendHigh + 0.25f;
-            if (node.slopeMaxBlendHigh > 90f)
-            {
-                node.slopeMaxBlendHigh = 90f;
-            }
-        }
-        if (node.slopeMinBlendLow > node.slopeMaxBlendLow)
-        {
-            node.slopeMinBlendLow = node.slopeMaxBlendLow - 0.25f;
-            if (node.slopeMinBlendLow < 0f)
-            {
-                node.slopeMinBlendLow = 0f;
-            }
+            node.slopeLow = node.slopeHigh - 0.01f;
         }
         node.slopeMaxBlendLow = node.slopeLow;
         node.slopeMinBlendHigh = node.slopeHigh;
-        if (blendSlopes == false)
+        if (node.blendSlopes == false)
         {
-            node.slopeMinBlendLow = node.slopeMaxBlendLow;
-            node.slopeMaxBlendHigh = node.slopeMinBlendHigh;
+            node.slopeMaxBlendHigh = node.slopeHigh;
+            node.slopeMinBlendLow = node.slopeLow;
         }
         #endregion
-        GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+        GUILayout.Label("Slope Tools (Degrees)", EditorStyles.boldLabel); // From 0 - 90
         EditorGUILayout.BeginHorizontal();
-        blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+        node.blendSlopes = EditorGUILayout.ToggleLeft("Blend Slopes", node.blendSlopes);
         // Todo: Toggle for check between heightrange.
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("From: " + node.slopeLow.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
-        GUILayout.Label("To: " + node.slopeHigh.ToString() + "°", EditorStyles.boldLabel, GUILayout.MaxWidth(90f));
+        GUILayout.Label("From: ", EditorStyles.boldLabel, GUILayout.MaxWidth(41f));
+        node.slopeLow = EditorGUILayout.FloatField(node.slopeLow, GUILayout.MaxWidth(50f));
+        GUILayout.Label("To: ", EditorStyles.boldLabel, GUILayout.MaxWidth(23f));
+        node.slopeHigh = EditorGUILayout.FloatField(node.slopeHigh, GUILayout.MaxWidth(50f));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref node.slopeLow, ref node.slopeHigh, 0f, 90f);
-        if (blendSlopes == true)
+        if (node.blendSlopes == true)
         {
-            GUILayout.Label("Blend Low: " + node.slopeMinBlendLow + "°");
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Blend Low: ");
+            node.slopeMinBlendLow = EditorGUILayout.FloatField(node.slopeMinBlendLow, GUILayout.MaxWidth(50f));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendLow, ref node.slopeMaxBlendLow, 0f, 90f);
-            GUILayout.Label("Blend High: " + node.slopeMaxBlendHigh + "°");
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Blend High: ");
+            node.slopeMaxBlendHigh = EditorGUILayout.FloatField(node.slopeMaxBlendHigh, GUILayout.MaxWidth(50f));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.MinMaxSlider(ref node.slopeMinBlendHigh, ref node.slopeMaxBlendHigh, 0f, 90f);
         }
     }

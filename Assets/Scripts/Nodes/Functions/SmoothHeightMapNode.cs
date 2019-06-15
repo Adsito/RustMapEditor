@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Functions/HeightMap/Smooth HeightMap")]
@@ -7,7 +6,7 @@ public class SmoothHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public float filterStrength = 1f, blurDirection = 0f;
+    [HideInInspector] public float filterStrength = 1f, blurDirection = 0f;
     public override object GetValue(NodePort port)
     {
         return null;
