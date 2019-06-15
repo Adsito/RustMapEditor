@@ -1,21 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using XNode;
 using XNodeEditor;
-using NodeVariables;
 
 [CustomNodeEditor(typeof(TextureNode))]
 public class TextureNodeEditor : NodeEditor
 {
-    #region Fields
-    TerrainSplat.Enum groundEnum = TerrainSplat.Enum.Grass;
-    TerrainBiome.Enum biomeEnum = TerrainBiome.Enum.Temperate;
-    NodeVariables.Texture.AlphaEnum alphaEnum = NodeVariables.Texture.AlphaEnum.Active;
-    TerrainTopology.Enum topologyLayer = TerrainTopology.Enum.Beach;
-    NodeVariables.Texture.TopologyEnum topologyEnum = NodeVariables.Texture.TopologyEnum.Active;
-    #endregion
     public override Color GetTint()
     {
         return Color.green;   
@@ -32,24 +21,24 @@ public class TextureNodeEditor : NodeEditor
         switch (node.landLayer)
         {
             case NodeVariables.Texture.LandLayerEnum.Ground:
-                groundEnum = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture", groundEnum);
+                node.groundEnum = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture", node.groundEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Biome:
-                biomeEnum = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture", biomeEnum);
+                node.biomeEnum = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture", node.biomeEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Alpha:
-                alphaEnum = (NodeVariables.Texture.AlphaEnum)EditorGUILayout.EnumPopup("Texture", alphaEnum);
+                node.alphaEnum = (NodeVariables.Texture.AlphaEnum)EditorGUILayout.EnumPopup("Texture", node.alphaEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Topology:
-                topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology", topologyLayer);
-                topologyEnum = (NodeVariables.Texture.TopologyEnum)EditorGUILayout.EnumPopup("Texture", topologyEnum);
+                node.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology", node.topologyLayer);
+                node.topologyEnum = (NodeVariables.Texture.TopologyEnum)EditorGUILayout.EnumPopup("Texture", node.topologyEnum);
                 break;
         }
         node.Texture.LandLayer = (int)node.landLayer;
-        node.Texture.TopologyLayer = TerrainTopology.TypeToIndex((int)topologyLayer);
-        node.Texture.GroundTexture = (int)groundEnum;
-        node.Texture.BiomeTexture = (int)biomeEnum;
-        node.Texture.AlphaTexture = (int)alphaEnum;
-        node.Texture.TopologyTexture = (int)topologyEnum;
+        node.Texture.TopologyLayer = TerrainTopology.TypeToIndex((int)node.topologyLayer);
+        node.Texture.GroundTexture = (int)node.groundEnum;
+        node.Texture.BiomeTexture = (int)node.biomeEnum;
+        node.Texture.AlphaTexture = (int)node.alphaEnum;
+        node.Texture.TopologyTexture = (int)node.topologyEnum;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Paint/Copy Texture")]
@@ -8,8 +7,16 @@ public class CopyTextureNode : Node
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public int landLayerFrom, textureFrom, topologyFrom;
-    [NonSerialized()] public string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
+    #region Fields
+    [HideInInspector] public int landLayerFrom, textureFrom, topologyFrom;
+    [HideInInspector] public string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
+    [HideInInspector] public int[] values = { 0, 1 };
+    [HideInInspector] public string[] activeTextureAlpha = { "Visible", "Invisible" };
+    [HideInInspector] public string[] activeTextureTopo = { "Active", "Inactive" };
+    [HideInInspector] public TerrainSplat.Enum groundLayerFrom = TerrainSplat.Enum.Grass;
+    [HideInInspector] public TerrainBiome.Enum biomeLayerFrom = TerrainBiome.Enum.Temperate;
+    [HideInInspector] public TerrainTopology.Enum topologyLayerFrom = TerrainTopology.Enum.Beach;
+    #endregion
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);
