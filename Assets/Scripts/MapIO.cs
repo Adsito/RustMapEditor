@@ -820,11 +820,11 @@ public class MapIO : MonoBehaviour {
     public int Texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
     // Accepts "Ground" and "Biome".
     {
-        if (landLayer == "Ground")
+        if (landLayer.ToLower() == "ground")
         {
             return TerrainSplat.TypeToIndex((int)terrainLayer); // Layer texture to paint from Ground Textures.
         }
-        if (landLayer == "Biome")
+        if (landLayer.ToLower() == "biome")
         {
             return TerrainBiome.TypeToIndex((int)biomeLayer); // Layer texture to paint from Biome Textures.
         }
@@ -837,7 +837,7 @@ public class MapIO : MonoBehaviour {
         {
             return 8;
         }
-        else if (landLayer == "biome")
+        else if (landLayer.ToLower() == "biome")
         {
             return 4;
         }
@@ -1031,7 +1031,6 @@ public class MapIO : MonoBehaviour {
     public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Height");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1042,7 +1041,7 @@ public class MapIO : MonoBehaviour {
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
                 float[] normalised = new float[textureCount];
                 float height = terrain.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
-                if (height > heightLow && height < heightHigh)
+                if (height >= heightLow && height <= heightHigh)
                 {
                     for (int k = 0; k < textureCount; k++) // Erases the textures on all the layers.
                     {
@@ -1050,7 +1049,7 @@ public class MapIO : MonoBehaviour {
                     }
                     splatMap[i, j, t] = 1; // Paints the texture t.
                 }
-                else if (height > minBlendLow && height < heightLow)
+                else if (height >= minBlendLow && height <= heightLow)
                 {
                     float normalisedHeight = height - minBlendLow;
                     float heightRange = heightLow - minBlendLow;
@@ -1074,7 +1073,7 @@ public class MapIO : MonoBehaviour {
                         splatMap[i, j, k] = normalised[k];
                     }
                 }
-                else if (height > heightHigh && height < maxBlendHigh)
+                else if (height >= heightHigh && height <= maxBlendHigh)
                 {
                     float normalisedHeight = height - heightHigh;
                     float heightRange = maxBlendHigh - heightHigh;
@@ -1196,7 +1195,6 @@ public class MapIO : MonoBehaviour {
     }
     public void PaintSlope(string landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Slope");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
