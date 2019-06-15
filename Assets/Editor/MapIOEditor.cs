@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.IMGUI.Controls;
@@ -15,7 +14,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.7-prerelease";
+    string editorVersion = "v1.8-prerelease";
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
     string saveFile = "";
