@@ -5,7 +5,6 @@ using XNodeEditor;
 [CustomNodeEditor(typeof(PaintHeightNode))]
 public class PaintHeightNodeEditor : NodeEditor
 {
-    bool blendHeights = false;
     public override Color GetTint()
     {
         return Color.magenta;
@@ -31,14 +30,14 @@ public class PaintHeightNodeEditor : NodeEditor
         }
         node.heightMaxBlendLow = node.heightLow;
         node.heightMinBlendHigh = node.heightHigh;
-        if (blendHeights == false)
+        if (node.blendHeights == false)
         {
             node.heightMaxBlendHigh = node.heightHigh;
             node.heightMinBlendLow = node.heightLow;
         }
         #endregion
         GUILayout.Label("Height Tools (Metres)", EditorStyles.boldLabel); // From 0 - 90
-        blendHeights = EditorGUILayout.ToggleLeft("Blend Heights", blendHeights);
+        node.blendHeights = EditorGUILayout.ToggleLeft("Blend Heights", node.blendHeights);
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("From: ", EditorStyles.boldLabel, GUILayout.MaxWidth(41f));
         node.heightLow = EditorGUILayout.FloatField(node.heightLow, GUILayout.MaxWidth(50f));
@@ -46,7 +45,7 @@ public class PaintHeightNodeEditor : NodeEditor
         node.heightHigh = EditorGUILayout.FloatField(node.heightHigh, GUILayout.MaxWidth(50f));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref node.heightLow, ref node.heightHigh, 0f, 1000f);
-        if (blendHeights == true)
+        if (node.blendHeights == true)
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Blend Low: ");
