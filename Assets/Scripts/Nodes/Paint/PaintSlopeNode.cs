@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Paint/Paint Slope")]
@@ -8,7 +7,8 @@ public class PaintSlopeNode : Node
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public float slopeLow = 40f, slopeHigh = 60f, slopeMinBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeMaxBlendHigh = 75f;
+    [HideInInspector] public float slopeLow = 40f, slopeHigh = 60f, slopeMinBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeMaxBlendHigh = 75f;
+    [HideInInspector] public bool blendSlopes = false;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);

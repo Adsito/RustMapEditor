@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Functions/HeightMap/Normalise HeightMap")]
@@ -7,7 +6,7 @@ public class NormaliseHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public float normaliseLow = 450f, normaliseHigh = 1000f, normaliseBlend = 1f;
+    [HideInInspector] public float normaliseLow = 450f, normaliseHigh = 1000f, normaliseBlend = 1f;
     public override object GetValue(NodePort port)
     {
         return null;

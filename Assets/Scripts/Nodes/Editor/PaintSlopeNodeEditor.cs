@@ -5,7 +5,6 @@ using XNodeEditor;
 [CustomNodeEditor(typeof(PaintSlopeNode))]
 public class PaintSlopeNodeEditor : NodeEditor
 {
-    bool blendSlopes = false;
     public override Color GetTint()
     {
         return Color.magenta;
@@ -32,7 +31,7 @@ public class PaintSlopeNodeEditor : NodeEditor
         }
         node.slopeMaxBlendLow = node.slopeLow;
         node.slopeMinBlendHigh = node.slopeHigh;
-        if (blendSlopes == false)
+        if (node.blendSlopes == false)
         {
             node.slopeMaxBlendHigh = node.slopeHigh;
             node.slopeMinBlendLow = node.slopeLow;
@@ -40,7 +39,7 @@ public class PaintSlopeNodeEditor : NodeEditor
         #endregion
         GUILayout.Label("Slope Tools (Degrees)", EditorStyles.boldLabel); // From 0 - 90
         EditorGUILayout.BeginHorizontal();
-        blendSlopes = EditorGUILayout.ToggleLeft("Blend Slopes", blendSlopes);
+        node.blendSlopes = EditorGUILayout.ToggleLeft("Blend Slopes", node.blendSlopes);
         // Todo: Toggle for check between heightrange.
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal();
@@ -50,7 +49,7 @@ public class PaintSlopeNodeEditor : NodeEditor
         node.slopeHigh = EditorGUILayout.FloatField(node.slopeHigh, GUILayout.MaxWidth(50f));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref node.slopeLow, ref node.slopeHigh, 0f, 90f);
-        if (blendSlopes == true)
+        if (node.blendSlopes == true)
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Blend Low: ");
