@@ -29,7 +29,6 @@ Using resources from:
 
 
 ## Features
-- Extended SDK that allows Prefab loading direct from game content files.
 - Importing and exporting .map files.
 - Ability to edit
   - Terrain Map
@@ -38,6 +37,6 @@ Using resources from:
   - Topology
   - Alpha Map
 - Simple painting tools to easily edit map features.
-- Spawn in prefabs such as monuments and decor.
 - Paint terrain based on height and slopes.
 - Integration with 3rd party assets.
+- Map Making API and documentation for contributers.
