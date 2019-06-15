@@ -30,10 +30,10 @@ public class LandData : MonoBehaviour
     void Awake()
     {
         terrain = transform.parent.GetComponent<Terrain>();
-        getTextures();
+        GetTextures();
     }
 
-    public void setData(float[,,] floatArray, string name, int topology = 0)
+    public void SetData(float[,,] floatArray, string name, int topology = 0)
     {
         switch (name.ToLower())
         {
@@ -52,18 +52,19 @@ public class LandData : MonoBehaviour
         }
         layerName = name;
     }
-    public void getTextures()
+    public void GetTextures()
     {
-        groundTextures = getGroundTextures();
-        biomeTextures = getBiomeTextures();
-        miscTextures = getAlphaTextures();
+        groundTextures = GetGroundTextures();
+        biomeTextures = GetBiomeTextures();
+        miscTextures = GetAlphaTextures();
+        AssetDatabase.SaveAssets();
     }
-    public void setLayer(string layer, int topology = 0)
+    public void SetLayer(string layer, int topology = 0)
     {
         terrain = transform.parent.GetComponent<Terrain>();
         if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
-            getTextures();
+            GetTextures();
         }
         Selection.activeGameObject = null;
         switch (layer.ToLower())
@@ -93,7 +94,7 @@ public class LandData : MonoBehaviour
                 break;
         }
     }
-    public void save(int topologyLayer = 0)
+    public void Save(int topologyLayer = 0)
     {
         switch (layerName)
         {
@@ -111,50 +112,47 @@ public class LandData : MonoBehaviour
                 break;
         }
     }
-    public TerrainLayer[] getAlphaTextures()
+    public TerrainLayer[] GetAlphaTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
-        textures[0] = Resources.Load<TerrainLayer>("Textures/Misc/Active");
-        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
-        textures[1] = Resources.Load<TerrainLayer>("Textures/Misc/InActive");
-        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
+        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/Active.terrainlayer");
+        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
+        textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/InActive.terrainlayer");
+        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
         return textures;
     }
-
-
-    public TerrainLayer[] getBiomeTextures()
+    public TerrainLayer[] GetBiomeTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[4];
-        textures[0] = Resources.Load<TerrainLayer>("Textures/Biome/Tundra");
-        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/tundra");
-        textures[1] = Resources.Load<TerrainLayer>("Textures/Biome/Temperate");
-        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/temperate");
-        textures[2] = Resources.Load<TerrainLayer>("Textures/Biome/Arid");
-        //textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arid");
-        textures[3] = Resources.Load<TerrainLayer>("Textures/Biome/Arctic");
-        //textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biomes/arctic");
+        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Tundra.terrainlayer");
+        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/tundra");
+        textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Temperate.terrainlayer");
+        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/temperate");
+        textures[2] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arid.terrainlayer");
+        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arid");
+        textures[3] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arctic.terrainlayer");
+        textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
         return textures;
     }
-
-    public TerrainLayer[] getGroundTextures()
+    public TerrainLayer[] GetGroundTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[8];
-        textures[0] = Resources.Load<TerrainLayer>("Textures/Ground/Dirt");
-        //textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/dirt");
-        textures[1] = Resources.Load<TerrainLayer>("Textures/Ground/Snow");
-        //textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/snow");
-        textures[2] = Resources.Load<TerrainLayer>("Textures/Ground/Sand");
-        //textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/sand");
-        textures[3] = Resources.Load<TerrainLayer>("Textures/Ground/Rock");
-        //textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/rock");
-        textures[4] = Resources.Load<TerrainLayer>("Textures/Ground/Grass");
-        //textures[4].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/grass");
-        textures[5] = Resources.Load<TerrainLayer>("Textures/Ground/Forest");
-        //textures[5].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/forest");
-        textures[6] = Resources.Load<TerrainLayer>("Textures/Ground/Stones");
-        //textures[6].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/stones");
-        textures[7] = Resources.Load<TerrainLayer>("Textures/Ground/Gravel");
-        //textures[7].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/gravel");
+        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Dirt.terrainlayer");
+        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/dirt");
+        textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Snow.terrainlayer");
+        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/snow");
+        textures[2] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Sand.terrainlayer");
+        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/sand");
+        textures[3] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Rock.terrainlayer");
+        textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/rock");
+        textures[4] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Grass.terrainlayer");
+        textures[4].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/grass");
+        textures[5] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Forest.terrainlayer");
+        textures[5].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/forest");
+        textures[6] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Stones.terrainlayer");
+        textures[6].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/stones");
+        textures[7] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Gravel.terrainlayer");
+        textures[7].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/gravel");
         return textures;
     }
 }
