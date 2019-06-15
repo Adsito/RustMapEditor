@@ -1,6 +1,118 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8171908515236407149
+--- !u!114 &-8524658251974134817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cbcdba27ae5fdd439861d3f4ada8bb0, type: 3}
+  m_Name: Paint Slope
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -296, y: -72}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -8524658251974134817}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -5338847498809457074}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: -8524658251974134817}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: -1335163955321824547}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -8524658251974134817}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: 823409336630597675}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &-8458600418427990289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cbcdba27ae5fdd439861d3f4ada8bb0, type: 3}
+  m_Name: Paint Slope
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1176, y: -104}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -8458600418427990289}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -5938251414465421087}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: -8458600418427990289}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 285136337390353533}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -8458600418427990289}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: 416925349687751395}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &-5938251414465421087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13,78 +125,25 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -88, y: -312}
+  position: {x: 936, y: -248}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: -8171908515236407149}
+      _node: {fileID: -5938251414465421087}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: -3884186362025209752}
+        node: {fileID: -8458600418427990289}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
   landLayer: 3
---- !u!114 &-7411003946809442330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: -72, y: -168}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -7411003946809442330}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 8749957092063288645}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: -7411003946809442330}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: -7411003946809442330}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: -3884186362025209752}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &-7135023920558333475
+--- !u!114 &-5338847498809457074
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,284 +156,269 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 1368, y: -328}
+  position: {x: -536, y: -184}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: -7135023920558333475}
+      _node: {fileID: -5338847498809457074}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: 6768946867123814240}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  landLayer: 1
---- !u!114 &-6751452465402670092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
-  m_Name: Texture
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 1608, y: -360}
-  ports:
-    keys:
-    - Texture
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -6751452465402670092}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 9026015187108634147}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  landLayer: 3
---- !u!114 &-5655921088383124039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 1128, y: -184}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -5655921088383124039}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 2213521937882852832}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: -5655921088383124039}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: 1518526838231475186}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: -5655921088383124039}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: 4180212599091440541}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &-4386835642655779955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 408, y: -168}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -4386835642655779955}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 317524383142496724}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: -4386835642655779955}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -3884186362025209752}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: -4386835642655779955}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: 3994457011291376083}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &-4192907766261516168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c573aec9ff67d354ea06e74c442ecb37, type: 3}
-  m_Name: Start
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: -568, y: -88}
-  ports:
-    keys:
-    - NextTask
-    values:
-    - _fieldName: NextTask
-      _node: {fileID: -4192907766261516168}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: 8086443918973716245}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &-3884186362025209752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 168, y: -168}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -3884186362025209752}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: -8171908515236407149}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: -3884186362025209752}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -7411003946809442330}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: -3884186362025209752}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: -4386835642655779955}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &-986363880300888220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
-  m_Name: Texture
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 408, y: -280}
-  ports:
-    keys:
-    - Texture
-    values:
-    - _fieldName: Texture
-      _node: {fileID: -986363880300888220}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 3994457011291376083}
+        node: {fileID: -8524658251974134817}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
   landLayer: 0
+--- !u!114 &-2929898013291634519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
+  m_Name: Texture
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1400, y: -216}
+  ports:
+    keys:
+    - Texture
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -2929898013291634519}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -170173152171647255}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  landLayer: 1
+--- !u!114 &-1341920753327571923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
+  m_Name: Texture
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1176, y: -216}
+  ports:
+    keys:
+    - Texture
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -1341920753327571923}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: 416925349687751395}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  landLayer: 1
+--- !u!114 &-1335163955321824547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Set Minimum Height
+  m_EditorClassIdentifier: Assembly-CSharp::SetMinimumHeight
+  graph: {fileID: 11400000}
+  position: {x: -536, y: -56}
+  ports:
+    keys:
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: PreviousTask
+      _node: {fileID: -1335163955321824547}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 9044346118808460901}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -1335163955321824547}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: -8524658251974134817}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &-929563960531475537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae6ea210b40a25458f845343f87ff5f, type: 3}
+  m_Name: Paint Rivers
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 680, y: -56}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -929563960531475537}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -136857179491737096}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: -929563960531475537}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 2405079158009111593}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -929563960531475537}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: 285136337390353533}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &-170173152171647255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
+  m_Name: Paint Height
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1640, y: -104}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -170173152171647255}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -2929898013291634519}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: -170173152171647255}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 416925349687751395}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -170173152171647255}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &-136857179491737096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
+  m_Name: Texture
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 440, y: -184}
+  ports:
+    keys:
+    - Texture
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -136857179491737096}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -929563960531475537}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  landLayer: 3
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,28 +432,251 @@ MonoBehaviour:
   m_Name: Example Painting
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -4192907766261516168}
-  - {fileID: 3518717860579213898}
-  - {fileID: 8086443918973716245}
-  - {fileID: 8749957092063288645}
-  - {fileID: -7411003946809442330}
-  - {fileID: -8171908515236407149}
-  - {fileID: -3884186362025209752}
-  - {fileID: 317524383142496724}
-  - {fileID: -4386835642655779955}
-  - {fileID: 3994457011291376083}
-  - {fileID: -986363880300888220}
-  - {fileID: 1518526838231475186}
-  - {fileID: 6023865054678533478}
-  - {fileID: -5655921088383124039}
-  - {fileID: 2213521937882852832}
-  - {fileID: 4180212599091440541}
-  - {fileID: 7121376025492765734}
-  - {fileID: -7135023920558333475}
-  - {fileID: 6768946867123814240}
-  - {fileID: -6751452465402670092}
-  - {fileID: 9026015187108634147}
---- !u!114 &317524383142496724
+  - {fileID: 9044346118808460901}
+  - {fileID: -5338847498809457074}
+  - {fileID: -8524658251974134817}
+  - {fileID: -1335163955321824547}
+  - {fileID: 4027890398051305254}
+  - {fileID: 823409336630597675}
+  - {fileID: 8178364471088617336}
+  - {fileID: 5358343890764357524}
+  - {fileID: 9043462183292265393}
+  - {fileID: 2405079158009111593}
+  - {fileID: -136857179491737096}
+  - {fileID: -929563960531475537}
+  - {fileID: 285136337390353533}
+  - {fileID: 3360871507643980886}
+  - {fileID: -5938251414465421087}
+  - {fileID: -8458600418427990289}
+  - {fileID: -1341920753327571923}
+  - {fileID: 416925349687751395}
+  - {fileID: -170173152171647255}
+  - {fileID: -2929898013291634519}
+--- !u!114 &285136337390353533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e76202ac806684c4cbaa210c913c59c9, type: 3}
+  m_Name: Copy Texture
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 936, y: -120}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: 285136337390353533}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: 3360871507643980886}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: 285136337390353533}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: -929563960531475537}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: 285136337390353533}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: -8458600418427990289}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &416925349687751395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
+  m_Name: Paint Height
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1416, y: -104}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: 416925349687751395}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -1341920753327571923}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: 416925349687751395}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: -8458600418427990289}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: 416925349687751395}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: -170173152171647255}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &823409336630597675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
+  m_Name: Paint Height
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -56, y: -56}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: 823409336630597675}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: 4027890398051305254}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: 823409336630597675}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: -8524658251974134817}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: 823409336630597675}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: 8178364471088617336}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &2405079158009111593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
+  m_Name: Paint Height
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 456, y: -24}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: 2405079158009111593}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: 9043462183292265393}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: 2405079158009111593}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 8178364471088617336}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: 2405079158009111593}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: PreviousTask
+        node: {fileID: -929563960531475537}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+--- !u!114 &3360871507643980886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -422,81 +689,25 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 152, y: -312}
+  position: {x: 680, y: -184}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: 317524383142496724}
+      _node: {fileID: 3360871507643980886}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: -4386835642655779955}
+        node: {fileID: 285136337390353533}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
   landLayer: 0
---- !u!114 &1518526838231475186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ae6ea210b40a25458f845343f87ff5f, type: 3}
-  m_Name: Paint Rivers
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 872, y: -152}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 1518526838231475186}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 6023865054678533478}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 1518526838231475186}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: 3994457011291376083}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 1518526838231475186}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: -5655921088383124039}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &2213521937882852832
+--- !u!114 &4027890398051305254
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -509,25 +720,25 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 888, y: -280}
+  position: {x: -280, y: -200}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: 2213521937882852832}
+      _node: {fileID: 4027890398051305254}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: -5655921088383124039}
+        node: {fileID: 823409336630597675}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
-  landLayer: 1
---- !u!114 &3518717860579213898
+  landLayer: 0
+--- !u!114 &5358343890764357524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -540,168 +751,25 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -568, y: -216}
+  position: {x: -56, y: -200}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: 3518717860579213898}
+      _node: {fileID: 5358343890764357524}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: 8086443918973716245}
+        node: {fileID: 8178364471088617336}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
   landLayer: 3
---- !u!114 &3994457011291376083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cbcdba27ae5fdd439861d3f4ada8bb0, type: 3}
-  m_Name: Paint Slope
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 648, y: -168}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 3994457011291376083}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: -986363880300888220}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 3994457011291376083}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -4386835642655779955}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 3994457011291376083}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: 1518526838231475186}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &4180212599091440541
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cbcdba27ae5fdd439861d3f4ada8bb0, type: 3}
-  m_Name: Paint Slope
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 1368, y: -216}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 4180212599091440541}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 7121376025492765734}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 4180212599091440541}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -5655921088383124039}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 4180212599091440541}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: 6768946867123814240}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &6023865054678533478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
-  m_Name: Texture
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 664, y: -280}
-  ports:
-    keys:
-    - Texture
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 6023865054678533478}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 1518526838231475186}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  landLayer: 3
---- !u!114 &6768946867123814240
+--- !u!114 &8178364471088617336
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -714,7 +782,7 @@ MonoBehaviour:
   m_Name: Paint Height
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 1624, y: -232}
+  position: {x: 200, y: -40}
   ports:
     keys:
     - Texture
@@ -722,42 +790,42 @@ MonoBehaviour:
     - NextTask
     values:
     - _fieldName: Texture
-      _node: {fileID: 6768946867123814240}
+      _node: {fileID: 8178364471088617336}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: -7135023920558333475}
+        node: {fileID: 5358343890764357524}
         reroutePoints: []
       _direction: 0
       _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
     - _fieldName: PreviousTask
-      _node: {fileID: 6768946867123814240}
+      _node: {fileID: 8178364471088617336}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: NextTask
-        node: {fileID: 4180212599091440541}
+        node: {fileID: 823409336630597675}
         reroutePoints: []
       _direction: 0
       _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
     - _fieldName: NextTask
-      _node: {fileID: 6768946867123814240}
+      _node: {fileID: 8178364471088617336}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: PreviousTask
-        node: {fileID: 9026015187108634147}
+        node: {fileID: 2405079158009111593}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
---- !u!114 &7121376025492765734
+--- !u!114 &9043462183292265393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -770,25 +838,25 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 1112, y: -312}
+  position: {x: 200, y: -184}
   ports:
     keys:
     - Texture
     values:
     - _fieldName: Texture
-      _node: {fileID: 7121376025492765734}
+      _node: {fileID: 9043462183292265393}
       _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: Texture
-        node: {fileID: 4180212599091440541}
+        node: {fileID: 2405079158009111593}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
   landLayer: 3
---- !u!114 &8086443918973716245
+--- !u!114 &9044346118808460901
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -797,131 +865,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
+  m_Script: {fileID: 11500000, guid: c573aec9ff67d354ea06e74c442ecb37, type: 3}
+  m_Name: Start
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -328, y: -168}
+  position: {x: -760, y: -56}
   ports:
     keys:
-    - Texture
-    - PreviousTask
     - NextTask
     values:
-    - _fieldName: Texture
-      _node: {fileID: 8086443918973716245}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 3518717860579213898}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 8086443918973716245}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -4192907766261516168}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
     - _fieldName: NextTask
-      _node: {fileID: 8086443918973716245}
+      _node: {fileID: 9044346118808460901}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
---- !u!114 &8749957092063288645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
-  m_Name: Texture
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: -328, y: -312}
-  ports:
-    keys:
-    - Texture
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 8749957092063288645}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
       connections:
-      - fieldName: Texture
-        node: {fileID: -7411003946809442330}
+      - fieldName: PreviousTask
+        node: {fileID: -1335163955321824547}
         reroutePoints: []
       _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  landLayer: 3
---- !u!114 &9026015187108634147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 606811e2fa6bb8e4986c97783b50fda5, type: 3}
-  m_Name: Paint Height
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 1848, y: -232}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 9026015187108634147}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: -6751452465402670092}
-        reroutePoints: []
-      _direction: 0
       _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 9026015187108634147}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: 6768946867123814240}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 9026015187108634147}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
