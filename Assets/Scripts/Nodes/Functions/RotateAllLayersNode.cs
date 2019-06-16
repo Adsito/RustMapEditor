@@ -29,13 +29,13 @@ public class RotateAllLayersNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.RotateGroundmap(CW);
+                mapIO.RotateLayer("ground", CW);
                 break;
             case 1: // Biome
-                mapIO.RotateBiomemap(CW);
+                mapIO.RotateLayer("biome", CW);
                 break;
             case 2: // Alpha
-                mapIO.RotateAlphamap(CW);
+                mapIO.RotateLayer("alpha", CW);
                 break;
             case 3: // Topology
                 mapIO.RotateAllTopologymap(CW);
