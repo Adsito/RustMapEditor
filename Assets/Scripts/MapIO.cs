@@ -2014,21 +2014,21 @@ public class MapIO : MonoBehaviour {
         SetPrefabLookup(new PrefabLookup(bundleFile, this));
     }
     public List<string> generationPresetList = new List<string>();
-    public Dictionary<string, UnityEngine.Object> generationPresetLookup = new Dictionary<string, UnityEngine.Object>();
+    public Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
     public void RefreshAssetList()
     { 
         var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
         generationPresetList.Clear();
-        generationPresetLookup.Clear();
+        nodePresetLookup.Clear();
         foreach (var item in list)
         {
             var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
-            generationPresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+            nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
         }
     }
-    public void ParseNodeGraph(XNode.NodeGraph graph)
+    public static void ParseNodeGraph(XNode.NodeGraph graph)
     {
         foreach (var node in graph.nodes)
         {
@@ -2055,7 +2055,7 @@ public class MapIO : MonoBehaviour {
                         }
                     }
                     while (nodeIteration != null);
-                    ChangeLayer(landLayer);
+                    GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
                 }
             }
         }
