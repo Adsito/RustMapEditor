@@ -20,7 +20,7 @@ namespace XNodeEditor {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
             {
-                GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().ParseNodeGraph(nodeGraph);
+                MapIO.ParseNodeGraph(nodeGraph);
             }
             if (GUILayout.Button(new GUIContent("Delete Preset", "Delete this preset from Unity."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
             {
@@ -34,6 +34,10 @@ namespace XNodeEditor {
             if (GUILayout.Button(new GUIContent("Rename Preset", "Rename this preset."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
             {
                 RenamePopup.Show(nodeGraph);
+            }
+            if (GUILayout.Button(new GUIContent("Wiki", "Opens the wiki at the NodeSystem page."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
+            {
+                Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Node-System");
             }
             EditorGUILayout.EndHorizontal();
         }

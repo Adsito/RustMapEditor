@@ -43,7 +43,7 @@ public class MapIOEditor : EditorWindow
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
-    string assetDirectory = "Assets/AutoGenPresets/";
+    string assetDirectory = "Assets/NodePresets/";
     Vector2 scrollPos = new Vector2(0, 0);
     Vector2 presetScrollPos = new Vector2(0, 0);
 
@@ -165,6 +165,10 @@ public class MapIOEditor : EditorWindow
                 if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), GUILayout.MaxWidth(65)))
                 {
                     Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/projects/1");
+                }
+                if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), GUILayout.MaxWidth(40)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
                 }
                 EditorGUILayout.EndHorizontal();
                 break;
@@ -1058,6 +1062,7 @@ public class MapIOEditor : EditorWindow
                     #endregion
                     #region Generation
                     case 2:
+                        /*
                         if (GUILayout.Button(new GUIContent("Default Topologies", "Generates default topologies on the map and paints over existing topologies without wiping them.")))
                         {
                             script.AutoGenerateTopology(false);
@@ -1074,21 +1079,20 @@ public class MapIOEditor : EditorWindow
                         {
                             script.AutoGenerateBiome();
                         }
-                        /*
                         scale = EditorGUILayout.Slider(scale, 1f, 2000f);
                         GUILayout.Label("Scale of the heightmap generation, \n the further left the less smoothed the terrain will be");
                         if (GUILayout.Button(new GUIContent("Generate Perlin Heightmap", "Really basic perlin doesn't do much rn.")))
                         {
                             script.generatePerlinHeightmap(scale);
                         }*/
-                        GUILayout.Label(new GUIContent("Auto Generation Presets", "List of all the auto generation presets in the project."), EditorStyles.boldLabel);
-                        if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Generation Presets in the project.")))
+                        GUILayout.Label(new GUIContent("Node Presets", "List of all the node presets in the project."), EditorStyles.boldLabel);
+                        if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Node Presets in the project.")))
                         {
                             script.RefreshAssetList();
                         }
                         presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
-                        ReorderableListGUI.Title("Generation Presets");
-                        ReorderableListGUI.ListField(script.generationPresetList, AutoGenerationPresetDrawer, DrawEmpty);
+                        ReorderableListGUI.Title("Node Presets");
+                        ReorderableListGUI.ListField(script.generationPresetList, NodePresetDrawer, DrawEmpty);
                         GUILayout.EndScrollView();
                         break;
                         #endregion
@@ -1204,7 +1208,7 @@ public class MapIOEditor : EditorWindow
     }
     #endregion
     #region Methods
-    private string AutoGenerationPresetDrawer(Rect position, string itemValue)
+    private string NodePresetDrawer(Rect position, string itemValue)
     {
         MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         position.width -= 67;
@@ -1214,7 +1218,7 @@ public class MapIOEditor : EditorWindow
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
         {
             script.RefreshAssetList();
-            script.generationPresetLookup.TryGetValue(itemValue, out Object preset);
+            script.nodePresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
                 AssetDatabase.OpenAsset(preset.GetInstanceID());
@@ -1228,11 +1232,11 @@ public class MapIOEditor : EditorWindow
         position.width = 30;
         if (GUI.Button(position, "Run"))
         {
-            script.generationPresetLookup.TryGetValue(itemValue, out Object preset);
+            script.nodePresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
                 var graph = (XNode.NodeGraph)AssetDatabase.LoadAssetAtPath(assetDirectory + itemValue + ".asset", typeof(XNode.NodeGraph));
-                script.ParseNodeGraph(graph);
+                MapIO.ParseNodeGraph(graph);
             }
         }
         return itemValue;

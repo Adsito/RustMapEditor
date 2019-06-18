@@ -1211,11 +1211,11 @@ namespace Rotorz.ReorderableList {
 						// Append item to list.
 						GUIUtility.keyboardControl = 0;
 						AddItem(adaptor);
-                        if (!System.IO.Directory.Exists("Assets/AutoGenPresets"))
+                        if (!System.IO.Directory.Exists("Assets/NodePresets"))
                         {
-                            System.IO.Directory.CreateDirectory("Assets/AutoGenPresets");
+                            System.IO.Directory.CreateDirectory("Assets/NodePresets");
                         }
-                        AssetDatabase.CreateAsset(AutoGenerationGraph.CreateInstance("AutoGenerationGraph"), "Assets/AutoGenPresets/AutoGenerationPreset.asset");
+                        AssetDatabase.CreateAsset(AutoGenerationGraph.CreateInstance("AutoGenerationGraph"), "Assets/NodePresets/AutoGenerationPreset.asset");
                         GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().RefreshAssetList();
 					}
 				}
