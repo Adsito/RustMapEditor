@@ -218,7 +218,6 @@ public class WorldConverter
             }
         }
 
-
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
         float[,,] alphaArray = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().alphaArray;
@@ -229,8 +228,8 @@ public class WorldConverter
                  alphaMap[0, j, k] = BitUtility.Float2Byte(alphaArray[j, k, 0]);
             }
         }
+        GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().SaveTopologyLayers();
         var topologyMap = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().getTerrainMap();
-
 
         world.AddMap("terrain", landHeightBytes);
         world.AddMap("height", landHeightBytes);
