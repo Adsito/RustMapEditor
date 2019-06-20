@@ -36,7 +36,6 @@ public class MapIOEditor : EditorWindow
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint, topologyFrom, topologyToPaint;
     int layerConditionalInt, texture = 0, topologyTexture = 0, alphaTexture;
-    bool TopoActive = false, TopoInactive = false;
     bool deletePrefabs = false;
     bool checkHeightCndtl = false, checkSlopeCndtl = false, checkAlpha = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
