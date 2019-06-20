@@ -1,39 +1,28 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
 [Serializable]
 
-
-public class LandData : MonoBehaviour
+public static class LandData 
 {
-    public float[,,] groundArray;
-    public float[,,] biomeArray;
-    public float[,,] alphaArray;
-    public float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
+    public static float[,,] groundArray;
+    public static float[,,] biomeArray;
+    public static float[,,] alphaArray;
+    public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
     [HideInInspector]
-    public TerrainLayer[] groundTextures = null;
+    public static TerrainLayer[] groundTextures = null;
     [HideInInspector]
-    public TerrainLayer[] biomeTextures = null;
+    public static TerrainLayer[] biomeTextures = null;
     [HideInInspector]
-    public TerrainLayer[] miscTextures = null;
+    public static TerrainLayer[] miscTextures = null;
 
-    Terrain terrain;
-    string layerName = "";
-    [HideInInspector]
-    public int topologyLayer = 0;
+    static Terrain terrain = GameObject.FindGameObjectWithTag("LandData").transform.parent.GetComponent<Terrain>();
+    static string layerName = "";
 
-    void Awake()
-    {
-        terrain = transform.parent.GetComponent<Terrain>();
-        GetTextures();
-    }
-
-    public void SetData(float[,,] floatArray, string name, int topology = 0)
+    public static void SetData(float[,,] floatArray, string name, int topology = 0)
     {
         switch (name.ToLower())
         {
@@ -52,16 +41,15 @@ public class LandData : MonoBehaviour
         }
         layerName = name;
     }
-    public void GetTextures()
+    public static void GetTextures()
     {
         groundTextures = GetGroundTextures();
         biomeTextures = GetBiomeTextures();
         miscTextures = GetAlphaTextures();
         AssetDatabase.SaveAssets();
     }
-    public void SetLayer(string layer, int topology = 0)
+    public static void SetLayer(string layer, int topology = 0)
     {
-        terrain = transform.parent.GetComponent<Terrain>();
         if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
             GetTextures();
@@ -89,12 +77,9 @@ public class LandData : MonoBehaviour
                 terrain.terrainData.terrainLayers = miscTextures;
                 terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
-            default:
-                Debug.Log("Layer not set");
-                break;
         }
     }
-    public void Save(int topologyLayer = 0)
+    public static void Save(int topologyLayer = 0)
     {
         switch (layerName)
         {
@@ -112,7 +97,7 @@ public class LandData : MonoBehaviour
                 break;
         }
     }
-    public TerrainLayer[] GetAlphaTextures()
+    public static TerrainLayer[] GetAlphaTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/Active.terrainlayer");
@@ -121,7 +106,7 @@ public class LandData : MonoBehaviour
         textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
         return textures;
     }
-    public TerrainLayer[] GetBiomeTextures()
+    public static TerrainLayer[] GetBiomeTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[4];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Tundra.terrainlayer");
@@ -134,7 +119,7 @@ public class LandData : MonoBehaviour
         textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
         return textures;
     }
-    public TerrainLayer[] GetGroundTextures()
+    public static TerrainLayer[] GetGroundTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[8];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Dirt.terrainlayer");
