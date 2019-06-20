@@ -6,7 +6,7 @@ public class PaintHeightNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float heightLow = 500f, heightHigh = 750f, heightMinBlendLow = 250f, heightMaxBlendLow = 500f, heightMinBlendHigh = 750f, heightMaxBlendHigh = 1000f;
     [HideInInspector] public bool blendHeights = false;
     public override object GetValue(NodePort port)

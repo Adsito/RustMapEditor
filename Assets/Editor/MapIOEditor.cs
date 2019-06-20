@@ -35,11 +35,10 @@ public class MapIOEditor : EditorWindow
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint, topologyFrom, topologyToPaint;
-    int layerConditionalInt, texture = 0, topologyLayer = 0;
-    bool AlphaVisible = false, AlphaInvisible = false;
+    int layerConditionalInt, texture = 0, topologyTexture = 0, alphaTexture;
     bool TopoActive = false, TopoInactive = false;
     bool deletePrefabs = false;
-    bool checkHeightCndtl = false, checkSlopeCndtl = false;
+    bool checkHeightCndtl = false, checkSlopeCndtl = false, checkAlpha = false;
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
@@ -52,11 +51,6 @@ public class MapIOEditor : EditorWindow
     float blurDirection = 0f;
 
     int[] values = { 0, 1 };
-    bool[] groundTxtCndtl = new bool[8] { true, true, true, true, true, true, true, true };
-    bool[] biomeTxtCndtl = new bool[4] { true, true, true, true };
-    bool[] alphaTxtCndtl = new bool[2] { true, true };
-    bool[] topoTxtCndtl = new bool[2] { true, true };
-    int[] topoLayersCndtl = new int[] { };
     string[] activeTextureAlpha = { "Visible", "Invisible" };
     string[] activeTextureTopo = { "Active", "Inactive" };
 
@@ -499,28 +493,10 @@ public class MapIOEditor : EditorWindow
                                         script.conditionalBiome = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(script.conditionalBiome);
                                         break;
                                     case 2: // Alpha
-                                        EditorGUILayout.BeginHorizontal();
-                                        if (GUILayout.Button("ALL", GUILayout.MaxWidth(30)))
+                                        checkAlpha = EditorGUILayout.Toggle("Check Alpha:", checkAlpha);
+                                        if (checkAlpha)
                                         {
-                                            alphaTxtCndtl = new bool[] { true, true };
-                                            AlphaVisible = true; AlphaInvisible = true;
-                                        }
-                                        if (GUILayout.Button("NONE", GUILayout.MaxWidth(45)))
-                                        {
-                                            alphaTxtCndtl = new bool[] { false, false };
-                                            AlphaVisible = false; AlphaInvisible = false;
-                                        }
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUI.BeginChangeCheck();
-                                        EditorGUILayout.BeginHorizontal();
-                                        AlphaVisible = EditorGUILayout.ToggleLeft("Visible", AlphaVisible, GUILayout.MaxWidth(60));
-                                        AlphaInvisible = EditorGUILayout.ToggleLeft("Invisible", AlphaInvisible, GUILayout.MaxWidth(65));
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUI.EndChangeCheck();
-                                        if (GUI.changed)
-                                        {
-                                            alphaTxtCndtl[0] = AlphaVisible;
-                                            alphaTxtCndtl[1] = AlphaInvisible;
+                                            alphaTexture = EditorGUILayout.IntPopup("Alpha Texture:", alphaTexture, activeTextureAlpha, values);
                                         }
                                         break;
                                     case 3: // Topology
@@ -528,29 +504,7 @@ public class MapIOEditor : EditorWindow
                                         script.conditionalTopology = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(script.conditionalTopology);
                                         EditorGUILayout.Space();
                                         GUILayout.Label("Topology Texture", EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        if (GUILayout.Button("ALL", GUILayout.MaxWidth(30)))
-                                        {
-                                            topoTxtCndtl = new bool[] { true, true };
-                                            TopoActive = true; TopoInactive = true;
-                                        }
-                                        if (GUILayout.Button("NONE", GUILayout.MaxWidth(45)))
-                                        {
-                                            topoTxtCndtl = new bool[] { false, false };
-                                            TopoActive = false; TopoInactive = false;
-                                        }
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUI.BeginChangeCheck();
-                                        EditorGUILayout.BeginHorizontal();
-                                        TopoActive = EditorGUILayout.ToggleLeft("Active", TopoActive, GUILayout.MaxWidth(60));
-                                        TopoInactive = EditorGUILayout.ToggleLeft("Inactive", TopoInactive, GUILayout.MaxWidth(65));
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUI.EndChangeCheck();
-                                        if (GUI.changed)
-                                        {
-                                            topoTxtCndtl[0] = TopoActive;
-                                            topoTxtCndtl[1] = TopoInactive;
-                                        }
+                                        topologyTexture = EditorGUILayout.IntPopup("Topology Texture:", topologyTexture, activeTextureTopo, values);
                                         break;
                                     case 4: // Terrain
                                         GUILayout.Label("Slope Range", EditorStyles.boldLabel);
@@ -625,9 +579,12 @@ public class MapIOEditor : EditorWindow
                                 if (GUILayout.Button(new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set.")))
                                 {
                                     Conditions conditions = new Conditions();
-                                    conditions.AlphaTextures = alphaTxtCndtl;
+                                    conditions.GroundConditions = script.conditionalGround;
+                                    conditions.BiomeConditions = script.conditionalBiome;
+                                    conditions.CheckAlpha = checkAlpha;
+                                    conditions.AlphaTexture = alphaTexture;
                                     conditions.TopologyLayers = script.conditionalTopology;
-                                    conditions.TopologyTextures = topoTxtCndtl;
+                                    conditions.TopologyTexture = topologyTexture;
                                     conditions.SlopeLow = slopeLowCndtl;
                                     conditions.SlopeHigh = slopeHighCndtl;
                                     conditions.HeightLow = heightLowCndtl;

@@ -5,7 +5,7 @@ using XNode;
 public class InvertHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
     public override object GetValue(NodePort port)
     {
         return null;
