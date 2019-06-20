@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [Serializable]
 
 public static class LandData 
