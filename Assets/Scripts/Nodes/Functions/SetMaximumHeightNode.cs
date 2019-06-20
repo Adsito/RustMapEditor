@@ -5,7 +5,7 @@ using XNode;
 public class SetMaximumHeight : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float maximumHeight = 450f;
     public override object GetValue(NodePort port)
     {

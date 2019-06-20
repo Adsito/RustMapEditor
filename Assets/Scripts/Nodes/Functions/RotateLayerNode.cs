@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
 [CreateNodeMenu("Functions/Rotate/Rotate Layer")]
@@ -7,8 +6,8 @@ public class RotateLayerNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
-    [NonSerialized()] public bool CW = true;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [HideInInspector] public bool CW = true;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);

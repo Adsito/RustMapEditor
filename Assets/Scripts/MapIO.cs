@@ -31,29 +31,41 @@ public struct TopologyLayers
 }
 public struct GroundTextures
 {
-    public int Textures
+    public int Texture
     {
         get; set;
     }
 }
 public struct BiomeTextures
 {
-    public int Textures
+    public int Texture
     {
         get; set;
     }
 }
 public struct Conditions
 {
+    public TerrainSplat.Enum GroundConditions
+    {
+        get; set;
+    }
+    public TerrainBiome.Enum BiomeConditions
+    {
+        get; set;
+    }
     public TerrainTopology.Enum TopologyLayers
     {
         get; set;
     }
-    public bool[] AlphaTextures
+    public bool CheckAlpha
     {
         get; set;
     }
-    public bool[] TopologyTextures
+    public int AlphaTexture
+    {
+        get; set;
+    }
+    public int TopologyTexture
     {
         get; set;
     }
@@ -773,26 +785,25 @@ public class MapIO : MonoBehaviour {
         float[,,] biomeSplatMap = GetSplatMap("biome");
         float[,,] alphaSplatMap = GetSplatMap("alpha");
         float[,,] topologySplatMap = GetSplatMap("topology", topology);
-        float[,,] splatMapPaint = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight, TextureCount(landLayerToPaint)];
+        float[,,] splatMapPaint = new float[groundSplatMap.GetLength(0), groundSplatMap.GetLength(1), TextureCount(landLayerToPaint)];
         bool paint = true;
         int textureCount = TextureCount(landLayerToPaint);
         float slope, height;
         float[,] heights = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
         float[,] slopes = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
-        int  alphaTexture = 0, topologyTexture = 0;
         ProgressBar("Conditional Painter", "Preparing SplatMaps", 0.025f);
-        switch (landLayerToPaint)
+        switch (landLayerToPaint.ToLower())
         {
-            case "Ground":
+            case "ground":
                 splatMapPaint = groundSplatMap;
                 break;
-            case "Biome":
+            case "biome":
                 splatMapPaint = biomeSplatMap;
                 break;
-            case "Alpha":
+            case "alpha":
                 splatMapPaint = alphaSplatMap;
                 break;
-            case "Topology":
+            case "topology":
                 splatMapPaint = topologySplatMap;
                 break;
         }
@@ -800,25 +811,25 @@ public class MapIO : MonoBehaviour {
         List<GroundTextures> groundTexturesList = new List<GroundTextures>();
         List<BiomeTextures> biomeTexturesList = new List<BiomeTextures>();
         ProgressBar("Conditional Painter", "Gathering Conditions", 0.05f);
-        foreach (var topologyLayerInt in ReturnSelectedElements(conditionalTopology))
+        foreach (var topologyLayerInt in ReturnSelectedElements(conditions.TopologyLayers))
         {
             topologyLayersList.Add(new TopologyLayers()
             {
                 Topologies = GetSplatMap("topology", topologyLayerInt)
             });
         }
-        foreach (var groundTextureInt in ReturnSelectedElements(conditionalGround))
+        foreach (var groundTextureInt in ReturnSelectedElements(conditions.GroundConditions))
         {
             groundTexturesList.Add(new GroundTextures()
             {
-                Textures = groundTextureInt
+                Texture = groundTextureInt
             });
         }
-        foreach (var biomeTextureInt in ReturnSelectedElements(conditionalBiome))
+        foreach (var biomeTextureInt in ReturnSelectedElements(conditions.BiomeConditions))
         {
             biomeTexturesList.Add(new BiomeTextures()
             {
-                Textures = biomeTextureInt
+                Texture = biomeTextureInt
             });
         }
         if (conditions.CheckHeight == true)
@@ -840,10 +851,7 @@ public class MapIO : MonoBehaviour {
                 if (conditions.CheckSlope == true)
                 {
                     slope = slopes[j, i];
-                    if (slope >= conditions.SlopeLow && slope <= conditions.SlopeHigh)
-                    {
-                    }
-                    else
+                    if (!(slope >= conditions.SlopeLow && slope <= conditions.SlopeHigh))
                     {
                         paint = false;
                     }
@@ -851,10 +859,7 @@ public class MapIO : MonoBehaviour {
                 if (conditions.CheckHeight == true)
                 {
                     height = heights[i, j];
-                    if (height >= conditions.HeightLow && height <= conditions.HeightHigh)
-                    {
-                    }
-                    else
+                    if (!(height >= conditions.HeightLow & height <= conditions.HeightHigh))
                     {
                         paint = false;
                     }
@@ -863,51 +868,30 @@ public class MapIO : MonoBehaviour {
                 {
                     foreach (GroundTextures groundTextureCheck in groundTexturesList)
                     {
-                        if (groundSplatMap[i, j, groundTextureCheck.Textures] > 0.5f)
-                        {
-                        }
-                        else
+                        if (groundSplatMap[i, j, groundTextureCheck.Texture] < 0.5f)
                         {
                             paint = false;
                         }
                     }
                     foreach (BiomeTextures biomeTextureCheck in biomeTexturesList)
                     {
-                        if (biomeSplatMap[i, j, biomeTextureCheck.Textures] > 0.5f)
-                        {
-                        }
-                        else
+                        if (biomeSplatMap[i, j, biomeTextureCheck.Texture] < 0.5f)
                         {
                             paint = false;
                         }
                     }
-                    foreach (var alphaTextureBool in conditions.AlphaTextures)
+                    if (conditions.CheckAlpha)
                     {
-                        if (alphaTextureBool == true)
+                        if (alphaSplatMap[i, j, conditions.AlphaTexture] < 1f)
                         {
-                            if (alphaSplatMap[i, j, alphaTexture] > 0.5f)
-                            {
-                            }
-                            else
-                            {
-                                paint = false;
-                            }
+                            paint = false;
                         }
                     }
-                    foreach (var topologyTextureBool in conditions.TopologyTextures)
+                    foreach (TopologyLayers layer in topologyLayersList)
                     {
-                        if (topologyTextureBool == true)
+                        if (layer.Topologies[i, j, conditions.TopologyTexture] < 0.5f)
                         {
-                            foreach (TopologyLayers layer in topologyLayersList)
-                            {
-                                if (layer.Topologies[i, j, topologyTexture] > 0.5f)
-                                {
-                                }
-                                else
-                                {
-                                    paint = false;
-                                }
-                            }
+                            paint = false;
                         }
                     }
                 }
@@ -919,12 +903,14 @@ public class MapIO : MonoBehaviour {
                     }
                     splatMapPaint[i, j, texture] = 1f;
                 }
-                
             }
         }
         ClearProgressBar();
+        groundTexturesList.Clear();
+        biomeTexturesList.Clear();
+        topologyLayersList.Clear();
         landData.SetData(splatMapPaint, landLayerToPaint, topology);
-        landData.SetLayer(landLayer, topology);
+        landData.SetLayer(landLayerToPaint, topology);
     }
     public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
     // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
@@ -1868,9 +1854,9 @@ public class MapIO : MonoBehaviour {
         terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
         water.terrainData.SetHeights(0, 0, terrains.water.heights);
 
-        terrain.terrainData.alphamapResolution = terrains.resolution;
+        terrain.terrainData.alphamapResolution = terrains.resolution - 1;
         terrain.terrainData.baseMapResolution = terrains.resolution - 1;
-        water.terrainData.alphamapResolution = terrains.resolution;
+        water.terrainData.alphamapResolution = terrains.resolution - 1;
         water.terrainData.baseMapResolution = terrains.resolution - 1;
 
         terrain.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
