@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
 
-[CreateAssetMenu(fileName = "Auto Generation Preset", menuName = "AutoGenPreset")]
+[CreateAssetMenu(fileName = "Node Preset", menuName = "NodePreset")]
 public class AutoGenerationGraph : NodeGraph
 {
     
