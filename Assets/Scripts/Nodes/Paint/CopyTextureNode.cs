@@ -6,7 +6,7 @@ public class CopyTextureNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
     #region Fields
     [HideInInspector] public int landLayerFrom, textureFrom, topologyFrom;
     [HideInInspector] public string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
@@ -45,7 +45,7 @@ public class CopyTextureNode : Node
             case 2: // Alpha
                 mapIO.CopyTexture(landLayers[landLayerFrom], "Alpha", textureFrom, layer.AlphaTexture);
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
+            case 3: // Topology.
                 mapIO.CopyTexture(landLayers[landLayerFrom], "Topology", textureFrom, layer.TopologyTexture, topologyFrom, layer.TopologyLayer);
                 break;
         }
