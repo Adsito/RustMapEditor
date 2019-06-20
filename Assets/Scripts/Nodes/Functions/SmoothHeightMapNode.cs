@@ -5,7 +5,7 @@ using XNode;
 public class SmoothHeightMapNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output] public NodeVariables.NextTask NextTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float filterStrength = 1f, blurDirection = 0f;
     public override object GetValue(NodePort port)
     {
