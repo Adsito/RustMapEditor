@@ -188,44 +188,37 @@ public class WorldConverter
     
         var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 
-        float[,,] splatMapValues = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().groundArray;
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
-
         for(int i = 0; i < 8; i++)
         {
             for(int j = 0; j < textureResolution; j++)
             {
                 for(int k = 0; k < textureResolution; k++)
                 {
-                    splatMap[i, j, k] = BitUtility.Float2Byte(splatMapValues[j, k, i]);
+                    splatMap[i, j, k] = BitUtility.Float2Byte(LandData.groundArray[j, k, i]);
                 }
             }
         }
-
         byte[] biomeBytes = new byte[textureResolution * textureResolution * 4];
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
-        float[,,] biomeArray = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().biomeArray;
-
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < textureResolution; j++)
             {
                 for (int k = 0; k < textureResolution; k++)
                 {
-                    biomeMap[i, j, k] = BitUtility.Float2Byte(biomeArray[j, k, i]);
+                    biomeMap[i, j, k] = BitUtility.Float2Byte(LandData.biomeArray[j, k, i]);
                 }
             }
         }
-
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        float[,,] alphaArray = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().alphaArray;
         for (int j = 0; j < textureResolution; j++)
         {
             for (int k = 0; k < textureResolution; k++)
             {
-                 alphaMap[0, j, k] = BitUtility.Float2Byte(alphaArray[j, k, 0]);
+                 alphaMap[0, j, k] = BitUtility.Float2Byte(LandData.alphaArray[j, k, 0]);
             }
         }
         GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().SaveTopologyLayers();
