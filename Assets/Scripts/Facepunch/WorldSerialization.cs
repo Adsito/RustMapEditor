@@ -9,7 +9,7 @@ using LZ4;
 
 public class WorldSerialization
 {
-	public const uint CurrentVersion = 8;
+	public const uint CurrentVersion = 9;
 
 	public uint Version
 	{
@@ -218,16 +218,16 @@ public class WorldSerialization
 				{
 					Version = binaryReader.ReadUInt32();
 
-					if (Version == CurrentVersion)
+					if (Version != CurrentVersion)
 					{
-						using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
-						{
-							world = Serializer.Deserialize<WorldData>(compressionStream);
-						}
+                        Debug.LogWarning("Map Version is: " + Version + " whilst Rust is on: " + CurrentVersion);
 					}
-				}
+                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
+                    {
+                        world = Serializer.Deserialize<WorldData>(compressionStream);
+                    }
+                }
 			}
-
 			Checksum = Hash();
 		}
 		catch (Exception e)
