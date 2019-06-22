@@ -14,7 +14,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9-prerelease";
+    string editorVersion = "v1.9.1-prerelease";
 
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
@@ -63,10 +63,10 @@ public class MapIOEditor : EditorWindow
     {
         MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
-        GUIContent[] mainMenu = new GUIContent[3];
+        GUIContent[] mainMenu = new GUIContent[2];
         mainMenu[0] = new GUIContent("Main Menu");
         mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Prefabs");
+        //mainMenu[2] = new GUIContent("Prefabs");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
