@@ -37,7 +37,7 @@ public class TopologyMesh : MonoBehaviour {
     public void SaveTopologyLayers()
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
-        var splatMap = GameObject.FindGameObjectWithTag("LandData").GetComponent<LandData>().topologyArray;
+        var splatMap = LandData.topologyArray;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             for (int j = 0; j < topologyMap.res; j++)
