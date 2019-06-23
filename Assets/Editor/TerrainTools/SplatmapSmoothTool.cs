@@ -11,7 +11,7 @@ namespace UnityEditor.Experimental.TerrainAPI
         Material GetPaintMaterial()
         {
             if (m_Material == null)
-                m_Material = new Material(Shader.Find("TerrainTools/SplatmapSmooth"));
+                m_Material = new Material((Shader)AssetDatabase.LoadAssetAtPath("Assets/Shaders/SplatmapSmooth.shader", typeof(Shader)));
             return m_Material;
         }
 
