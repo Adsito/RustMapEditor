@@ -99,7 +99,8 @@ public struct Conditions
     }
 }
 [ExecuteAlways]
-public class MapIO : MonoBehaviour {
+public class MapIO : MonoBehaviour
+{
     #region Layers
     public TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
     public TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
@@ -276,7 +277,7 @@ public class MapIO : MonoBehaviour {
     private void CleanUpMap()
     {
         GameObject mapPrefabs = GameObject.Find("Objects");
-        foreach(PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
+        foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
         {
             DestroyImmediate(g.gameObject);
         }
@@ -387,7 +388,7 @@ public class MapIO : MonoBehaviour {
     }
     public void RotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
     {
-        progressValue =  1f / TerrainTopology.COUNT;
+        progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             progressBar += progressValue;
@@ -484,7 +485,7 @@ public class MapIO : MonoBehaviour {
         Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
         mat.SetTexture("_BrushTex", terrainFilterTexture);
         mat.SetVector("_BrushParams", brushParams);
-        Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);                                          
+        Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);
         mat.SetVector("_SmoothWeights", smoothWeights);
         TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
@@ -597,7 +598,7 @@ public class MapIO : MonoBehaviour {
         }
         else if (heightOutOfRange == true)
         {
-            Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value." );
+            Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value.");
         }
     }
     public void DebugWaterLevel() // Puts the water level up to 500 if it's below 500 in height.
@@ -757,7 +758,7 @@ public class MapIO : MonoBehaviour {
     public int TextureCount(string landLayer) // Texture count in layer chosen, used for determining the size of the splatmap array.
     // Call method with the layer you are painting to.
     {
-        if(landLayer.ToLower() == "ground")
+        if (landLayer.ToLower() == "ground")
         {
             return 8;
         }
@@ -769,9 +770,7 @@ public class MapIO : MonoBehaviour {
     }
     public float GetTexture(string landLayer, int texture, int x, int y, int topology = 0)
     {
-        float[,,] splatMap = GetSplatMap(landLayer, topology);
-        float returnedTexture = splatMap[x, y, texture];
-        return returnedTexture;
+        return GetSplatMap(landLayer, topology)[x, y, texture];
     }
     public void PaintConditional(string landLayerToPaint, int texture, Conditions conditions, int topology = 0) // Paints based on the conditions set.
     {
@@ -825,11 +824,11 @@ public class MapIO : MonoBehaviour {
                 Texture = biomeTextureInt
             });
         }
-        if (conditions.CheckHeight == true)
+        if (conditions.CheckHeight)
         {
             heights = GetHeights();
         }
-        if (conditions.CheckSlope == true)
+        if (conditions.CheckSlope)
         {
             slopes = GetSlopes();
         }
@@ -840,7 +839,7 @@ public class MapIO : MonoBehaviour {
             ProgressBar("Conditional Painter", "Painting", progressBar);
             for (int j = 0; j < groundSplatMap.GetLength(1); j++)
             {
-                if (conditions.CheckSlope == true)
+                if (conditions.CheckSlope)
                 {
                     slope = slopes[j, i];
                     if (!(slope >= conditions.SlopeLow && slope <= conditions.SlopeHigh))
@@ -848,7 +847,7 @@ public class MapIO : MonoBehaviour {
                         continue;
                     }
                 }
-                if (conditions.CheckHeight == true)
+                if (conditions.CheckHeight)
                 {
                     height = heights[i, j];
                     if (!(height >= conditions.HeightLow & height <= conditions.HeightHigh))
@@ -991,7 +990,7 @@ public class MapIO : MonoBehaviour {
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
-    } 
+    }
     public void ClearLayer(string landLayerToPaint, int topology = 0) // Sets whole layer to the inactive texture. Alpha and Topology only. 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Clear Layer");
@@ -1075,7 +1074,7 @@ public class MapIO : MonoBehaviour {
                 float slope = terrain.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
                 if (slope >= slopeLow && slope <= slopeHigh)
                 {
-                    for (int k = 0; k < textureCount; k++) 
+                    for (int k = 0; k < textureCount; k++)
                     {
                         splatMap[i, j, k] = 0;
                     }
@@ -1108,7 +1107,7 @@ public class MapIO : MonoBehaviour {
                 else if (slope >= slopeHigh && slope <= maxBlendHigh)
                 {
                     float normalisedSlope = slope - slopeHigh;
-                    float slopeRange = maxBlendHigh - slopeHigh; 
+                    float slopeRange = maxBlendHigh - slopeHigh;
                     float slopeBlendInverted = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
                     float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
                     for (int k = 0; k < textureCount; k++)
@@ -1242,7 +1241,7 @@ public class MapIO : MonoBehaviour {
         {
             for (int j = 0; j < splatMapFrom.GetLength(1); j++)
             {
-                if (splatMapFrom [i, j, textureFrom] > 0)
+                if (splatMapFrom[i, j, textureFrom] > 0)
                 {
                     for (int k = 0; k < textureCount; k++)
                     {
@@ -1385,7 +1384,7 @@ public class MapIO : MonoBehaviour {
                     });
                     if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
                     {
-                        DestroyImmediate(p.gameObject); 
+                        DestroyImmediate(p.gameObject);
                     }
                     lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
                     break;
@@ -1688,7 +1687,7 @@ public class MapIO : MonoBehaviour {
     public List<string> generationPresetList = new List<string>();
     public Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
     public void RefreshAssetList()
-    { 
+    {
         var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
         generationPresetList.Clear();
         nodePresetLookup.Clear();
@@ -1736,7 +1735,7 @@ public class MapIO : MonoBehaviour {
 public class PrefabHierachy : TreeView
 {
     MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-    
+
     public PrefabHierachy(TreeViewState treeViewState)
         : base(treeViewState)
     {
