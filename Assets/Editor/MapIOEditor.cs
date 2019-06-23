@@ -600,15 +600,13 @@ public class MapIOEditor : EditorWindow
                                 EditorGUILayout.BeginHorizontal();
                                 if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
                                 {
-                                    script.ChangeLayer("Ground");
-                                    script.AlphaDebug("Ground");
+                                    script.AlphaDebug();
                                 }
                                 if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
                                 {
                                     script.DebugWaterLevel();
                                 }
                                 EditorGUILayout.EndHorizontal();
-                                
                                 break;
                             #endregion
                         }
