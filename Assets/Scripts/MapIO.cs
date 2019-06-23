@@ -1215,21 +1215,19 @@ public class MapIO : MonoBehaviour {
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void AlphaDebug(string landLayer) // Paints a ground texture to the corresponding coordinate if the alpha is active.
+    public void AlphaDebug() // Paints a ground texture to the corresponding coordinate if the alpha is active.
     // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
     {
-        ProgressBar("Debug Alpha", "Debugging", 0.3f);
         float[,,] splatMap = GetSplatMap("ground");
         float[,,] alphaSplatMap = GetSplatMap("alpha"); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
-        ProgressBar("Debug Alpha", "Debugging", 0.5f);
-
+        int textureCount = TextureCount("ground");
         for (int i = 0; i < alphaSplatMap.GetLength(0); i++)
         {
             for (int j = 0; j < alphaSplatMap.GetLength(1); j++)
             {
                 if (alphaSplatMap[i, j, 1] == 1)
                 {
-                    for (int k = 0; k < TextureCount(landLayer); k++)
+                    for (int k = 0; k < textureCount; k++)
                     {
                         splatMap[i, j, k] = 0;
                     }
@@ -1237,11 +1235,8 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
-        ProgressBar("Debug Alpha", "Debugging", 0.7f);
         LandData.SetData(splatMap, landLayer);
         LandData.SetLayer(landLayer);
-        ProgressBar("Debug Alpha", "Done", 1f);
-        ClearProgressBar();
     }
     public void CopyTexture(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0) // This copies the selected texture on a landlayer 
     // and paints the same coordinate on another landlayer with the selected texture.
@@ -1287,6 +1282,49 @@ public class MapIO : MonoBehaviour {
                 }
             }
         }
+    }
+    public void PaintPerlin(string landLayer, float scale, float contrast, int texture, bool invert, int topology = 0)
+    {
+        float[,,] newSplat = GetSplatMap(landLayer);
+        int textureCount = TextureCount(landLayer);
+        float o = 0;
+        float r = UnityEngine.Random.Range(0, 10000) / 100f;
+        float r1 = UnityEngine.Random.Range(0, 10000) / 100f;
+        for (int i = 0; i < newSplat.GetLength(0); i++)
+        {
+            for (int j = 0; j < newSplat.GetLength(1); j++)
+            {
+                o = Mathf.PerlinNoise(i * 1f / scale + r, j * 1f / scale + r1);
+                o = o * contrast;
+                if (o > 1f)
+                {
+                    o = 1f;
+                }
+                if (invert)
+                {
+                    o = 1f - o;
+                }
+                for (int k = 0; k < textureCount; k++)
+                {
+                    if (k != texture)
+                    {
+                        if (newSplat[i, j, k] > 0)
+                        {
+                            newSplat[i, j, k] = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (newSplat[i, j, texture] != 1)
+                        {
+                            newSplat[i, j, texture] = o;
+                        }
+                    }
+                }
+            }
+        }
+        LandData.SetData(newSplat, landLayer, topology);
+        LandData.SetLayer(landLayer, topology);
     }
     #endregion
     public void RemoveBrokenPrefabs()
