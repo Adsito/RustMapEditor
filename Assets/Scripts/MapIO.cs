@@ -780,7 +780,6 @@ public class MapIO : MonoBehaviour {
         float[,,] alphaSplatMap = GetSplatMap("alpha");
         float[,,] topologySplatMap = GetSplatMap("topology", topology);
         float[,,] splatMapPaint = new float[groundSplatMap.GetLength(0), groundSplatMap.GetLength(1), TextureCount(landLayerToPaint)];
-        bool paint = true;
         int textureCount = TextureCount(landLayerToPaint);
         float slope, height;
         float[,] heights = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
@@ -841,13 +840,12 @@ public class MapIO : MonoBehaviour {
             ProgressBar("Conditional Painter", "Painting", progressBar);
             for (int j = 0; j < groundSplatMap.GetLength(1); j++)
             {
-                paint = true;
                 if (conditions.CheckSlope == true)
                 {
                     slope = slopes[j, i];
                     if (!(slope >= conditions.SlopeLow && slope <= conditions.SlopeHigh))
                     {
-                        paint = false;
+                        continue;
                     }
                 }
                 if (conditions.CheckHeight == true)
@@ -855,48 +853,42 @@ public class MapIO : MonoBehaviour {
                     height = heights[i, j];
                     if (!(height >= conditions.HeightLow & height <= conditions.HeightHigh))
                     {
-                        paint = false;
+                        continue;
                     }
                 }
-                if (paint == true)
+                foreach (GroundTextures groundTextureCheck in groundTexturesList)
                 {
-                    foreach (GroundTextures groundTextureCheck in groundTexturesList)
+                    if (groundSplatMap[i, j, groundTextureCheck.Texture] < 0.5f)
                     {
-                        if (groundSplatMap[i, j, groundTextureCheck.Texture] < 0.5f)
-                        {
-                            paint = false;
-                        }
-                    }
-                    foreach (BiomeTextures biomeTextureCheck in biomeTexturesList)
-                    {
-                        if (biomeSplatMap[i, j, biomeTextureCheck.Texture] < 0.5f)
-                        {
-                            paint = false;
-                        }
-                    }
-                    if (conditions.CheckAlpha)
-                    {
-                        if (alphaSplatMap[i, j, conditions.AlphaTexture] < 1f)
-                        {
-                            paint = false;
-                        }
-                    }
-                    foreach (TopologyLayers layer in topologyLayersList)
-                    {
-                        if (layer.Topologies[i, j, conditions.TopologyTexture] < 0.5f)
-                        {
-                            paint = false;
-                        }
+                        continue;
                     }
                 }
-                if (paint == true)
+                foreach (BiomeTextures biomeTextureCheck in biomeTexturesList)
                 {
-                    for (int k = 0; k < textureCount; k++)
+                    if (biomeSplatMap[i, j, biomeTextureCheck.Texture] < 0.5f)
                     {
-                        splatMapPaint[i, j, k] = 0;
+                        continue;
                     }
-                    splatMapPaint[i, j, texture] = 1f;
                 }
+                if (conditions.CheckAlpha)
+                {
+                    if (alphaSplatMap[i, j, conditions.AlphaTexture] < 1f)
+                    {
+                        continue;
+                    }
+                }
+                foreach (TopologyLayers layer in topologyLayersList)
+                {
+                    if (layer.Topologies[i, j, conditions.TopologyTexture] < 0.5f)
+                    {
+                        continue;
+                    }
+                }
+                for (int k = 0; k < textureCount; k++)
+                {
+                    splatMapPaint[i, j, k] = 0;
+                }
+                splatMapPaint[i, j, texture] = 1f;
             }
         }
         ClearProgressBar();
