@@ -14,7 +14,8 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9-prerelease";
+    string editorVersion = "v1.9.1-prerelease";
+
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
     string saveFile = "";
