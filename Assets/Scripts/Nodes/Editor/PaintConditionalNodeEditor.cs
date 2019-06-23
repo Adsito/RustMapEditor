@@ -44,7 +44,11 @@ public class PaintConditionalNodeEditor : NodeEditor
                 node.biomeLayerConditions = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(node.biomeLayerConditions);
                 break;
             case 2: // Alpha
-                node.alphaTexture = EditorGUILayout.IntPopup("Texture:", node.alphaTexture, activeTextureAlpha, values);
+                node.checkAlpha = EditorGUILayout.ToggleLeft("Check Alpha:", node.checkAlpha);
+                if (node.checkAlpha)
+                {
+                    node.alphaTexture = EditorGUILayout.IntPopup("Texture:", node.alphaTexture, activeTextureAlpha, values);
+                }
                 break;
             case 3: // Topology
                 GUILayout.Label("Topology Layer", EditorStyles.boldLabel);
