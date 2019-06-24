@@ -298,8 +298,8 @@ MonoBehaviour:
   - {fileID: -5948663352679288527}
   - {fileID: 5350488800427464430}
   - {fileID: 529838174236956624}
-  - {fileID: -3199135802097209344}
   - {fileID: 8048671650940927528}
+  - {fileID: -3199135802097209344}
 --- !u!114 &529838174236956624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,10 +666,7 @@ MonoBehaviour:
       _node: {fileID: 8048671650940927528}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: PreviousTask
-        node: {fileID: -3199135802097209344}
-        reroutePoints: []
+      connections: []
       _direction: 1
       _connectionType: 1
       _typeConstraint: 0

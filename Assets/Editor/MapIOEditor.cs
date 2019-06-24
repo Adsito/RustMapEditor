@@ -1043,11 +1043,11 @@ public class MapIOEditor : EditorWindow
                         GUILayout.Label(new GUIContent("Node Presets", "List of all the node presets in the project."), EditorStyles.boldLabel);
                         if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Node Presets in the project.")))
                         {
-                            script.RefreshAssetList();
+                            MapIO.RefreshAssetList();
                         }
                         presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
                         ReorderableListGUI.Title("Node Presets");
-                        ReorderableListGUI.ListField(script.generationPresetList, NodePresetDrawer, DrawEmpty);
+                        ReorderableListGUI.ListField(MapIO.generationPresetList, NodePresetDrawer, DrawEmpty);
                         GUILayout.EndScrollView();
                         break;
                         #endregion
@@ -1172,8 +1172,8 @@ public class MapIOEditor : EditorWindow
         position.width = 38;
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
         {
-            script.RefreshAssetList();
-            script.nodePresetLookup.TryGetValue(itemValue, out Object preset);
+            MapIO.RefreshAssetList();
+            MapIO.nodePresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
                 AssetDatabase.OpenAsset(preset.GetInstanceID());
@@ -1187,7 +1187,7 @@ public class MapIOEditor : EditorWindow
         position.width = 30;
         if (GUI.Button(position, "Run"))
         {
-            script.nodePresetLookup.TryGetValue(itemValue, out Object preset);
+            MapIO.nodePresetLookup.TryGetValue(itemValue, out Object preset);
             if (preset != null)
             {
                 var graph = (XNode.NodeGraph)AssetDatabase.LoadAssetAtPath(assetDirectory + itemValue + ".asset", typeof(XNode.NodeGraph));
