@@ -1684,9 +1684,9 @@ public class MapIO : MonoBehaviour
     {
         SetPrefabLookup(new PrefabLookup(bundleFile, this));
     }
-    public List<string> generationPresetList = new List<string>();
-    public Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
-    public void RefreshAssetList()
+    public static List<string> generationPresetList = new List<string>();
+    public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
+    public static void RefreshAssetList()
     {
         var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
         generationPresetList.Clear();

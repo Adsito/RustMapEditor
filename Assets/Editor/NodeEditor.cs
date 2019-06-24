@@ -73,6 +73,7 @@ namespace XNodeEditor {
             }
 
             // Add actions to any number of selected nodes
+            menu.AddItem(new GUIContent("Copy"), false, NodeEditorWindow.current.CopySelectedNodes);
             menu.AddItem(new GUIContent("Duplicate"), false, NodeEditorWindow.current.DuplicateSelectedNodes);
             menu.AddItem(new GUIContent("Remove"), false, NodeEditorWindow.current.RemoveSelectedNodes);
 
@@ -85,9 +86,9 @@ namespace XNodeEditor {
 
         /// <summary> Rename the node asset. This will trigger a reimport of the node. </summary>
         public void Rename(string newName) {
-            if (newName == null || newName.Trim() == "") newName = UnityEditor.ObjectNames.NicifyVariableName(target.GetType().Name);
+            if (newName == null || newName.Trim() == "") newName = NodeEditorUtilities.NodeDefaultName(target.GetType());
             target.name = newName;
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
+            AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), target.name);
         }
 
         [AttributeUsage(AttributeTargets.Class)]
