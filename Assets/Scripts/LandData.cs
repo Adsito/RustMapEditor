@@ -6,9 +6,21 @@ using UnityEngine;
 
 public static class LandData 
 {
+    /// <summary>
+    /// The Ground textures of the map.
+    /// </summary>
     public static float[,,] groundArray;
+    /// <summary>
+    /// The Biome textures of the map.
+    /// </summary>
     public static float[,,] biomeArray;
+    /// <summary>
+    /// The Alpha textures of the map.
+    /// </summary>
     public static float[,,] alphaArray;
+    /// <summary>
+    /// The Topology layers, and textures of the map.
+    /// </summary>
     public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
     [HideInInspector]
@@ -21,9 +33,15 @@ public static class LandData
     static Terrain terrain = GameObject.FindGameObjectWithTag("LandData").transform.parent.GetComponent<Terrain>();
     static string layerName = "";
 
-    public static void SetData(float[,,] floatArray, string name, int topology = 0)
+    /// <summary>
+    /// Sets the array data of LandLayer.
+    /// </summary>
+    /// <param name="floatArray">The alphamap array of all the textures.</param>
+    /// <param name="landLayer">The landlayer to save the floatArray to.</param>
+    /// <param name="topology">The topology layer if the landlayer is topology.</param>
+    public static void SetData(float[,,] floatArray, string landLayer, int topology = 0)
     {
-        switch (name.ToLower())
+        switch (landLayer.ToLower())
         {
             case "ground":
                 groundArray = floatArray;
@@ -38,7 +56,7 @@ public static class LandData
                 topologyArray[topology] = floatArray; 
                 break;
         }
-        layerName = name;
+        layerName = landLayer;
     }
     public static void GetTextures()
     {
@@ -47,14 +65,19 @@ public static class LandData
         miscTextures = GetAlphaTextures();
         AssetDatabase.SaveAssets();
     }
-    public static void SetLayer(string layer, int topology = 0)
+    /// <summary>
+    /// Sets the terrain alphamaps to the LandLayer.
+    /// </summary>
+    /// <param name="landLayer">The LandLayer to set.</param>
+    /// <param name="topology">The Topology layer to set.</param>
+    public static void SetLayer(string landLayer, int topology = 0)
     {
         if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
             GetTextures();
         }
         Selection.activeGameObject = null;
-        switch (layer.ToLower())
+        switch (landLayer.ToLower())
         {
             case "ground":
                 layerName = "ground";
@@ -78,6 +101,10 @@ public static class LandData
                 break;
         }
     }
+    /// <summary>
+    /// Saves any changes made to the Alphamaps, like the paint brush.
+    /// </summary>
+    /// <param name="topologyLayer">The Topology layer, if active.</param>
     public static void Save(int topologyLayer = 0)
     {
         switch (layerName)
