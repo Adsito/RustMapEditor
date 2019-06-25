@@ -15,7 +15,6 @@ public class PrefabDataHolderEditor : Editor
         }
         EditorGUILayout.LabelField("Category", script.prefabData.category);
         script.prefabData.id = uint.Parse(EditorGUILayout.TextField("Id", script.prefabData.id + ""));
-        script.saveWithMap = EditorGUILayout.ToggleLeft("Save with Map", script.saveWithMap);
         if (GUILayout.Button("Snap to ground"))
         {
             script.snapToGround();

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -10,11 +7,10 @@ public class PrefabDataHolder : MonoBehaviour {
     
     public WorldSerialization.PrefabData prefabData;
     public bool showBtn = false;
-    public bool saveWithMap = true;
 
     void Start()
     {
-        this.gameObject.transform.parent = GameObject.Find("Prefabs").transform;
+        //this.gameObject.transform.parent = GameObject.Find("Prefabs").transform;
     }
     public void MapSave()
     {
