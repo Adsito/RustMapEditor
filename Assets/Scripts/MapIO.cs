@@ -266,7 +266,6 @@ public class MapIO : MonoBehaviour
         newObj.transform.rotation = rotation;
         newObj.transform.localScale = scale;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
-        newObj.GetComponent<PrefabDataHolder>().saveWithMap = true;
         prefabNames.TryGetValue(prefabData.id, out string prefabName); // Sets the prefab name to the string if the user has previously loaded the game bundles.
         if (prefabName != null)
         {
@@ -1671,7 +1670,6 @@ public class MapIO : MonoBehaviour
                 prefabSpawned.name = linesSplit[1];
                 var prefabNameSplit = linesSplit[1].Split('/');
                 var prefabName = prefabNameSplit[prefabNameSplit.Length - 1].Replace(".prefab", "");
-                pdh.saveWithMap = false;
                 pdh.prefabData = new PrefabData();
                 pdh.prefabData.id = uint.Parse(linesSplit[2]);
                 var shortenedId = linesSplit[2].Substring(2);
