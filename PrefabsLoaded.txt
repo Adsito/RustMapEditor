@@ -450,9 +450,11 @@ old_cave:assets/bundled/prefabs/hapis/old_cave.prefab:3186718110
 hapis_puzzle_blue_1:assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_blue_1.prefab:1872469913
 hapis_puzzle_green_1:assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_green_1.prefab:635490549
 hapis_puzzle_green_2:assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_green_2.prefab:3608126957
+invisible_collider:assets/bundled/prefabs/modding/invisible_collider.prefab:2159418374
 ladder_trigger:assets/bundled/prefabs/modding/ladder_trigger.prefab:1056981612
 prevent_building_cube:assets/bundled/prefabs/modding/prevent_building_cube.prefab:2463286452
 prevent_building_sphere:assets/bundled/prefabs/modding/prevent_building_sphere.prefab:731087319
+prevent_movment_volume:assets/bundled/prefabs/modding/prevent_movment_volume.prefab:831600643
 spawn_point:assets/bundled/prefabs/modding/spawn_point.prefab:108781706
 terrain_trigger:assets/bundled/prefabs/modding/terrain_trigger.prefab:1546689861
 water_trigger:assets/bundled/prefabs/modding/water_trigger.prefab:3576870501
@@ -1384,6 +1386,7 @@ rake:assets/content/props/tools/rake/rake.prefab:680111746
 trash_bag_pile_300x300:assets/content/props/trash_bag_piles/trash_bag_pile_300x300.prefab:222963432
 water_drum_a:assets/content/props/water_drums/water_drum_a.prefab:3576778262
 water_drum_a_junk:assets/content/props/water_drums/water_drum_a_junk.prefab:1407999938
+water_drum_toxic:assets/content/props/water_drums/water_drum_toxic.prefab:1935963419
 water_junk_pile_a:assets/content/props/water_junk_piles/water_junk_pile_a.prefab:3770689418
 water_junk_pile_a_no_planks:assets/content/props/water_junk_piles/water_junk_pile_a_no_planks.prefab:466128470
 water_junk_pile_b:assets/content/props/water_junk_piles/water_junk_pile_b.prefab:4059394568
@@ -1541,6 +1544,8 @@ garage_door_large_c:assets/content/structures/garage_doors/garage_door_large_c.p
 garage_door_large_d:assets/content/structures/garage_doors/garage_door_large_d.prefab:3709739503
 garage_door_large_e:assets/content/structures/garage_doors/garage_door_large_e.prefab:1621290112
 garage_door_powerplant:assets/content/structures/garage_doors/garage_door_powerplant.prefab:132360225
+gas_station_extension:assets/content/structures/gas_station/exterior/models/gas_station_extension.prefab:4125118507
+gas_station_exterior:assets/content/structures/gas_station/exterior/models/gas_station_exterior.prefab:2930517002
 hangar_airfield:assets/content/structures/hangar/hangar_airfield.prefab:3434180486
 hangar_airfield_doors_a:assets/content/structures/hangar/hangar_airfield_doors_a.prefab:1149060120
 hangar_airfield_doors_b:assets/content/structures/hangar/hangar_airfield_doors_b.prefab:2787328162
@@ -1577,6 +1582,8 @@ harbor_2_grounds_c:assets/content/structures/harbor/grounds/harbor_2_grounds_c.p
 tugboat_a:assets/content/structures/harbor/tugboat/tugboat_a.prefab:1714044309
 tugboat_a_interior:assets/content/structures/harbor/tugboat/tugboat_a_interior.prefab:619931715
 tugboat_a_snow:assets/content/structures/harbor/tugboat/tugboat_a_snow.prefab:1737613140
+rowhouse_ruin_2st_6x12:assets/content/structures/house_ruins/models/rowhouse_ruin_2st_6x12.prefab:4058125915
+rowhouse_ruin_3st_15x12:assets/content/structures/house_ruins/models/rowhouse_ruin_3st_15x12.prefab:1893834630
 rowhouse_ruin_1st_6x12:assets/content/structures/house_ruins/rowhouse_ruin_1st_6x12.prefab:556562256
 rowhouse_ruin_2st_6x12:assets/content/structures/house_ruins/rowhouse_ruin_2st_6x12.prefab:1856374500
 rowhouse_ruin_2st_9x12:assets/content/structures/house_ruins/rowhouse_ruin_2st_9x12.prefab:1881737650
@@ -1836,6 +1843,14 @@ substation_f:assets/content/structures/power_substation/substation_f.prefab:2408
 substation_g:assets/content/structures/power_substation/substation_g.prefab:1172992427
 radiationsphere:assets/content/structures/radiation/radiationsphere.prefab:1744658818
 remnant_container_6x4:assets/content/structures/remnant_container/remnant_container_6x4.prefab:794422555
+outbuilding_1st_15x9:assets/content/structures/residential_buildings/models/outbuilding_1st_15x9.prefab:113406351
+outbuilding_1st_27x9:assets/content/structures/residential_buildings/models/outbuilding_1st_27x9.prefab:1857121774
+outbuilding_1st_6x9:assets/content/structures/residential_buildings/models/outbuilding_1st_6x9.prefab:3513755741
+outbuilding_2st_21x9:assets/content/structures/residential_buildings/models/outbuilding_2st_21x9.prefab:4110800122
+rowhouse_2st_6x12:assets/content/structures/residential_buildings/models/rowhouse_2st_6x12.prefab:2045847313
+rowhouse_2st_9x12-2:assets/content/structures/residential_buildings/models/rowhouse_2st_9x12-2.prefab:632447863
+rowhouse_3st_9x9:assets/content/structures/residential_buildings/models/rowhouse_3st_9x9.prefab:3102181051
+rowhouse_4st_9x12:assets/content/structures/residential_buildings/models/rowhouse_4st_9x12.prefab:866887917
 carpark_a:assets/content/structures/roads/carpark_a.prefab:4028826801
 loading_bay_lane_a:assets/content/structures/roads/loading_bay_lane_a.prefab:2965736300
 pavement_3x3_isle_end:assets/content/structures/roads/pavement_3x3_isle_end.prefab:3676516630
@@ -2531,6 +2546,8 @@ radbarrel_test:assets/prefabs/deployable/loot barrels/radbarrel_test.prefab:2734
 mailbox-deploy:assets/prefabs/deployable/mailbox/effects/mailbox-deploy.prefab:3681316424
 mailbox.deployed:assets/prefabs/deployable/mailbox/mailbox.deployed.prefab:2697131904
 maildrop:assets/prefabs/deployable/mailbox/maildrop.prefab:2163588764
+batterycelltier1:assets/prefabs/deployable/makeshift batteries/batterycelltier1.prefab:1415196587
+batterycelltier2:assets/prefabs/deployable/makeshift batteries/batterycelltier2.prefab:3301525707
 crudeoutput:assets/prefabs/deployable/oil jack/crudeoutput.prefab:70163214
 engineswitch:assets/prefabs/deployable/oil jack/engineswitch.prefab:336885727
 fuelstorage:assets/prefabs/deployable/oil jack/fuelstorage.prefab:4260630588
@@ -2709,7 +2726,24 @@ dragondoorknocker.deployed:assets/prefabs/misc/chinesenewyear/dragondoorknocker/
 door_knock_fx:assets/prefabs/misc/chinesenewyear/dragondoorknocker/effects/door_knock_fx.prefab:1007801029
 hat.dragonmask:assets/prefabs/misc/chinesenewyear/dragonmask/hat.dragonmask.prefab:2351448072
 hat.dragonmask.world:assets/prefabs/misc/chinesenewyear/dragonmask/hat.dragonmask.world.prefab:1332503790
+arcadeentity:assets/prefabs/misc/chippy arcade/arcadeentity.prefab:1664526274
 arcademachine:assets/prefabs/misc/chippy arcade/arcademachine.prefab:3491508603
+boss1:assets/prefabs/misc/chippy arcade/chippygame/boss1.prefab:2830105504
+bossorbbullet:assets/prefabs/misc/chippy arcade/chippygame/bossorbbullet.prefab:615324951
+chippyboss_1:assets/prefabs/misc/chippy arcade/chippygame/chippyboss_1.prefab:1514529688
+chippybulletprefab:assets/prefabs/misc/chippy arcade/chippygame/chippybulletprefab.prefab:1126659580
+chippycharacter:assets/prefabs/misc/chippy arcade/chippygame/chippycharacter.prefab:3679871765
+chippymain:assets/prefabs/misc/chippy arcade/chippygame/chippymain.prefab:2801389808
+debris:assets/prefabs/misc/chippy arcade/chippygame/debris.prefab:1962906531
+impact:assets/prefabs/misc/chippy arcade/chippygame/impact.prefab:3225220581
+damage1:assets/prefabs/misc/chippy arcade/chippygame/textures/boss0/damage1.prefab:827795136
+damage2:assets/prefabs/misc/chippy arcade/chippygame/textures/boss0/damage2.prefab:3496797745
+damage3:assets/prefabs/misc/chippy arcade/chippygame/textures/boss0/damage3.prefab:1207288801
+damage4:assets/prefabs/misc/chippy arcade/chippygame/textures/boss0/damage4.prefab:1498390736
+chippyscene:assets/prefabs/misc/chippy arcade/chippyscene.prefab:1304146910
+spritearcadeentity:assets/prefabs/misc/chippy arcade/spritearcadeentity.prefab:4268073814
+ball:assets/prefabs/misc/chippy arcade/tennis/ball.prefab:1002444243
+tennisgame:assets/prefabs/misc/chippy arcade/tennis/tennisgame.prefab:272700839
 divesite_a:assets/prefabs/misc/divesite/divesite_a.prefab:2419904621
 divesite_b:assets/prefabs/misc/divesite/divesite_b.prefab:2048371271
 divesite_c:assets/prefabs/misc/divesite/divesite_c.prefab:1891214172
