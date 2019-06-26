@@ -232,7 +232,7 @@ public class WorldConverter
         world.AddMap("alpha", alphaMap.ToByteArray());
         world.AddMap("water", waterHeightBytes);
 
-        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        PrefabDataHolder[] prefabs = GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<PrefabDataHolder>(false);
 
         foreach (PrefabDataHolder p in prefabs)
         {
