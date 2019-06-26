@@ -1,4 +1,9 @@
-assets/bundled/prefabs/autospawn/
+assets/bundled/prefabs/autospawn/clutter/
+assets/bundled/prefabs/autospawn/collectable/
+assets/bundled/prefabs/autospawn/decor/
+assets/bundled/prefabs/autospawn/monument/
+assets/bundled/prefabs/autospawn/power substations/
+assets/bundled/prefabs/autospawn/resource/
 assets/bundled/prefabs/bunker_rooms/
 assets/bundled/prefabs/caves/
 assets/bundled/prefabs/hapis/

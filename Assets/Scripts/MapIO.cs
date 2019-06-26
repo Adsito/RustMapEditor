@@ -1623,6 +1623,7 @@ public class MapIO : MonoBehaviour
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
     }
+    
     public void Save(string path)
     {
         LandData.Save(TerrainTopology.TypeToIndex((int)topologyLayer));
@@ -1729,6 +1730,22 @@ public class MapIO : MonoBehaviour
             }
         }
     }
+}
+public class ModelPreProcess : AssetPostprocessor
+{
+    /*
+    static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+    {
+        foreach (string str in importedAssets)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<GameObject>(str);
+            if (asset != null)
+            {
+                GameObjectUtility.RemoveMonoBehavioursWithMissingScript(asset);
+            }
+        }
+        AssetDatabase.SaveAssets();
+    }*/
 }
 public class PrefabHierachy : TreeView
 {
