@@ -151,14 +151,10 @@ public class PrefabLookup : System.IDisposable
     public void PreparePrefab(GameObject gameObject, string path, uint rustid) // Seperates the prefab components and adds them to list.
     {
         GameObject go = GameObject.Instantiate(gameObject);
+        go.SetActive(true);
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
         var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
-        var rectTransforms = go.GetComponentsInChildren<RectTransform>();
-        if (rectTransforms.Length > 0) // Remove UI prefabs.
-        {
-            return;
-        }
         /*
         var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
