@@ -43,7 +43,6 @@ public class PrefabLookup : System.IDisposable
     {
         backend = new AssetBundleBackend(bundlename);
         AssetBundleLookup();
-        //CreateRustDirectory();
         float progress = 0f;
         float progressInterval = 0f;
         var lookupString = "";
@@ -74,7 +73,8 @@ public class PrefabLookup : System.IDisposable
             }
         }
         PrefabsLoadedDump();
-        //SavePrefabsToAsset();
+        CreateRustDirectory();
+        SavePrefabsToAsset();
         MapIO.ClearProgressBar();
         mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
         prefabsLoaded = true;
@@ -97,7 +97,7 @@ public class PrefabLookup : System.IDisposable
         {
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
-                //CreatePrefabDirectory(subpaths[i]);
+                CreatePrefabDirectory(subpaths[i]);
                 prefabs[i] = backend.Load<GameObject>(subpaths[i]);
                 PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
             }
@@ -148,9 +148,8 @@ public class PrefabLookup : System.IDisposable
             }
         }
     }
-    public void PreparePrefab(GameObject gameObject, string path, uint rustid) // Seperates the prefab components and adds them to list.
+    public void PreparePrefab(GameObject go, string path, uint rustid) // Seperates the prefab components and adds them to list.
     {
-        GameObject go = GameObject.Instantiate(gameObject);
         go.SetActive(true);
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");

@@ -241,7 +241,10 @@ trainyard_1:assets/bundled/prefabs/autospawn/monument/large/trainyard_1.prefab:4
 water_treatment_plant_1:assets/bundled/prefabs/autospawn/monument/large/water_treatment_plant_1.prefab:3422899798
 lighthouse:assets/bundled/prefabs/autospawn/monument/lighthouse/lighthouse.prefab:610633799
 bandit_town:assets/bundled/prefabs/autospawn/monument/medium/bandit_town.prefab:2074025910
+compound:assets/bundled/prefabs/autospawn/monument/medium/compound.prefab:1879405026
 radtown_small_3:assets/bundled/prefabs/autospawn/monument/medium/radtown_small_3.prefab:3257319375
+oilrig_1:assets/bundled/prefabs/autospawn/monument/offshore/oilrig_1.prefab:2839094107
+oilrig_2:assets/bundled/prefabs/autospawn/monument/offshore/oilrig_2.prefab:2038914978
 gas_station_1:assets/bundled/prefabs/autospawn/monument/small/gas_station_1.prefab:3087947638
 mining_quarry_a:assets/bundled/prefabs/autospawn/monument/small/mining_quarry_a.prefab:2148214341
 mining_quarry_b:assets/bundled/prefabs/autospawn/monument/small/mining_quarry_b.prefab:2046822015
@@ -435,6 +438,11 @@ cave_well_c:assets/bundled/prefabs/caves/cave_well_c.prefab:3969946034
 desk_greencard_hapis:assets/bundled/prefabs/hapis/desk_greencard_hapis.prefab:3103232858
 hapis_rock_formation_a:assets/bundled/prefabs/hapis/hapis_rock_formation_a.prefab:2605687900
 military_tunnel_hapis:assets/bundled/prefabs/hapis/military_tunnel_hapis.prefab:21740960
+npcvendingmachine_building_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_building_hapis.prefab:1566614566
+npcvendingmachine_buyres_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_buyres_hapis.prefab:924385556
+npcvendingmachine_food_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_food_hapis.prefab:3921325388
+npcvendingmachine_hapis_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_hapis_hapis.prefab:3357703198
+npcvendingmachine_weapons_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_weapons_hapis.prefab:2630900005
 old_cave:assets/bundled/prefabs/hapis/old_cave.prefab:3186718110
 hapis_puzzle_blue_1:assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_blue_1.prefab:1872469913
 hapis_puzzle_green_1:assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_green_1.prefab:635490549
@@ -2479,6 +2487,7 @@ chinooklockedcrate:assets/prefabs/deployable/chinooklockedcrate/chinooklockedcra
 chinooklockedcratecodelocked:assets/prefabs/deployable/chinooklockedcrate/chinooklockedcratecodelocked.prefab:3952870947
 codelockedhackablecrate:assets/prefabs/deployable/chinooklockedcrate/codelockedhackablecrate.prefab:209286362
 landing:assets/prefabs/deployable/chinooklockedcrate/effects/landing.prefab:1594218189
+hackingdevice:assets/prefabs/deployable/chinooklockedcrate/hackingdevice.prefab:44938382
 door_barricade_a:assets/prefabs/deployable/door barricades/door_barricade_a.prefab:931526157
 door_barricade_a_large:assets/prefabs/deployable/door barricades/door_barricade_a_large.prefab:382418191
 door_barricade_a_spawner:assets/prefabs/deployable/door barricades/door_barricade_a_spawner.prefab:3328229716
@@ -2551,6 +2560,7 @@ small_planter:assets/prefabs/deployable/planters/small_planter.prefab:2496885758
 audioalarm:assets/prefabs/deployable/playerioents/alarms/audioalarm.prefab:1056621402
 large.rechargable.battery.deployed:assets/prefabs/deployable/playerioents/batteries/large/large.rechargable.battery.deployed.prefab:3398686648
 smallrechargablebattery.deployed:assets/prefabs/deployable/playerioents/batteries/smallrechargablebattery.deployed.prefab:918119888
+counter:assets/prefabs/deployable/playerioents/counter/counter.prefab:4254177840
 detect_down:assets/prefabs/deployable/playerioents/detectors/hbhfsensor/effects/detect_down.prefab:1351459619
 detect_up:assets/prefabs/deployable/playerioents/detectors/hbhfsensor/effects/detect_up.prefab:1185887238
 hbhfsensor.deployed:assets/prefabs/deployable/playerioents/detectors/hbhfsensor/hbhfsensor.deployed.prefab:986625916
@@ -2667,8 +2677,16 @@ tunacan_walllight:assets/prefabs/deployable/tuna can wall lamp/tunacan_walllight
 tunalight.deployed:assets/prefabs/deployable/tuna can wall lamp/tunalight.deployed.prefab:1392608348
 vending-machine-deploy:assets/prefabs/deployable/vendingmachine/effects/vending-machine-deploy.prefab:3076959501
 vending-machine-purchase-human:assets/prefabs/deployable/vendingmachine/effects/vending-machine-purchase-human.prefab:1447045219
+npcvendingmachine:assets/prefabs/deployable/vendingmachine/npcvendingmachine.prefab:2245774897
+npcvendingmachine_attire:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_attire.prefab:3971055878
+npcvendingmachine_building:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_building.prefab:538046694
+npcvendingmachine_components:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_components.prefab:567510558
+npcvendingmachine_resources:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_resources.prefab:1505537622
+npcvendingmachine_tools:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_tools.prefab:2259994529
+npcvendingmachine_weapons:assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_weapons.prefab:3836034446
 shopkeeper_vm_invis:assets/prefabs/deployable/vendingmachine/npcvendingmachines/shopkeeper_vm_invis.prefab:858853278
 vending_mapmarker:assets/prefabs/deployable/vendingmachine/vending_mapmarker.prefab:3459945130
+vendingmachine.deployed:assets/prefabs/deployable/vendingmachine/vendingmachine.deployed.prefab:186002280
 vendingmachine:assets/prefabs/deployable/vendingmachine/vendingmachine.prefab:3268817912
 water_barrel:assets/prefabs/deployable/water barrel/water_barrel.prefab:1340035897
 water-catcher-deploy:assets/prefabs/deployable/water catcher/effects/water-catcher-deploy.prefab:2855029066
@@ -2717,11 +2735,13 @@ hat.dragonmask:assets/prefabs/misc/chinesenewyear/dragonmask/hat.dragonmask.pref
 hat.dragonmask.world:assets/prefabs/misc/chinesenewyear/dragonmask/hat.dragonmask.world.prefab:1332503790
 arcadeentity:assets/prefabs/misc/chippy arcade/arcadeentity.prefab:1664526274
 arcademachine:assets/prefabs/misc/chippy arcade/arcademachine.prefab:3491508603
+chippyarcademachine:assets/prefabs/misc/chippy arcade/chippyarcademachine.prefab:4267988016
 boss1:assets/prefabs/misc/chippy arcade/chippygame/boss1.prefab:2830105504
 bossorbbullet:assets/prefabs/misc/chippy arcade/chippygame/bossorbbullet.prefab:615324951
 chippyboss_1:assets/prefabs/misc/chippy arcade/chippygame/chippyboss_1.prefab:1514529688
 chippybulletprefab:assets/prefabs/misc/chippy arcade/chippygame/chippybulletprefab.prefab:1126659580
 chippycharacter:assets/prefabs/misc/chippy arcade/chippygame/chippycharacter.prefab:3679871765
+chippygame:assets/prefabs/misc/chippy arcade/chippygame/chippygame.prefab:3810013740
 chippymain:assets/prefabs/misc/chippy arcade/chippygame/chippymain.prefab:2801389808
 debris:assets/prefabs/misc/chippy arcade/chippygame/debris.prefab:1962906531
 impact:assets/prefabs/misc/chippy arcade/chippygame/impact.prefab:3225220581
@@ -2788,6 +2808,7 @@ paintedegg2:assets/prefabs/misc/easter/painted eggs/paintedegg2.prefab:408347973
 paintedegg3:assets/prefabs/misc/easter/painted eggs/paintedegg3.prefab:803819946
 paintedeggs.worldmodel:assets/prefabs/misc/easter/painted eggs/paintedeggs.worldmodel.prefab:1728443604
 silveregg.worldmodel:assets/prefabs/misc/easter/painted eggs/silveregg.worldmodel.prefab:3509327202
+bunnyentry:assets/prefabs/misc/easter/ui/bunnyentry.prefab:3165482671
 candles:assets/prefabs/misc/halloween/candles.prefab:3065497305
 largecandleset:assets/prefabs/misc/halloween/candles/largecandleset.prefab:3049520350
 smallcandleset:assets/prefabs/misc/halloween/candles/smallcandleset.prefab:3435611199
@@ -2827,6 +2848,7 @@ wirespindle:assets/prefabs/misc/junkpile/new/wirespindle.prefab:1390898020
 junkpile_water_a:assets/prefabs/misc/junkpile_water/junkpile_water_a.prefab:303596648
 junkpile_water_b:assets/prefabs/misc/junkpile_water/junkpile_water_b.prefab:292159419
 junkpile_water_c:assets/prefabs/misc/junkpile_water/junkpile_water_c.prefab:1744083475
+notepanel:assets/prefabs/misc/note/notepanel.prefab:1373365111
 bonus_fail:assets/prefabs/misc/orebonus/effects/bonus_fail.prefab:726773094
 bonus_finish:assets/prefabs/misc/orebonus/effects/bonus_finish.prefab:696179503
 bonus_hit:assets/prefabs/misc/orebonus/effects/bonus_hit.prefab:1933407705
