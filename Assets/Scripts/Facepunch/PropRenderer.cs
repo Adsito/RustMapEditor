@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
-public class PropRenderer : MonoBehaviour
+namespace Rust.Global.Rust
 {
-    protected void Awake()
+    [ExecuteAlways]
+    public class PropRenderer : MonoBehaviour
     {
-        DestroyImmediate(this);
+        protected void Awake()
+        {
+            DestroyImmediate(this);
+        }
     }
 }

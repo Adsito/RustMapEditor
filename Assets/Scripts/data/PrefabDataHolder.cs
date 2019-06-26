@@ -3,14 +3,14 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [Serializable]
-public class PrefabDataHolder : MonoBehaviour {
+public class PrefabDataHolder : MonoBehaviour
+{
     
     public WorldSerialization.PrefabData prefabData;
-    public bool showBtn = false;
 
     void Start()
     {
-        //this.gameObject.transform.parent = GameObject.Find("Prefabs").transform;
+        gameObject.transform.parent = GameObject.Find("Prefabs").transform;
     }
     public void MapSave()
     {
@@ -26,4 +26,3 @@ public class PrefabDataHolder : MonoBehaviour {
         transform.position = newPos;
     }
 }
-
