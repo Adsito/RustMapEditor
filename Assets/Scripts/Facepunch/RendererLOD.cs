@@ -28,6 +28,5 @@ public class RendererLOD : MonoBehaviour
                 }
             }
         }
-        DestroyImmediate(this);
     }
 }
