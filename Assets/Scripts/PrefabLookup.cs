@@ -256,7 +256,14 @@ public class PrefabLookup : System.IDisposable
             if (!File.Exists("Assets/Rust/Meshes/" + mesh.name + ".asset"))
             {
                 AssetDatabase.RemoveObjectFromAsset(mesh);
-                AssetDatabase.CreateAsset(mesh, "Assets/Rust/Meshes/" + mesh.name + ".asset");
+                if (mesh.isReadable)
+                {
+                    AssetDatabase.CreateAsset(mesh, "Assets/Rust/Meshes/" + mesh.name + ".asset");
+                }
+                else
+                {
+                    // Make new mesh from data here.
+                }
             }
         }
         meshes.Clear();
