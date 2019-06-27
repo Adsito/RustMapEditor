@@ -10,7 +10,7 @@ public class PrefabDataHolder : MonoBehaviour
 
     void Start()
     {
-        gameObject.transform.parent = GameObject.Find("Prefabs").transform;
+        //gameObject.transform.parent = GameObject.Find("Prefabs").transform;
     }
     public void MapSave()
     {
