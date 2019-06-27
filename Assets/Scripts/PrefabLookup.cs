@@ -23,10 +23,7 @@ public class PrefabLookup : System.IDisposable
 {
 	private AssetBundleBackend backend;
 	private HashLookup lookup;
-
-    public List<Material> materials = new List<Material>();
     public List<Mesh> meshes = new List<Mesh>();
-    public List<Texture2D> textures = new List<Texture2D>();
     public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
 
@@ -115,9 +112,7 @@ public class PrefabLookup : System.IDisposable
     }
     public void CreateRustDirectory()
     {
-        Directory.CreateDirectory("Assets/Rust/Materials");
         Directory.CreateDirectory("Assets/Rust/Meshes");
-        Directory.CreateDirectory("Assets/Rust/Textures");
     }
     public void AssetBundleLookup() 
     {
@@ -150,35 +145,9 @@ public class PrefabLookup : System.IDisposable
     }
     public void PreparePrefab(GameObject go, string path, uint rustid) // Seperates the prefab components and adds them to list.
     {
-        go.SetActive(true);
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
-        var prefabMeshes = go.GetComponentsInChildren<MeshFilter>();
-        /*
-        var prefabRenderers = go.GetComponentsInChildren<MeshRenderer>();
-        for (int i = 0; i < prefabRenderers.Length; i++) // Add all the materials and shaders to the list to save to the project later.
-        {
-            var prefabMaterials = prefabRenderers[i].sharedMaterials;
-            for (int j = 0; j < prefabMaterials.Length; j++)
-            {
-                if (!materials.Contains(prefabMaterials[j]))
-                {
-                    materials.Add(prefabMaterials[j]);
-                }
-            }
-            foreach (Object tex in EditorUtility.CollectDependencies(prefabMaterials))
-            {
-                if (tex is Texture)
-                {
-                    var texture = tex as Texture;
-                    if (!textures.Contains(texture) && texture.name.Contains("_diff"))
-                    {
-                        textures.Add(tex as Texture2D);
-                    }
-                }
-            }
-        }
-        */
+        var prefabMeshes = go.GetComponentsInChildren<MeshFilter>(true);
         for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
         {
             if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null && prefabMeshes[i].sharedMesh.name != "Quad" && prefabMeshes[i].sharedMesh.name != "Sphere")
@@ -186,71 +155,29 @@ public class PrefabLookup : System.IDisposable
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
         }
-        go.tag = "LoadedPrefab";
-        go.name = prefabName;
-        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-        prefabDataHolder.prefabData = new WorldSerialization.PrefabData
+        var fbxAssetPath = assetsList.FirstOrDefault(stringToCheck => stringToCheck.Contains(prefabName + ".fbx"));
+        if (fbxAssetPath != null)
         {
-            id = rustid,
-        };
-        prefabsList.Add(new PrefabAttributes()
-        {
-            Prefab = go,
-            Path = path,
-            RustID = rustid
-        });
+            var fbxAsset = backend.Load<GameObject>(fbxAssetPath);
+            fbxAsset.SetActive(true);
+            fbxAsset.tag = "LoadedPrefab";
+            fbxAsset.name = prefabName;
+            PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
+            prefabDataHolder.prefabData = new WorldSerialization.PrefabData
+            {
+                id = rustid,
+            };
+            prefabsList.Add(new PrefabAttributes()
+            {
+                Prefab = fbxAsset,
+                Path = path.Replace(".prefab", ".fbx"),
+                RustID = rustid
+            });
+        }
     }
     public void SavePrefabsToAsset() // Strip all the assets and save them to the project.
     {
-        /*
-        foreach (var texture in textures)
-        {
-            if (!File.Exists("Assets/Rust/Textures/" + texture.name + ".tga"))
-            {
-                RenderTexture tmp = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
-                Graphics.Blit(texture, tmp);
-                RenderTexture.active = tmp;
-                Texture2D newTexture = new Texture2D(texture.width, texture.height);
-                newTexture.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
-                newTexture.Apply();
-                RenderTexture.ReleaseTemporary(tmp);
-                File.WriteAllBytes("Assets/Rust/Textures/" + texture.name + ".tga", newTexture.EncodeToTGA());
-                Resources.UnloadAsset(texture);
-                newTexture = null;
-            }
-            
-        }
-        textures.Clear();
-        AssetDatabase.Refresh();
-        */
         AssetDatabase.StartAssetEditing();
-        /*
-        for (int i = 0; i < materials.Count; i++)
-        {
-            if (!File.Exists("Assets/Rust/Materials/" + materials[i].name + ".mat"))
-            {
-                AssetDatabase.RemoveObjectFromAsset(materials[i]);
-                if (materials[i].HasProperty("_MainTex"))
-                {
-                    var texture = (Texture)AssetDatabase.LoadAssetAtPath("Assets/Rust/Textures/" + materials[i].mainTexture.name + ".tga", typeof(Texture));
-                    if (texture != null)
-                    {
-                        materials[i].mainTexture = texture;
-                    }
-                }
-                if (materials[i].shader.name.Contains("Specular"))
-                {
-                    materials[i].shader = Shader.Find("Standard (Specular setup)");
-                }
-                else
-                {
-                    materials[i].shader = Shader.Find("Standard");
-                }
-                AssetDatabase.CreateAsset(materials[i], "Assets/Rust/Materials/" + materials[i].name + ".mat");
-            }
-        }
-        materials.Clear();
-        */
         foreach (var mesh in meshes)
         {
             if (!File.Exists("Assets/Rust/Meshes/" + mesh.name + ".asset"))
@@ -262,7 +189,7 @@ public class PrefabLookup : System.IDisposable
                 }
                 else
                 {
-                    // Make new mesh from data here.
+                    Debug.Log(mesh.name + " is not readable.");
                 }
             }
         }
@@ -272,7 +199,6 @@ public class PrefabLookup : System.IDisposable
             if (!File.Exists(prefab.Path))
             {
                 AssetDatabase.RemoveObjectFromAsset(prefab.Prefab);
-                GameObjectUtility.RemoveMonoBehavioursWithMissingScript(prefab.Prefab);
                 PrefabUtility.SaveAsPrefabAsset(prefab.Prefab, prefab.Path);
             }
         }
