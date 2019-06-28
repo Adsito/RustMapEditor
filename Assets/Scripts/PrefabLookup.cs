@@ -70,10 +70,10 @@ public class PrefabLookup : System.IDisposable
             }
         }
         PrefabsLoadedDump();
-        CreateRustDirectory();
-        SavePrefabsToAsset();
+        //CreateRustDirectory();
+        //SavePrefabsToAsset();
         MapIO.ClearProgressBar();
-        mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
+        //mapIO.GetProjectPrefabs(); // Adds the prefabs just saved to the mapIO lookup.
         prefabsLoaded = true;
     }
     public void Dispose()
@@ -94,7 +94,7 @@ public class PrefabLookup : System.IDisposable
         {
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
-                CreatePrefabDirectory(subpaths[i]);
+                //CreatePrefabDirectory(subpaths[i]);
                 prefabs[i] = backend.Load<GameObject>(subpaths[i]);
                 PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
             }
@@ -155,25 +155,21 @@ public class PrefabLookup : System.IDisposable
                 meshes.Add(prefabMeshes[i].sharedMesh);
             }
         }
-        var fbxAssetPath = assetsList.FirstOrDefault(stringToCheck => stringToCheck.Contains(prefabName + ".fbx"));
-        if (fbxAssetPath != null)
+        go.SetActive(true);
+        GameObject.Instantiate(go); // Debug 
+        go.tag = "LoadedPrefab";
+        go.name = prefabName;
+        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
+        prefabDataHolder.prefabData = new WorldSerialization.PrefabData
         {
-            var fbxAsset = backend.Load<GameObject>(fbxAssetPath);
-            fbxAsset.SetActive(true);
-            fbxAsset.tag = "LoadedPrefab";
-            fbxAsset.name = prefabName;
-            PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-            prefabDataHolder.prefabData = new WorldSerialization.PrefabData
-            {
-                id = rustid,
-            };
-            prefabsList.Add(new PrefabAttributes()
-            {
-                Prefab = fbxAsset,
-                Path = path.Replace(".prefab", ".fbx"),
-                RustID = rustid
-            });
-        }
+            id = rustid,
+        };
+        prefabsList.Add(new PrefabAttributes()
+        {
+            Prefab = go,
+            Path = path,
+            RustID = rustid
+        });
     }
     public void SavePrefabsToAsset() // Strip all the assets and save them to the project.
     {
