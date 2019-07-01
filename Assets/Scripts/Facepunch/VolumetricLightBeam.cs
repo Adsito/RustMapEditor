@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
-public class VolumetricLightBeam : MonoBehaviour
+namespace VLB
 {
-    
+    [ExecuteAlways]
+    public class VolumetricLightBeam : MonoBehaviour
+    {
+
+    }
 }
