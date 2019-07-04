@@ -1,5 +1,75 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8453734170648955243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b531f0ff1193d954caa1de6d49287584, type: 3}
+  m_Name: Paint Conditional
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1016, y: -104}
+  ports:
+    keys:
+    - Texture
+    - PreviousTask
+    - NextTask
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -8453734170648955243}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -2063200925374640321}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: -8453734170648955243}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: -5948663352679288527}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: NextTask
+      _node: {fileID: -8453734170648955243}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 0
+      _dynamic: 0
+  groundLayerConditions: 0
+  groundLayerToPaint: 16
+  biomeLayerConditions: 0
+  biomeLayerToPaint: 2
+  topologyLayerConditions: 0
+  topologyLayerToPaint: 16
+  topologyTexture: 0
+  alphaTexture: 1
+  layerConditionalInt: 0
+  texture: 0
+  checkAlpha: 1
+  checkHeight: 0
+  checkSlope: 0
+  slopeLowCndtl: 45
+  slopeHighCndtl: 60
+  heightLowCndtl: 500
+  heightHighCndtl: 600
 --- !u!114 &-7868190863014187011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +219,7 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: PreviousTask
-        node: {fileID: 5350488800427464430}
+        node: {fileID: -8453734170648955243}
         reroutePoints: []
       _direction: 1
       _connectionType: 1
@@ -272,6 +342,42 @@ MonoBehaviour:
       _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
+--- !u!114 &-2063200925374640321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
+  m_Name: Texture
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 776, y: -216}
+  ports:
+    keys:
+    - Texture
+    values:
+    - _fieldName: Texture
+      _node: {fileID: -2063200925374640321}
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Texture
+        node: {fileID: -8453734170648955243}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  landLayer: 0
+  groundEnum: 8
+  biomeEnum: 2
+  alphaEnum: 0
+  topologyLayer: 16
+  topologyEnum: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,46 +402,9 @@ MonoBehaviour:
   - {fileID: 1492942287457766551}
   - {fileID: -7868190863014187011}
   - {fileID: -5948663352679288527}
-  - {fileID: 5350488800427464430}
-  - {fileID: 529838174236956624}
   - {fileID: 8048671650940927528}
-  - {fileID: 0}
---- !u!114 &529838174236956624
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e130d8134a1f3c4bb40e3df060711f5, type: 3}
-  m_Name: Texture
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 776, y: -216}
-  ports:
-    keys:
-    - Texture
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 529838174236956624}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 5350488800427464430}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  landLayer: 0
-  groundEnum: 8
-  biomeEnum: 2
-  alphaEnum: 0
-  topologyLayer: 16
-  topologyEnum: 0
+  - {fileID: -2063200925374640321}
+  - {fileID: -8453734170648955243}
 --- !u!114 &1492942287457766551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,76 +531,6 @@ MonoBehaviour:
   heightMinBlendHigh: 1000
   heightMaxBlendHigh: 1000
   blendHeights: 1
---- !u!114 &5350488800427464430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b531f0ff1193d954caa1de6d49287584, type: 3}
-  m_Name: Paint Conditional
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 1032, y: -104}
-  ports:
-    keys:
-    - Texture
-    - PreviousTask
-    - NextTask
-    values:
-    - _fieldName: Texture
-      _node: {fileID: 5350488800427464430}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 529838174236956624}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: PreviousTask
-      _node: {fileID: 5350488800427464430}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: -5948663352679288527}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 5350488800427464430}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-  groundLayerConditions: 0
-  groundLayerToPaint: 16
-  biomeLayerConditions: 0
-  biomeLayerToPaint: 2
-  topologyLayerConditions: 0
-  topologyLayerToPaint: 16
-  topologyTexture: 0
-  alphaTexture: 1
-  layerConditionalInt: 0
-  texture: 0
-  checkAlpha: 1
-  checkHeight: 0
-  checkSlope: 0
-  slopeLowCndtl: 45
-  slopeHighCndtl: 60
-  heightLowCndtl: 500
-  heightHighCndtl: 600
 --- !u!114 &5576913009223774642
 MonoBehaviour:
   m_ObjectHideFlags: 0

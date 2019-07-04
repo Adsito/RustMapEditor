@@ -36,10 +36,6 @@ namespace XNodeEditor {
             //GUIContent content = new GUIContent("Run Terrain Generation", "Runs the Terrain Generation of the graph currently in view.");
             //menu.AddItem(content, false, RunNodeGraph);
         }
-        private void RunNodeGraph()
-        {
-            MapIO.ParseNodeGraph(this.graph);
-        }
         private void OnDisable() {
             // Cache portConnectionPoints before serialization starts
             int count = portConnectionPoints.Count;
