@@ -206,6 +206,10 @@ public class MapIO : MonoBehaviour
     {
         return prefabLookup;
     }
+    /// <summary>
+    /// Change the active land layer.
+    /// </summary>
+    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
     public void ChangeLayer(string layer)
     {
         landLayer = layer;
@@ -1619,11 +1623,6 @@ public class MapIO : MonoBehaviour
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(terrains);
     }
-    public void LoadEmpty(int size)
-    {
-        LoadMapInfo(WorldConverter.emptyWorld(size));
-    }
-    
     public void Save(string path)
     {
         LandData.Save(TerrainTopology.TypeToIndex((int)topologyLayer));
@@ -1698,6 +1697,10 @@ public class MapIO : MonoBehaviour
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
         }
     }
+    /// <summary>
+    /// Runs the selected NodeGraph.
+    /// </summary>
+    /// <param name="graph">The NodeGraph to run.</param>
     public static void ParseNodeGraph(XNode.NodeGraph graph)
     {
         foreach (var node in graph.nodes)
