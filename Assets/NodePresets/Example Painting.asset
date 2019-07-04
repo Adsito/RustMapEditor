@@ -74,7 +74,7 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: NextTask
-        node: {fileID: -3199135802097209344}
+        node: {fileID: 8048671650940927528}
         reroutePoints: []
       _direction: 0
       _connectionType: 1
@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Name: Start
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -888, y: -104}
+  position: {x: -696, y: -104}
   ports:
     keys:
     - NextTask
@@ -299,7 +299,7 @@ MonoBehaviour:
   - {fileID: 5350488800427464430}
   - {fileID: 529838174236956624}
   - {fileID: 8048671650940927528}
-  - {fileID: -3199135802097209344}
+  - {fileID: 0}
 --- !u!114 &529838174236956624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_Name: Smooth Height Map
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -664, y: -104}
+  position: {x: -456, y: -104}
   ports:
     keys:
     - PreviousTask
@@ -668,7 +668,7 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
       connections:
       - fieldName: PreviousTask
-        node: {fileID: -3199135802097209344}
+        node: {fileID: -7214435569319782212}
         reroutePoints: []
       _direction: 1
       _connectionType: 1
