@@ -171,10 +171,19 @@ public class MapIO : MonoBehaviour
         terrainLayer = TerrainSplat.Enum.Grass;
         conditionalGround = (TerrainSplat.Enum)TerrainSplat.NOTHING;
     }
+    /// <summary>
+    /// Displays a popup progress bar, the progress is also visible in the taskbar.
+    /// </summary>
+    /// <param name="title">The Progress Bar title.</param>
+    /// <param name="info">The info to be displayed next to the loading bar.</param>
+    /// <param name="progress">The progress amount. Between 0f - 1f.</param>
     public static void ProgressBar(string title, string info, float progress)
     {
         EditorUtility.DisplayProgressBar(title, info, progress);
     }
+    /// <summary>
+    /// Clears the popup progress bar. Needs to be called otherwise it will persist in the editor.
+    /// </summary>
     public static void ClearProgressBar()
     {
         GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().progressBar = 0;
@@ -277,6 +286,9 @@ public class MapIO : MonoBehaviour
         }
         return newObj;
     }
+    /// <summary>
+    /// Removes all prefabs and path objects in the scene.
+    /// </summary>
     private void CleanUpMap()
     {
         GameObject mapPrefabs = GameObject.Find("Objects");
@@ -298,7 +310,11 @@ public class MapIO : MonoBehaviour
         return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
-    public void RotateHeightmap(bool CW) //Rotates Terrain Map and Water Map 90°.
+    /// <summary>
+    /// Rotates Terrain Map and Water Map 90°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public void RotateHeightmap(bool CW)
     {
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -331,7 +347,11 @@ public class MapIO : MonoBehaviour
         terrain.terrainData.SetHeights(0, 0, newHeightMap);
         water.terrainData.SetHeights(0, 0, newWaterMap);
     }
-    public void RotatePrefabs(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    /// <summary>
+    /// Rotates prefabs 90°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public void RotatePrefabs(bool CW) 
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
         if (CW)
@@ -343,7 +363,11 @@ public class MapIO : MonoBehaviour
             prefabRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
-    public void RotatePaths(bool CW) //Needs prefabs in scene to be all at Vector3.Zero to work. Rotates objects 90.
+    /// <summary>
+    /// Rotates paths 90°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public void RotatePaths(bool CW)
     {
         var pathRotate = GameObject.FindGameObjectWithTag("Paths");
         if (CW)
@@ -355,7 +379,13 @@ public class MapIO : MonoBehaviour
             pathRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
-    public void RotateLayer(string landLayer, bool CW, int topology = 0) //Rotates the layer 90 degrees for CW true.
+    /// <summary>
+    /// Rotates the selected layer 90°.
+    /// </summary>
+    /// <param name="landLayer">The LandLayer. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void RotateLayer(string landLayer, bool CW, int topology = 0) 
     {
         int textureCount = TextureCount(landLayer);
         float[,,] oldLayer = GetSplatMap(landLayer, topology);
@@ -389,7 +419,11 @@ public class MapIO : MonoBehaviour
         LandData.SetData(newLayer, landLayer, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void RotateAllTopologymap(bool CW) //Rotates All Topology maps 90 degrees for CW true.
+    /// <summary>
+    /// Rotates all Topology layers 90°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public void RotateAllTopologymap(bool CW) 
     {
         progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -402,6 +436,9 @@ public class MapIO : MonoBehaviour
     }
     #endregion
     #region HeightMap Methods
+    /// <summary>
+    /// Inverts the HeightMap.
+    /// </summary>
     public void InvertHeightmap()
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Invert Terrain");
@@ -415,26 +452,12 @@ public class MapIO : MonoBehaviour
         }
         terrain.terrainData.SetHeights(0, 0, landHeightMap);
     }
-    public void TransposeHeightmap()
-    {
-        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        float[,] oldHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-        float[,] newHeightMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        float[,] oldWaterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
-        float[,] newWaterMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        for (int i = 0; i < oldHeightMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < oldHeightMap.GetLength(1); j++)
-            {
-                newHeightMap[i, j] = oldHeightMap[j, i];
-                newWaterMap[i, j] = oldWaterMap[j, i];
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, newHeightMap);
-        water.terrainData.SetHeights(0, 0, newWaterMap);
-    }
-    public void NormaliseHeightmap(float normaliseLow, float normaliseHigh, float normaliseBlend)
+    /// <summary>
+    /// Normalises the HeightMap between two heights.
+    /// </summary>
+    /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
+    /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
+    public void NormaliseHeightmap(float normaliseLow, float normaliseHigh)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Normalise Terrain");
         float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -466,6 +489,11 @@ public class MapIO : MonoBehaviour
         }
         terrain.terrainData.SetHeights(0, 0, landHeightMap);
     }
+    /// <summary>
+    /// Terraces the HeightMap.
+    /// </summary>
+    /// <param name="featureSize">The height of each terrace.</param>
+    /// <param name="interiorCornerWeight">The weight of the terrace effect.</param>
     public void TerraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Terrace Terrain");
@@ -479,6 +507,11 @@ public class MapIO : MonoBehaviour
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
         TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - TerraceErosion");
     }
+    /// <summary>
+    /// Smooths the HeightMap.
+    /// </summary>
+    /// <param name="filterStrength">The strength of the smoothing.</param>
+    /// <param name="blurDirection">The direction the smoothing should preference. Between -1f - 1f.</param>
     public void SmoothHeightmap(float filterStrength, float blurDirection)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Smooth Terrain");
@@ -494,23 +527,12 @@ public class MapIO : MonoBehaviour
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
         TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
     }
-    public void MoveHeightmap()
-    {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Move Terrain");
-        Vector3 difference = terrain.transform.position;
-        float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-        for (int i = 0; i < heightMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < heightMap.GetLength(1); j++)
-            {
-                heightMap[i, j] = heightMap[i, j] + (difference.y / terrain.terrainData.size.y);
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, heightMap);
-        terrain.transform.position = Vector3.zero;
-    }
-    public void SetEdgePixel(float heightToSet, bool[] sides) // Sets the very edge pixel of the heightmap to the heightToSet value. Includes toggle
-    // option for sides.
+    /// <summary>
+    /// Sets the edge row of pixels on the HeightMap.
+    /// </summary>
+    /// <param name="heightToSet">The height to set.</param>
+    /// <param name="sides">The sides to set.</param>
+    public void SetEdgePixel(float heightToSet, bool[] sides)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Set Edge Pixel");
         float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -538,26 +560,13 @@ public class MapIO : MonoBehaviour
         }
         terrain.terrainData.SetHeights(0, 0, heightMap);
     }
-    public void GeneratePerlinHeightmap(float scale) // Extremely basic first run of perlin map gen. In future this will have roughly 15 controllable elements.
-    {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Perlin Terrain");
-        float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-
-        for (int i = 0; i < terrain.terrainData.heightmapHeight; i++)
-        {
-            for (int j = 0; j < terrain.terrainData.heightmapWidth; j++)
-            {
-                float i2 = i / scale;
-                float j2 = j / scale;
-                float perlin = Mathf.Clamp01(Mathf.PerlinNoise(i2, j2));
-                heightMap[i, j] = perlin;
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, heightMap);
-    }
-    public void OffsetHeightmap(float offset, bool checkHeight, bool setWaterMap) // Increases or decreases the heightmap by the offset. Useful for moving maps up or down in the scene if the heightmap
-    // isn't at the right height. If checkHeight is enabled it will make sure that the offset does not flatten a part of the map because it hits the floor or ceiling.
-    // If setWaterMap is enabled it will offset the water map as well, however if this goes below 500 the watermap will be broken.
+    /// <summary>
+    /// Increases or decreases the HeightMap by the offset.
+    /// </summary>
+    /// <param name="offset">The amount to offset by. Negative values offset down.</param>
+    /// <param name="checkHeight">Check if offsetting the heightmap would exceed the min-max values.</param>
+    /// <param name="setWaterMap">Offset the water heightmap.</param>
+    public void OffsetHeightmap(float offset, bool checkHeight, bool setWaterMap)
     {
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
@@ -604,7 +613,10 @@ public class MapIO : MonoBehaviour
             Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value.");
         }
     }
-    public void DebugWaterLevel() // Puts the water level up to 500 if it's below 500 in height.
+    /// <summary>
+    /// Sets the water level up to 500 if it's below 500 in height.
+    /// </summary>
+    public void DebugWaterLevel()
     {
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
@@ -620,7 +632,11 @@ public class MapIO : MonoBehaviour
         }
         water.terrainData.SetHeights(0, 0, waterMap);
     }
-    public void SetMinimumHeight(float minimumHeight) // Puts the heightmap level to the minimum if it's below.
+    /// <summary>
+    /// Sets the HeightMap level to the minimum if it's below.
+    /// </summary>
+    /// <param name="minimumHeight">The minimum height to set.</param>
+    public void SetMinimumHeight(float minimumHeight) 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Minimum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -637,7 +653,11 @@ public class MapIO : MonoBehaviour
         }
         terrain.terrainData.SetHeights(0, 0, landMap);
     }
-    public void SetMaximumHeight(float maximumHeight) // Puts the heightmap level to the minimum if it's below.
+    /// <summary>
+    /// Puts the heightmap level to the maximum if it's above.
+    /// </summary>
+    /// <param name="maximumHeight">The maximum height to set.</param>
+    public void SetMaximumHeight(float maximumHeight) 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Maximum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -654,26 +674,46 @@ public class MapIO : MonoBehaviour
         }
         terrain.terrainData.SetHeights(0, 0, landMap);
     }
-    public float GetHeight(int x, int y)
+    /// <summary>
+    /// Returns the height of the HeightMap at the selected coords.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="z">The Z coordinate.</param>
+    /// <returns></returns>
+    public float GetHeight(int x, int z)
     {
         float xNorm = (float)x / (float)terrain.terrainData.alphamapHeight;
-        float yNorm = (float)y / (float)terrain.terrainData.alphamapHeight;
+        float yNorm = (float)z / (float)terrain.terrainData.alphamapHeight;
         float height = terrain.terrainData.GetInterpolatedHeight(xNorm, yNorm);
         return height;
     }
+    /// <summary>
+    /// Returns a 2D array of the height values.
+    /// </summary>
+    /// <returns></returns>
     public float[,] GetHeights()
     {
         float alphamapInterp = 1f / terrain.terrainData.alphamapWidth;
         float[,] heights = terrain.terrainData.GetInterpolatedHeights(0, 0, terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapWidth, alphamapInterp, alphamapInterp);
         return heights;
     }
-    public float GetSlope(int x, int y)
+    /// <summary>
+    /// Returns the slope of the HeightMap at the selected coords.
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="z">The Z coordinate.</param>
+    /// <returns></returns>
+    public float GetSlope(int x, int z)
     {
         float xNorm = (float)x / terrain.terrainData.alphamapHeight;
-        float yNorm = (float)y / terrain.terrainData.alphamapHeight;
+        float yNorm = (float)z / terrain.terrainData.alphamapHeight;
         float slope = terrain.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
     }
+    /// <summary>
+    /// Returns a 2D array of the slope values.
+    /// </summary>
+    /// <returns></returns>
     public float[,] GetSlopes()
     {
         float[,] slopes = new float[terrain.terrainData.alphamapHeight, terrain.terrainData.alphamapHeight];
@@ -690,7 +730,12 @@ public class MapIO : MonoBehaviour
     }
     #endregion
     #region SplatMap Methods
-    List<int> ReturnSelectedElements(TerrainSplat.Enum ground) // Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// <summary>
+    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// </summary>
+    /// <param name="ground">The TerrainSplat Enum to parse.</param>
+    /// <returns></returns>
+    List<int> ReturnSelectedElements(TerrainSplat.Enum ground)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
@@ -703,7 +748,12 @@ public class MapIO : MonoBehaviour
         }
         return selectedElements;
     }
-    List<int> ReturnSelectedElements(TerrainBiome.Enum biome) // Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// <summary>
+    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// </summary>
+    /// <param name="biome">The TerrainBiome Enum to parse.</param>
+    /// <returns></returns>
+    List<int> ReturnSelectedElements(TerrainBiome.Enum biome)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
@@ -716,7 +766,12 @@ public class MapIO : MonoBehaviour
         }
         return selectedElements;
     }
-    List<int> ReturnSelectedElements(TerrainTopology.Enum topology) // Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// <summary>
+    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// </summary>
+    /// <param name="topology">The TerrainTopology Enum to parse.</param>
+    /// <returns></returns>
+    List<int> ReturnSelectedElements(TerrainTopology.Enum topology)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
@@ -729,6 +784,12 @@ public class MapIO : MonoBehaviour
         }
         return selectedElements;
     }
+    /// <summary>
+    /// Returns the SplatMap at the selected LandLayer.
+    /// </summary>
+    /// <param name="landLayer">The LandLayer to return. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    /// <returns></returns>
     public float[,,] GetSplatMap(string landLayer, int topology = 0)
     {
         switch (landLayer.ToLower())
@@ -745,21 +806,12 @@ public class MapIO : MonoBehaviour
                 return LandData.topologyArray[topology];
         }
     }
-    public int Texture(string landLayer) // Active texture selected in layer. Call method with a string type of the layer to search. 
-    // Accepts "Ground" and "Biome".
-    {
-        if (landLayer.ToLower() == "ground")
-        {
-            return TerrainSplat.TypeToIndex((int)terrainLayer); // Layer texture to paint from Ground Textures.
-        }
-        if (landLayer.ToLower() == "biome")
-        {
-            return TerrainBiome.TypeToIndex((int)biomeLayer); // Layer texture to paint from Biome Textures.
-        }
-        return 0;
-    }
-    public int TextureCount(string landLayer) // Texture count in layer chosen, used for determining the size of the splatmap array.
-    // Call method with the layer you are painting to.
+    /// <summary>
+    /// Texture count in layer chosen, used for determining the size of the splatmap array.
+    /// </summary>
+    /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
+    /// <returns></returns>
+    public int TextureCount(string landLayer)
     {
         if (landLayer.ToLower() == "ground")
         {
@@ -771,11 +823,27 @@ public class MapIO : MonoBehaviour
         }
         return 2;
     }
-    public float GetTexture(string landLayer, int texture, int x, int y, int topology = 0)
+    /// <summary>
+    /// Returns the value of a texture at the selected coords.
+    /// </summary>
+    /// <param name="landLayer">The LandLayer of the texture. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="texture">The texture to get.</param>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="z">The Z coordinate.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    /// <returns></returns>
+    public float GetTexture(string landLayer, int texture, int x, int z, int topology = 0)
     {
-        return GetSplatMap(landLayer, topology)[x, y, texture];
+        return GetSplatMap(landLayer, topology)[x, z, texture];
     }
-    public void PaintConditional(string landLayerToPaint, int texture, Conditions conditions, int topology = 0) // Paints based on the conditions set.
+    /// <summary>
+    /// Paints if all the conditions passed in are true.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="texture">The texture to paint.</param>
+    /// <param name="conditions">The conditions to check.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void PaintConditional(string landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
         float[,,] groundSplatMap = GetSplatMap("ground");
         float[,,] biomeSplatMap = GetSplatMap("biome");
@@ -900,8 +968,17 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMapPaint, landLayerToPaint, topology);
         LandData.SetLayer(landLayerToPaint, topology);
     }
-    public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints height between 2 floats. Blending is attributed to the 2 blend floats.
-    // The closer the height is to the heightLow and heightHigh the stronger the weight of the texture is. To paint without blending assign the blend floats to the same value as the height floats.
+    /// <summary>
+    /// Paints the layer wherever the height conditions are met. Includes option to blend.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
+    /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
+    /// <param name="minBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
+    /// <param name="maxBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) 
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -975,7 +1052,13 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void PaintLayer(string landLayerToPaint, int t, int topology = 0) // Sets whole layer to the active texture. 
+    /// <summary>
+    /// Sets whole layer to the active texture. 
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void PaintLayer(string landLayerToPaint, int t, int topology = 0)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Layer");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -994,7 +1077,12 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void ClearLayer(string landLayerToPaint, int topology = 0) // Sets whole layer to the inactive texture. Alpha and Topology only. 
+    /// <summary>
+    /// Sets whole layer to the inactive texture. Alpha and Topology only. 
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Alpha, Topology)</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void ClearLayer(string landLayerToPaint, int topology = 0)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Clear Layer");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1018,7 +1106,10 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void ClearAllLayers()
+    /// <summary>
+    /// Clears all the topology layers.
+    /// </summary>
+    public void ClearAllTopologyLayers()
     {
         progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -1029,7 +1120,12 @@ public class MapIO : MonoBehaviour
         }
         ClearProgressBar();
     }
-    public void InvertLayer(string landLayerToPaint, int topology = 0) // Inverts the active and inactive textures. Alpha and Topology only. 
+    /// <summary>
+    /// Inverts the active and inactive textures. Alpha and Topology only. 
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void InvertLayer(string landLayerToPaint, int topology = 0) 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Invert Layer");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1052,7 +1148,10 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void InvertAllLayers()
+    /// <summary>
+    /// Inverts all the Topology layers.
+    /// </summary>
+    public void InvertAllTopologyLayers()
     {
         progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -1063,6 +1162,16 @@ public class MapIO : MonoBehaviour
         }
         ClearProgressBar();
     }
+    /// <summary>
+    /// Paints the layer wherever the slope conditions are met. Includes option to blend.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
+    /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
+    /// <param name="minBlendLow">The minimum slope to start to paint. The texture weight will increase as it gets closer to the slopeLow.</param>
+    /// <param name="maxBlendHigh">The maximum slope to start to paint. The texture weight will increase as it gets closer to the slopeHigh.</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
     public void PaintSlope(string landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1137,11 +1246,16 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void PaintArea(string landLayerToPaint, int z1, int z2, int x1, int x2, int t, int topology = 0) // Paints area within these splatmap coords, Maps will always have a splatmap resolution between
-    // 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048). Face downright in the editor with Z axis facing up, and X axis facing right, and the map will draw
-    // from the bottom left corner, up to the top right. So a value of z1 = 0, z2 = 500, x1 = 0, x2 = 1000, would paint 500 pixels up, and 1000 pixels left from the bottom right corner.
-    // Note that the results of how much of the map is covered is dependant on the map size, a 2000 map size would paint almost the bottom half of the map, whereas a 4000 map would 
-    // paint up nearly one quarter of the map, and across nearly half of the map.
+    /// <summary>
+    /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
+    /// Face downright in the editor with Z axis facing up, and X axis facing right, and the map will draw from the bottom left corner, up to the top right. 
+    /// Note that the results of how much of the map is covered is dependant on the map size, a 2000 map size would paint almost the bottom half of the map,
+    /// whereas a 4000 map would paint up nearly one quarter of the map, and across nearly half of the map.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void PaintArea(string landLayerToPaint, int z1, int z2, int x1, int x2, int t, int topology = 0) 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1166,8 +1280,14 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void PaintRiver(string landLayerToPaint, bool aboveTerrain, int t, int topology = 0) // Paints the splats wherever the water is above 500 and is above the terrain. Above terrain
-    // true will paint only if water is above 500 and is also above the land terrain.
+    /// <summary>
+    /// Paints the splats wherever the water is above 500 and is above the terrain.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public void PaintRiver(string landLayerToPaint, bool aboveTerrain, int t, int topology = 0) 
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint River");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1209,11 +1329,14 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, topology);
     }
-    public void AlphaDebug() // Paints a ground texture to the corresponding coordinate if the alpha is active.
-    // Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer. Replaces with rock texture.
+    /// <summary>
+    /// Paints a ground texture to the corresponding coordinate if the alpha is active. 
+    /// Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer.
+    /// </summary>
+    public void AlphaDebug()
     {
         float[,,] splatMap = GetSplatMap("ground");
-        float[,,] alphaSplatMap = GetSplatMap("alpha"); // Always needs to be at two layers or it will break, as we can't divide landData by 0.
+        float[,,] alphaSplatMap = GetSplatMap("alpha");
         int textureCount = TextureCount("ground");
         for (int i = 0; i < alphaSplatMap.GetLength(0); i++)
         {
@@ -1232,12 +1355,20 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMap, landLayer);
         LandData.SetLayer(landLayer);
     }
-    public void CopyTexture(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0) // This copies the selected texture on a landlayer 
-    // and paints the same coordinate on another landlayer with the selected texture.
+    /// <summary>
+    /// Copies the selected texture on a landlayer and paints the same coordinate on another landlayer with the other selected texture.
+    /// </summary>
+    /// <param name="landLayerFrom">The LandLayer to copy. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="textureFrom">The texture to copy.</param>
+    /// <param name="textureToPaint">The texture to paint.</param>
+    /// <param name="topologyFrom">The Topology layer to copy from, if selected.</param>
+    /// <param name="topologyToPaint">The Topology layer to paint to, if selected.</param>
+    public void CopyTexture(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0) 
     {
         ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.3f);
-        float[,,] splatMapFrom = GetSplatMap(landLayerFrom, topologyFrom); // Land layer to copy from.
-        float[,,] splatMapTo = GetSplatMap(landLayerToPaint, topologyToPaint); //  Land layer to paint to.
+        float[,,] splatMapFrom = GetSplatMap(landLayerFrom, topologyFrom);
+        float[,,] splatMapTo = GetSplatMap(landLayerToPaint, topologyToPaint);
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.5f);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMapFrom.GetLength(0); i++)
@@ -1258,67 +1389,6 @@ public class MapIO : MonoBehaviour
         LandData.SetData(splatMapTo, landLayerToPaint, topologyToPaint);
         LandData.SetLayer(landLayer, topologyToPaint);
         ClearProgressBar();
-    }
-    public void GenerateLayerNoise(string landLayer, int layers, float scale)
-    {
-        float[,,] splatMap = GetSplatMap(landLayer);
-        float layerBlend = 1 / layers;
-        for (int i = 0; i < splatMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float i2 = i / scale;
-                float j2 = j / scale;
-                float perlin = Mathf.Clamp(Mathf.PerlinNoise(i2, j2), 0, layers);
-                if (perlin <= layerBlend)
-                {
-
-                }
-            }
-        }
-    }
-    public void PaintPerlin(string landLayer, float scale, float contrast, int texture, bool invert, int topology = 0)
-    {
-        float[,,] newSplat = GetSplatMap(landLayer);
-        int textureCount = TextureCount(landLayer);
-        float o = 0;
-        float r = UnityEngine.Random.Range(0, 10000) / 100f;
-        float r1 = UnityEngine.Random.Range(0, 10000) / 100f;
-        for (int i = 0; i < newSplat.GetLength(0); i++)
-        {
-            for (int j = 0; j < newSplat.GetLength(1); j++)
-            {
-                o = Mathf.PerlinNoise(i * 1f / scale + r, j * 1f / scale + r1);
-                o = o * contrast;
-                if (o > 1f)
-                {
-                    o = 1f;
-                }
-                if (invert)
-                {
-                    o = 1f - o;
-                }
-                for (int k = 0; k < textureCount; k++)
-                {
-                    if (k != texture)
-                    {
-                        if (newSplat[i, j, k] > 0)
-                        {
-                            newSplat[i, j, k] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (newSplat[i, j, texture] != 1)
-                        {
-                            newSplat[i, j, texture] = o;
-                        }
-                    }
-                }
-            }
-        }
-        LandData.SetData(newSplat, landLayer, topology);
-        LandData.SetLayer(landLayer, topology);
     }
     #endregion
     public void RemoveBrokenPrefabs()
@@ -1349,6 +1419,11 @@ public class MapIO : MonoBehaviour
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
+    /// <summary>
+    /// Exports lootcrates to a JSON for use with Oxide.
+    /// </summary>
+    /// <param name="prefabFilePath">The path to save the JSON.</param>
+    /// <param name="deletePrefabs">Delete the lootcrates after exporting.</param>
     public void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
     {
         StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
@@ -1517,7 +1592,6 @@ public class MapIO : MonoBehaviour
         {
             topology = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>();
         }
-        // Puts prefabs object in middle of map.
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
@@ -1623,6 +1697,10 @@ public class MapIO : MonoBehaviour
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(terrains);
     }
+    /// <summary>
+    /// Saves the map.
+    /// </summary>
+    /// <param name="path">The path to save to.</param>
     public void Save(string path)
     {
         LandData.Save(TerrainTopology.TypeToIndex((int)topologyLayer));
@@ -1640,6 +1718,10 @@ public class MapIO : MonoBehaviour
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
         ClearProgressBar();
     }
+    /// <summary>
+    /// Creates a new flat terrain.
+    /// </summary>
+    /// <param name="size">The size of the terrain.</param>
     public void NewEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
@@ -1655,28 +1737,6 @@ public class MapIO : MonoBehaviour
         PaintLayer("Ground", 4);
         SetMinimumHeight(503f);
         ClearProgressBar();
-    }
-    public void CreateDefaultPrefabs()
-    {
-        var prefabParent = GameObject.Find("PrefabsLoaded").GetComponent<Transform>();
-        if (File.Exists("PrefabsLoaded.txt"))
-        {
-            var lines = File.ReadAllLines("PrefabsLoaded.txt");
-            foreach (var line in lines)
-            {
-                var linesSplit = line.Split(':');
-                GameObject prefabSpawned = Instantiate(Resources.Load<GameObject>("Prefabs/DefaultPrefab"), prefabParent);
-                var pdh = prefabSpawned.GetComponent<PrefabDataHolder>();
-                prefabSpawned.name = linesSplit[1];
-                var prefabNameSplit = linesSplit[1].Split('/');
-                var prefabName = prefabNameSplit[prefabNameSplit.Length - 1].Replace(".prefab", "");
-                pdh.prefabData = new PrefabData();
-                pdh.prefabData.id = uint.Parse(linesSplit[2]);
-                var shortenedId = linesSplit[2].Substring(2);
-                prefabReference.Add(shortenedId, prefabSpawned);
-                prefabNames.Add(uint.Parse(linesSplit[2]), prefabName);
-            }
-        }
     }
     public void StartPrefabLookup()
     {
@@ -1733,22 +1793,6 @@ public class MapIO : MonoBehaviour
             }
         }
     }
-}
-public class ModelPreProcess : AssetPostprocessor
-{
-    /*
-    static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-    {
-        foreach (string str in importedAssets)
-        {
-            var asset = AssetDatabase.LoadAssetAtPath<GameObject>(str);
-            if (asset != null)
-            {
-                GameObjectUtility.RemoveMonoBehavioursWithMissingScript(asset);
-            }
-        }
-        AssetDatabase.SaveAssets();
-    }*/
 }
 public class PrefabHierachy : TreeView
 {

@@ -30,7 +30,7 @@ public class InvertAllLayersNode : Node
                 mapIO.InvertLayer("Alpha");
                 break;
             case 3: // Topology
-                mapIO.InvertAllLayers();
+                mapIO.InvertAllTopologyLayers();
                 break;
         }
     }

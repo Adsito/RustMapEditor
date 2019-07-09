@@ -208,7 +208,7 @@ public class PrefabLookup : System.IDisposable
                 }
             }
         }
-        //go.SetActive(true);
+        go.SetActive(false);
         go.tag = "LoadedPrefab";
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
