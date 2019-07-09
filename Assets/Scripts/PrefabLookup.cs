@@ -148,15 +148,67 @@ public class PrefabLookup : System.IDisposable
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
         var prefabMeshes = go.GetComponentsInChildren<MeshFilter>(true);
-        for (int i = 0; i < prefabMeshes.Length; i++) // Add all the meshes to the list to save to the project later.
+        for (int i = 0; i < prefabMeshes.Length; i++)
         {
-            if (!meshes.Contains(prefabMeshes[i].sharedMesh) && prefabMeshes[i].sharedMesh != null && prefabMeshes[i].sharedMesh.name != "Quad" && prefabMeshes[i].sharedMesh.name != "Sphere")
+            if (prefabMeshes[i].sharedMesh != null)
             {
-                meshes.Add(prefabMeshes[i].sharedMesh);
+                if (prefabMeshes[i].sharedMesh.name.Contains("LOD0"))
+                {
+                    int lodGroups = 0; // Highest LOD found
+                    LODGroup lodGroup;
+                    MeshFilter[] lodMeshes;
+                    var parentObject = (prefabMeshes[i].gameObject.transform.parent != null) ? prefabMeshes[i].gameObject.transform.parent.gameObject : null;
+                    if (parentObject != null)
+                    {
+                        lodGroup = parentObject.GetComponent<LODGroup>();
+                        if (lodGroup != null)
+                        {
+                            continue;
+                        }
+                        lodGroup = parentObject.AddComponent<LODGroup>();
+                        lodMeshes = parentObject.GetComponentsInChildren<MeshFilter>(true);
+                    }
+                    else
+                    {
+                        lodGroup = prefabMeshes[i].gameObject.AddComponent<LODGroup>();
+                        lodMeshes = prefabMeshes[i].gameObject.GetComponentsInChildren<MeshFilter>(true);
+                    }
+                    MeshRenderer[][] renderers = new MeshRenderer[lodMeshes.Length][];
+                    for (int j = 0; j < lodMeshes.Length; j++)
+                    {
+                        renderers[j] = new MeshRenderer[1];
+                    }
+                    for (int j = 0; j < lodMeshes.Length; j++) // Sorts out normal meshes into LOD groups. Might have to count tris instead cause of irregular naming scheme.
+                    {
+                        foreach (var meshFilter in lodMeshes)
+                        {
+                            if (meshFilter.sharedMesh != null)
+                            {
+                                if (meshFilter.sharedMesh.name.Contains("LOD" + j.ToString()))
+                                {
+                                    var meshRenderer = meshFilter.gameObject.GetComponent<MeshRenderer>();
+                                    if (meshRenderer != null)
+                                    {
+                                        meshRenderer.enabled = true;
+                                        renderers[j][0] = meshRenderer;
+                                        lodGroups = (lodGroups < j) ? j : lodGroups;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    LOD[] lods = new LOD[lodMeshes.Length];
+                    for (int j = 0; j < lodMeshes.Length; j++)
+                    {
+                        lods[j] = new LOD(1.0F / (j + 1.5f), renderers[j]);
+                    }
+                    lodGroup.SetLODs(lods);
+                    lodGroup.fadeMode = LODFadeMode.SpeedTree;
+                    lodGroup.RecalculateBounds();
+                }
             }
         }
-        go.SetActive(true);
-        GameObject.Instantiate(go); // Debug 
+        //go.SetActive(true);
         go.tag = "LoadedPrefab";
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
@@ -164,6 +216,7 @@ public class PrefabLookup : System.IDisposable
         {
             id = rustid,
         };
+        GameObject.Instantiate(go); // Debug 
         prefabsList.Add(new PrefabAttributes()
         {
             Prefab = go,
