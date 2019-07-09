@@ -8,7 +8,7 @@ public class AmbientLightLOD : MonoBehaviour
 	protected void Awake()
 	{
 		lightComponent = GetComponent<Light>();
-        lightComponent.enabled = false;
+        lightComponent.enabled = true;
 	}
 	private void ToggleLight(bool state)
 	{
