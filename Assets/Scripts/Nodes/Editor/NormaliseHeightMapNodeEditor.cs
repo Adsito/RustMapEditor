@@ -26,10 +26,5 @@ public class NormaliseHeightMapNodeEditor : NodeEditor
         EditorGUILayout.LabelField(new GUIContent("High", "The highest point on the map after being normalised."), GUILayout.MaxWidth(40));
         node.normaliseHigh = EditorGUILayout.Slider(node.normaliseHigh, 0f, 1000f);
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(new GUIContent("Blend", "The amount of blending to occur during normalisation. The higher the value the" +
-            "smoother the result will be."), GUILayout.MaxWidth(40));
-        node.normaliseBlend = EditorGUILayout.Slider(node.normaliseBlend, 0f, 1f);
-        EditorGUILayout.EndHorizontal();
     }
 }
