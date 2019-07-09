@@ -97,10 +97,10 @@ QualitySettings:
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 0
     vSyncCount: 0
-    lodBias: 3
-    maximumLODLevel: 0
+    lodBias: 100
+    maximumLODLevel: 1
     streamingMipmapsActive: 1
-    streamingMipmapsAddAllCameras: 1
+    streamingMipmapsAddAllCameras: 0
     streamingMipmapsMemoryBudget: 512
     streamingMipmapsRenderersPerFrame: 512
     streamingMipmapsMaxLevelReduction: 2
