@@ -535,16 +535,14 @@ MonoBehaviour:
   conditionalBiome: 0
   landSelectIndex: 0
   landLayer: Ground
-  loadPath: 
+  loadPath: New Map
   savePath: 
   prefabSavePath: 
   bundleFile: C:/Program Files (x86)/Steam/steamapps/common/Rust/Bundles/Bundles
   progressBar: 0
-  progressValue: 1
+  progressValue: 0.032258064
   terrainFilterTexture: {fileID: 2800000, guid: d86e497a72c9d224aafb5bec1b0d2ecc,
     type: 3}
-  generationPresetList:
-  - Example Painting
 --- !u!4 &1403325384
 Transform:
   m_ObjectHideFlags: 0
@@ -552,12 +550,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1403325382}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 500, y: 500, z: 500}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_Father: {fileID: 1640801175}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1640801174
 GameObject:
@@ -590,8 +588,9 @@ Transform:
   - {fileID: 1175142916}
   - {fileID: 736545994}
   - {fileID: 170076735}
+  - {fileID: 1403325384}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1646275497
 GameObject:

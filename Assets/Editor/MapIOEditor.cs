@@ -32,7 +32,7 @@ public class MapIOEditor : EditorWindow
     float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
     float slopeMinBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeMaxBlendHigh = 75f;
     float heightMinBlendLow = 0f, heightMaxBlendLow = 500f, heightMinBlendHigh = 500f, heightMaxBlendHigh = 1000f;
-    float normaliseLow = 450f, normaliseHigh = 1000f, normaliseBlend = 1f;
+    float normaliseLow = 450f, normaliseHigh = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint, topologyFrom, topologyToPaint;
@@ -377,18 +377,15 @@ public class MapIOEditor : EditorWindow
                                         normaliseHigh = EditorGUILayout.Slider(normaliseHigh, 0f, 1000f);
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Blend", "The amount of blending to occur during normalisation. The higher the value the" +
-                                            "smoother the result will be."), GUILayout.MaxWidth(40));
-                                        normaliseBlend = EditorGUILayout.Slider(normaliseBlend, 0f, 1f);
                                         if (EditorGUI.EndChangeCheck() && autoUpdate == true)
                                         {
-                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
                                         }
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
                                         if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
-                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f, normaliseBlend);
+                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
                                         }
                                         autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
                                         EditorGUILayout.EndHorizontal();
@@ -944,11 +941,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers.")))
                             {
-                                script.InvertAllLayers();
+                                script.InvertAllTopologyLayers();
                             }
                             if (GUILayout.Button(new GUIContent("Clear All", "Clear all Topology layers.")))
                             {
-                                script.ClearAllLayers();
+                                script.ClearAllTopologyLayers();
                             }
                             EditorGUILayout.EndHorizontal();
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);

@@ -30,7 +30,7 @@ public class ClearAllLayersNode : Node
                 mapIO.ClearLayer("Alpha");
                 break;
             case 3: // Topology
-                mapIO.ClearAllLayers();
+                mapIO.ClearAllTopologyLayers();
                 break;
         }
     }
