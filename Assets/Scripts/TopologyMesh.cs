@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class TopologyMesh : MonoBehaviour {
-    
-    [HideInInspector]
+public static class TopologyMesh
+{
     [SerializeField]
-    public byte[] top;
+    public static byte[] top;
 
-    public TerrainMap<int> getTerrainMap()
+    public static TerrainMap<int> getTerrainMap()
     {
         return new TerrainMap<int>(top, 1);
     }
-    public float[,,] getSplatMap(int layer)
+    public static float[,,] getSplatMap(int layer)
     {
         TerrainMap<int> topology = getTerrainMap();
         float[,,] splatMap = new float[topology.res, topology.res, 2];
@@ -34,7 +31,7 @@ public class TopologyMesh : MonoBehaviour {
         }
         return splatMap;
     }
-    public void SaveTopologyLayers()
+    public static void SaveTopologyLayers()
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
         var splatMap = LandData.topologyArray;
@@ -57,7 +54,7 @@ public class TopologyMesh : MonoBehaviour {
         }
         top = topologyMap.ToByteArray();
     }
-    public void InitMesh(TerrainMap<int> topology)
+    public static void InitMesh(TerrainMap<int> topology)
     {
         top = topology.ToByteArray();
     }
