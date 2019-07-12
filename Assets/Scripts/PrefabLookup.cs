@@ -40,6 +40,7 @@ public class PrefabLookup : System.IDisposable
     {
         backend = new AssetBundleBackend(bundlename);
         AssetBundleLookup();
+        AssetDump();
         float progress = 0f;
         float progressInterval = 0f;
         var lookupString = "";
