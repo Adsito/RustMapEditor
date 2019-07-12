@@ -110,7 +110,6 @@ public class MapIO : MonoBehaviour
     public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "", bundleFile = "No bundle file selected";
     private PrefabLookup prefabLookup;
     public float progressBar = 0f, progressValue = 1f;
-    static TopologyMesh topology;
     private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
     private Dictionary<uint, string> prefabPaths = new Dictionary<uint, string>();
     public Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
@@ -1127,7 +1126,6 @@ public class MapIO : MonoBehaviour
     /// <param name="topology">The Topology layer, if selected.</param>
     public void InvertLayer(string landLayerToPaint, int topology = 0) 
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Invert Layer");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -1588,10 +1586,6 @@ public class MapIO : MonoBehaviour
     }
     private void LoadMapInfo(MapInfo terrains)
     {
-        if (MapIO.topology == null)
-        {
-            topology = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>();
-        }
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
@@ -1608,7 +1602,7 @@ public class MapIO : MonoBehaviour
         water.transform.position = terrainPosition;
 
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
-        topology.InitMesh(terrains.topology);
+        TopologyMesh.InitMesh(terrains.topology);
 
         terrain.terrainData.heightmapResolution = terrains.resolution;
         terrain.terrainData.size = terrains.size;
@@ -1641,7 +1635,7 @@ public class MapIO : MonoBehaviour
         ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            LandData.SetData(topology.getSplatMap(TerrainTopology.IndexToType(i)), "topology", i);
+            LandData.SetData(TopologyMesh.getSplatMap(TerrainTopology.IndexToType(i)), "topology", i);
         }
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -1686,7 +1680,7 @@ public class MapIO : MonoBehaviour
         // Will clean this up later, without the below the topology layer last selected is not saved to the array properly, and if ground selected it shows the topology until
         // the layer is swapped.
         ChangeLayer("Ground");
-        LandData.SetData(topology.getSplatMap((int)topologyLayer), "topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetData(TopologyMesh.getSplatMap((int)topologyLayer), "topology", TerrainTopology.TypeToIndex((int)topologyLayer));
         LandData.SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
         ChangeLayer("Ground");
         ClearProgressBar();
@@ -1729,8 +1723,8 @@ public class MapIO : MonoBehaviour
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             progressBar += progressValue;
-            ClearLayer("Topology", i);
             ProgressBar("Creating New Map", "Wiping: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            ClearLayer("Topology", i);
         }
         ClearLayer("Alpha");
         PaintLayer("Biome", 1);
