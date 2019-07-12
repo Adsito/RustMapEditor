@@ -30,7 +30,7 @@ public static class LandData
     [HideInInspector]
     public static TerrainLayer[] miscTextures = null;
 
-    static Terrain terrain = GameObject.FindGameObjectWithTag("LandData").transform.parent.GetComponent<Terrain>();
+    static Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
     static string layerName = "";
 
     /// <summary>

@@ -29,7 +29,8 @@ public class WorldConverter
     public static MapInfo emptyWorld(int size)
     {
         MapInfo terrains = new MapInfo();
-        
+        MapIO.ProgressBar("Creating New Map", "Creating Terrain", 0.0f);
+
         var terrainSize = new Vector3(size, 1000, size);
 
         int resolution = Mathf.NextPowerOfTwo((int)(size * 0.50f));
@@ -41,6 +42,8 @@ public class WorldConverter
         var topologyMap = new TerrainMap<int>   (new byte[(int)Mathf.Pow(Mathf.Clamp(resolution, 16, 2048), 2) * 4 * 1], 1); //4 bytes 1 channel
         var biomeMap    = new TerrainMap<byte>  (new byte[(int)Mathf.Pow(Mathf.Clamp(resolution, 16, 2048), 2) * 1 * 4], 4); //1 bytes 4 channels
         var alphaMap    = new TerrainMap<byte>  (new byte[(int)Mathf.Pow(Mathf.Clamp(resolution, 16, 2048), 2) * 1 * 1], 1); //1 byte 1 channel
+
+        MapIO.ProgressBar("Creating New Map", "Creating TerrainMaps", 0.25f);
 
         float[,] landHeight = new float[resolution + 1, resolution + 1];
         for (int i = 0; i < resolution + 1; i++)
@@ -62,6 +65,7 @@ public class WorldConverter
         byte[] landHeightBytes = TypeConverter.floatArrayToByteArray(landHeight);
         byte[] waterHeightBytes = TypeConverter.floatArrayToByteArray(waterHeight);
 
+        MapIO.ProgressBar("Creating New Map", "Setting TerrainMaps", 0.5f);
 
         terrainMap.FromByteArray(landHeightBytes);
         heightMap.FromByteArray(landHeightBytes);
@@ -83,20 +87,18 @@ public class WorldConverter
         terrains.land.heights = TypeConverter.shortMapToFloatArray(terrainMap);
         terrains.water.heights = TypeConverter.shortMapToFloatArray(waterMap);
 
-        terrains = convertMaps(terrains, splatMap, biomeMap, alphaMap);
+        MapIO.ProgressBar("Creating New Map", "Converting to Terrain", 0.75f);
 
-        for (int i = 0; i < terrains.splatMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < terrains.splatMap.GetLength(1); j++)
-            {
-                terrains.splatMap[i, j, 4] = 1f;
-            }
-        }
-
+        terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap, false);
+        
         return terrains;
     }
-
-    public static MapInfo convertMaps(MapInfo terrains, TerrainMap<byte> splatMap, TerrainMap<byte> biomeMap, TerrainMap<byte> alphaMap)
+    /// <summary>
+    /// Converts the MapInfo and TerrainMaps into a Unity map format.
+    /// </summary>
+    /// <param name="normaliseMulti">Controls if the splatmaps have their values normalised to equal 1.0f or not. Should be set to true unless creating a new map.</param>
+    /// <returns></returns>
+    public static MapInfo ConvertMaps(MapInfo terrains, TerrainMap<byte> splatMap, TerrainMap<byte> biomeMap, TerrainMap<byte> alphaMap, bool normaliseMulti)
     {
 
         terrains.splatMap = new float[splatMap.res, splatMap.res, 8];
@@ -110,7 +112,7 @@ public class WorldConverter
                 }
             }
         }
-        terrains.splatMap = TypeConverter.MultiNormalised(terrains.splatMap, 8);
+        terrains.splatMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.splatMap, 8) : terrains.splatMap;
 
         terrains.biomeMap = new float[biomeMap.res, biomeMap.res, 4];
         for (int i = 0; i < terrains.biomeMap.GetLength(0); i++)
@@ -123,7 +125,7 @@ public class WorldConverter
                 }
             }
         }
-        terrains.biomeMap = TypeConverter.MultiNormalised(terrains.biomeMap, 4);
+        terrains.biomeMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.biomeMap, 4) : terrains.biomeMap;
 
         terrains.alphaMap = new float[alphaMap.res, alphaMap.res, 2];
         for (int i = 0; i < terrains.alphaMap.GetLength(0); i++)
@@ -174,7 +176,7 @@ public class WorldConverter
         terrains.land.heights = TypeConverter.shortMapToFloatArray(terrainMap);
         terrains.water.heights = TypeConverter.shortMapToFloatArray(waterMap);
 
-        terrains = convertMaps(terrains, splatMap, biomeMap, alphaMap);
+        terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap, true);
         return terrains;
     }
     public static WorldSerialization terrainToWorld(Terrain land, Terrain water) // Saves maps
@@ -221,14 +223,13 @@ public class WorldConverter
                  alphaMap[0, j, k] = BitUtility.Float2Byte(LandData.alphaArray[j, k, 0]);
             }
         }
-        GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().SaveTopologyLayers();
-        var topologyMap = GameObject.FindGameObjectWithTag("LandData").GetComponent<TopologyMesh>().getTerrainMap();
+        TopologyMesh.SaveTopologyLayers();
 
         world.AddMap("terrain", landHeightBytes);
         world.AddMap("height", landHeightBytes);
         world.AddMap("splat", splatMap.ToByteArray());
         world.AddMap("biome", biomeMap.ToByteArray());
-        world.AddMap("topology", topologyMap.ToByteArray());
+        world.AddMap("topology", TopologyMesh.getTerrainMap().ToByteArray());
         world.AddMap("alpha", alphaMap.ToByteArray());
         world.AddMap("water", waterHeightBytes);
 
@@ -260,5 +261,4 @@ public class WorldConverter
         }
         return world;
     }
-
 }
