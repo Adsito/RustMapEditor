@@ -39,4 +39,4 @@ Using resources from:
 - Simple painting tools to easily edit map features.
 - Paint terrain based on height and slopes.
 - Integration with 3rd party assets.
-- Map Making API and documentation for contributers.
+- Map Making API and documentation for contributers. 
