@@ -520,10 +520,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topologyLayerFrom: 16
   topologyLayerToPaint: 16
-  topologyLayer: 1
+  topologyLayer: 16
   conditionalTopology: 0
   topologyLayersList: 16
-  oldTopologyLayer: 1
+  oldTopologyLayer: 16
   groundLayerFrom: 16
   groundLayerToPaint: 16
   terrainLayer: 16
@@ -532,7 +532,7 @@ MonoBehaviour:
   biomeLayerToPaint: 2
   biomeLayer: 2
   conditionalBiome: 0
-  landSelectIndex: 3
+  landSelectIndex: 0
   landLayer: Ground
   loadPath: New Map
   savePath: C:/Program Files (x86)/Steam/steamapps/common/Rust/maps/test.map
