@@ -23,11 +23,8 @@ public static class LandData
     /// </summary>
     public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
-    [HideInInspector]
     public static TerrainLayer[] groundTextures = null;
-    [HideInInspector]
     public static TerrainLayer[] biomeTextures = null;
-    [HideInInspector]
     public static TerrainLayer[] miscTextures = null;
 
     static Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();

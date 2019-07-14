@@ -102,21 +102,19 @@ public struct Conditions
 public class MapIO : MonoBehaviour
 {
     #region Layers
-    public TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
-    public TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
-    public TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
+    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
+    public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
+    public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
-    public int landSelectIndex = 0;
-    public string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "", bundleFile = "No bundle file selected";
-    private PrefabLookup prefabLookup;
-    public float progressBar = 0f, progressValue = 1f;
-    private Dictionary<uint, string> prefabNames = new Dictionary<uint, string>();
-    private Dictionary<uint, string> prefabPaths = new Dictionary<uint, string>();
-    public Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
-    public Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
-    public Texture terrainFilterTexture;
+    public static int landSelectIndex = 0;
+    public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "", bundleFile = "No bundle file selected";
+    private static PrefabLookup prefabLookup;
+    public static float progressBar = 0f, progressValue = 1f;
+    public static Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
+    public static Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
+    public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    private Terrain terrain;
+    private static Terrain terrain;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -134,7 +132,7 @@ public class MapIO : MonoBehaviour
         //Debug.Log("KEY CHANGE " + Event.current.keyCode);
     }
     #endregion
-    void Start()
+    public void Start()
     {
         loadPath = "";
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
@@ -153,7 +151,7 @@ public class MapIO : MonoBehaviour
             sceneView.LookAt(new Vector3(500f, 750f, 500f));
         }
     }
-    public void SetLayers()
+    public static void SetLayers()
     {
         topologyLayerFrom = TerrainTopology.Enum.Beach;
         topologyLayerToPaint = TerrainTopology.Enum.Beach;
@@ -185,14 +183,14 @@ public class MapIO : MonoBehaviour
     /// </summary>
     public static void ClearProgressBar()
     {
-        GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().progressBar = 0;
+        MapIO.progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
-    public void SetPrefabLookup(PrefabLookup prefabLookup)
+    public static void SetPrefabLookup(PrefabLookup prefabLookup)
     {
-        this.prefabLookup = prefabLookup;
+        MapIO.prefabLookup = prefabLookup;
     }
-    public void GetProjectPrefabs()
+    public static void GetProjectPrefabs()
     {
         prefabsLoaded.Clear();
         foreach (var asset in AssetDatabase.GetAllAssetPaths())
@@ -210,7 +208,7 @@ public class MapIO : MonoBehaviour
             }
         }
     }
-    public PrefabLookup GetPrefabLookUp()
+    public static PrefabLookup GetPrefabLookUp()
     {
         return prefabLookup;
     }
@@ -218,12 +216,12 @@ public class MapIO : MonoBehaviour
     /// Change the active land layer.
     /// </summary>
     /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
-    public void ChangeLayer(string layer)
+    public static void ChangeLayer(string layer)
     {
         landLayer = layer;
         ChangeLandLayer();
     }
-    public void ChangeLandLayer()
+    public static void ChangeLandLayer()
     {
         LandData.Save(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
         Undo.ClearAll();
@@ -243,31 +241,7 @@ public class MapIO : MonoBehaviour
                 break;
         }
     }
-    public void GetPrefabNames()
-    {
-        if (File.Exists("PrefabsLoaded.txt"))
-        {
-            var lines = File.ReadAllLines("PrefabsLoaded.txt");
-            foreach (var line in lines)
-            {
-                var linesSplit = line.Split(':');
-                prefabNames.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[0]);
-            }
-        }
-    }
-    public void GetPrefabPaths()
-    {
-        if (File.Exists("PrefabsLoaded.txt"))
-        {
-            var lines = File.ReadAllLines("PrefabsLoaded.txt");
-            foreach (var line in lines)
-            {
-                var linesSplit = line.Split(':');
-                prefabPaths.Add(uint.Parse(linesSplit[linesSplit.Length - 1]), linesSplit[1]);
-            }
-        }
-    }
-    public GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
+    public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
         Vector3 pos = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z);
         Vector3 scale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
@@ -278,17 +252,12 @@ public class MapIO : MonoBehaviour
         newObj.transform.rotation = rotation;
         newObj.transform.localScale = scale;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
-        prefabNames.TryGetValue(prefabData.id, out string prefabName); // Sets the prefab name to the string if the user has previously loaded the game bundles.
-        if (prefabName != null)
-        {
-            newObj.name = prefabName;
-        }
         return newObj;
     }
     /// <summary>
     /// Removes all prefabs and path objects in the scene.
     /// </summary>
-    private void CleanUpMap()
+    private static void CleanUpMap()
     {
         GameObject mapPrefabs = GameObject.Find("Objects");
         foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
@@ -734,7 +703,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="ground">The TerrainSplat Enum to parse.</param>
     /// <returns></returns>
-    List<int> ReturnSelectedElements(TerrainSplat.Enum ground)
+    public static List<int> ReturnSelectedElements(TerrainSplat.Enum ground)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
@@ -752,7 +721,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="biome">The TerrainBiome Enum to parse.</param>
     /// <returns></returns>
-    List<int> ReturnSelectedElements(TerrainBiome.Enum biome)
+    public static List<int> ReturnSelectedElements(TerrainBiome.Enum biome)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
@@ -770,7 +739,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="topology">The TerrainTopology Enum to parse.</param>
     /// <returns></returns>
-    List<int> ReturnSelectedElements(TerrainTopology.Enum topology)
+    public static List<int> ReturnSelectedElements(TerrainTopology.Enum topology)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
@@ -789,7 +758,7 @@ public class MapIO : MonoBehaviour
     /// <param name="landLayer">The LandLayer to return. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     /// <returns></returns>
-    public float[,,] GetSplatMap(string landLayer, int topology = 0)
+    public static float[,,] GetSplatMap(string landLayer, int topology = 0)
     {
         switch (landLayer.ToLower())
         {
@@ -810,7 +779,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
     /// <returns></returns>
-    public int TextureCount(string landLayer)
+    public static int TextureCount(string landLayer)
     {
         if (landLayer.ToLower() == "ground")
         {
@@ -831,7 +800,7 @@ public class MapIO : MonoBehaviour
     /// <param name="z">The Z coordinate.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     /// <returns></returns>
-    public float GetTexture(string landLayer, int texture, int x, int z, int topology = 0)
+    public static float GetTexture(string landLayer, int texture, int x, int z, int topology = 0)
     {
         return GetSplatMap(landLayer, topology)[x, z, texture];
     }
@@ -1262,16 +1231,13 @@ public class MapIO : MonoBehaviour
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                if (i >= z1 && i <= z2)
+                if ((i >= z1 && i <= z2) && (j >= x1 && j <= x2))
                 {
-                    if (j >= x1 && j <= x2)
+                    for (int k = 0; k < textureCount; k++)
                     {
-                        for (int k = 0; k < textureCount; k++)
-                        {
-                            splatMap[i, j, k] = 0;
-                        }
-                        splatMap[i, j, t] = 1;
+                        splatMap[i, j, k] = 0;
                     }
+                    splatMap[i, j, t] = 1;
                 }
             }
         }
@@ -1433,37 +1399,6 @@ public class MapIO : MonoBehaviour
         {
             switch (p.prefabData.id)
             {
-                default:
-                    // Not a lootcrate. If you want you to export everything uncomment this section.
-                    /*
-                    if (prefabNames[p.prefabData.id] != null)
-                    {
-                        prefabExports.Add(new PrefabExport()
-                        {
-                            PrefabNumber = lootCrateCount,
-                            PrefabProperty = prefabPaths[p.prefabData.id] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
-                        });
-                        if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
-                        {
-                            DestroyImmediate(p.gameObject);
-                        }
-                        lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
-                    }
-                    */
-                    break;
-                case 69: // THIS IS AN EXAMPLE FOR EXPORTING AN INDIVIDUAL PREFAB. Set this number to a prefab ID you want to export.
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        // Set the number in prefabNames to be the prefabid, this just gets the prefab name for the data file to load ingame.
-                        PrefabProperty = prefabPaths[69] + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
-                    });
-                    if (deletePrefabs == true) // If delete prefabs on export is selected this will delete the prefab from the map file.
-                    {
-                        DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++; // This is just used to keep track of the lootcrates exported, not important for things that arent respawning.
-                    break;
                 case 1603759333:
                     prefabExports.Add(new PrefabExport()
                     {
@@ -1584,7 +1519,7 @@ public class MapIO : MonoBehaviour
         streamWriter.Close();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
-    private void LoadMapInfo(MapInfo terrains)
+    private static void LoadMapInfo(MapInfo terrains)
     {
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
@@ -1685,7 +1620,7 @@ public class MapIO : MonoBehaviour
         ChangeLayer("Ground");
         ClearProgressBar();
     }
-    public void Load(WorldSerialization blob)
+    public static void Load(WorldSerialization blob)
     {
         WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
@@ -1782,7 +1717,7 @@ public class MapIO : MonoBehaviour
                         }
                     }
                     while (nodeIteration != null);
-                    GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>().ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
+                    MapIO.ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
                 }
             }
         }
@@ -1806,10 +1741,10 @@ public class PrefabHierachy : TreeView
         DragAndDrop.PrepareStartDrag();
         if (args.draggedItemIDs[0] > 100) // Only drag prefabs not the treeview parents.
         {
-            if (mapIO.prefabReference.ContainsKey(args.draggedItemIDs[0].ToString()))
+            if (MapIO.prefabReference.ContainsKey(args.draggedItemIDs[0].ToString()))
             {
                 Debug.Log("Prefab Found");
-                mapIO.prefabReference.TryGetValue(args.draggedItemIDs[0].ToString(), out GameObject prefabDragged);
+                MapIO.prefabReference.TryGetValue(args.draggedItemIDs[0].ToString(), out GameObject prefabDragged);
                 GameObject newPrefab = prefabDragged;
                 UnityEngine.Object[] objectArray = new UnityEngine.Object[1];
                 objectArray[0] = newPrefab;
