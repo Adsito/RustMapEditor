@@ -1399,6 +1399,33 @@ public class MapIO : MonoBehaviour
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
+    /// <summary>
+    /// Breaks down RustEdit custom prefabs back into the individual prefabs.
+    /// </summary>
+    public static void BreakRustEditCustomPrefabs()
+    {
+        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs", 0f);
+        int prefabsBroken = 0;
+        progressValue = 1f / prefabDataHolders.Length;
+        for (int i = 0; i < prefabDataHolders.Length; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            if (prefabDataHolders[i].prefabData.category.Contains(':'))
+            {
+                prefabDataHolders[i].prefabData.category = "Decor";
+                prefabsBroken++;
+            }
+        }
+        Debug.Log("Broke down " + prefabsBroken + " prefabs.");
+        ClearProgressBar();
+    }
+    /// <summary>
+    /// Exports information about all the map prefabs to a JSON file.
+    /// </summary>
+    /// <param name="mapPrefabFilePath">The JSON file path and name.</param>
+    /// <param name="deletePrefabs">Deletes the prefab after the data is exported.</param>
     public static void ExportMapPrefabs(string mapPrefabFilePath, bool deletePrefabs)
     {
         List<PrefabExport> mapPrefabExports = new List<PrefabExport>();

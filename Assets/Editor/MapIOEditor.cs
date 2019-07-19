@@ -1112,8 +1112,8 @@ public class MapIOEditor : EditorWindow
                         {
                             MapIO.RemoveBrokenPrefabs();
                         }
-                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
-                            "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
+                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes the prefabs after exporting them."), deletePrefabs, GUILayout.MaxWidth(300));
+                        EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
                             "If you don't delete them after export they will duplicate on first map load.")))
                         {
@@ -1132,6 +1132,11 @@ public class MapIOEditor : EditorWindow
                                 return;
                             }
                             MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.")))
+                        {
+                            MapIO.BreakRustEditCustomPrefabs();
                         }
                         break;
                     default:
