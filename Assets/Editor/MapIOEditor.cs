@@ -19,7 +19,7 @@ public class MapIOEditor : EditorWindow
     string loadFile = "";
     string saveFile = "";
     string mapName = "";
-    string prefabSaveFile = "";
+    string prefabSaveFile = "", mapPrefabSaveFile = "";
     //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
     float heightToSet = 450f, offset = 0f;
@@ -1110,19 +1110,28 @@ public class MapIOEditor : EditorWindow
                         if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
                                     " errors loading a map on a server.")))
                         {
-                            script.RemoveBrokenPrefabs();
+                            MapIO.RemoveBrokenPrefabs();
                         }
                         deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete LootCrates on Export.", "Deletes the lootcrates after exporting them. Stops lootcrates from originally spawning" +
                             "on first map load."), deletePrefabs, GUILayout.MaxWidth(300));
                         if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
                             "If you don't delete them after export they will duplicate on first map load.")))
                         {
-                            prefabSaveFile = UnityEditor.EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
+                            prefabSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
                             if (prefabSaveFile == "")
                             {
                                 return;
                             }
-                            script.ExportLootCrates(prefabSaveFile, deletePrefabs);
+                            MapIO.ExportLootCrates(prefabSaveFile, deletePrefabs);
+                        }
+                        if (GUILayout.Button(new GUIContent("Export Map Prefabs", "Exports all map prefabs to plugin data.")))
+                        {
+                            mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", prefabSaveFile, "MapData", "json");
+                            if (mapPrefabSaveFile == "")
+                            {
+                                return;
+                            }
+                            MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
                         }
                         break;
                     default:

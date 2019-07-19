@@ -17,7 +17,23 @@ public class PrefabExport
     {
         get; set;
     }
-    public string PrefabProperty
+    public uint PrefabID
+    {
+        get; set;
+    }
+    public string PrefabPath
+    {
+        get; set;
+    }
+    public string PrefabPosition
+    {
+        get; set;
+    }
+    public string PrefabScale
+    {
+        get; set;
+    }
+    public string PrefabRotation
     {
         get; set;
     }
@@ -319,7 +335,7 @@ public class MapIO : MonoBehaviour
     /// Rotates prefabs 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotatePrefabs(bool CW) 
+    public void RotatePrefabs(bool CW)
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
         if (CW)
@@ -353,7 +369,7 @@ public class MapIO : MonoBehaviour
     /// <param name="landLayer">The LandLayer. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public void RotateLayer(string landLayer, bool CW, int topology = 0) 
+    public void RotateLayer(string landLayer, bool CW, int topology = 0)
     {
         int textureCount = TextureCount(landLayer);
         float[,,] oldLayer = GetSplatMap(landLayer, topology);
@@ -391,7 +407,7 @@ public class MapIO : MonoBehaviour
     /// Rotates all Topology layers 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotateAllTopologymap(bool CW) 
+    public void RotateAllTopologymap(bool CW)
     {
         progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -604,7 +620,7 @@ public class MapIO : MonoBehaviour
     /// Sets the HeightMap level to the minimum if it's below.
     /// </summary>
     /// <param name="minimumHeight">The minimum height to set.</param>
-    public void SetMinimumHeight(float minimumHeight) 
+    public void SetMinimumHeight(float minimumHeight)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Minimum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -625,7 +641,7 @@ public class MapIO : MonoBehaviour
     /// Puts the heightmap level to the maximum if it's above.
     /// </summary>
     /// <param name="maximumHeight">The maximum height to set.</param>
-    public void SetMaximumHeight(float maximumHeight) 
+    public void SetMaximumHeight(float maximumHeight)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Maximum Height Terrain");
         float[,] landMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
@@ -946,7 +962,7 @@ public class MapIO : MonoBehaviour
     /// <param name="maxBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) 
+    public void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1093,7 +1109,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public void InvertLayer(string landLayerToPaint, int topology = 0) 
+    public void InvertLayer(string landLayerToPaint, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1222,7 +1238,7 @@ public class MapIO : MonoBehaviour
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public void PaintArea(string landLayerToPaint, int z1, int z2, int x1, int x2, int t, int topology = 0) 
+    public void PaintArea(string landLayerToPaint, int z1, int z2, int x1, int x2, int t, int topology = 0)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1251,7 +1267,7 @@ public class MapIO : MonoBehaviour
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public void PaintRiver(string landLayerToPaint, bool aboveTerrain, int t, int topology = 0) 
+    public void PaintRiver(string landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint River");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
@@ -1328,7 +1344,7 @@ public class MapIO : MonoBehaviour
     /// <param name="textureToPaint">The texture to paint.</param>
     /// <param name="topologyFrom">The Topology layer to copy from, if selected.</param>
     /// <param name="topologyToPaint">The Topology layer to paint to, if selected.</param>
-    public void CopyTexture(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0) 
+    public void CopyTexture(string landLayerFrom, string landLayerToPaint, int textureFrom, int textureToPaint, int topologyFrom = 0, int topologyToPaint = 0)
     {
         ProgressBar("Copy Textures", "Copying: " + landLayerFrom, 0.3f);
         float[,,] splatMapFrom = GetSplatMap(landLayerFrom, topologyFrom);
@@ -1355,7 +1371,10 @@ public class MapIO : MonoBehaviour
         ClearProgressBar();
     }
     #endregion
-    public void RemoveBrokenPrefabs()
+    /// <summary>
+    /// ToDo: Read from a text file instead of having a switch.
+    /// </summary>
+    public static void RemoveBrokenPrefabs()
     {
         PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
         Undo.RegisterCompleteObjectUndo(prefabs, "Remove Broken Prefabs");
@@ -1364,9 +1383,6 @@ public class MapIO : MonoBehaviour
         {
             switch (p.prefabData.id)
             {
-                default:
-                    // Do nothing
-                    break;
                 case 3493139359:
                     DestroyImmediate(p.gameObject);
                     prefabsRemovedCount++;
@@ -1383,18 +1399,53 @@ public class MapIO : MonoBehaviour
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
     }
+    public static void ExportMapPrefabs(string mapPrefabFilePath, bool deletePrefabs)
+    {
+        List<PrefabExport> mapPrefabExports = new List<PrefabExport>();
+        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        ProgressBar("Export Map Prefabs", "Exporting...", 0f);
+        progressValue = 1f / prefabDataHolders.Length;
+        for (int i = 0; i < prefabDataHolders.Length; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length, progressBar);
+            mapPrefabExports.Add(new PrefabExport()
+            {
+                PrefabNumber = i,
+                PrefabID = prefabDataHolders[i].prefabData.id,
+                PrefabPosition = prefabDataHolders[i].transform.localPosition.ToString(),
+                PrefabScale = prefabDataHolders[i].transform.localScale.ToString(),
+                PrefabRotation = prefabDataHolders[i].transform.rotation.ToString()
+            });
+            if (deletePrefabs)
+            {
+                GameObject.DestroyImmediate(prefabDataHolders[i].gameObject);
+            }
+        }
+        using (StreamWriter streamWriter = new StreamWriter(mapPrefabFilePath, false))
+        {
+            streamWriter.WriteLine("{");
+            foreach (PrefabExport prefabDetail in mapPrefabExports)
+            {
+                streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabID + ":" + prefabDetail.PrefabPosition + ":" + prefabDetail.PrefabScale + ":" + prefabDetail.PrefabRotation + "\",");
+            }
+            streamWriter.WriteLine("   \"Prefab Count\": " + prefabDataHolders.Length);
+            streamWriter.WriteLine("}");
+        }
+        mapPrefabExports.Clear();
+        ClearProgressBar();
+        Debug.Log("Exported " + prefabDataHolders.Length + " prefabs.");
+    }
     /// <summary>
     /// Exports lootcrates to a JSON for use with Oxide.
     /// </summary>
     /// <param name="prefabFilePath">The path to save the JSON.</param>
     /// <param name="deletePrefabs">Delete the lootcrates after exporting.</param>
-    public void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
+    public static void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
     {
-        StreamWriter streamWriter = new StreamWriter(prefabFilePath, false);
-        streamWriter.WriteLine("{");
         List<PrefabExport> prefabExports = new List<PrefabExport>();
         PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        var lootCrateCount = 0;
+        int lootCrateCount = 0;
         foreach (PrefabDataHolder p in prefabs)
         {
             switch (p.prefabData.id)
@@ -1403,7 +1454,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_basic.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1415,7 +1468,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_elite.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_elite.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1427,7 +1482,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_mine.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_mine.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1439,7 +1496,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1451,7 +1510,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1463,7 +1524,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1475,7 +1538,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1488,7 +1553,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1500,7 +1567,9 @@ public class MapIO : MonoBehaviour
                     prefabExports.Add(new PrefabExport()
                     {
                         PrefabNumber = lootCrateCount,
-                        PrefabProperty = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab" + ":(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + "):" + p.transform.rotation
+                        PrefabPath = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab",
+                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
+                        PrefabRotation = p.transform.rotation.ToString()
                     });
                     if (deletePrefabs == true)
                     {
@@ -1510,13 +1579,17 @@ public class MapIO : MonoBehaviour
                     break;
             }
         }
-        foreach (PrefabExport prefabDetail in prefabExports)
+        using (StreamWriter streamWriter = new StreamWriter(prefabFilePath, false))
         {
-            streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabProperty + "\",");
+            streamWriter.WriteLine("{");
+            foreach (PrefabExport prefabDetail in prefabExports)
+            {
+                streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabPath + ":" + prefabDetail.PrefabPosition + ":" + prefabDetail.PrefabRotation + "\",");
+            }
+            streamWriter.WriteLine("   \"Prefab Count\": " + lootCrateCount);
+            streamWriter.WriteLine("}");
         }
-        streamWriter.WriteLine("   \"Prefab Count\": " + lootCrateCount);
-        streamWriter.WriteLine("}");
-        streamWriter.Close();
+        prefabExports.Clear();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
     private static void LoadMapInfo(MapInfo terrains)
@@ -1553,8 +1626,6 @@ public class MapIO : MonoBehaviour
         water.terrainData.alphamapResolution = terrains.resolution - 1;
         water.terrainData.baseMapResolution = terrains.resolution - 1;
 
-        terrain.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
-        water.GetComponent<UpdateTerrainValues>().setSize(terrains.size);
         terrain.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
         water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
 
