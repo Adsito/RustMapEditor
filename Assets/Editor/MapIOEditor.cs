@@ -1138,6 +1138,16 @@ public class MapIOEditor : EditorWindow
                         {
                             MapIO.BreakRustEditCustomPrefabs();
                         }
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
+                        {
+                            MapIO.RemoveMapObjects(true, false);
+                        }
+                        if (GUILayout.Button(new GUIContent("Delete All Map Paths", "Removes all the paths from the map.")))
+                        {
+                            MapIO.RemoveMapObjects(false, true);
+                        }
+                        EditorGUILayout.EndHorizontal();
                         break;
                     default:
                         prefabOptions = 0;

@@ -153,7 +153,8 @@ public class MapIO : MonoBehaviour
         loadPath = "";
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        RefreshAssetList(); // Refresh the auto gen asset presets.
+        WarmUpAssets(); // Warms up the node gen presets.
+        RefreshAssetList(); // Refreshes the node gen presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
         SetLayers(); // Resets all the layers to default values.
@@ -271,18 +272,26 @@ public class MapIO : MonoBehaviour
         return newObj;
     }
     /// <summary>
-    /// Removes all prefabs and path objects in the scene.
+    /// Removes all the map objects from the scene.
     /// </summary>
-    private static void CleanUpMap()
+    /// <param name="prefabs">Delete Prefab objects.</param>
+    /// <param name="paths">Delete Path objects.</param>
+    public static void RemoveMapObjects(bool prefabs, bool paths)
     {
         GameObject mapPrefabs = GameObject.Find("Objects");
-        foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
+        if (prefabs)
         {
-            DestroyImmediate(g.gameObject);
+            foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
+            {
+                DestroyImmediate(g.gameObject);
+            }
         }
-        foreach (PathDataHolder g in mapPrefabs.GetComponentsInChildren<PathDataHolder>())
+        if (paths)
         {
-            DestroyImmediate(g.gameObject);
+            foreach (PathDataHolder g in mapPrefabs.GetComponentsInChildren<PathDataHolder>())
+            {
+                DestroyImmediate(g.gameObject);
+            }
         }
     }
     public static Vector3 GetTerrainSize()
@@ -1627,7 +1636,7 @@ public class MapIO : MonoBehaviour
         worldCentrePath.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentreMapIO = GameObject.FindGameObjectWithTag("MapIO");
         worldCentreMapIO.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
-        CleanUpMap();
+        RemoveMapObjects(true, true);
         CentreSceneView();
 
         var terrainPosition = 0.5f * terrains.size;
@@ -1771,6 +1780,9 @@ public class MapIO : MonoBehaviour
     }
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
+    /// <summary>
+    /// Refreshes and adds the new NodePresets in the generationPresetList.
+    /// </summary>
     public static void RefreshAssetList()
     {
         var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
@@ -1782,6 +1794,16 @@ public class MapIO : MonoBehaviour
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+        }
+    }
+    /// <summary>
+    /// Loads all the NodePresets into memory. Needed in order to run a node if it hasn't already being opened.
+    /// </summary>
+    public static void WarmUpAssets()
+    {
+        foreach (var assetPath in AssetDatabase.GetAllAssetPaths())
+        {
+            AssetDatabase.LoadAssetAtPath(assetPath, typeof(AutoGenerationGraph));
         }
     }
     /// <summary>
