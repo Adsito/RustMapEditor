@@ -2,7 +2,7 @@
 using XNode;
 
 [CreateNodeMenu("Functions/HeightMap/Set Minimum Height")]
-public class SetMinimumHeight : Node
+public class SetMinimumHeightNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
     [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
