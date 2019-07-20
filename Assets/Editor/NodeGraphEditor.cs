@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using XNode;
@@ -98,6 +96,22 @@ namespace XNodeEditor {
 
         public virtual Color GetTypeColor(Type type) {
             return NodeEditorPreferences.GetTypeColor(type);
+        }
+
+        public virtual string GetPortTooltip(XNode.NodePort port) {
+            Type portType = port.ValueType;
+            string tooltip = "";
+            tooltip = portType.PrettyName();
+            if (port.IsOutput) {
+                object obj = port.node.GetValue(port);
+                tooltip += " = " + (obj != null ? obj.ToString() : "null");
+            }
+            return tooltip;
+        }
+
+        /// <summary> Deal with objects dropped into the graph through DragAndDrop </summary>
+        public virtual void OnDropObjects(UnityEngine.Object[] objects) {
+            Debug.Log("No OnDropItems override defined for " + GetType());
         }
 
         /// <summary> Create a node and save it in the graph asset </summary>

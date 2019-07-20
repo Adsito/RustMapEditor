@@ -142,7 +142,7 @@ MonoBehaviour:
       _dynamic: 0
   heightLow: 650
   heightHigh: 700
-  heightMinBlendLow: 625
+  heightMinBlendLow: 600
   heightMaxBlendLow: 650
   heightMinBlendHigh: 700
   heightMaxBlendHigh: 750

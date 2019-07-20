@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: Paint Conditional
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -296, y: -488}
+  position: {x: -312, y: -488}
   ports:
     keys:
     - Texture
@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Name: Paint Height
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 88, y: -488}
+  position: {x: 72, y: -488}
   ports:
     keys:
     - Texture
@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 88, y: -600}
+  position: {x: 72, y: -600}
   ports:
     keys:
     - Texture
@@ -578,7 +578,7 @@ MonoBehaviour:
   m_Name: Texture
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -152, y: -600}
+  position: {x: -168, y: -600}
   ports:
     keys:
     - Texture
