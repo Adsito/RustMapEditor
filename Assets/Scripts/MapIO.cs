@@ -1322,7 +1322,7 @@ public class MapIO : MonoBehaviour
         {
             for (int j = 0; j < alphaSplatMap.GetLength(1); j++)
             {
-                if (alphaSplatMap[i, j, 1] == 1)
+                if (alphaSplatMap[i, j, 1] > 0.9f)
                 {
                     for (int k = 0; k < textureCount; k++)
                     {
