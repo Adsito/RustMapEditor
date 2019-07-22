@@ -153,7 +153,6 @@ public class MapIO : MonoBehaviour
         loadPath = "";
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        WarmUpAssets(); // Warms up the node gen presets.
         RefreshAssetList(); // Refreshes the node gen presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
@@ -1670,6 +1669,7 @@ public class MapIO : MonoBehaviour
 
         var terrainPosition = 0.5f * terrains.size;
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
 
         terrain.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
@@ -1824,16 +1824,6 @@ public class MapIO : MonoBehaviour
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
-        }
-    }
-    /// <summary>
-    /// Loads all the NodePresets into memory. Needed in order to run a node if it hasn't already being opened.
-    /// </summary>
-    public static void WarmUpAssets()
-    {
-        foreach (var assetPath in AssetDatabase.GetAllAssetPaths())
-        {
-            AssetDatabase.LoadAssetAtPath(assetPath, typeof(AutoGenerationGraph));
         }
     }
     /// <summary>

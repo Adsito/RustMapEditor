@@ -41,7 +41,7 @@ public class MapIOEditor : EditorWindow
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
-    string assetDirectory = "Assets/NodePresets/";
+    //string assetDirectory = "Assets/NodePresets/";
     Vector2 scrollPos = new Vector2(0, 0);
     Vector2 presetScrollPos = new Vector2(0, 0);
 
@@ -1196,11 +1196,10 @@ public class MapIOEditor : EditorWindow
     #region Methods
     private string NodePresetDrawer(Rect position, string itemValue)
     {
-        MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        position.width -= 67;
+        position.width -= 39;
         GUI.Label(position, itemValue);
-        position.x = position.xMax + 5;
-        position.width = 38;
+        position.x = position.xMax;
+        position.width = 39;
         if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
         {
             MapIO.RefreshAssetList();
@@ -1214,6 +1213,7 @@ public class MapIOEditor : EditorWindow
                 Debug.LogError("The preset you are trying to open is null.");
             }
         }
+        /*
         position.x = position.x + 40;
         position.width = 30;
         if (GUI.Button(position, "Run"))
@@ -1225,6 +1225,7 @@ public class MapIOEditor : EditorWindow
                 MapIO.ParseNodeGraph(graph);
             }
         }
+        */
         return itemValue;
     }
     private void DrawEmpty()
