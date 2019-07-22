@@ -16,21 +16,18 @@ MonoBehaviour:
   position: {x: -56, y: -56}
   ports:
     keys:
-    - Texture
-    - PreviousTask
     - NextTask
+    - PreviousTask
+    - Texture
     values:
-    - _fieldName: Texture
+    - _fieldName: NextTask
       _node: {fileID: -6865267863016896359}
-      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Texture
-        node: {fileID: 7050763446370067333}
-        reroutePoints: []
-      _direction: 0
+      connections: []
+      _direction: 1
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
     - _fieldName: PreviousTask
       _node: {fileID: -6865267863016896359}
@@ -42,16 +39,19 @@ MonoBehaviour:
         reroutePoints: []
       _direction: 0
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
-    - _fieldName: NextTask
+    - _fieldName: Texture
       _node: {fileID: -6865267863016896359}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+      _typeQualifiedName: NodeVariables.Texture, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
+      connections:
+      - fieldName: Texture
+        node: {fileID: 7050763446370067333}
+        reroutePoints: []
+      _direction: 0
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
   groundLayerConditions: 0
   groundLayerToPaint: 16
@@ -98,7 +98,7 @@ MonoBehaviour:
         reroutePoints: []
       _direction: 1
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -143,8 +143,8 @@ MonoBehaviour:
         node: {fileID: -6865267863016896359}
         reroutePoints: []
       _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
+      _connectionType: 1
+      _typeConstraint: 2
       _dynamic: 0
   landLayer: 0
   groundEnum: 8

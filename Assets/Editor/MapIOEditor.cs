@@ -13,7 +13,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9.2-prerelease-beta";
+    string editorVersion = "v1.9.3-prerelease-beta";
 
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
@@ -204,36 +204,36 @@ public class MapIOEditor : EditorWindow
                                     if (heightmap == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Heightmap ", 0.05f);
-                                        script.RotateHeightmap(true);
+                                        MapIO.RotateHeightmap(true);
                                     }
                                     if (paths == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Paths ", 0.075f);
-                                        script.RotatePaths(true);
+                                        MapIO.RotatePaths(true);
                                     }
                                     if (prefabs == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Prefabs ", 0.1f);
-                                        script.RotatePrefabs(true);
+                                        MapIO.RotatePrefabs(true);
                                     }
                                     if (ground == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
-                                        script.RotateLayer("ground", true);
+                                        MapIO.RotateLayer("ground", true);
                                     }
                                     if (biome == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
-                                        script.RotateLayer("biome", true);
+                                        MapIO.RotateLayer("biome", true);
                                     }
                                     if (alpha == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
-                                        script.RotateLayer("alpha", true);
+                                        MapIO.RotateLayer("alpha", true);
                                     }
                                     if (topology == true)
                                     {
-                                        script.RotateAllTopologymap(true);
+                                        MapIO.RotateAllTopologymap(true);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
                                     EditorUtility.ClearProgressBar();
@@ -243,36 +243,36 @@ public class MapIOEditor : EditorWindow
                                     if (heightmap == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Heightmap ", 0.05f);
-                                        script.RotateHeightmap(false);
+                                        MapIO.RotateHeightmap(false);
                                     }
                                     if (paths == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Paths ", 0.075f);
-                                        script.RotatePaths(false);
+                                        MapIO.RotatePaths(false);
                                     }
                                     if (prefabs == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Prefabs ", 0.1f);
-                                        script.RotatePrefabs(false);
+                                        MapIO.RotatePrefabs(false);
                                     }
                                     if (ground == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Ground Textures ", 0.15f);
-                                        script.RotateLayer("ground", false);
+                                        MapIO.RotateLayer("ground", false);
                                     }
                                     if (biome == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Biome Textures ", 0.2f);
-                                        script.RotateLayer("biome", false);
+                                        MapIO.RotateLayer("biome", false);
                                     }
                                     if (alpha == true)
                                     {
                                         EditorUtility.DisplayProgressBar("Rotating Map", "Rotating Alpha Textures ", 0.25f);
-                                        script.RotateLayer("alpha", false);
+                                        MapIO.RotateLayer("alpha", false);
                                     }
                                     if (topology == true)
                                     {
-                                        script.RotateAllTopologymap(false);
+                                        MapIO.RotateAllTopologymap(false);
                                     };
                                     EditorUtility.DisplayProgressBar("Rotating Map", "Finished ", 1f);
                                     EditorUtility.ClearProgressBar();
@@ -678,11 +678,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
-                                script.RotateLayer("ground", true);
+                                MapIO.RotateLayer("ground", true);
                             }
                             if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
-                                script.RotateLayer("ground", false);
+                                MapIO.RotateLayer("ground", false);
                             }
                             EditorGUILayout.EndHorizontal();
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
@@ -751,11 +751,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
-                                script.RotateLayer("biome", true);
+                                MapIO.RotateLayer("biome", true);
                             }
                             if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
-                                script.RotateLayer("biome", false);
+                                MapIO.RotateLayer("biome", false);
                             }
                             EditorGUILayout.EndHorizontal();
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
@@ -836,17 +836,17 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button("Invert Layer"))
                             {
-                                script.InvertLayer("Alpha");
+                                MapIO.InvertLayer("Alpha");
                             }
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
-                                script.RotateLayer("alpha", true);
+                                MapIO.RotateLayer("alpha", true);
                             }
                             if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
-                                script.RotateLayer("alpha", false);
+                                MapIO.RotateLayer("alpha", false);
                             }
                             EditorGUILayout.EndHorizontal();
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
@@ -910,43 +910,47 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button("Clear Layer"))
                             {
-                                script.ClearLayer("Topology", TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.ClearLayer("Topology", MapIO.topologyLayer);
                             }
                             if (GUILayout.Button("Invert Layer"))
                             {
-                                script.InvertLayer("Topology", TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.InvertLayer("Topology", MapIO.topologyLayer);
                             }
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
                             {
-                                script.RotateLayer("topology", true, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.RotateLayer("topology", true, MapIO.topologyLayer);
                             }
                             if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate this layer 90° Counter ClockWise.")))
                             {
-                                script.RotateLayer("topology", false, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.RotateLayer("topology", false, MapIO.topologyLayer);
                             }
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90° ClockWise.")))
                             {
-                                script.RotateAllTopologymap(true);
+                                MapIO.RotateAllTopologymap(true);
                             }
                             if (GUILayout.Button(new GUIContent("Rotate All 270°", "Rotate all Topology layers 90° Counter ClockWise.")))
                             {
-                                script.RotateAllTopologymap(false);
+                                MapIO.RotateAllTopologymap(false);
                             }
                             EditorGUILayout.EndHorizontal();
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers.")))
                             {
-                                script.InvertAllTopologyLayers();
+                                MapIO.InvertAllTopologyLayers();
                             }
                             if (GUILayout.Button(new GUIContent("Clear All", "Clear all Topology layers.")))
                             {
-                                script.ClearAllTopologyLayers();
+                                MapIO.ClearAllTopologyLayers();
                             }
                             EditorGUILayout.EndHorizontal();
+                            if (GUILayout.Button(new GUIContent("Clear All ServerSide Topologies", "Clear all Topology layers that are used by only the server.")))
+                            {
+                                MapIO.ClearServerSideTopologies();
+                            }
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
@@ -1134,10 +1138,17 @@ public class MapIOEditor : EditorWindow
                             MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
                         }
                         EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from " +
+                            "appearing in RustEdit. Use the break RustEdit Custom Prefabs button to undo.")))
+                        {
+                            MapIO.HidePrefabsInRustEdit();
+                        }
                         if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.")))
                         {
                             MapIO.BreakRustEditCustomPrefabs();
                         }
+                        EditorGUILayout.EndHorizontal();
                         EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
                         {

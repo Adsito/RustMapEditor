@@ -307,7 +307,7 @@ public class MapIO : MonoBehaviour
     /// Rotates Terrain Map and Water Map 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotateHeightmap(bool CW)
+    public static void RotateHeightmap(bool CW)
     {
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -344,7 +344,7 @@ public class MapIO : MonoBehaviour
     /// Rotates prefabs 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotatePrefabs(bool CW)
+    public static void RotatePrefabs(bool CW)
     {
         var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
         if (CW)
@@ -360,7 +360,7 @@ public class MapIO : MonoBehaviour
     /// Rotates paths 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotatePaths(bool CW)
+    public static void RotatePaths(bool CW)
     {
         var pathRotate = GameObject.FindGameObjectWithTag("Paths");
         if (CW)
@@ -377,55 +377,59 @@ public class MapIO : MonoBehaviour
     /// </summary>
     /// <param name="landLayer">The LandLayer. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public void RotateLayer(string landLayer, bool CW, int topology = 0)
+    /// <param name="topologyLayers">The Topology enums, if selected.</param>
+    public static void RotateLayer(string landLayer, bool CW, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
     {
-        int textureCount = TextureCount(landLayer);
-        float[,,] oldLayer = GetSplatMap(landLayer, topology);
-        float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
-        if (CW)
+        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
+        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
-            for (int i = 0; i < newLayer.GetLength(0); i++)
+            progressBar += progressValue;
+            var rotateText = (landLayer.ToLower() == "topology") ? ((TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt)).ToString() : landLayer;
+            ProgressBar("Rotating Layers", "Rotating: " + rotateText, progressBar);
+            int textureCount = TextureCount(landLayer);
+            float[,,] oldLayer = GetSplatMap(landLayer, topologyInt);
+            float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
+            if (CW)
             {
-                for (int j = 0; j < newLayer.GetLength(1); j++)
+                for (int i = 0; i < newLayer.GetLength(0); i++)
                 {
-                    for (int k = 0; k < textureCount; k++)
+                    for (int j = 0; j < newLayer.GetLength(1); j++)
                     {
-                        newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
+                        for (int k = 0; k < textureCount; k++)
+                        {
+                            newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            for (int i = 0; i < newLayer.GetLength(0); i++)
+            else
             {
-                for (int j = 0; j < newLayer.GetLength(1); j++)
+                for (int i = 0; i < newLayer.GetLength(0); i++)
                 {
-                    for (int k = 0; k < textureCount; k++)
+                    for (int j = 0; j < newLayer.GetLength(1); j++)
                     {
-                        newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
+                        for (int k = 0; k < textureCount; k++)
+                        {
+                            newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
+                        }
                     }
                 }
             }
+            LandData.SetData(newLayer, landLayer, topologyInt);
         }
-        LandData.SetData(newLayer, landLayer, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        ClearProgressBar();
     }
     /// <summary>
     /// Rotates all Topology layers 90°.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public void RotateAllTopologymap(bool CW)
+    public static void RotateAllTopologymap(bool CW)
     {
-        progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Rotating Map", "Rotating " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i) + " Topology", progressBar);
-            RotateLayer("topology", CW, i);
+            RotateLayer("topology", CW, (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
         }
-        ClearProgressBar();
     }
     #endregion
     #region HeightMap Methods
@@ -1074,85 +1078,90 @@ public class MapIO : MonoBehaviour
     /// Sets whole layer to the inactive texture. Alpha and Topology only. 
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Alpha, Topology)</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public void ClearLayer(string landLayerToPaint, int topology = 0)
+    /// <param name="topologyLayers">The Topology enums, if selected.</param>
+    public static void ClearLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Clear Layer");
-        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-        var alpha = (landLayerToPaint.ToLower() == "alpha") ? true : false;
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
+        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
+            progressBar += progressValue;
+            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
+            float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
+            var alpha = (landLayerToPaint.ToLower() == "alpha") ? true : false;
+            for (int i = 0; i < splatMap.GetLength(0); i++)
             {
-                if (alpha)
+                for (int j = 0; j < splatMap.GetLength(1); j++)
                 {
-                    splatMap[i, j, 0] = 1;
-                    splatMap[i, j, 1] = 0;
-                }
-                else
-                {
-                    splatMap[i, j, 0] = 0;
-                    splatMap[i, j, 1] = 1;
+                    if (alpha)
+                    {
+                        splatMap[i, j, 0] = 1;
+                        splatMap[i, j, 1] = 0;
+                    }
+                    else
+                    {
+                        splatMap[i, j, 0] = 0;
+                        splatMap[i, j, 1] = 1;
+                    }
                 }
             }
+            LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
-        LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        ClearProgressBar();
     }
     /// <summary>
     /// Clears all the topology layers.
     /// </summary>
-    public void ClearAllTopologyLayers()
+    public static void ClearAllTopologyLayers()
     {
-        progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            ClearLayer("topology", i);
+            ClearLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
         }
-        ClearProgressBar();
     }
     /// <summary>
     /// Inverts the active and inactive textures. Alpha and Topology only. 
     /// </summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public void InvertLayer(string landLayerToPaint, int topology = 0)
+    /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
+    /// <param name="topologyLayers">The Topology enums, if selected.</param>
+    public static void InvertLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
     {
-        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
+        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
+            progressBar += progressValue;
+            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
+            float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
+            for (int i = 0; i < splatMap.GetLength(0); i++)
             {
-                if (splatMap[i, j, 0] < 0.5f)
+                for (int j = 0; j < splatMap.GetLength(1); j++)
                 {
-                    splatMap[i, j, 0] = 1;
-                    splatMap[i, j, 1] = 0;
-                }
-                else
-                {
-                    splatMap[i, j, 0] = 0;
-                    splatMap[i, j, 1] = 1;
+                    if (splatMap[i, j, 0] < 0.5f)
+                    {
+                        splatMap[i, j, 0] = 1;
+                        splatMap[i, j, 1] = 0;
+                    }
+                    else
+                    {
+                        splatMap[i, j, 0] = 0;
+                        splatMap[i, j, 1] = 1;
+                    }
                 }
             }
+            LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
-        LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        ClearProgressBar();
     }
     /// <summary>
     /// Inverts all the Topology layers.
     /// </summary>
-    public void InvertAllTopologyLayers()
+    public static void InvertAllTopologyLayers()
     {
-        progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            InvertLayer("topology", i);
+            InvertLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
         }
-        ClearProgressBar();
     }
     /// <summary>
     /// Paints the layer wherever the slope conditions are met. Includes option to blend.
@@ -1408,6 +1417,25 @@ public class MapIO : MonoBehaviour
             }
         }
         Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
+    }
+    /// <summary>
+    /// Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.
+    /// </summary>
+    public static void HidePrefabsInRustEdit()
+    {
+        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: ", 0f);
+        int prefabsHidden = 0;
+        progressValue = 1f / prefabDataHolders.Length;
+        for (int i = 0; i < prefabDataHolders.Length; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            prefabDataHolders[i].prefabData.category = @":\RustEditHiddenPrefab:" + prefabsHidden + ":";
+            prefabsHidden++;
+        }
+        Debug.Log("Hid " + prefabsHidden + " prefabs.");
+        ClearProgressBar();
     }
     /// <summary>
     /// Breaks down RustEdit custom prefabs back into the individual prefabs.
@@ -1757,22 +1785,28 @@ public class MapIO : MonoBehaviour
     public void NewEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
-        progressValue = 1f / TerrainTopology.COUNT;
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Creating New Map", "Wiping: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            ClearLayer("Topology", i);
-        }
+        ClearAllTopologyLayers();
         ClearLayer("Alpha");
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         SetMinimumHeight(503f);
-        ClearProgressBar();
     }
     public void StartPrefabLookup()
     {
         SetPrefabLookup(new PrefabLookup(bundleFile, this));
+    }
+    /// <summary>
+    /// Clears the topologies only used by the server. 
+    /// </summary>
+    public static void ClearServerSideTopologies()
+    {
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            if (i != 14 && i != 16) // Checks for River and Lake.
+            {
+                ClearLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            }
+        }
     }
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
