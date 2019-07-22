@@ -1252,9 +1252,13 @@ public class MapIO : MonoBehaviour
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
-        for (int i = Mathf.Clamp(z1, 0, splatMap.GetLength(0)); i < Mathf.Clamp(z2, 0, splatMap.GetLength(0)); i++)
+        z1 = Mathf.Clamp(z1, 0, splatMap.GetLength(0));
+        z2 = Mathf.Clamp(z2, 0, splatMap.GetLength(1));
+        x1 = Mathf.Clamp(x1, 0, splatMap.GetLength(0));
+        x2 = Mathf.Clamp(x2, 0, splatMap.GetLength(1));
+        for (int i = z1; i < z2; i++)
         {
-            for (int j = Mathf.Clamp(x1, 0, splatMap.GetLength(0)); j < Mathf.Clamp(x2, 0, splatMap.GetLength(0)); j++)
+            for (int j = x1; j < x2; j++)
             {
                 for (int k = 0; k < textureCount; k++)
                 {
