@@ -1252,18 +1252,15 @@ public class MapIO : MonoBehaviour
         Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        for (int i = Mathf.Clamp(z1, 0, splatMap.GetLength(0)); i < Mathf.Clamp(z2, 0, splatMap.GetLength(0)); i++)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
+            for (int j = Mathf.Clamp(x1, 0, splatMap.GetLength(0)); j < Mathf.Clamp(x2, 0, splatMap.GetLength(0)); j++)
             {
-                if ((i >= z1 && i <= z2) && (j >= x1 && j <= x2))
+                for (int k = 0; k < textureCount; k++)
                 {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1;
+                    splatMap[i, j, k] = 0;
                 }
+                splatMap[i, j, t] = 1;
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
@@ -1719,12 +1716,7 @@ public class MapIO : MonoBehaviour
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        // Will clean this up later, without the below the topology layer last selected is not saved to the array properly, and if ground selected it shows the topology until
-        // the layer is swapped.
-        ChangeLayer("Ground");
-        LandData.SetData(TopologyMesh.getSplatMap((int)topologyLayer), "topology", TerrainTopology.TypeToIndex((int)topologyLayer));
-        LandData.SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
-        ChangeLayer("Ground");
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
     public static void Load(WorldSerialization blob)
