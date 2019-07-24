@@ -2,7 +2,7 @@
 using UnityEditor;
 using XNodeEditor;
 
-[CustomNodeEditor(typeof(SetMinimumHeight))]
+[CustomNodeEditor(typeof(SetMinimumHeightNode))]
 public class SetMinimumHeightEditor : NodeEditor
 {
     public override Color GetTint()
@@ -16,7 +16,7 @@ public class SetMinimumHeightEditor : NodeEditor
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
-        SetMinimumHeight node = target as SetMinimumHeight;
+        SetMinimumHeightNode node = target as SetMinimumHeightNode;
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(new GUIContent("Height", "The minimum height the heightmap should be. Will raise any part of the heightmap below this " +
             "height to the minimum height set."), GUILayout.MaxWidth(50));
