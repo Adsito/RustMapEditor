@@ -2,7 +2,7 @@
 using UnityEditor;
 using XNodeEditor;
 
-[CustomNodeEditor(typeof(SetMaximumHeight))]
+[CustomNodeEditor(typeof(SetMaximumHeightNode))]
 public class SetMaximumHeightEditor : NodeEditor
 {
     public override Color GetTint()
@@ -16,7 +16,7 @@ public class SetMaximumHeightEditor : NodeEditor
     public override void OnBodyGUI()
     {
         base.OnBodyGUI();
-        SetMaximumHeight node = target as SetMaximumHeight;
+        SetMaximumHeightNode node = target as SetMaximumHeightNode;
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(new GUIContent("Height", "The maximum height the heightmap should be. Will lower any part of the heightmap above this " +
             "height to the maximum height set."), GUILayout.MaxWidth(50));

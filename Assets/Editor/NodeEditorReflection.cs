@@ -77,19 +77,38 @@ namespace XNodeEditor {
             foreach (Assembly assembly in assemblies) {
                 try {
                     types.AddRange(assembly.GetTypes().Where(t => !t.IsAbstract && baseType.IsAssignableFrom(t)).ToArray());
-                } catch(ReflectionTypeLoadException) {}
+                } catch (ReflectionTypeLoadException) { }
             }
             return types.ToArray();
         }
 
         public static void AddCustomContextMenuItems(GenericMenu contextMenu, object obj) {
-            KeyValuePair<ContextMenu, System.Reflection.MethodInfo>[] items = GetContextMenuMethods(obj);
+            KeyValuePair<ContextMenu, MethodInfo>[] items = GetContextMenuMethods(obj);
             if (items.Length != 0) {
                 contextMenu.AddSeparator("");
-                for (int i = 0; i < items.Length; i++) {
-                    KeyValuePair<ContextMenu, System.Reflection.MethodInfo> kvp = items[i];
-                    contextMenu.AddItem(new GUIContent(kvp.Key.menuItem), false, () => kvp.Value.Invoke(obj, null));
+                List<string> invalidatedEntries = new List<string>();
+                foreach (KeyValuePair<ContextMenu, MethodInfo> checkValidate in items) {
+                    if (checkValidate.Key.validate && !(bool) checkValidate.Value.Invoke(obj, null)) {
+                        invalidatedEntries.Add(checkValidate.Key.menuItem);
+                    }
                 }
+                for (int i = 0; i < items.Length; i++) {
+                    KeyValuePair<ContextMenu, MethodInfo> kvp = items[i];
+                    if (invalidatedEntries.Contains(kvp.Key.menuItem)) {
+                        contextMenu.AddDisabledItem(new GUIContent(kvp.Key.menuItem));
+                    } else {
+                        contextMenu.AddItem(new GUIContent(kvp.Key.menuItem), false, () => kvp.Value.Invoke(obj, null));
+                    }
+                }
+            }
+        }
+
+        /// <summary> Call OnValidate on target </summary>
+        public static void TriggerOnValidate(UnityEngine.Object target) {
+            System.Reflection.MethodInfo onValidate = null;
+            if (target != null) {
+                onValidate = target.GetType().GetMethod("OnValidate", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (onValidate != null) onValidate.Invoke(target, null);
             }
         }
 

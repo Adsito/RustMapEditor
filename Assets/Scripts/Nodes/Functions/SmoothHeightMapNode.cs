@@ -4,8 +4,8 @@ using XNode;
 [CreateNodeMenu("Functions/HeightMap/Smooth HeightMap")]
 public class SmoothHeightMapNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float filterStrength = 1f, blurDirection = 0f;
     public override object GetValue(NodePort port)
     {

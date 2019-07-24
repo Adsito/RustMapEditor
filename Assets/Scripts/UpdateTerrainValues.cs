@@ -1,14 +1,12 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 [ExecuteAlways]
 public class UpdateTerrainValues : MonoBehaviour
 {
-    Vector3 oldTerrainSize;
     Vector3 position = Vector3.zero;
     MapIO mapIO;
     Terrain terrain;
-    void Update ()
+    public void Start()
     {
         if (terrain == null)
         {
@@ -18,6 +16,9 @@ public class UpdateTerrainValues : MonoBehaviour
         {
             mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         }
+    }
+    void Update ()
+    {
         if (transform.position != position)
         {
             transform.position = position;
@@ -30,10 +31,6 @@ public class UpdateTerrainValues : MonoBehaviour
         {
             transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
-    }
-    public void setSize(Vector3 oldTerrainSize)
-    {
-        this.oldTerrainSize = oldTerrainSize;
     }
     public void setPosition(Vector3 position)
     {
