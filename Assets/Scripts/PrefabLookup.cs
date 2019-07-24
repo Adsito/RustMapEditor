@@ -198,8 +198,9 @@ public class PrefabLookup : System.IDisposable
                             }
                         }
                     }
-                    LOD[] lods = new LOD[lodMeshes.Length];
-                    for (int j = 0; j < lodMeshes.Length; j++)
+                    int lodGroupCount = (lodMeshes.Length < 8) ? lodMeshes.Length : 7;
+                    LOD[] lods = new LOD[lodGroupCount];
+                    for (int j = 0; j < lodGroupCount; j++)
                     {
                         lods[j] = new LOD(1.0F / (j + 1.5f), renderers[j]);
                     }
