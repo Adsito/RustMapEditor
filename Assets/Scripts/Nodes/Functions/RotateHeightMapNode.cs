@@ -4,8 +4,8 @@ using XNode;
 [CreateNodeMenu("Functions/Rotate/Rotate HeightMap")]
 public class RotateHeightMapNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public bool CW = true;
     public override object GetValue(NodePort port)
     {
@@ -13,7 +13,6 @@ public class RotateHeightMapNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.RotateHeightmap(CW);
+        MapIO.RotateHeightmap(CW);
     }
 }

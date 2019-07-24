@@ -4,8 +4,8 @@ using XNode;
 [CreateNodeMenu("Functions/HeightMap/Normalise HeightMap")]
 public class NormaliseHeightMapNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float normaliseLow = 450f, normaliseHigh = 1000f;
     public override object GetValue(NodePort port)
     {

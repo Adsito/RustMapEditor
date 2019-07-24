@@ -17,6 +17,9 @@ public class RotateLayerNodeEditor : NodeEditor
     {
         base.OnBodyGUI();
         RotateLayerNode node = target as RotateLayerNode;
-        node.CW = EditorGUILayout.ToggleLeft(new GUIContent(node.CW ? "Rotate Direction: 90°" : "Rotate Direction: 270°", "The direction which the layer will rotate, either 90° or 270°"), node.CW);
+        if (node.landLayer == NodeVariables.Texture.LandLayerEnum.Topology)
+        {
+            node.topologies = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(node.topologies);
+        }
     }
 }
