@@ -4,33 +4,23 @@ using XNode;
 [CreateNodeMenu("Functions/Invert/Invert Layer")]
 public class InvertLayerNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
+    [HideInInspector] public TerrainTopology.Enum topologies = TerrainTopology.NOTHING;
+    public NodeVariables.Misc.DualLayerEnum layer = NodeVariables.Misc.DualLayerEnum.Topology;
     public override object GetValue(NodePort port)
     {
-        NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);
-        return Texture;
-    }
-    public object GetValue()
-    {
-        return GetInputValue<object>("Texture");
+        return null;
     }
     public void RunNode()
     {
-        var layer = (NodeVariables.Texture)GetValue();
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        if (layer == null) // Check for if the textures node is not connected.
+        switch (layer)
         {
-            return;
-        }
-        switch (layer.LandLayer)
-        {
-            case 2: // Alpha
-                mapIO.InvertLayer("Alpha");
+            case NodeVariables.Misc.DualLayerEnum.Alpha:
+                MapIO.InvertLayer("Alpha");
                 break;
-            case 3: // Topology
-                mapIO.InvertLayer("Topology", layer.TopologyLayer);
+            case NodeVariables.Misc.DualLayerEnum.Topology:
+                MapIO.InvertLayer("Topology", topologies);
                 break;
         }
     }

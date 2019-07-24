@@ -4,9 +4,9 @@ using XNode;
 [CreateNodeMenu("Paint/Paint Slope")]
 public class PaintSlopeNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.Texture Texture;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     [HideInInspector] public float slopeLow = 40f, slopeHigh = 60f, slopeMinBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeMaxBlendHigh = 75f;
     [HideInInspector] public bool blendSlopes = false;
     public override object GetValue(NodePort port)

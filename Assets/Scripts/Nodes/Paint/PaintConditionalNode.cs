@@ -5,9 +5,9 @@ using XNode;
 [NodeWidth(350)]
 public class PaintConditionalNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.Texture Texture;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     #region Fields
     [HideInInspector] public TerrainSplat.Enum groundLayerConditions = TerrainSplat.NOTHING, groundLayerToPaint = TerrainSplat.Enum.Grass;
     [HideInInspector] public TerrainBiome.Enum biomeLayerConditions = TerrainBiome.NOTHING, biomeLayerToPaint = TerrainBiome.Enum.Temperate;

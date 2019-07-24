@@ -4,9 +4,9 @@ using XNode;
 [CreateNodeMenu("Paint/Copy Texture")]
 public class CopyTextureNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.Texture Texture;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     #region Fields
     [HideInInspector] public int landLayerFrom, textureFrom, topologyFrom;
     [HideInInspector] public string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
