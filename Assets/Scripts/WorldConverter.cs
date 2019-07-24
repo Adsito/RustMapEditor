@@ -142,7 +142,7 @@ public class WorldConverter
                 }
             }
         }
-
+        terrains.alphaMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.alphaMap, 2) : terrains.alphaMap;
         return terrains;
     }
 

@@ -4,9 +4,9 @@ using XNode;
 [CreateNodeMenu("Paint/Paint Layer")]
 public class PaintLayerNode : Node
 {
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.Texture Texture;
-    [Input(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask PreviousTask;
-    [Output(ShowBackingValue.Never, ConnectionType.Override)] public NodeVariables.NextTask NextTask;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.Texture Texture;
+    [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
+    [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     public override object GetValue(NodePort port)
     {
         NodeVariables.Texture Texture = GetInputValue("Texture", this.Texture);
