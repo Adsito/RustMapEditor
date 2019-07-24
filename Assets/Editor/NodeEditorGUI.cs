@@ -282,12 +282,6 @@ namespace XNodeEditor {
                 selectionCache = new List<UnityEngine.Object>(Selection.objects);
             }
 
-            System.Reflection.MethodInfo onValidate = null;
-            if (Selection.activeObject != null && Selection.activeObject is XNode.Node) {
-                onValidate = Selection.activeObject.GetType().GetMethod("OnValidate");
-                if (onValidate != null) EditorGUI.BeginChangeCheck();
-            }
-
             BeginZoomed();
 
             Vector2 mousePos = Event.current.mousePosition;
@@ -420,11 +414,6 @@ namespace XNodeEditor {
 
             if (e.type != EventType.Layout && currentActivity == NodeActivity.DragGrid) Selection.objects = preSelection.ToArray();
             EndZoomed();
-
-            //If a change in is detected in the selected node, call OnValidate method. 
-            //This is done through reflection because OnValidate is only relevant in editor, 
-            //and thus, the code should not be included in build.
-            if (onValidate != null && EditorGUI.EndChangeCheck()) onValidate.Invoke(Selection.activeObject, null);
         }
 
         private bool ShouldBeCulled(XNode.Node node) {
@@ -441,14 +430,10 @@ namespace XNodeEditor {
         }
 
         private void DrawTooltip() {
-            if (hoveredPort != null && NodeEditorPreferences.GetSettings().portTooltips) {
-                Type type = hoveredPort.ValueType;
-                GUIContent content = new GUIContent();
-                content.text = type.PrettyName();
-                if (hoveredPort.IsOutput) {
-                    object obj = hoveredPort.node.GetValue(hoveredPort);
-                    content.text += " = " + (obj != null ? obj.ToString() : "null");
-                }
+            if (hoveredPort != null && NodeEditorPreferences.GetSettings().portTooltips && graphEditor != null) {
+                string tooltip = graphEditor.GetPortTooltip(hoveredPort);
+                if (string.IsNullOrEmpty(tooltip)) return;
+                GUIContent content = new GUIContent(tooltip);
                 Vector2 size = NodeEditorResources.styles.tooltip.CalcSize(content);
                 Rect rect = new Rect(Event.current.mousePosition - (size), size);
                 EditorGUI.LabelField(rect, content, NodeEditorResources.styles.tooltip);

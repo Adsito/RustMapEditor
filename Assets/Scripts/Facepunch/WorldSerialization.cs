@@ -11,12 +11,12 @@ public class WorldSerialization
 {
 	public const uint CurrentVersion = 9;
 
-	public uint Version
+	public static uint Version
 	{
 		get; private set;
 	}
 
-	public string Checksum
+	public static string Checksum
 	{
 		get; private set;
 	}
@@ -201,6 +201,7 @@ public class WorldSerialization
 			}
 
 			Checksum = Hash();
+            //Debug.Log(Checksum);
 		}
 		catch (Exception e)
 		{
@@ -236,12 +237,7 @@ public class WorldSerialization
 		}
 	}
 
-	public void CalculateChecksum()
-	{
-		Checksum = Hash();
-	}
-
-	private string Hash()
+	public string Hash()
 	{
 		var checksum = new Checksum();
 

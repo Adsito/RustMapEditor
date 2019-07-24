@@ -50,4 +50,15 @@
             Active, InActive
         }
     }
+    public class Misc
+    {
+        public enum DualLayerEnum
+        {
+            Alpha, Topology
+        }
+        public enum RotateDirection
+        {
+            ClockWise, CounterClockWise
+        }
+    }
 }
