@@ -13,10 +13,4 @@ public class RotateHeightMapNodeEditor : NodeEditor
     {
         GUILayout.Label(new GUIContent("Rotate HeightMap", "Rotates the heightmap and watermap."), NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
     }
-    public override void OnBodyGUI()
-    {
-        base.OnBodyGUI();
-        RotateHeightMapNode node = target as RotateHeightMapNode;
-        node.CW = EditorGUILayout.ToggleLeft(new GUIContent(node.CW ? "Rotate Direction: 90°" : "Rotate Direction: 270°", "The direction which the heightmap and watermap will rotate, either 90° or 270°"), node.CW);
-    }
 }

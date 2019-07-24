@@ -1061,15 +1061,16 @@ public class MapIOEditor : EditorWindow
                     GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
                     break;
                 }
-                GUIContent[] prefabsOptionsMenu = new GUIContent[3];
+                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
-                prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
-                prefabsOptionsMenu[2] = new GUIContent("Prefab Tools");
+                prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
+                //prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
                 prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
                 switch (prefabOptions)
                 {
                     case 0:
+                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. FULL OF BUGS ATM", EditorStyles.boldLabel);
                         EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))

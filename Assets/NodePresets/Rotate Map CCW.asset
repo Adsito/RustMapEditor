@@ -181,7 +181,7 @@ MonoBehaviour:
       _connectionType: 1
       _typeConstraint: 2
       _dynamic: 0
-  CW: 0
+  direction: 1
 --- !u!114 &-1689924454696839583
 MonoBehaviour:
   m_ObjectHideFlags: 0
