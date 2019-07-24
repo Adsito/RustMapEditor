@@ -13,7 +13,7 @@ public class MapIOInspector : Editor
 }
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9.2-prerelease";
+    string editorVersion = "v1.9.3-prerelease";
 
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
