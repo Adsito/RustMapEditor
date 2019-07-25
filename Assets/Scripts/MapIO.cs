@@ -259,14 +259,11 @@ public class MapIO : MonoBehaviour
     }
     public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
-        Vector3 pos = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z);
-        Vector3 scale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
-        Quaternion rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
-        GameObject newObj = (GameObject)PrefabUtility.InstantiatePrefab(g);
-        newObj.transform.parent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        newObj.transform.position = pos + GetMapOffset();
-        newObj.transform.rotation = rotation;
-        newObj.transform.localScale = scale;
+        GameObject newObj = GameObject.Instantiate(g);
+        newObj.transform.parent = parent;
+        newObj.transform.position = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z) + GetMapOffset();
+        newObj.transform.rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
+        newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
         return newObj;
     }
@@ -1716,14 +1713,7 @@ public class MapIO : MonoBehaviour
         {
             progressValue += 0.1f / terrains.prefabData.Length;
             ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.9f);
-            if (prefabsLoaded.TryGetValue(terrains.prefabData[i].id, out GameObject newObj))
-            {
-                newObj = SpawnPrefab(prefabsLoaded[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
-            }
-            else
-            {
-                newObj = SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-            }
+            SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
