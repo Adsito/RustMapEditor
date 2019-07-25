@@ -1,17 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [Serializable]
 public class PrefabDataHolder : MonoBehaviour
 {
     
     public WorldSerialization.PrefabData prefabData;
-
-    void Start()
-    {
-        //gameObject.transform.parent = GameObject.Find("Prefabs").transform;
-    }
+    
     public void MapSave()
     {
         prefabData.position = gameObject.transform.position - MapIO.GetMapOffset();
