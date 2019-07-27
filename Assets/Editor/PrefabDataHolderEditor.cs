@@ -17,7 +17,7 @@ public class PrefabDataHolderEditor : Editor
         script.prefabData.id = uint.Parse(EditorGUILayout.TextField("Id", script.prefabData.id + ""));
         if (GUILayout.Button("Snap to ground"))
         {
-            script.snapToGround();
+            script.SnapToGround();
         }
     }
 }

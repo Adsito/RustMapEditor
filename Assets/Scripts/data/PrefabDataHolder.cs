@@ -13,7 +13,7 @@ public class PrefabDataHolder : MonoBehaviour
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
-    public void snapToGround()
+    public void SnapToGround()
     {
         Vector3 newPos = transform.position;
         float y = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().SampleHeight(transform.position);
