@@ -77,8 +77,8 @@ namespace XNode {
             return graph;
         }
 
-        protected virtual void OnDestroy()
-        {
+        protected virtual void OnDestroy() {
+            // Remove all nodes prior to graph destruction
             Clear();
         }
     }
