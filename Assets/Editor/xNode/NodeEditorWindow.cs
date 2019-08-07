@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using System;
+using Object = UnityEngine.Object;
 
 namespace XNodeEditor {
     [InitializeOnLoad]
-    public partial class NodeEditorWindow : EditorWindow, IHasCustomMenu
-    {
+    public partial class NodeEditorWindow : EditorWindow {
         public static NodeEditorWindow current;
 
         /// <summary> Stores node positions for all nodePorts. </summary>
@@ -14,6 +15,14 @@ namespace XNodeEditor {
         private Dictionary<XNode.NodePort, Rect> _portConnectionPoints = new Dictionary<XNode.NodePort, Rect>();
         [SerializeField] private NodePortReference[] _references = new NodePortReference[0];
         [SerializeField] private Rect[] _rects = new Rect[0];
+
+        private Func<bool> isDocked {
+            get {
+                if (_isDocked == null) _isDocked = this.GetIsDockedDelegate();
+                return _isDocked;
+            }
+        }
+        private Func<bool> _isDocked;
 
         [System.Serializable] private class NodePortReference {
             [SerializeField] private XNode.Node _node;
@@ -31,11 +40,7 @@ namespace XNodeEditor {
                 return _node.GetPort(_name);
             }
         }
-        void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
-        {
-            //GUIContent content = new GUIContent("Run Terrain Generation", "Runs the Terrain Generation of the graph currently in view.");
-            //menu.AddItem(content, false, RunNodeGraph);
-        }
+
         private void OnDisable() {
             // Cache portConnectionPoints before serialization starts
             int count = portConnectionPoints.Count;
@@ -48,6 +53,7 @@ namespace XNodeEditor {
                 index++;
             }
         }
+
         private void OnEnable() {
             // Reload portConnectionPoints if there are any
             int length = _references.Length;
@@ -99,7 +105,6 @@ namespace XNodeEditor {
 
         /// <summary> Create editor window </summary>
         public static NodeEditorWindow Init() {
-            
             NodeEditorWindow w = CreateInstance<NodeEditorWindow>();
             w.titleContent = new GUIContent("Node Generation");
             w.wantsMouseMove = true;

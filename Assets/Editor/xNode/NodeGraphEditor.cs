@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using XNode;
@@ -72,8 +74,8 @@ namespace XNodeEditor {
         /// <summary> Add items for the context menu when right-clicking this node. Override to add custom menu items. </summary>
         public virtual void AddContextMenuItems(GenericMenu menu) {
             Vector2 pos = NodeEditorWindow.current.WindowToGridPosition(Event.current.mousePosition);
-            for (int i = 0; i < NodeEditorWindow.nodeTypes.Length; i++) {
-                Type type = NodeEditorWindow.nodeTypes[i];
+            for (int i = 0; i < NodeEditorReflection.nodeTypes.Length; i++) {
+                Type type = NodeEditorReflection.nodeTypes[i];
 
                 //Get node context menu path
                 string path = GetNodeMenuName(type);
@@ -86,8 +88,8 @@ namespace XNodeEditor {
             menu.AddSeparator("");
             if (NodeEditorWindow.copyBuffer != null && NodeEditorWindow.copyBuffer.Length > 0) menu.AddItem(new GUIContent("Paste"), false, () => NodeEditorWindow.current.PasteNodes(pos));
             else menu.AddDisabledItem(new GUIContent("Paste"));
-            menu.AddItem(new GUIContent("Preferences"), false, () => NodeEditorWindow.OpenPreferences());
-            NodeEditorWindow.AddCustomContextMenuItems(menu, target);
+            menu.AddItem(new GUIContent("Preferences"), false, () => NodeEditorReflection.OpenPreferences());
+            menu.AddCustomContextMenuItems(target);
         }
 
         public virtual Color GetPortColor(XNode.NodePort port) {
