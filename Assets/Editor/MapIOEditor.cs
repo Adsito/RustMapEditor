@@ -1075,7 +1075,7 @@ public class MapIOEditor : EditorWindow
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
                         {
-                            if (!MapIO.bundleFile.Contains(@"steamapps/common/Rust/Bundles/Bundles"))
+                            if (!MapIO.bundleFile.Contains(@"Bundles/Bundles"))
                             {
                                 MapIO.bundleFile = MapIO.bundleFile = EditorUtility.OpenFilePanel("Select Bundle File", MapIO.bundleFile, "");
                                 if (MapIO.bundleFile == "")
@@ -1150,6 +1150,10 @@ public class MapIOEditor : EditorWindow
                             MapIO.BreakRustEditCustomPrefabs();
                         }
                         EditorGUILayout.EndHorizontal();
+                        if (GUILayout.Button(new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.")))
+                        {
+                            MapIO.GroupRustEditCustomPrefabs();
+                        }
                         EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
                         {

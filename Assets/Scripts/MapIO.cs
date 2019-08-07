@@ -11,6 +11,13 @@ using static WorldConverter;
 using static WorldSerialization;
 
 [Serializable]
+public class CustomPrefab : MonoBehaviour
+{
+    public void UnGroupPrefab()
+    {
+
+    }
+}
 public class PrefabExport
 {
     public int PrefabNumber
@@ -130,7 +137,7 @@ public class MapIO : MonoBehaviour
     public static Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    private static Terrain terrain;
+    private static Terrain terrain, water;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -153,6 +160,7 @@ public class MapIO : MonoBehaviour
         loadPath = "";
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         RefreshAssetList(); // Refreshes the node gen presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
@@ -259,14 +267,11 @@ public class MapIO : MonoBehaviour
     }
     public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
-        Vector3 pos = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z);
-        Vector3 scale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
-        Quaternion rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
-        GameObject newObj = (GameObject)PrefabUtility.InstantiatePrefab(g);
-        newObj.transform.parent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        newObj.transform.position = pos + GetMapOffset();
-        newObj.transform.rotation = rotation;
-        newObj.transform.localScale = scale;
+        GameObject newObj = GameObject.Instantiate(g);
+        newObj.transform.parent = parent;
+        newObj.transform.position = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z) + GetMapOffset();
+        newObj.transform.rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
+        newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
         return newObj;
     }
@@ -282,7 +287,14 @@ public class MapIO : MonoBehaviour
         {
             foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
             {
-                DestroyImmediate(g.gameObject);
+                if (g != null)
+                {
+                    DestroyImmediate(g.gameObject);
+                }
+            }
+            foreach (CustomPrefab p in mapPrefabs.GetComponentsInChildren<CustomPrefab>())
+            {
+                DestroyImmediate(p.gameObject);
             }
         }
         if (paths)
@@ -309,7 +321,7 @@ public class MapIO : MonoBehaviour
     public static void RotateHeightmap(bool CW)
     {
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] oldHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
         float[,] newHeightMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
         float[,] oldWaterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
@@ -564,7 +576,7 @@ public class MapIO : MonoBehaviour
     /// <param name="setWaterMap">Offset the water heightmap.</param>
     public void OffsetHeightmap(float offset, bool checkHeight, bool setWaterMap)
     {
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
         float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
         offset = offset / 1000f;
@@ -614,7 +626,7 @@ public class MapIO : MonoBehaviour
     /// </summary>
     public void DebugWaterLevel()
     {
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
         for (int i = 0; i < waterMap.GetLength(0); i++)
         {
@@ -1459,6 +1471,39 @@ public class MapIO : MonoBehaviour
         ClearProgressBar();
     }
     /// <summary>
+    /// Parents all the RustEdit custom prefabs in the map to parent gameobjects.
+    /// </summary>
+    public static void GroupRustEditCustomPrefabs()
+    {
+        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
+        Transform prefabHierachy = GameObject.FindGameObjectWithTag("Prefabs").transform;
+        Dictionary<string, GameObject> prefabParents = new Dictionary<string, GameObject>();
+        ProgressBar("Group RustEdit Custom Prefabs", "Scanning prefabs", 0f);
+        progressValue = 1f / prefabDataHolders.Length;
+        for (int i = 0; i < prefabDataHolders.Length; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            if (prefabDataHolders[i].prefabData.category.Contains(':'))
+            {
+                var categoryFields = prefabDataHolders[i].prefabData.category.Split(':');
+                if (!prefabParents.ContainsKey(categoryFields[1]))
+                {
+                    GameObject customPrefabParent = new GameObject(categoryFields[1]);
+                    customPrefabParent.transform.SetParent(prefabHierachy);
+                    customPrefabParent.transform.localPosition = prefabDataHolders[i].transform.localPosition;
+                    customPrefabParent.AddComponent<CustomPrefab>();
+                    prefabParents.Add(categoryFields[1], customPrefabParent);
+                }
+                if (prefabParents.TryGetValue(categoryFields[1], out GameObject prefabParent))
+                {
+                    prefabDataHolders[i].gameObject.transform.SetParent(prefabParent.transform);
+                }
+            }
+        }
+        ClearProgressBar();
+    }
+    /// <summary>
     /// Exports information about all the map prefabs to a JSON file.
     /// </summary>
     /// <param name="mapPrefabFilePath">The JSON file path and name.</param>
@@ -1668,7 +1713,7 @@ public class MapIO : MonoBehaviour
         CentreSceneView();
 
         var terrainPosition = 0.5f * terrains.size;
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
 
         terrain.transform.position = terrainPosition;
@@ -1710,20 +1755,13 @@ public class MapIO : MonoBehaviour
         }
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.9f);
+        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
         float progressValue = 0f;
         for (int i = 0; i < terrains.prefabData.Length; i++)
         {
-            progressValue += 0.1f / terrains.prefabData.Length;
-            ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.9f);
-            if (prefabsLoaded.TryGetValue(terrains.prefabData[i].id, out GameObject newObj))
-            {
-                newObj = SpawnPrefab(prefabsLoaded[terrains.prefabData[i].id], terrains.prefabData[i], prefabsParent);
-            }
-            else
-            {
-                newObj = SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-            }
+            progressValue += 0.2f / terrains.prefabData.Length;
+            ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+            SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
         }
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
