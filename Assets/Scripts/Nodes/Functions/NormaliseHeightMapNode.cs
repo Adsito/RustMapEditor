@@ -13,7 +13,6 @@ public class NormaliseHeightMapNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+        MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
     }
 }

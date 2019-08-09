@@ -4,17 +4,13 @@
 public class UpdateTerrainValues : MonoBehaviour
 {
     Vector3 position = Vector3.zero;
-    MapIO mapIO;
+
     Terrain terrain;
     public void Start()
     {
         if (terrain == null)
         {
             terrain = GetComponent<Terrain>();
-        }
-        if (mapIO == null)
-        {
-            mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         }
     }
     void Update ()
