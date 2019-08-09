@@ -41,7 +41,6 @@ public class PaintConditionalNode : Node
         conditions.HeightLow = heightLowCndtl;
         conditions.HeightHigh = heightHighCndtl;
         var layer = (NodeVariables.Texture)GetValue();
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         if (layer == null) // Check for if the textures node is not connected.
         {
             return;
@@ -49,16 +48,16 @@ public class PaintConditionalNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.PaintConditional("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
+                MapIO.PaintConditional("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
                 break;
             case 1: // Biome
-                mapIO.PaintConditional("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
+                MapIO.PaintConditional("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
                 break;
             case 2: // Alpha
-                mapIO.PaintConditional( "Alpha", layer.AlphaTexture, conditions);
+                MapIO.PaintConditional( "Alpha", layer.AlphaTexture, conditions);
                 break;
             case 3: // Topology.
-                mapIO.PaintConditional("Topology", layer.TopologyTexture, conditions, layer.TopologyLayer);
+                MapIO.PaintConditional("Topology", layer.TopologyTexture, conditions, layer.TopologyLayer);
                 break;
         }
     }
