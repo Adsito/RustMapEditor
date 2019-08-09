@@ -13,7 +13,6 @@ public class SetMinimumHeightNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.SetMinimumHeight(minimumHeight);
+        MapIO.SetMinimumHeight(minimumHeight);
     }
 }

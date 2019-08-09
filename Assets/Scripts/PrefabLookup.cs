@@ -36,7 +36,7 @@ public class PrefabLookup : System.IDisposable
 		get { return prefabsLoaded; }
 	}
 
-    public PrefabLookup(string bundlename, MapIO mapIO)
+    public PrefabLookup(string bundlename)
     {
         backend = new AssetBundleBackend(bundlename);
         AssetBundleLookup();
