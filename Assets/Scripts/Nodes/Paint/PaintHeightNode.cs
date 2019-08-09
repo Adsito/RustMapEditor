@@ -21,7 +21,6 @@ public class PaintHeightNode : Node
     public void RunNode()
     {
         var layer = (NodeVariables.Texture)GetValue();
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         if (layer == null) // Check for if the textures node is not connected.
         {
             return;
@@ -29,16 +28,16 @@ public class PaintHeightNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                mapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
-                mapIO.PaintHeight("Alpha", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.AlphaTexture);
+                MapIO.PaintHeight("Alpha", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.AlphaTexture);
                 break;
             case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                mapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }
