@@ -3,17 +3,9 @@ using UnityEngine;
 using UnityEditor.IMGUI.Controls;
 using Rotorz.ReorderableList;
 
-[CustomEditor(typeof(MapIO))]
-public class MapIOInspector : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        //Only override this to stop the MapIO public variables from being exposed when the object is selected.
-    }
-}
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9.3-prerelease";
+    string editorVersion = "v1.9.4-prerelease";
 
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "";
@@ -60,7 +52,6 @@ public class MapIOEditor : EditorWindow
     }
     public void OnGUI()
     {
-        MapIO script = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
         GUIContent[] mainMenu = new GUIContent[3];
         mainMenu[0] = new GUIContent("Main Menu");
@@ -101,7 +92,7 @@ public class MapIOEditor : EditorWindow
                     MapIO.savePath = saveFile;
                     prefabSaveFile = saveFile;
                     MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
-                    script.Save(saveFile);
+                    MapIO.Save(saveFile);
                 }
                 if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), GUILayout.MaxWidth(45)))
                 {
@@ -115,7 +106,7 @@ public class MapIOEditor : EditorWindow
                     {
                         case 0:
                             MapIO.loadPath = "New Map";
-                            script.NewEmptyTerrain(mapSize);
+                            MapIO.NewEmptyTerrain(mapSize);
                             break;
                         case 1:
                             // User cancelled
@@ -128,9 +119,9 @@ public class MapIOEditor : EditorWindow
                                 return;
                             }
                             Debug.Log("Exported map " + saveFile);
-                            script.Save(saveFile);
+                            MapIO.Save(saveFile);
                             MapIO.loadPath = "New Map";
-                            script.NewEmptyTerrain(mapSize);
+                            MapIO.NewEmptyTerrain(mapSize);
                             break;
                         default:
                             Debug.Log("Create New Map option outofbounds");
@@ -317,7 +308,7 @@ public class MapIOEditor : EditorWindow
                                         if (GUILayout.Button(new GUIContent("Offset Heightmap", "Raises or lowers the height of the entire heightmap by " + offset.ToString() + " metres. " +
                                             "A positive offset will raise the heightmap, a negative offset will lower the heightmap.")))
                                         {
-                                            script.OffsetHeightmap(offset, checkHeight, setWaterMap);
+                                            MapIO.OffsetHeightmap(offset, checkHeight, setWaterMap);
                                         }
                                         GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
@@ -325,12 +316,12 @@ public class MapIOEditor : EditorWindow
                                         if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
                                             " metres."), GUILayout.MaxWidth(130)))
                                         {
-                                            script.SetMinimumHeight(heightToSet);
+                                            MapIO.SetMinimumHeight(heightToSet);
                                         }
                                         if (GUILayout.Button(new GUIContent("Set Maximum Height", "Lowers any of the land above " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
                                             " metres."), GUILayout.MaxWidth(130)))
                                         {
-                                            script.SetMaximumHeight(heightToSet);
+                                            MapIO.SetMaximumHeight(heightToSet);
                                         }
                                         EditorGUILayout.EndHorizontal();
 
@@ -344,7 +335,7 @@ public class MapIOEditor : EditorWindow
 
                                         if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
                                         {
-                                            script.SetEdgePixel(heightToSet, sides);
+                                            MapIO.SetEdgePixel(heightToSet, sides);
                                         }
                                         
                                         break;
@@ -362,7 +353,7 @@ public class MapIOEditor : EditorWindow
                                         }*/
                                         if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself.")))
                                         {
-                                            script.InvertHeightmap();
+                                            MapIO.InvertHeightmap();
                                         }
                                         EditorGUILayout.EndHorizontal();
                                         GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
@@ -378,13 +369,13 @@ public class MapIOEditor : EditorWindow
                                         EditorGUILayout.BeginHorizontal();
                                         if (EditorGUI.EndChangeCheck() && autoUpdate == true)
                                         {
-                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+                                            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
                                         }
                                         EditorGUILayout.EndHorizontal();
                                         EditorGUILayout.BeginHorizontal();
                                         if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
                                         {
-                                            script.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+                                            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
                                         }
                                         autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
                                         EditorGUILayout.EndHorizontal();
@@ -400,7 +391,7 @@ public class MapIOEditor : EditorWindow
                                         EditorGUILayout.EndHorizontal();
                                         if (GUILayout.Button(new GUIContent("Smooth Map", "Smoothes the heightmap.")))
                                         {
-                                            script.SmoothHeightmap(filterStrength, blurDirection);
+                                            MapIO.SmoothHeightmap(filterStrength, blurDirection);
                                         }
                                         GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
@@ -413,7 +404,7 @@ public class MapIOEditor : EditorWindow
                                         EditorGUILayout.EndHorizontal();
                                         if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap.")))
                                         {
-                                            script.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
+                                            MapIO.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
                                         }
                                         break;
                                 }
@@ -466,7 +457,7 @@ public class MapIOEditor : EditorWindow
                                 if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[landLayerFrom] + " layer and " +
                                     "paints it on the " + landLayers[landLayerToPaint] + " layer.")))
                                 {
-                                    script.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopology.TypeToIndex((int)MapIO.topologyLayerToPaint));
+                                    MapIO.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopology.TypeToIndex((int)MapIO.topologyLayerToPaint));
                                 }
                                 GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
 
@@ -587,7 +578,7 @@ public class MapIOEditor : EditorWindow
                                     conditions.HeightHigh = heightHighCndtl;
                                     conditions.CheckHeight = checkHeightCndtl;
                                     conditions.CheckSlope = checkSlopeCndtl;
-                                    script.PaintConditional(landLayers[layerConditionalInt], texture, conditions);
+                                    MapIO.PaintConditional(landLayers[layerConditionalInt], texture, conditions);
                                 }
                                 break;
                             #endregion
@@ -596,11 +587,11 @@ public class MapIOEditor : EditorWindow
                                 EditorGUILayout.BeginHorizontal();
                                 if (GUILayout.Button(new GUIContent("Debug Alpha", "Sets the ground texture to rock wherever the terrain is invisible. Prevents the floating grass effect.")))
                                 {
-                                    script.AlphaDebug();
+                                    MapIO.AlphaDebug();
                                 }
                                 if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
                                 {
-                                    script.DebugWaterLevel();
+                                    MapIO.DebugWaterLevel();
                                 }
                                 EditorGUILayout.EndHorizontal();
                                 break;
@@ -673,7 +664,7 @@ public class MapIOEditor : EditorWindow
                             MapIO.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", MapIO.terrainLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                script.PaintLayer("Ground", TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintLayer("Ground", TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
@@ -688,7 +679,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -709,7 +700,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                script.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 90
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -727,7 +718,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
                             {
-                                script.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Ground textures");
@@ -746,7 +737,7 @@ public class MapIOEditor : EditorWindow
                             MapIO.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Biome To Paint:", MapIO.biomeLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                script.PaintLayer("Biome", TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintLayer("Biome", TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
@@ -761,7 +752,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.PaintRiver("Biome", aboveTerrain, 0);
+                                MapIO.PaintRiver("Biome", aboveTerrain, 0);
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -782,7 +773,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                script.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -800,7 +791,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
                             {
-                                script.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             z1 = EditorGUILayout.IntField("From Z ", z1);
                             z2 = EditorGUILayout.IntField("To Z ", z2);
@@ -808,7 +799,7 @@ public class MapIOEditor : EditorWindow
                             x2 = EditorGUILayout.IntField("To X ", x2);
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.PaintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
@@ -828,11 +819,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Layer"))
                             {
-                                script.PaintLayer("Alpha", 1);
+                                MapIO.PaintLayer("Alpha", 1);
                             }
                             if (GUILayout.Button("Clear Layer"))
                             {
-                                script.PaintLayer("Alpha", 0);
+                                MapIO.PaintLayer("Alpha", 0);
                             }
                             if (GUILayout.Button("Invert Layer"))
                             {
@@ -857,7 +848,7 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                script.PaintSlope("Alpha", slopeLow, slopeHigh, slopeLow, slopeHigh, 0);
+                                MapIO.PaintSlope("Alpha", slopeLow, slopeHigh, slopeLow, slopeHigh, 0);
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             EditorGUILayout.BeginHorizontal();
@@ -868,11 +859,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint range"))
                             {
-                                script.PaintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0);
+                                MapIO.PaintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 0);
                             }
                             if (GUILayout.Button("Erase range"))
                             {
-                                script.PaintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1);
+                                MapIO.PaintHeight("Alpha", heightLow, heightHigh, heightLow, heightHigh, 1);
                             }
                             EditorGUILayout.EndHorizontal();
                             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -882,11 +873,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.PaintArea("Alpha", z1, z2, x1, x2, 0);
+                                MapIO.PaintArea("Alpha", z1, z2, x1, x2, 0);
                             }
                             if (GUILayout.Button("Erase Area"))
                             {
-                                script.PaintArea("Alpha", z1, z2, x1, x2, 1);
+                                MapIO.PaintArea("Alpha", z1, z2, x1, x2, 1);
                             }
                             EditorGUILayout.EndHorizontal();
                         }
@@ -906,7 +897,7 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Layer"))
                             {
-                                script.PaintLayer("Topology", 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintLayer("Topology", 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button("Clear Layer"))
                             {
@@ -947,14 +938,10 @@ public class MapIOEditor : EditorWindow
                                 MapIO.ClearAllTopologyLayers();
                             }
                             EditorGUILayout.EndHorizontal();
-                            if (GUILayout.Button(new GUIContent("Clear All ServerSide Topologies", "Clear all Topology layers that are used by only the server.")))
-                            {
-                                MapIO.ClearServerSideTopologies();
-                            }
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                script.PaintRiver("Topology", aboveTerrain, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintRiver("Topology", aboveTerrain, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -964,11 +951,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                script.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button(new GUIContent("Erase Slopes", "Paints the slopes within the slope range with the INACTIVE topology texture.")))
                             {
-                                script.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             EditorGUILayout.BeginHorizontal();
@@ -979,11 +966,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Paint Range", "Paints the slopes within the height range with the ACTIVE topology texture.")))
                             {
-                                script.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button(new GUIContent("Erase Range", "Paints the slopes within the height range with the INACTIVE topology texture.")))
                             {
-                                script.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             EditorGUILayout.EndHorizontal();
                             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -993,11 +980,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Area"))
                             {
-                                script.PaintArea("Topology", z1, z2, x1, x2, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button("Erase Area"))
                             {
-                                script.PaintArea("Topology", z1, z2, x1, x2, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             EditorGUILayout.EndHorizontal();
                             /*
@@ -1088,7 +1075,7 @@ public class MapIOEditor : EditorWindow
                                     return;
                                 }
                             }
-                            script.StartPrefabLookup();
+                            MapIO.StartPrefabLookup();
                         }
                         if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
                         {

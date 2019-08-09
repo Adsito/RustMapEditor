@@ -12,7 +12,6 @@ public class InvertHeightMapNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.InvertHeightmap();
+        MapIO.InvertHeightmap();
     }
 }

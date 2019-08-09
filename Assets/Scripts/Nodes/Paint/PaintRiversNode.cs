@@ -21,20 +21,19 @@ public class PaintRiversNode : Node
     public void RunNode()
     {
         var layer = (NodeVariables.Texture)GetValue();
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                mapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                mapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
-                mapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);
+                MapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);
                 break;
             case 3: // Topology
-                mapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }
