@@ -13,7 +13,6 @@ public class SmoothHeightMapNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.SmoothHeightmap(filterStrength, blurDirection);
+        MapIO.SmoothHeightmap(filterStrength, blurDirection);
     }
 }

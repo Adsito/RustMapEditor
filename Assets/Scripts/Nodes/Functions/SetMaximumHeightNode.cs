@@ -13,7 +13,6 @@ public class SetMaximumHeightNode : Node
     }
     public void RunNode()
     {
-        MapIO mapIO = GameObject.FindGameObjectWithTag("MapIO").GetComponent<MapIO>();
-        mapIO.SetMaximumHeight(maximumHeight);
+        MapIO.SetMaximumHeight(maximumHeight);
     }
 }
