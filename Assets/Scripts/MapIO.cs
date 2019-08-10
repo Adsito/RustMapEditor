@@ -1839,7 +1839,7 @@ public static class MapIO
     /// </summary>
     public static void RefreshAssetList()
     {
-        var list = AssetDatabase.FindAssets("t:AutoGenerationGraph");
+        var list = AssetDatabase.FindAssets("t:NodePreset");
         generationPresetList.Clear();
         nodePresetLookup.Clear();
         foreach (var item in list)
@@ -1847,7 +1847,7 @@ public static class MapIO
             var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
-            nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(AutoGenerationGraph)));
+            nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
         }
     }
     /// <summary>
