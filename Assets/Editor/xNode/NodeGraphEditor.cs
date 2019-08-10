@@ -45,7 +45,7 @@ namespace XNodeEditor {
         /// <summary> Called when opened by NodeEditorWindow </summary>
         public virtual void OnOpen()
         {
-            
+            window.titleContent = new GUIContent(window.graph.name);
         }
 
         public virtual Texture2D GetGridTexture() {
