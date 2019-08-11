@@ -17,7 +17,6 @@ public class TextureNodeEditor : NodeEditor
     {
         base.OnBodyGUI();
         TextureNode node = target as TextureNode;
-        AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         switch (node.landLayer)
         {
             case NodeVariables.Texture.LandLayerEnum.Ground:

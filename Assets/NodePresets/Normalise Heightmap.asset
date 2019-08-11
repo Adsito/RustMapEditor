@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a094643a377c0a54f862bccf5f3b1aa8, type: 3}
+  m_Script: {fileID: 11500000, guid: 65a7e0786c8a58f4a989c82fcfd58d03, type: 3}
   m_Name: Normalise Heightmap
   m_EditorClassIdentifier: 
   nodes:
@@ -28,25 +28,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd8b35dbbaa7d04e8e5bb89f366b2b1, type: 3}
   m_Name: Normalise Height Map
   m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
+  graph: {fileID: 0}
   position: {x: -40, y: -40}
   ports:
     keys:
-    - PreviousTask
     - NextTask
+    - PreviousTask
     values:
-    - _fieldName: PreviousTask
-      _node: {fileID: 2062662062747927088}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: NextTask
-        node: {fileID: 2499351267661651580}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
     - _fieldName: NextTask
       _node: {fileID: 2062662062747927088}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
@@ -57,7 +45,19 @@ MonoBehaviour:
         reroutePoints: []
       _direction: 1
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: PreviousTask
+      _node: {fileID: 2062662062747927088}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: NextTask
+        node: {fileID: 2499351267661651580}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
       _dynamic: 0
   normaliseLow: 450
   normaliseHigh: 850
@@ -73,7 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c573aec9ff67d354ea06e74c442ecb37, type: 3}
   m_Name: Start
   m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
+  graph: {fileID: 0}
   position: {x: -280, y: -40}
   ports:
     keys:
@@ -89,7 +89,7 @@ MonoBehaviour:
         reroutePoints: []
       _direction: 1
       _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
 --- !u!114 &3531586715729308074
 MonoBehaviour:
@@ -103,13 +103,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8aefcb159f403246a5af59ce8e470f5, type: 3}
   m_Name: Smooth Height Map
   m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
+  graph: {fileID: 0}
   position: {x: 184, y: -40}
   ports:
     keys:
-    - PreviousTask
     - NextTask
+    - PreviousTask
     values:
+    - _fieldName: NextTask
+      _node: {fileID: 3531586715729308074}
+      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
     - _fieldName: PreviousTask
       _node: {fileID: 3531586715729308074}
       _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
@@ -120,16 +129,7 @@ MonoBehaviour:
         reroutePoints: []
       _direction: 0
       _connectionType: 1
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: NextTask
-      _node: {fileID: 3531586715729308074}
-      _typeQualifiedName: NodeVariables.NextTask, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 1
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
   filterStrength: 1
   blurDirection: 0
