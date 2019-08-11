@@ -1,10 +1,9 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.TerrainAPI;
 
-[Serializable]
-
-public static class LandData 
+public static class LandData
 {
     /// <summary>
     /// The Ground textures of the map.
@@ -27,9 +26,23 @@ public static class LandData
     public static TerrainLayer[] biomeTextures = null;
     public static TerrainLayer[] miscTextures = null;
 
-    static Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
     static string layerName = "";
 
+    [InitializeOnLoadMethod]
+    static void OnTerrainChangedInit()
+    {
+        TerrainCallbacks.textureChanged += TextureChanged;
+        TerrainCallbacks.heightmapChanged += HeightmapChanged;
+    }
+    private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
+    {
+
+    }
+    private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
+    {
+        // ToDo: Check for if user released mouse before SetData call.
+        //SetData(terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight), layerName, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+    }
     /// <summary>
     /// Sets the array data of LandLayer.
     /// </summary>
@@ -73,28 +86,27 @@ public static class LandData
         {
             GetTextures();
         }
-        Selection.activeGameObject = null;
         switch (landLayer.ToLower())
         {
             case "ground":
                 layerName = "ground";
-                terrain.terrainData.terrainLayers = groundTextures;
-                terrain.terrainData.SetAlphamaps(0, 0, groundArray);
+                MapIO.terrain.terrainData.terrainLayers = groundTextures;
+                MapIO.terrain.terrainData.SetAlphamaps(0, 0, groundArray);
                 break;
             case "biome":
                 layerName = "biome";
-                terrain.terrainData.terrainLayers = biomeTextures;
-                terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
+                MapIO.terrain.terrainData.terrainLayers = biomeTextures;
+                MapIO.terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
                 break;
             case "alpha":
                 layerName = "alpha";
-                terrain.terrainData.terrainLayers = miscTextures;
-                terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
+                MapIO.terrain.terrainData.terrainLayers = miscTextures;
+                MapIO.terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
             case "topology":
                 layerName = "topology";
-                terrain.terrainData.terrainLayers = miscTextures;
-                terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
+                MapIO.terrain.terrainData.terrainLayers = miscTextures;
+                MapIO.terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
         }
     }
@@ -102,21 +114,21 @@ public static class LandData
     /// Saves any changes made to the Alphamaps, like the paint brush.
     /// </summary>
     /// <param name="topologyLayer">The Topology layer, if active.</param>
-    public static void Save(int topologyLayer = 0)
+    public static void SaveLayer(int topologyLayer = 0)
     {
         switch (layerName)
         {
             case "ground":
-                groundArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                groundArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
             case "biome":
-                biomeArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                biomeArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
             case "alpha":
-                alphaArray = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                alphaArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
             case "topology":
-                topologyArray[topologyLayer] = terrain.terrainData.GetAlphamaps(0, 0, terrain.terrainData.alphamapWidth, terrain.terrainData.alphamapHeight);
+                topologyArray[topologyLayer] = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
         }
     }
