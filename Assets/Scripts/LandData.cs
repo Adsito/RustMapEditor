@@ -27,14 +27,18 @@ public static class LandData
     public static TerrainLayer[] miscTextures = null;
 
     static string layerName = "";
-    public static Terrain terrain;
 
     [InitializeOnLoadMethod]
-    static void OnTextureChanged()
+    static void OnTerrainChangedInit()
     {
         TerrainCallbacks.textureChanged += TextureChanged;
+        TerrainCallbacks.heightmapChanged += HeightmapChanged;
     }
-    static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
+    private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
+    {
+
+    }
+    private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
         // ToDo: Check for if user released mouse before SetData call.
         //SetData(terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight), layerName, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
