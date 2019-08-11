@@ -4,15 +4,6 @@
 public class UpdateTerrainValues : MonoBehaviour
 {
     Vector3 position = Vector3.zero;
-
-    Terrain terrain;
-    public void Start()
-    {
-        if (terrain == null)
-        {
-            terrain = GetComponent<Terrain>();
-        }
-    }
     void Update ()
     {
         if (transform.position != position)

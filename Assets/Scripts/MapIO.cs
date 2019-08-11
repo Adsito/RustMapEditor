@@ -142,8 +142,7 @@ public static class MapIO
     [InitializeOnLoadMethod]
     static void EditorInit()
     {
-        System.Reflection.FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-
+        FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
         EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
 
         value += EditorGlobalKeyPress;
@@ -246,7 +245,7 @@ public static class MapIO
     }
     public static void ChangeLandLayer()
     {
-        LandData.Save(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
+        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
         Undo.ClearAll();
         switch (landLayer.ToLower())
         {
@@ -1701,6 +1700,9 @@ public static class MapIO
     /// </summary>
     public static void LoadMapInfo(MapInfo terrains)
     {
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
@@ -1709,9 +1711,7 @@ public static class MapIO
         CentreSceneView();
 
         var terrainPosition = 0.5f * terrains.size;
-        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-
+        
         terrain.transform.position = terrainPosition;
         water.transform.position = terrainPosition;
 
@@ -1800,7 +1800,7 @@ public static class MapIO
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        LandData.Save(TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
         foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
         {
             item.gameObject.SetActive(true);
@@ -1881,7 +1881,7 @@ public static class MapIO
                         }
                     }
                     while (nodeIteration != null);
-                    MapIO.ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
+                    ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
                 }
             }
         }
