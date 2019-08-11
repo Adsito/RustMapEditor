@@ -6,7 +6,7 @@ public class TextureNode : Node
 {
     [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.Texture Texture;
     #region Fields
-    public NodeVariables.Texture.LandLayerEnum landLayer = NodeVariables.Texture.LandLayerEnum.Ground;
+    [NodeEnum] public NodeVariables.Texture.LandLayerEnum landLayer = NodeVariables.Texture.LandLayerEnum.Ground;
     [HideInInspector] public TerrainSplat.Enum groundEnum = TerrainSplat.Enum.Grass;
     [HideInInspector] public TerrainBiome.Enum biomeEnum = TerrainBiome.Enum.Temperate;
     [HideInInspector] public NodeVariables.Texture.AlphaEnum alphaEnum = NodeVariables.Texture.AlphaEnum.Active;
