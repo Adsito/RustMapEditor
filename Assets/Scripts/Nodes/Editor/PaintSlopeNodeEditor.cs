@@ -17,7 +17,6 @@ public class PaintSlopeNodeEditor : NodeEditor
     {
         base.OnBodyGUI();
         PaintSlopeNode node = target as PaintSlopeNode;
-        AutoGenerationGraph graph = node.graph as AutoGenerationGraph;
         NodeVariables.Texture texture = (NodeVariables.Texture)node.GetValue();
         #region UpdateValues
         node.slopeLow = Mathf.Clamp(node.slopeLow, 0f, 89.99f);
@@ -38,16 +37,18 @@ public class PaintSlopeNodeEditor : NodeEditor
         }
         #endregion
         GUILayout.Label("Slope Tools (Degrees)", EditorStyles.boldLabel); // From 0 - 90
+
         EditorGUILayout.BeginHorizontal();
         node.blendSlopes = EditorGUILayout.ToggleLeft("Blend Slopes", node.blendSlopes);
-        // Todo: Toggle for check between heightrange.
         EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("From: ", EditorStyles.boldLabel, GUILayout.MaxWidth(41f));
         node.slopeLow = EditorGUILayout.FloatField(node.slopeLow, GUILayout.MaxWidth(50f));
         GUILayout.Label("To: ", EditorStyles.boldLabel, GUILayout.MaxWidth(23f));
         node.slopeHigh = EditorGUILayout.FloatField(node.slopeHigh, GUILayout.MaxWidth(50f));
         EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.MinMaxSlider(ref node.slopeLow, ref node.slopeHigh, 0f, 90f);
         if (node.blendSlopes == true)
         {
