@@ -121,7 +121,6 @@ public struct Conditions
         get; set;
     }
 }
-[ExecuteAlways]
 public static class MapIO
 {
     #region Layers
@@ -142,16 +141,15 @@ public static class MapIO
     [InitializeOnLoadMethod]
     static void EditorInit()
     {
-        FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+        FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", BindingFlags.Static | BindingFlags.NonPublic);
         EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
 
         value += EditorGlobalKeyPress;
-
         info.SetValue(null, value);
     }
     static void EditorGlobalKeyPress()
     {
-        //Debug.Log("KEY CHANGE " + Event.current.keyCode);
+        
     }
     #endregion
     [InitializeOnLoadMethod]
@@ -160,8 +158,19 @@ public static class MapIO
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         RefreshAssetList(); // Refreshes the node gen presets.
         GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
-        CentreSceneView(); // Centres the sceneview camera over the middle of the map on project open.
         SetLayers(); // Resets all the layers to default values.
+        EditorApplication.update += OnProjectLoad;
+    }
+    /// <summary>
+    /// Executes once when the project finished loading.
+    /// </summary>
+    static void OnProjectLoad()
+    {
+        EditorApplication.update -= OnProjectLoad;
+        if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
+        {
+            NewEmptyTerrain(2000); // Create new map.
+        }
     }
     public static void CentreSceneView()
     {
@@ -182,13 +191,13 @@ public static class MapIO
         biomeLayerFrom = TerrainBiome.Enum.Temperate;
         biomeLayerToPaint = TerrainBiome.Enum.Temperate;
         topologyLayer = TerrainTopology.Enum.Beach;
-        conditionalTopology = (TerrainTopology.Enum)TerrainTopology.NOTHING;
+        conditionalTopology = TerrainTopology.NOTHING;
         topologyLayersList = TerrainTopology.Enum.Beach;
         oldTopologyLayer = TerrainTopology.Enum.Beach;
         biomeLayer = TerrainBiome.Enum.Temperate;
-        conditionalBiome = (TerrainBiome.Enum)TerrainBiome.NOTHING;
+        conditionalBiome = TerrainBiome.NOTHING;
         terrainLayer = TerrainSplat.Enum.Grass;
-        conditionalGround = (TerrainSplat.Enum)TerrainSplat.NOTHING;
+        conditionalGround = TerrainSplat.NOTHING;
     }
     /// <summary>
     /// Displays a popup progress bar, the progress is also visible in the taskbar.
