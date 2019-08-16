@@ -5,18 +5,11 @@ using Rotorz.ReorderableList;
 
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v1.9.4-prerelease";
-
+    string editorVersion = "v1.9.5-prerelease";
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
-    string loadFile = "";
-    string saveFile = "";
-    string mapName = "";
-    string prefabSaveFile = "", mapPrefabSaveFile = "";
-    //Todo: Clean this up. It's coarse and rough and irritating and it gets everywhere.
+    string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, toolsOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0;
     float heightToSet = 450f, offset = 0f;
-    //float scale = 50f;
-    //float mapScale = 1f; Comment back in when used.
     bool[] sides = new bool[4]; 
     bool checkHeight = true, setWaterMap = false;
     bool allLayers = false, ground = false, biome = false, alpha = false, topology = false, heightmap = false, prefabs = false, paths = false;
@@ -33,13 +26,10 @@ public class MapIOEditor : EditorWindow
     float slopeLowCndtl = 45f, slopeHighCndtl = 60f;
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
-    //string assetDirectory = "Assets/NodePresets/";
-    Vector2 scrollPos = new Vector2(0, 0);
-    Vector2 presetScrollPos = new Vector2(0, 0);
+    Vector2 scrollPos = new Vector2(0, 0), presetScrollPos = new Vector2(0, 0);
 
-    float filterStrength = 1f;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
-    float blurDirection = 0f;
+    float blurDirection = 0f, filterStrength = 1f;
 
     int[] values = { 0, 1 };
     string[] activeTextureAlpha = { "Visible", "Invisible" };
