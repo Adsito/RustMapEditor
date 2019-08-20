@@ -170,6 +170,7 @@ public static class MapIO
         if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
         {
             NewEmptyTerrain(2000); // Create new map.
+            loadPath = "newmap.map";
         }
     }
     public static void CentreSceneView()
