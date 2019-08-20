@@ -392,19 +392,19 @@ public static class MapIO
     /// <summary>
     /// Rotates the selected layer 90°.
     /// </summary>
-    /// <param name="landLayer">The LandLayer. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void RotateLayer(string landLayer, bool CW, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    public static void RotateLayer(string landLayerToPaint, bool CW, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
     {
         progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
         foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
             progressBar += progressValue;
-            var rotateText = (landLayer.ToLower() == "topology") ? ((TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt)).ToString() : landLayer;
+            var rotateText = (landLayerToPaint.ToLower() == "topology") ? ((TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt)).ToString() : landLayerToPaint;
             ProgressBar("Rotating Layers", "Rotating: " + rotateText, progressBar);
-            int textureCount = TextureCount(landLayer);
-            float[,,] oldLayer = GetSplatMap(landLayer, topologyInt);
+            int textureCount = TextureCount(landLayerToPaint);
+            float[,,] oldLayer = GetSplatMap(landLayerToPaint, topologyInt);
             float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
             if (CW)
             {
@@ -432,7 +432,7 @@ public static class MapIO
                     }
                 }
             }
-            LandData.SetData(newLayer, landLayer, topologyInt);
+            LandData.SetData(newLayer, landLayerToPaint, topologyInt);
         }
         LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
