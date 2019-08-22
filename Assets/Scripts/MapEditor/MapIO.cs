@@ -153,6 +153,8 @@ public static class MapIO
     }
     #endregion
     [InitializeOnLoadMethod]
+
+
     public static void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
@@ -1857,42 +1859,6 @@ public static class MapIO
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
-        }
-    }
-    /// <summary>
-    /// Runs the selected NodeGraph.
-    /// </summary>
-    /// <param name="graph">The NodeGraph to run.</param>
-    public static void ParseNodeGraph(XNode.NodeGraph graph)
-    {
-        foreach (var node in graph.nodes)
-        {
-            if (node.name == "Start")
-            {
-                if (node.GetOutputPort("NextTask").GetConnections().Count == 0) // Check for start node being in graph but not linked.
-                {
-                    return;
-                }
-                XNode.Node nodeIteration = node.GetOutputPort("NextTask").Connection.node;
-                if (nodeIteration != null)
-                {
-                    do
-                    {
-                        MethodInfo runNode = nodeIteration.GetType().GetMethod("RunNode");
-                        runNode.Invoke(nodeIteration, null);
-                        if (nodeIteration.GetOutputPort("NextTask").IsConnected)
-                        {
-                            nodeIteration = nodeIteration.GetOutputPort("NextTask").Connection.node;
-                        }
-                        else
-                        {
-                            nodeIteration = null;
-                        }
-                    }
-                    while (nodeIteration != null);
-                    ChangeLandLayer(); // Puts the layer back to the one selected in MapIO LandLayer.
-                }
-            }
         }
     }
 }

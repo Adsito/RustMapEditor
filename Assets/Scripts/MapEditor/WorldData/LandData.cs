@@ -29,14 +29,14 @@ public static class LandData
     static string layerName = "";
 
     [InitializeOnLoadMethod]
-    static void OnTerrainChangedInit()
+    static void OnLoad()
     {
         TerrainCallbacks.textureChanged += TextureChanged;
         TerrainCallbacks.heightmapChanged += HeightmapChanged;
     }
     private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
     {
-
+        
     }
     private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
