@@ -223,13 +223,13 @@ public class WorldConverter
                  alphaMap[0, j, k] = BitUtility.Float2Byte(LandData.alphaArray[j, k, 0]);
             }
         }
-        TopologyMesh.SaveTopologyLayers();
+        TopologyData.SaveTopologyLayers();
 
         world.AddMap("terrain", landHeightBytes);
         world.AddMap("height", landHeightBytes);
         world.AddMap("splat", splatMap.ToByteArray());
         world.AddMap("biome", biomeMap.ToByteArray());
-        world.AddMap("topology", TopologyMesh.getTerrainMap().ToByteArray());
+        world.AddMap("topology", TopologyData.GetTerrainMap().ToByteArray());
         world.AddMap("alpha", alphaMap.ToByteArray());
         world.AddMap("water", waterHeightBytes);
 

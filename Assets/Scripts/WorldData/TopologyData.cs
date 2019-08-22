@@ -2,18 +2,23 @@
 using UnityEngine;
 
 [Serializable]
-public static class TopologyMesh
+public static class TopologyData
 {
     [SerializeField]
     public static byte[] top;
 
-    public static TerrainMap<int> getTerrainMap()
+    public static TerrainMap<int> GetTerrainMap()
     {
         return new TerrainMap<int>(top, 1);
     }
-    public static float[,,] getSplatMap(int layer)
+    /// <summary>
+    /// Returns the Splatmap of the selected Topology Layer.
+    /// </summary>
+    /// <param name="layer">The Topology layer to return.</param>
+    /// <returns></returns>
+    public static float[,,] GetTopologyLayer(int layer)
     {
-        TerrainMap<int> topology = getTerrainMap();
+        TerrainMap<int> topology = GetTerrainMap();
         float[,,] splatMap = new float[topology.res, topology.res, 2];
         for (int i = 0; i < topology.res; i++)
         {
@@ -31,6 +36,9 @@ public static class TopologyMesh
         }
         return splatMap;
     }
+    /// <summary>
+    /// Converts all the Topology Layer arrays back into a single byte array.
+    /// </summary>
     public static void SaveTopologyLayers()
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
