@@ -1204,7 +1204,7 @@ public class MapIOEditor : EditorWindow
             if (preset != null)
             {
                 var graph = (XNode.NodeGraph)AssetDatabase.LoadAssetAtPath(assetDirectory + itemValue + ".asset", typeof(XNode.NodeGraph));
-                MapIO.ParseNodeGraph(graph);
+                MapIO.NodeAsset(graph);
             }
         }
         */
