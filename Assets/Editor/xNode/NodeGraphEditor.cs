@@ -20,7 +20,7 @@ namespace XNodeEditor {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button(new GUIContent("Run Preset", "Run this preset with all it's current nodes."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
             {
-                MapIO.ParseNodeGraph(nodeGraph);
+                NodeAsset.Parse(nodeGraph);
             }
             if (GUILayout.Button(new GUIContent("Delete Preset", "Delete this preset from Unity."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))
             {
@@ -28,7 +28,6 @@ namespace XNodeEditor {
                 {
                     NodeEditorWindow.focusedWindow.Close();
                     AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeGraph));
-                    MapIO.RefreshAssetList();
                 }
             }
             if (GUILayout.Button(new GUIContent("Rename Preset", "Rename this preset."), EditorStyles.toolbarButton, GUILayout.MaxWidth(100f)))

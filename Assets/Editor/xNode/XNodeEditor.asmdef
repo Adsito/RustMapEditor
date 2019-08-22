@@ -1,0 +1,14 @@
+{
+    "name": "XNodeEditor",
+    "references": [
+        "GUID:9e9360c1f1627e949bef804d8fdbe7c3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

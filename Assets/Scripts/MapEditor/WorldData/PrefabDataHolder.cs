@@ -9,7 +9,7 @@ public class PrefabDataHolder : MonoBehaviour
     
     public void MapSave()
     {
-        prefabData.position = gameObject.transform.position - MapIO.GetMapOffset();
+        prefabData.position = gameObject.transform.position - (0.5f * GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().terrainData.size);
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }

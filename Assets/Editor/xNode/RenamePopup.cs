@@ -59,7 +59,6 @@ namespace XNodeEditor {
                 if (GUILayout.Button("Apply") || (e.isKey && e.keyCode == KeyCode.Return)) {
                     target.name = input;
                     AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), target.name);
-                    MapIO.RefreshAssetList();
                     Close();
 					target.TriggerOnValidate();
                 }
