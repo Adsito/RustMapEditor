@@ -586,9 +586,9 @@ public static class MapIO
         float[,] heightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
         offset = offset / 1000f;
         bool heightOutOfRange = false;
-        for (int i = 0; i < terrain.terrainData.heightmapHeight; i++)
+        for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
         {
-            for (int j = 0; j < terrain.terrainData.heightmapWidth; j++)
+            for (int j = 0; j < terrain.terrainData.heightmapHeight; j++)
             {
                 if (checkHeight == true)
                 {
@@ -1742,8 +1742,8 @@ public static class MapIO
         water.terrainData.alphamapResolution = terrains.resolution - 1;
         water.terrainData.baseMapResolution = terrains.resolution - 1;
 
-        terrain.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
-        water.GetComponent<UpdateTerrainValues>().setPosition(Vector3.zero);
+        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
+        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
 
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
         LandData.SetData(terrains.splatMap, "ground");
@@ -1832,7 +1832,6 @@ public static class MapIO
     public static void NewEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
-        ClearAllTopologyLayers();
         ClearLayer("Alpha");
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);

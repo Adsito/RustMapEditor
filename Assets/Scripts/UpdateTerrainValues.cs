@@ -19,7 +19,7 @@ public class UpdateTerrainValues : MonoBehaviour
             transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
     }
-    public void setPosition(Vector3 position)
+    public void SetPosition(Vector3 position)
     {
         transform.position = position;
         this.position = position;
