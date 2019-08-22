@@ -1726,7 +1726,7 @@ public static class MapIO
         water.transform.position = terrainPosition;
 
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
-        TopologyMesh.InitMesh(terrains.topology);
+        TopologyData.InitMesh(terrains.topology);
 
         terrain.terrainData.heightmapResolution = terrains.resolution;
         terrain.terrainData.size = terrains.size;
@@ -1757,7 +1757,7 @@ public static class MapIO
         ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            LandData.SetData(TopologyMesh.getSplatMap(TerrainTopology.IndexToType(i)), "topology", i);
+            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
         }
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -1832,7 +1832,7 @@ public static class MapIO
     public static void NewEmptyTerrain(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
-        ClearLayer("Alpha");
+        PaintLayer("Alpha", 0);
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         SetMinimumHeight(503f);
