@@ -43,35 +43,34 @@ public class MapIOEditor : EditorWindow
     public void OnGUI()
     {
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
-        GUIContent[] mainMenu = new GUIContent[3];
-        mainMenu[0] = new GUIContent("Main Menu");
-        mainMenu[1] = new GUIContent("Tools");
-        mainMenu[2] = new GUIContent("Prefabs");
+        GUIContent[] mainMenu = new GUIContent[4];
+        mainMenu[0] = new GUIContent("File");
+        mainMenu[1] = new GUIContent("Prefabs");
+        mainMenu[2] = new GUIContent("Layers");
+        mainMenu[3] = new GUIContent("Advanced");
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
 
         #region Menu
         switch (mainMenuOptions)
         {
-            #region Main Menu
+            #region File
             case 0:
-                GUILayout.Label("Map Options", EditorStyles.boldLabel);
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), GUILayout.MaxWidth(45)))
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
                 {
                     loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
-
-                    var blob = new WorldSerialization();
                     if (loadFile == "")
                     {
                         return;
                     }
+                    var world = new WorldSerialization();
                     MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
-                    blob.Load(loadFile);
+                    world.Load(loadFile);
                     MapIO.loadPath = loadFile;
                     MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
-                    MapIO.Load(blob);
+                    MapIO.Load(world);
                 }
-                if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), GUILayout.MaxWidth(45)))
+                if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
                 {
                     saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
                     if (saveFile == "")
@@ -84,19 +83,14 @@ public class MapIOEditor : EditorWindow
                     MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                     MapIO.Save(saveFile);
                 }
-                if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), GUILayout.MaxWidth(45)))
+                if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
                 {
                     int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
-                    if (mapSize < 1000 & mapSize > 6000)
-                    {
-                        EditorUtility.DisplayDialog("Error", "Map size must be between 1000 - 6000", "Ok");
-                        return;
-                    }
                     switch (newMap)
                     {
                         case 0:
                             MapIO.loadPath = "New Map";
-                            MapIO.NewEmptyTerrain(mapSize);
+                            MapIO.CreateNewMap(mapSize);
                             break;
                         case 1:
                             // User cancelled
@@ -111,44 +105,174 @@ public class MapIOEditor : EditorWindow
                             Debug.Log("Exported map " + saveFile);
                             MapIO.Save(saveFile);
                             MapIO.loadPath = "New Map";
-                            MapIO.NewEmptyTerrain(mapSize);
-                            break;
-                        default:
-                            Debug.Log("Create New Map option outofbounds");
+                            MapIO.CreateNewMap(mapSize);
                             break;
                     }
                 }
-                GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map."), GUILayout.MaxWidth(30));
-                mapSize = EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45));
+                GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), GUILayout.MaxWidth(30));
+                mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45)), 1000, 6000);
                 EditorGUILayout.EndHorizontal();
 
-                GUILayout.Label("Editor Info", EditorStyles.boldLabel);
+                GUILayout.Label("Editor Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
                 GUILayout.Label("OS: " + SystemInfo.operatingSystem);
                 GUILayout.Label("Unity Version: " + Application.unityVersion);
                 GUILayout.Label("Editor Version: " + editorVersion);
 
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), GUILayout.MaxWidth(75)))
+                GUILayout.Label(new GUIContent("Links"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
+
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(75)))
                 {
-                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues/new?assignees=Adsitoz&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
                 }
-                if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), GUILayout.MaxWidth(105)))
+                if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(105)))
                 {
-                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/issues/new?assignees=Adsitoz&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
                 }
-                if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), GUILayout.MaxWidth(65)))
+                if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
                 {
-                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/projects/1");
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
                 }
-                if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), GUILayout.MaxWidth(40)))
+                if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
                 {
-                    Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
                 }
                 EditorGUILayout.EndHorizontal();
+
+                GUILayout.Label(new GUIContent("Settings"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
+
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                if (GUILayout.Button(new GUIContent("Save Changes", "Sets and saves the current settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+                }
+                if (GUILayout.Button(new GUIContent("Discard", "Discards the changes to the settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+                }
+                if (GUILayout.Button(new GUIContent("Default", "Sets the settings back to the default."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+                {
+                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+                }
+                EditorGUILayout.EndHorizontal();
+
+                break;
+            #endregion
+           
+            #region Prefabs
+            case 1:
+                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
+                prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
+                prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
+                //prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
+                prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
+
+                switch (prefabOptions)
+                {
+                    case 0:
+                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. FULL OF BUGS ATM", EditorStyles.boldLabel);
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
+                            "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
+                        {
+                            if (!MapIO.bundleFile.Contains(@"Bundles/Bundles"))
+                            {
+                                MapIO.bundleFile = MapIO.bundleFile = EditorUtility.OpenFilePanel("Select Bundle File", MapIO.bundleFile, "");
+                                if (MapIO.bundleFile == "")
+                                {
+                                    return;
+                                }
+                                if (!MapIO.bundleFile.Contains(@"steamapps/common/Rust/Bundles/Bundles"))
+                                {
+                                    EditorUtility.DisplayDialog("ERROR: Bundle File Invalid", @"Bundle file path invalid. It should be located within steamapps\common\Rust\Bundles", "Ok");
+                                    return;
+                                }
+                            }
+                            MapIO.StartPrefabLookup();
+                        }
+                        if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
+                        {
+                            if (MapIO.GetPrefabLookUp() != null)
+                            {
+                                MapIO.GetPrefabLookUp().Dispose();
+                                MapIO.SetPrefabLookup(null);
+                            }
+                            else
+                            {
+                                EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
+                            }
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        MapIO.bundleFile = GUILayout.TextArea(MapIO.bundleFile);
+                        break;
+                    case 2:
+                        if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
+                        {
+                            PrefabHierachyEditor.ShowWindow();
+                        }
+                        break;
+                    case 1:
+                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
+                                    " errors loading a map on a server.")))
+                        {
+                            MapIO.RemoveBrokenPrefabs();
+                        }
+                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes the prefabs after exporting them."), deletePrefabs, GUILayout.MaxWidth(300));
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
+                            "If you don't delete them after export they will duplicate on first map load.")))
+                        {
+                            prefabSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
+                            if (prefabSaveFile == "")
+                            {
+                                return;
+                            }
+                            MapIO.ExportLootCrates(prefabSaveFile, deletePrefabs);
+                        }
+                        if (GUILayout.Button(new GUIContent("Export Map Prefabs", "Exports all map prefabs to plugin data.")))
+                        {
+                            mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", prefabSaveFile, "MapData", "json");
+                            if (mapPrefabSaveFile == "")
+                            {
+                                return;
+                            }
+                            MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from " +
+                            "appearing in RustEdit. Use the break RustEdit Custom Prefabs button to undo.")))
+                        {
+                            MapIO.HidePrefabsInRustEdit();
+                        }
+                        if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.")))
+                        {
+                            MapIO.BreakRustEditCustomPrefabs();
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        if (GUILayout.Button(new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.")))
+                        {
+                            MapIO.GroupRustEditCustomPrefabs();
+                        }
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
+                        {
+                            MapIO.RemoveMapObjects(true, false);
+                        }
+                        if (GUILayout.Button(new GUIContent("Delete All Map Paths", "Removes all the paths from the map.")))
+                        {
+                            MapIO.RemoveMapObjects(false, true);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        break;
+                    default:
+                        prefabOptions = 0;
+                        break;
+                }
                 break;
             #endregion
             #region Tools
-            case 1:
+            case 2:
                 if (MapIO.loadPath == "")
                 {
                     GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
@@ -327,7 +451,7 @@ public class MapIOEditor : EditorWindow
                                         {
                                             MapIO.SetEdgePixel(heightToSet, sides);
                                         }
-                                        
+
                                         break;
                                     case 1:
                                         GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
@@ -585,14 +709,14 @@ public class MapIOEditor : EditorWindow
                                 }
                                 EditorGUILayout.EndHorizontal();
                                 break;
-                            #endregion
+                                #endregion
                         }
                         break;
                     #endregion
                     #region Layer Tools
                     case 1:
                         GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
-                        
+
                         string oldLandLayer = MapIO.landLayer;
 
                         MapIO.landSelectIndex = EditorGUILayout.Popup("Layer:", MapIO.landSelectIndex, landLayers);
@@ -1028,123 +1152,6 @@ public class MapIOEditor : EditorWindow
                         GUILayout.EndScrollView();
                         break;
                         #endregion
-                }
-                break;
-            #endregion
-            #region Prefabs
-            case 2:
-                if (MapIO.loadPath == "")
-                {
-                    GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
-                    break;
-                }
-                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
-                prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
-                prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
-                //prefabsOptionsMenu[1] = new GUIContent("Spawn Prefabs");
-                prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
-
-                switch (prefabOptions)
-                {
-                    case 0:
-                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. FULL OF BUGS ATM", EditorStyles.boldLabel);
-                        EditorGUILayout.BeginHorizontal();
-                        if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
-                            "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
-                        {
-                            if (!MapIO.bundleFile.Contains(@"Bundles/Bundles"))
-                            {
-                                MapIO.bundleFile = MapIO.bundleFile = EditorUtility.OpenFilePanel("Select Bundle File", MapIO.bundleFile, "");
-                                if (MapIO.bundleFile == "")
-                                {
-                                    return;
-                                }
-                                if (!MapIO.bundleFile.Contains(@"steamapps/common/Rust/Bundles/Bundles"))
-                                {
-                                    EditorUtility.DisplayDialog("ERROR: Bundle File Invalid", @"Bundle file path invalid. It should be located within steamapps\common\Rust\Bundles", "Ok");
-                                    return;
-                                }
-                            }
-                            MapIO.StartPrefabLookup();
-                        }
-                        if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
-                        {
-                            if (MapIO.GetPrefabLookUp() != null)
-                            {
-                                MapIO.GetPrefabLookUp().Dispose();
-                                MapIO.SetPrefabLookup(null);
-                            }
-                            else
-                            {
-                                EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
-                            }
-                        }
-                        EditorGUILayout.EndHorizontal();
-                        MapIO.bundleFile = GUILayout.TextArea(MapIO.bundleFile);
-                        break;
-                    case 2:
-                        if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
-                        {
-                            PrefabHierachyEditor.ShowWindow();
-                        }
-                        break;
-                    case 1:
-                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
-                                    " errors loading a map on a server.")))
-                        {
-                            MapIO.RemoveBrokenPrefabs();
-                        }
-                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes the prefabs after exporting them."), deletePrefabs, GUILayout.MaxWidth(300));
-                        EditorGUILayout.BeginHorizontal();
-                        if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
-                            "If you don't delete them after export they will duplicate on first map load.")))
-                        {
-                            prefabSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
-                            if (prefabSaveFile == "")
-                            {
-                                return;
-                            }
-                            MapIO.ExportLootCrates(prefabSaveFile, deletePrefabs);
-                        }
-                        if (GUILayout.Button(new GUIContent("Export Map Prefabs", "Exports all map prefabs to plugin data.")))
-                        {
-                            mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", prefabSaveFile, "MapData", "json");
-                            if (mapPrefabSaveFile == "")
-                            {
-                                return;
-                            }
-                            MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
-                        }
-                        EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
-                        if (GUILayout.Button(new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from " +
-                            "appearing in RustEdit. Use the break RustEdit Custom Prefabs button to undo.")))
-                        {
-                            MapIO.HidePrefabsInRustEdit();
-                        }
-                        if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.")))
-                        {
-                            MapIO.BreakRustEditCustomPrefabs();
-                        }
-                        EditorGUILayout.EndHorizontal();
-                        if (GUILayout.Button(new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.")))
-                        {
-                            MapIO.GroupRustEditCustomPrefabs();
-                        }
-                        EditorGUILayout.BeginHorizontal();
-                        if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
-                        {
-                            MapIO.RemoveMapObjects(true, false);
-                        }
-                        if (GUILayout.Button(new GUIContent("Delete All Map Paths", "Removes all the paths from the map.")))
-                        {
-                            MapIO.RemoveMapObjects(false, true);
-                        }
-                        EditorGUILayout.EndHorizontal();
-                        break;
-                    default:
-                        prefabOptions = 0;
-                        break;
                 }
                 break;
             #endregion

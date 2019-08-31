@@ -146,28 +146,28 @@ public class WorldConverter
         return terrains;
     }
 
-    public static MapInfo worldToTerrain(WorldSerialization blob) // Loads maps
+    public static MapInfo WorldToTerrain(WorldSerialization world) // Loads maps
     {
         MapInfo terrains = new MapInfo();
 
-        if (blob.GetMap("terrain") == null)
+        if (world.GetMap("terrain") == null)
         {
             Debug.LogError("Old map file");
         }
 
-        var terrainSize = new Vector3(blob.world.size, 1000, blob.world.size);
-        var terrainMap = new TerrainMap<short>(blob.GetMap("terrain").data, 1);
-        var heightMap = new TerrainMap<short>(blob.GetMap("height").data, 1);
-        var waterMap = new TerrainMap<short>(blob.GetMap("water").data, 1);
-        var splatMap = new TerrainMap<byte>(blob.GetMap("splat").data, 8);
-        var topologyMap = new TerrainMap<int>(blob.GetMap("topology").data, 1);
-        var biomeMap = new TerrainMap<byte>(blob.GetMap("biome").data, 4);
-        var alphaMap = new TerrainMap<byte>(blob.GetMap("alpha").data, 1);
+        var terrainSize = new Vector3(world.world.size, 1000, world.world.size);
+        var terrainMap = new TerrainMap<short>(world.GetMap("terrain").data, 1);
+        var heightMap = new TerrainMap<short>(world.GetMap("height").data, 1);
+        var waterMap = new TerrainMap<short>(world.GetMap("water").data, 1);
+        var splatMap = new TerrainMap<byte>(world.GetMap("splat").data, 8);
+        var topologyMap = new TerrainMap<int>(world.GetMap("topology").data, 1);
+        var biomeMap = new TerrainMap<byte>(world.GetMap("biome").data, 4);
+        var alphaMap = new TerrainMap<byte>(world.GetMap("alpha").data, 1);
         
         terrains.topology = topologyMap;
 
-        terrains.pathData = blob.world.paths.ToArray();
-        terrains.prefabData = blob.world.prefabs.ToArray();
+        terrains.pathData = world.world.paths.ToArray();
+        terrains.prefabData = world.world.prefabs.ToArray();
 
         terrains.resolution = heightMap.res;
         terrains.size = terrainSize;
@@ -179,7 +179,7 @@ public class WorldConverter
         terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap, true);
         return terrains;
     }
-    public static WorldSerialization terrainToWorld(Terrain land, Terrain water) // Saves maps
+    public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) // Saves maps
     {
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
