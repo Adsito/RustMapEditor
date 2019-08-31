@@ -63,7 +63,7 @@ public class MapIOEditor : EditorWindow
                     {
                         return;
                     }
-                    var world = new WorldSerialization();
+                    var world = new WorldSerializationSDK();
                     MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                     world.Load(loadFile);
                     MapIO.loadPath = loadFile;
@@ -273,11 +273,6 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Tools
             case 2:
-                if (MapIO.loadPath == "")
-                {
-                    GUILayout.Label("Load a map first before trying to edit.", EditorStyles.boldLabel);
-                    break;
-                }
                 GUIContent[] toolsOptionsMenu = new GUIContent[3];
                 toolsOptionsMenu[0] = new GUIContent("Map Tools");
                 toolsOptionsMenu[1] = new GUIContent("Layer Tools");
@@ -531,18 +526,18 @@ public class MapIOEditor : EditorWindow
                                 switch (landLayerFrom) // Get texture list from the currently selected landLayer.
                                 {
                                     case 0:
-                                        MapIO.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.groundLayerFrom);
-                                        textureFrom = TerrainSplat.TypeToIndex((int)MapIO.groundLayerFrom);
+                                        MapIO.groundLayerFrom = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.groundLayerFrom);
+                                        textureFrom = TerrainSplatSDK.TypeToIndex((int)MapIO.groundLayerFrom);
                                         break;
                                     case 1:
-                                        MapIO.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.biomeLayerFrom);
-                                        textureFrom = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerFrom);
+                                        MapIO.biomeLayerFrom = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.biomeLayerFrom);
+                                        textureFrom = TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayerFrom);
                                         break;
                                     case 2:
                                         textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureAlpha, values);
                                         break;
                                     case 3:
-                                        MapIO.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Copy:", MapIO.topologyLayerFrom);
+                                        MapIO.topologyLayerFrom = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology To Copy:", MapIO.topologyLayerFrom);
                                         textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureTopo, values);
                                         break;
                                 }
@@ -553,25 +548,25 @@ public class MapIOEditor : EditorWindow
                                         Debug.Log("Layer doesn't exist");
                                         break;
                                     case 0:
-                                        MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
-                                        textureToPaint = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
+                                        MapIO.groundLayerToPaint = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
+                                        textureToPaint = TerrainSplatSDK.TypeToIndex((int)MapIO.groundLayerToPaint);
                                         break;
                                     case 1:
-                                        MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
-                                        textureToPaint = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
+                                        MapIO.biomeLayerToPaint = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
+                                        textureToPaint = TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayerToPaint);
                                         break;
                                     case 2:
                                         textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureAlpha, values);
                                         break;
                                     case 3:
-                                        MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Paint:", MapIO.topologyLayerToPaint);
+                                        MapIO.topologyLayerToPaint = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology To Paint:", MapIO.topologyLayerToPaint);
                                         textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureTopo, values);
                                         break;
                                 }
                                 if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[landLayerFrom] + " layer and " +
                                     "paints it on the " + landLayers[landLayerToPaint] + " layer.")))
                                 {
-                                    MapIO.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopology.TypeToIndex((int)MapIO.topologyLayerToPaint));
+                                    MapIO.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayerToPaint));
                                 }
                                 GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
 
@@ -587,11 +582,11 @@ public class MapIOEditor : EditorWindow
                                 {
                                     case 0: // Ground
                                         GUILayout.Label("Ground Texture", EditorStyles.boldLabel);
-                                        MapIO.conditionalGround = (TerrainSplat.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalGround);
+                                        MapIO.conditionalGround = (TerrainSplatSDK.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalGround);
                                         break;
                                     case 1: // Biome
                                         GUILayout.Label("Biome Texture", EditorStyles.boldLabel);
-                                        MapIO.conditionalBiome = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalBiome);
+                                        MapIO.conditionalBiome = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalBiome);
                                         break;
                                     case 2: // Alpha
                                         checkAlpha = EditorGUILayout.Toggle("Check Alpha:", checkAlpha);
@@ -602,7 +597,7 @@ public class MapIOEditor : EditorWindow
                                         break;
                                     case 3: // Topology
                                         GUILayout.Label("Topology Layer", EditorStyles.boldLabel);
-                                        MapIO.conditionalTopology = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalTopology);
+                                        MapIO.conditionalTopology = (TerrainTopologySDK.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalTopology);
                                         EditorGUILayout.Space();
                                         GUILayout.Label("Topology Texture", EditorStyles.boldLabel);
                                         topologyTexture = EditorGUILayout.IntPopup("Topology Texture:", topologyTexture, activeTextureTopo, values);
@@ -662,18 +657,18 @@ public class MapIOEditor : EditorWindow
                                         Debug.Log("Layer doesn't exist");
                                         break;
                                     case 0:
-                                        MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
-                                        texture = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
+                                        MapIO.groundLayerToPaint = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
+                                        texture = TerrainSplatSDK.TypeToIndex((int)MapIO.groundLayerToPaint);
                                         break;
                                     case 1:
-                                        MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
-                                        texture = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
+                                        MapIO.biomeLayerToPaint = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
+                                        texture = TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayerToPaint);
                                         break;
                                     case 2:
                                         texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureAlpha, values);
                                         break;
                                     case 3:
-                                        MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayerToPaint);
+                                        MapIO.topologyLayerToPaint = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayerToPaint);
                                         texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureTopo, values);
                                         break;
                                 }
@@ -775,10 +770,10 @@ public class MapIOEditor : EditorWindow
                         #region Ground Layer
                         if (MapIO.landLayer.Equals("Ground"))
                         {
-                            MapIO.terrainLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", MapIO.terrainLayer);
+                            MapIO.terrainLayer = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", MapIO.terrainLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                MapIO.PaintLayer("Ground", TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintLayer("Ground", TerrainSplatSDK.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
@@ -793,7 +788,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplatSDK.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -814,7 +809,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                MapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplatSDK.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 90
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -832,7 +827,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
                             {
-                                MapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex((int)MapIO.terrainLayer));
+                                MapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplatSDK.TypeToIndex((int)MapIO.terrainLayer));
                             }
                             /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Ground textures");
@@ -848,10 +843,10 @@ public class MapIOEditor : EditorWindow
                         #region Biome Layer
                         if (MapIO.landLayer.Equals("Biome"))
                         {
-                            MapIO.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Biome To Paint:", MapIO.biomeLayer);
+                            MapIO.biomeLayer = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Biome To Paint:", MapIO.biomeLayer);
                             if (GUILayout.Button("Paint Whole Layer"))
                             {
-                                MapIO.PaintLayer("Biome", TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintLayer("Biome", TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate this layer 90° ClockWise.")))
@@ -887,7 +882,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                MapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
@@ -905,7 +900,7 @@ public class MapIOEditor : EditorWindow
                             }
                             if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
                             {
-                                MapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             z1 = EditorGUILayout.IntField("From Z ", z1);
                             z2 = EditorGUILayout.IntField("To Z ", z2);
@@ -913,7 +908,7 @@ public class MapIOEditor : EditorWindow
                             x2 = EditorGUILayout.IntField("To X ", x2);
                             if (GUILayout.Button("Paint Area"))
                             {
-                                MapIO.PaintArea("Biome", z1, z2, x1, x2, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
+                                MapIO.PaintArea("Biome", z1, z2, x1, x2, TerrainBiomeSDK.TypeToIndex((int)MapIO.biomeLayer));
                             }
                             /*
                             GUILayout.Label("Noise scale, the futher left the smaller the blobs \n Replaces the current Biomes");
@@ -1002,7 +997,7 @@ public class MapIOEditor : EditorWindow
                         {
                             GUILayout.Label("Green = Active \nPurple = Inactive", EditorStyles.boldLabel);
                             MapIO.oldTopologyLayer = MapIO.topologyLayer;
-                            MapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayer);
+                            MapIO.topologyLayer = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayer);
                             if (MapIO.topologyLayer != MapIO.oldTopologyLayer)
                             {
                                 MapIO.ChangeLandLayer();
@@ -1011,7 +1006,7 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Layer"))
                             {
-                                MapIO.PaintLayer("Topology", 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintLayer("Topology", 0, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button("Clear Layer"))
                             {
@@ -1055,7 +1050,7 @@ public class MapIOEditor : EditorWindow
                             aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
                             if (GUILayout.Button("Paint Rivers"))
                             {
-                                MapIO.PaintRiver("Topology", aboveTerrain, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintRiver("Topology", aboveTerrain, 0, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
                             EditorGUILayout.BeginHorizontal();
@@ -1065,11 +1060,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
                             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the slopes on the " + MapIO.landLayer + " layer within the slope range.")))
                             {
-                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 0, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button(new GUIContent("Erase Slopes", "Paints the slopes within the slope range with the INACTIVE topology texture.")))
                             {
-                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeLow, slopeHigh, 1, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             GUILayout.Label("Height Tools", EditorStyles.boldLabel); // From 0 - 1000
                             EditorGUILayout.BeginHorizontal();
@@ -1080,11 +1075,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button(new GUIContent("Paint Range", "Paints the slopes within the height range with the ACTIVE topology texture.")))
                             {
-                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 0, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button(new GUIContent("Erase Range", "Paints the slopes within the height range with the INACTIVE topology texture.")))
                             {
-                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightLow, heightHigh, 1, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             EditorGUILayout.EndHorizontal();
                             z1 = EditorGUILayout.IntField("From Z ", z1);
@@ -1094,11 +1089,11 @@ public class MapIOEditor : EditorWindow
                             EditorGUILayout.BeginHorizontal();
                             if (GUILayout.Button("Paint Area"))
                             {
-                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 0, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 0, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             if (GUILayout.Button("Erase Area"))
                             {
-                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                                MapIO.PaintArea("Topology", z1, z2, x1, x2, 1, TerrainTopologySDK.TypeToIndex((int)MapIO.topologyLayer));
                             }
                             EditorGUILayout.EndHorizontal();
                             /*

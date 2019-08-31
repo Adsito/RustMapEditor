@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class FileSystem_AssetBundles : IFileSystem
+public class FileSystem_AssetBundlesSDK : IFileSystemSDK
 {
     public static string loadingError = string.Empty;
     private Dictionary<string, AssetBundle> bundles = new Dictionary<string, AssetBundle>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
@@ -23,9 +23,9 @@ public class FileSystem_AssetBundles : IFileSystem
     private AssetBundleManifest manifest;
     private string assetPath;
 
-    public FileSystem_AssetBundles(string assetRoot)
+    public FileSystem_AssetBundlesSDK(string assetRoot)
     {
-        FileSystem_AssetBundles.isError = false;
+        FileSystem_AssetBundlesSDK.isError = false;
         this.assetPath = Path.GetDirectoryName(assetRoot) + (object)Path.DirectorySeparatorChar;
         this.rootBundle = AssetBundle.LoadFromFile(assetRoot);
         if ((UnityEngine.Object)this.rootBundle == (UnityEngine.Object)null)
@@ -45,7 +45,7 @@ public class FileSystem_AssetBundles : IFileSystem
                 foreach (string allAssetBundle in this.manifest.GetAllAssetBundles())
                 {
                     this.LoadBundle(allAssetBundle);
-                    if (FileSystem_AssetBundles.isError)
+                    if (FileSystem_AssetBundlesSDK.isError)
                         return;
                 }
                 this.BuildFileIndex();
@@ -72,8 +72,8 @@ public class FileSystem_AssetBundles : IFileSystem
     private void LoadError(string err)
     {
         UnityEngine.Debug.LogError((object)err);
-        FileSystem_AssetBundles.loadingError = err;
-        FileSystem_AssetBundles.isError = true;
+        FileSystem_AssetBundlesSDK.loadingError = err;
+        FileSystem_AssetBundlesSDK.isError = true;
     }
 
     private void LoadBundle(string bundleName)

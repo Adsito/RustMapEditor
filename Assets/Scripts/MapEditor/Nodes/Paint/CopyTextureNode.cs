@@ -13,9 +13,9 @@ public class CopyTextureNode : Node
     [HideInInspector] public int[] values = { 0, 1 };
     [HideInInspector] public string[] activeTextureAlpha = { "Visible", "Invisible" };
     [HideInInspector] public string[] activeTextureTopo = { "Active", "Inactive" };
-    [HideInInspector] public TerrainSplat.Enum groundLayerFrom = TerrainSplat.Enum.Grass;
-    [HideInInspector] public TerrainBiome.Enum biomeLayerFrom = TerrainBiome.Enum.Temperate;
-    [HideInInspector] public TerrainTopology.Enum topologyLayerFrom = TerrainTopology.Enum.Beach;
+    [HideInInspector] public TerrainSplatSDK.Enum groundLayerFrom = TerrainSplatSDK.Enum.Grass;
+    [HideInInspector] public TerrainBiomeSDK.Enum biomeLayerFrom = TerrainBiomeSDK.Enum.Temperate;
+    [HideInInspector] public TerrainTopologySDK.Enum topologyLayerFrom = TerrainTopologySDK.Enum.Beach;
     #endregion
     public override object GetValue(NodePort port)
     {
@@ -36,10 +36,10 @@ public class CopyTextureNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                MapIO.CopyTexture(landLayers[landLayerFrom], "Ground", textureFrom, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.CopyTexture(landLayers[landLayerFrom], "Ground", textureFrom, TerrainSplatSDK.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                MapIO.CopyTexture(landLayers[landLayerFrom], "Biome", textureFrom, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.CopyTexture(landLayers[landLayerFrom], "Biome", textureFrom, TerrainBiomeSDK.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
                 MapIO.CopyTexture(landLayers[landLayerFrom], "Alpha", textureFrom, layer.AlphaTexture);

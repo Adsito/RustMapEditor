@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class PathDataHolder : MonoBehaviour {
     
-    public WorldSerialization.PathData pathData;
+    public WorldSerializationSDK.PathData pathData;
     public float resolutionFactor = 0;
 
 

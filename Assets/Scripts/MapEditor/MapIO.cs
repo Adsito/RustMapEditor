@@ -8,7 +8,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
-using static WorldSerialization;
+using static WorldSerializationSDK;
 
 public class CustomPrefab : MonoBehaviour
 {
@@ -67,15 +67,15 @@ public struct BiomeTextures
 }
 public struct Conditions
 {
-    public TerrainSplat.Enum GroundConditions
+    public TerrainSplatSDK.Enum GroundConditions
     {
         get; set;
     }
-    public TerrainBiome.Enum BiomeConditions
+    public TerrainBiomeSDK.Enum BiomeConditions
     {
         get; set;
     }
-    public TerrainTopology.Enum TopologyLayers
+    public TerrainTopologySDK.Enum TopologyLayers
     {
         get; set;
     }
@@ -123,9 +123,9 @@ public struct Conditions
 public static class MapIO
 {
     #region Layers
-    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
-    public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
-    public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
+    public static TerrainTopologySDK.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
+    public static TerrainSplatSDK.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
+    public static TerrainBiomeSDK.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
     public static int landSelectIndex = 0;
     public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "", bundleFile = "No bundle file selected";
@@ -170,7 +170,7 @@ public static class MapIO
         EditorApplication.update -= OnProjectLoad;
         if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
         {
-            
+            CreateNewMap(2000);
         }
     }
     public static void SaveSettings()
@@ -189,20 +189,20 @@ public static class MapIO
     }
     public static void SetLayers()
     {
-        topologyLayerFrom = TerrainTopology.Enum.Beach;
-        topologyLayerToPaint = TerrainTopology.Enum.Beach;
-        groundLayerFrom = TerrainSplat.Enum.Grass;
-        groundLayerToPaint = TerrainSplat.Enum.Grass;
-        biomeLayerFrom = TerrainBiome.Enum.Temperate;
-        biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-        topologyLayer = TerrainTopology.Enum.Beach;
-        conditionalTopology = TerrainTopology.NOTHING;
-        topologyLayersList = TerrainTopology.Enum.Beach;
-        oldTopologyLayer = TerrainTopology.Enum.Beach;
-        biomeLayer = TerrainBiome.Enum.Temperate;
-        conditionalBiome = TerrainBiome.NOTHING;
-        terrainLayer = TerrainSplat.Enum.Grass;
-        conditionalGround = TerrainSplat.NOTHING;
+        topologyLayerFrom = TerrainTopologySDK.Enum.Beach;
+        topologyLayerToPaint = TerrainTopologySDK.Enum.Beach;
+        groundLayerFrom = TerrainSplatSDK.Enum.Grass;
+        groundLayerToPaint = TerrainSplatSDK.Enum.Grass;
+        biomeLayerFrom = TerrainBiomeSDK.Enum.Temperate;
+        biomeLayerToPaint = TerrainBiomeSDK.Enum.Temperate;
+        topologyLayer = TerrainTopologySDK.Enum.Beach;
+        conditionalTopology = TerrainTopologySDK.NOTHING;
+        topologyLayersList = TerrainTopologySDK.Enum.Beach;
+        oldTopologyLayer = TerrainTopologySDK.Enum.Beach;
+        biomeLayer = TerrainBiomeSDK.Enum.Temperate;
+        conditionalBiome = TerrainBiomeSDK.NOTHING;
+        terrainLayer = TerrainSplatSDK.Enum.Grass;
+        conditionalGround = TerrainSplatSDK.NOTHING;
     }
     /// <summary>
     /// Displays a popup progress bar, the progress is also visible in the taskbar.
@@ -259,7 +259,7 @@ public static class MapIO
     }
     public static void ChangeLandLayer()
     {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
+        LandData.SaveLayer(TerrainTopologySDK.TypeToIndex((int)oldTopologyLayer));
         Undo.ClearAll();
         switch (landLayer.ToLower())
         {
@@ -273,7 +273,7 @@ public static class MapIO
                 LandData.SetLayer("alpha");
                 break;
             case "topology":
-                LandData.SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+                LandData.SetLayer("topology", TerrainTopologySDK.TypeToIndex((int)topologyLayer));
                 break;
         }
     }
@@ -399,13 +399,13 @@ public static class MapIO
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void RotateLayer(string landLayerToPaint, bool CW, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    public static void RotateLayer(string landLayerToPaint, bool CW, TerrainTopologySDK.Enum topologyLayers = TerrainTopologySDK.Enum.Beach)
     {
         progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
         foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
             progressBar += progressValue;
-            var rotateText = (landLayerToPaint.ToLower() == "topology") ? ((TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt)).ToString() : landLayerToPaint;
+            var rotateText = (landLayerToPaint.ToLower() == "topology") ? ((TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(topologyInt)).ToString() : landLayerToPaint;
             ProgressBar("Rotating Layers", "Rotating: " + rotateText, progressBar);
             int textureCount = TextureCount(landLayerToPaint);
             float[,,] oldLayer = GetSplatMap(landLayerToPaint, topologyInt);
@@ -438,7 +438,7 @@ public static class MapIO
             }
             LandData.SetData(newLayer, landLayerToPaint, topologyInt);
         }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(landLayer, TerrainTopologySDK.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
     }
     /// <summary>
@@ -447,9 +447,9 @@ public static class MapIO
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateAllTopologymap(bool CW)
     {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
         {
-            RotateLayer("topology", CW, (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            RotateLayer("topology", CW, (TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(i));
         }
     }
     #endregion
@@ -751,10 +751,10 @@ public static class MapIO
     /// </summary>
     /// <param name="ground">The TerrainSplat Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainSplat.Enum ground)
+    public static List<int> ReturnSelectedElements(TerrainSplatSDK.Enum ground)
     {
         List<int> selectedElements = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainSplatSDK.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)ground & layer) != 0)
@@ -769,10 +769,10 @@ public static class MapIO
     /// </summary>
     /// <param name="biome">The TerrainBiome Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainBiome.Enum biome)
+    public static List<int> ReturnSelectedElements(TerrainBiomeSDK.Enum biome)
     {
         List<int> selectedElements = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainBiomeSDK.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)biome & layer) != 0)
@@ -787,10 +787,10 @@ public static class MapIO
     /// </summary>
     /// <param name="topology">The TerrainTopology Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainTopology.Enum topology)
+    public static List<int> ReturnSelectedElements(TerrainTopologySDK.Enum topology)
     {
         List<int> selectedElements = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(TerrainTopologySDK.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)topology & layer) != 0)
@@ -1098,13 +1098,13 @@ public static class MapIO
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Alpha, Topology)</param>
     /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void ClearLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    public static void ClearLayer(string landLayerToPaint, TerrainTopologySDK.Enum topologyLayers = TerrainTopologySDK.Enum.Beach)
     {
         progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
         foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
             progressBar += progressValue;
-            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
+            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(topologyInt), progressBar);
             float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
             var alpha = (landLayerToPaint.ToLower() == "alpha") ? true : false;
             for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1125,7 +1125,7 @@ public static class MapIO
             }
             LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(landLayer, TerrainTopologySDK.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
     }
     /// <summary>
@@ -1133,9 +1133,9 @@ public static class MapIO
     /// </summary>
     public static void ClearAllTopologyLayers()
     {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
         {
-            ClearLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            ClearLayer("topology", (TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(i));
         }
     }
     /// <summary>
@@ -1143,13 +1143,13 @@ public static class MapIO
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
     /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void InvertLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    public static void InvertLayer(string landLayerToPaint, TerrainTopologySDK.Enum topologyLayers = TerrainTopologySDK.Enum.Beach)
     {
         progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
         foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
         {
             progressBar += progressValue;
-            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
+            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(topologyInt), progressBar);
             float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
             for (int i = 0; i < splatMap.GetLength(0); i++)
             {
@@ -1169,7 +1169,7 @@ public static class MapIO
             }
             LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(landLayer, TerrainTopologySDK.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
     }
     /// <summary>
@@ -1177,9 +1177,9 @@ public static class MapIO
     /// </summary>
     public static void InvertAllTopologyLayers()
     {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
         {
-            InvertLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            InvertLayer("topology", (TerrainTopologySDK.Enum)TerrainTopologySDK.IndexToType(i));
         }
     }
     /// <summary>
@@ -1759,9 +1759,9 @@ public static class MapIO
         LandData.SetData(terrains.alphaMap, "alpha");
 
         ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
         {
-            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
+            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopologySDK.IndexToType(i)), "topology", i);
         }
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -1796,13 +1796,13 @@ public static class MapIO
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
+        LandData.SetLayer(landLayer, TerrainTopologySDK.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
     /// <summary>
     /// Loads a WorldSerialization and calls LoadMapInfo.
     /// </summary>
-    public static void Load(WorldSerialization world)
+    public static void Load(WorldSerializationSDK world)
     {
         WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(world);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
@@ -1814,7 +1814,7 @@ public static class MapIO
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SaveLayer(TerrainTopologySDK.TypeToIndex((int)topologyLayer));
         foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
         {
             item.gameObject.SetActive(true);
@@ -1823,7 +1823,7 @@ public static class MapIO
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
         ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
+        WorldSerializationSDK world = WorldConverter.TerrainToWorld(terrain, water);
         ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);

@@ -1,12 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct Union8
+public struct Union16SDK
 {
 	[FieldOffset(0)]
-	public sbyte i;
+	public short i;
 	[FieldOffset(0)]
-	public byte u;
+	public ushort u;
 	[FieldOffset(0)]
 	public byte b1;
+	[FieldOffset(1)]
+	public byte b2;
 }

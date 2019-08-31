@@ -6,7 +6,7 @@
 
 using UnityEngine;
 
-public interface IFileSystem
+public interface IFileSystemSDK
 {
     T Load<T>(string filePath, bool bComplain = true) where T : Object;
 

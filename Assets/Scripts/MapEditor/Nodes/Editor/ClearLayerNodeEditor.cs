@@ -19,7 +19,7 @@ public class ClearLayerNodeEditor : NodeEditor
         ClearLayerNode node = target as ClearLayerNode;
         if (node.layer == NodeVariables.Misc.DualLayerEnum.Topology)
         {
-            node.topologies = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(node.topologies);
+            node.topologies = (TerrainTopologySDK.Enum)EditorGUILayout.EnumFlagsField(node.topologies);
         }
     }
 }

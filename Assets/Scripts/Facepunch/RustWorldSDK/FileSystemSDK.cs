@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class FileSystem
+public static class FileSystemSDK
 {
-    public static IFileSystem iface = (IFileSystem)null;
+    public static IFileSystemSDK iface = (IFileSystemSDK)null;
     public static Dictionary<string, UnityEngine.Object> cache = new Dictionary<string, UnityEngine.Object>();
 
     public static GameObject[] LoadPrefabs(string folder)
@@ -19,27 +19,27 @@ public static class FileSystem
             Debug.LogWarning((object)("FileSystem.LoadPrefabs - folder should end in '/' - " + folder));
         if (!folder.StartsWith("assets/"))
             Debug.LogWarning((object)("FileSystem.LoadPrefabs - should start with assets/ - " + folder));
-        return FileSystem.LoadAll<GameObject>(folder, ".prefab");
+        return FileSystemSDK.LoadAll<GameObject>(folder, ".prefab");
     }
 
     public static GameObject LoadPrefab(string filePath)
     {
         if (!filePath.StartsWith("assets/", StringComparison.CurrentCultureIgnoreCase))
             Debug.LogWarning((object)("FileSystem.LoadPrefab - should start with assets/ - " + filePath));
-        return FileSystem.Load<GameObject>(filePath, true);
+        return FileSystemSDK.Load<GameObject>(filePath, true);
     }
 
     public static string[] FindAll(string folder, string search = "")
     {
-        return FileSystem.iface.FindAll(folder, search);
+        return FileSystemSDK.iface.FindAll(folder, search);
     }
 
     public static T[] LoadAll<T>(string folder, string search = "") where T : UnityEngine.Object
     {
         List<T> objList = new List<T>();
-        foreach (string filePath in FileSystem.FindAll(folder, search))
+        foreach (string filePath in FileSystemSDK.FindAll(folder, search))
         {
-            T obj = FileSystem.Load<T>(filePath, true);
+            T obj = FileSystemSDK.Load<T>(filePath, true);
             if ((UnityEngine.Object)obj != (UnityEngine.Object)null)
                 objList.Add(obj);
         }
@@ -50,24 +50,24 @@ public static class FileSystem
     {
         filePath = filePath.ToLower();
         T obj2;
-        if (FileSystem.cache.ContainsKey(filePath))
+        if (FileSystemSDK.cache.ContainsKey(filePath))
         {
-            obj2 = FileSystem.cache[filePath] as T;
+            obj2 = FileSystemSDK.cache[filePath] as T;
         }
         else
         {
             
-            obj2 = FileSystem.iface.Load<T>(filePath, bComplain);
+            obj2 = FileSystemSDK.iface.Load<T>(filePath, bComplain);
             if ((UnityEngine.Object)obj2 != (UnityEngine.Object)null)
-                FileSystem.cache.Add(filePath, (UnityEngine.Object)obj2);
+                FileSystemSDK.cache.Add(filePath, (UnityEngine.Object)obj2);
         }
         return obj2;
     }
 
-    public static FileSystem.Operation LoadAsync(string filePath)
+    public static FileSystemSDK.Operation LoadAsync(string filePath)
     {
         filePath = filePath.ToLower();
-        return !FileSystem.cache.ContainsKey(filePath) ? new FileSystem.Operation(filePath, FileSystem.iface.LoadAsync(filePath)) : new FileSystem.Operation(filePath, (AsyncOperation)null);
+        return !FileSystemSDK.cache.ContainsKey(filePath) ? new FileSystemSDK.Operation(filePath, FileSystemSDK.iface.LoadAsync(filePath)) : new FileSystemSDK.Operation(filePath, (AsyncOperation)null);
     }
 
     public struct Operation
@@ -101,7 +101,7 @@ public static class FileSystem
             }
         }
 
-        public static implicit operator AsyncOperation(FileSystem.Operation op)
+        public static implicit operator AsyncOperation(FileSystemSDK.Operation op)
         {
             return op.request;
         }
@@ -111,16 +111,16 @@ public static class FileSystem
             T obj = (T)null;
             if (!this.isDone)
                 return obj;
-            if (FileSystem.cache.ContainsKey(this.path))
+            if (FileSystemSDK.cache.ContainsKey(this.path))
             {
-                obj = FileSystem.cache[this.path] as T;
+                obj = FileSystemSDK.cache[this.path] as T;
             }
             else
             {
                 AssetBundleRequest request = this.request as AssetBundleRequest;
                 if (request != null && request.asset != (UnityEngine.Object)null)
                 {
-                    FileSystem.cache.Add(this.path, request.asset);
+                    FileSystemSDK.cache.Add(this.path, request.asset);
                     obj = request.asset as T;
                 }
             }
