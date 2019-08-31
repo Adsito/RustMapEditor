@@ -10,7 +10,6 @@ using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
 using static WorldSerialization;
 
-[Serializable]
 public class CustomPrefab : MonoBehaviour
 {
     public void UnGroupPrefab()
@@ -171,9 +170,12 @@ public static class MapIO
         EditorApplication.update -= OnProjectLoad;
         if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
         {
-            NewEmptyTerrain(2000); // Create new map.
-            loadPath = "newmap.map";
+            
         }
+    }
+    public static void SaveSettings()
+    {
+
     }
     public static void CentreSceneView()
     {
@@ -1800,9 +1802,9 @@ public static class MapIO
     /// <summary>
     /// Loads a WorldSerialization and calls LoadMapInfo.
     /// </summary>
-    public static void Load(WorldSerialization blob)
+    public static void Load(WorldSerialization world)
     {
-        WorldConverter.MapInfo terrains = WorldConverter.worldToTerrain(blob);
+        WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(world);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(terrains);
     }
@@ -1821,7 +1823,7 @@ public static class MapIO
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
         ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = WorldConverter.terrainToWorld(terrain, water);
+        WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
         ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
@@ -1831,7 +1833,7 @@ public static class MapIO
     /// Creates a new flat terrain.
     /// </summary>
     /// <param name="size">The size of the terrain.</param>
-    public static void NewEmptyTerrain(int size)
+    public static void CreateNewMap(int size)
     {
         LoadMapInfo(WorldConverter.emptyWorld(size));
         PaintLayer("Alpha", 0);
