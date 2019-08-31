@@ -7,7 +7,7 @@ using System.IO;
 using ProtoBuf;
 using LZ4;
 
-public class WorldSerialization
+public class WorldSerializationSDK
 {
     public const uint CurrentVersion = 9;
 
@@ -23,7 +23,7 @@ public class WorldSerialization
 
     public WorldData world = new WorldData();
 
-    public WorldSerialization()
+    public WorldSerializationSDK()
     {
         Version = CurrentVersion;
         Checksum = null;

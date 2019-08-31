@@ -5,7 +5,7 @@ using System.Linq;
 
 #if UNITY_EDITOR
 
-public class AssetDatabaseBackend : FileSystemBackend
+public class AssetDatabaseBackendSDK : FileSystemBackendSDK
 {
 	protected override T LoadAsset<T>(string filePath)
 	{

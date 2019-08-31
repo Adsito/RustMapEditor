@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-public class TerrainMap<T> where T : struct
+public class TerrainMapSDK<T> where T : struct
 {
 	public int res;
 	public T[] src;
@@ -22,7 +22,7 @@ public class TerrainMap<T> where T : struct
 		set { dst[(c * res + z) * res + x] = value; }
 	}
 
-	public TerrainMap(byte[] data, int channels)
+	public TerrainMapSDK(byte[] data, int channels)
 	{
 		res = Mathf.RoundToInt(Mathf.Sqrt(data.Length / BytesPerElement() / channels));
 		src = dst = new T[channels * res * res];
@@ -30,7 +30,7 @@ public class TerrainMap<T> where T : struct
 		FromByteArray(data);
 	}
 
-	public TerrainMap(int size, int channels)
+	public TerrainMapSDK(int size, int channels)
 	{
 		res = size;
 		src = dst = new T[channels * res * res];

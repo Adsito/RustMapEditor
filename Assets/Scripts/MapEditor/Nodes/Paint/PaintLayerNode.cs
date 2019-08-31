@@ -26,10 +26,10 @@ public class PaintLayerNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                MapIO.PaintLayer("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintLayer("Ground", TerrainSplatSDK.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                MapIO.PaintLayer("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintLayer("Biome", TerrainBiomeSDK.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
                 MapIO.PaintLayer("Alpha", layer.AlphaTexture);

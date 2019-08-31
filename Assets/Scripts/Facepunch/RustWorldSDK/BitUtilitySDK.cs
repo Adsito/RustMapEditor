@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-public class BitUtility
+public class BitUtilitySDK
 {
 	private const float float2byte = 255;
 	private const float byte2float = 1f / float2byte;
 
 	public static byte Float2Byte(float f)
 	{
-		Union32 u = new Union32();
+		Union32SDK u = new Union32SDK();
 		u.f = f;
 		u.b1 = 0;
 		return (byte)(u.f * float2byte + 0.5f);
@@ -34,14 +34,14 @@ public class BitUtility
 
 	public static Color32 EncodeFloat(float f)
 	{
-		Union32 u = new Union32();
+		Union32SDK u = new Union32SDK();
 		u.f = f;
 		return new Color32(u.b1, u.b2, u.b3, u.b4);
 	}
 
 	public static float DecodeFloat(Color32 c)
 	{
-		Union32 u = new Union32();
+		Union32SDK u = new Union32SDK();
 		u.b1 = c.r;
 		u.b2 = c.g;
 		u.b3 = c.b;
@@ -51,14 +51,14 @@ public class BitUtility
 
 	public static Color32 EncodeInt(int i)
 	{
-		Union32 u = new Union32();
+		Union32SDK u = new Union32SDK();
 		u.i = i;
 		return new Color32(u.b1, u.b2, u.b3, u.b4);
 	}
 
 	public static int DecodeInt(Color32 c)
 	{
-		Union32 u = new Union32();
+		Union32SDK u = new Union32SDK();
 		u.b1 = c.r;
 		u.b2 = c.g;
 		u.b3 = c.b;
@@ -68,14 +68,14 @@ public class BitUtility
 
 	public static Color32 EncodeShort(short i)
 	{
-		Union16 u = new Union16();
+		Union16SDK u = new Union16SDK();
 		u.i = i;
 		return new Color32(u.b1, 0, u.b2, 1);
 	}
 
 	public static short DecodeShort(Color32 c)
 	{
-		Union16 u = new Union16();
+		Union16SDK u = new Union16SDK();
 		u.b1 = c.r;
 		u.b2 = c.b;
 		return u.i;

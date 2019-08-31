@@ -6,14 +6,14 @@ using System.Linq;
 
 public static class TypeConverter {
 
-    public static float[,] shortMapToFloatArray(TerrainMap<short> terrainMap)
+    public static float[,] shortMapToFloatArray(TerrainMapSDK<short> terrainMap)
     {
         float[,] heights = new float[terrainMap.res, terrainMap.res];
         for (int i = 0; i < heights.GetLength(0); i++)
         {
             for (int j = 0; j < heights.GetLength(1); j++)
             {
-                heights[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
+                heights[i, j] = BitUtilitySDK.Short2Float(terrainMap[i, j]);
             }
         }
         return heights;
@@ -27,7 +27,7 @@ public static class TypeConverter {
         {
             for (int j = 0; j < floatArray.GetLength(1); j++)
             {
-                shortArray[(i * floatArray.GetLength(0)) + j] = BitUtility.Float2Short(floatArray[i, j]);
+                shortArray[(i * floatArray.GetLength(0)) + j] = BitUtilitySDK.Float2Short(floatArray[i, j]);
             }
         }
 

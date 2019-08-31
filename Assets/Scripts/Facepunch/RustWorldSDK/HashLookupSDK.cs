@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 
-public class HashLookup
+public class HashLookupSDK
 {
 	private Dictionary<uint, string> uid2str = new Dictionary<uint, string>();
 	private Dictionary<string, uint> str2uid = new Dictionary<string, uint>();
 
-	public HashLookup(string text)
+	public HashLookupSDK(string text)
 	{
 		using (var reader = new StringReader(text))
 		{

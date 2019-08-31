@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StringPool
+public class StringPoolSDK
 {
     public static Dictionary<uint, string> toString;
     private static Dictionary<string, uint> toNumber;
@@ -17,27 +17,27 @@ public class StringPool
 
     private static void Init()
     {
-        if (StringPool.initialized)
+        if (StringPoolSDK.initialized)
             return;
-        StringPool.toString = new Dictionary<uint, string>();
-        StringPool.toNumber = new Dictionary<string, uint>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-        GameManifest gameManifest = FileSystem.Load<GameManifest>("Assets/manifest.asset", true);
+        StringPoolSDK.toString = new Dictionary<uint, string>();
+        StringPoolSDK.toNumber = new Dictionary<string, uint>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
+        GameManifestSDK gameManifest = FileSystemSDK.Load<GameManifestSDK>("Assets/manifest.asset", true);
         for (uint index = 0; (long)index < (long)gameManifest.pooledStrings.Length; ++index)
         {
-            StringPool.toString.Add(gameManifest.pooledStrings[index].hash, gameManifest.pooledStrings[index].str);
-            StringPool.toNumber.Add(gameManifest.pooledStrings[index].str, gameManifest.pooledStrings[index].hash);
+            StringPoolSDK.toString.Add(gameManifest.pooledStrings[index].hash, gameManifest.pooledStrings[index].str);
+            StringPoolSDK.toNumber.Add(gameManifest.pooledStrings[index].str, gameManifest.pooledStrings[index].hash);
         }
-        StringPool.initialized = true;
-        StringPool.closest = StringPool.Get("closest");
+        StringPoolSDK.initialized = true;
+        StringPoolSDK.closest = StringPoolSDK.Get("closest");
     }
 
     public static string Get(uint i)
     {
         if ((int)i == 0)
             return string.Empty;
-        StringPool.Init();
+        StringPoolSDK.Init();
         string str;
-        if (StringPool.toString.TryGetValue(i, out str))
+        if (StringPoolSDK.toString.TryGetValue(i, out str))
             return str;
         Debug.LogWarning((object)("StringPool.GetString - no string for ID" + (object)i));
         return string.Empty;
@@ -47,9 +47,9 @@ public class StringPool
     {
         if (string.IsNullOrEmpty(str))
             return 0;
-        StringPool.Init();
+        StringPoolSDK.Init();
         uint num;
-        if (StringPool.toNumber.TryGetValue(str, out num))
+        if (StringPoolSDK.toNumber.TryGetValue(str, out num))
             return num;
         Debug.LogWarning((object)("StringPool.GetNumber - no number for string " + str));
         return 0;
@@ -58,11 +58,11 @@ public class StringPool
     public static uint Add(string str)
     {
         uint key = 0;
-        if (!StringPool.toNumber.TryGetValue(str, out key))
+        if (!StringPoolSDK.toNumber.TryGetValue(str, out key))
         {
             //key = str.ManifestHash();
-            StringPool.toString.Add(key, str);
-            StringPool.toNumber.Add(str, key);
+            StringPoolSDK.toString.Add(key, str);
+            StringPoolSDK.toNumber.Add(str, key);
         }
         return key;
     }
