@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct Union64
+public struct Union64SDK
 {
 	[FieldOffset(0)]
 	public long i;

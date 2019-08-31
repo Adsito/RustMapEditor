@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-public class GameManifest : ScriptableObject
+public class GameManifestSDK : ScriptableObject
 {
 	[Serializable]
 	public struct PooledString
@@ -60,13 +60,13 @@ public class GameManifest : ScriptableObject
 
 	public string[] entities;
 
-	internal static GameManifest loadedManifest;
+	internal static GameManifestSDK loadedManifest;
 
 	internal static Dictionary<string, string> guidToPath = new Dictionary<string, string>();
 
 	internal static Dictionary<string, UnityEngine.Object> guidToObject = new Dictionary<string, UnityEngine.Object>();
 
-	public static GameManifest Current
+	public static GameManifestSDK Current
 	{
 		get
 		{
@@ -83,7 +83,7 @@ public class GameManifest : ScriptableObject
 	{
 		if (!(loadedManifest != null))
 		{
-			loadedManifest = FileSystem.Load<GameManifest>("Assets/manifest.asset");
+			loadedManifest = FileSystemSDK.Load<GameManifestSDK>("Assets/manifest.asset");
 			PrefabProperties[] array = loadedManifest.prefabProperties;
 			foreach (PrefabProperties prefabProperties in array)
 			{
@@ -154,7 +154,7 @@ public class GameManifest : ScriptableObject
 			guidToObject.Add(guid, null);
 			return null;
 		}
-		UnityEngine.Object @object = FileSystem.Load<UnityEngine.Object>(text);
+		UnityEngine.Object @object = FileSystemSDK.Load<UnityEngine.Object>(text);
 		guidToObject.Add(guid, @object);
 		return @object;
 	}

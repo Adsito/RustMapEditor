@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public abstract class FileSystemBackend
+public abstract class FileSystemBackendSDK
 {
 	public bool isError = false;
 	public string loadingError = "";

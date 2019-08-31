@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
-public class AssetBundleBackend : FileSystemBackend, System.IDisposable
+public class AssetBundleBackendSDK : FileSystemBackendSDK, System.IDisposable
 {
 	private AssetBundle rootBundle;
 	private AssetBundleManifest manifest;
@@ -12,7 +12,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 	public Dictionary<string, AssetBundle> files = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	private string assetPath;
 
-	public AssetBundleBackend(string assetRoot)
+	public AssetBundleBackendSDK(string assetRoot)
 	{
         
 		isError = false;

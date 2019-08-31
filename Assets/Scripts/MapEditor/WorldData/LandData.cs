@@ -20,7 +20,7 @@ public static class LandData
     /// <summary>
     /// The Topology layers, and textures of the map.
     /// </summary>
-    public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
+    public static float[][,,] topologyArray = new float[TerrainTopologySDK.COUNT][,,];
 
     public static TerrainLayer[] groundTextures = null;
     public static TerrainLayer[] biomeTextures = null;

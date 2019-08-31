@@ -21,8 +21,8 @@ public class PrefabAttributes : List<PrefabAttributes>
 }
 public class PrefabLookup : System.IDisposable
 {
-	private AssetBundleBackend backend;
-	private HashLookup lookup;
+	private AssetBundleBackendSDK backend;
+	private HashLookupSDK lookup;
     public List<Mesh> meshes = new List<Mesh>();
     public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
@@ -38,13 +38,13 @@ public class PrefabLookup : System.IDisposable
 
     public PrefabLookup(string bundlename)
     {
-        backend = new AssetBundleBackend(bundlename);
+        backend = new AssetBundleBackendSDK(bundlename);
         AssetBundleLookup();
         AssetDump();
         float progress = 0f;
         float progressInterval = 0f;
         var lookupString = "";
-        var manifest = backend.Load<GameManifest>(manifestPath);
+        var manifest = backend.Load<GameManifestSDK>(manifestPath);
         if (manifest == null)
         {
             Debug.LogError("Manifest is null");
@@ -58,7 +58,7 @@ public class PrefabLookup : System.IDisposable
                 lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
             }
         }
-        lookup = new HashLookup(lookupString);
+        lookup = new HashLookupSDK(lookupString);
         var lines = File.ReadAllLines(assetsToLoadPath);
         progressInterval = 1f / lines.Length;
         foreach (var line in lines)
@@ -96,8 +96,9 @@ public class PrefabLookup : System.IDisposable
             if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
             {
                 //CreatePrefabDirectory(subpaths[i]);
-                prefabs[i] = backend.Load<GameObject>(subpaths[i]);
-                PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
+                //prefabs[i] = backend.Load<GameObject>(subpaths[i]);
+                //PreparePrefab(prefabs[i], subpaths[i], lookup[subpaths[i]]);
+                GameObject.Instantiate(backend.Load<GameObject>(subpaths[i]));
             }
         }
     }
@@ -214,7 +215,7 @@ public class PrefabLookup : System.IDisposable
         go.tag = "LoadedPrefab";
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-        prefabDataHolder.prefabData = new WorldSerialization.PrefabData
+        prefabDataHolder.prefabData = new WorldSerializationSDK.PrefabData
         {
             id = rustid,
         };

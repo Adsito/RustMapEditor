@@ -7,9 +7,9 @@ public static class TopologyData
     [SerializeField]
     public static byte[] top;
 
-    public static TerrainMap<int> GetTerrainMap()
+    public static TerrainMapSDK<int> GetTerrainMap()
     {
-        return new TerrainMap<int>(top, 1);
+        return new TerrainMapSDK<int>(top, 1);
     }
     /// <summary>
     /// Returns the Splatmap of the selected Topology Layer.
@@ -18,7 +18,7 @@ public static class TopologyData
     /// <returns></returns>
     public static float[,,] GetTopologyLayer(int layer)
     {
-        TerrainMap<int> topology = GetTerrainMap();
+        TerrainMapSDK<int> topology = GetTerrainMap();
         float[,,] splatMap = new float[topology.res, topology.res, 2];
         for (int i = 0; i < topology.res; i++)
         {
@@ -41,9 +41,9 @@ public static class TopologyData
     /// </summary>
     public static void SaveTopologyLayers()
     {
-        TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
+        TerrainMapSDK<int> topologyMap = new TerrainMapSDK<int>(top, 1);
         var splatMap = LandData.topologyArray;
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
         {
             for (int j = 0; j < topologyMap.res; j++)
             {
@@ -51,18 +51,18 @@ public static class TopologyData
                 {
                     if (splatMap[i][j, k, 0] > 0)
                     {
-                        topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
+                        topologyMap[j, k] = topologyMap[j, k] | TerrainTopologySDK.IndexToType(i);
                     }
                     if (splatMap[i][j, k, 1] > 0)
                     {
-                        topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
+                        topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopologySDK.IndexToType(i);
                     }
                 }
             }
         }
         top = topologyMap.ToByteArray();
     }
-    public static void InitMesh(TerrainMap<int> topology)
+    public static void InitMesh(TerrainMapSDK<int> topology)
     {
         top = topology.ToByteArray();
     }

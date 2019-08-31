@@ -5,7 +5,7 @@ using UnityEngine;
 public class PrefabDataHolder : MonoBehaviour
 {
     
-    public WorldSerialization.PrefabData prefabData;
+    public WorldSerializationSDK.PrefabData prefabData;
     
     public void MapSave()
     {
