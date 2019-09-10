@@ -9,9 +9,9 @@ public class PaintConditionalNode : Node
     [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
     [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     #region Fields
-    [HideInInspector] public TerrainSplatSDK.Enum groundLayerConditions = TerrainSplatSDK.NOTHING, groundLayerToPaint = TerrainSplatSDK.Enum.Grass;
-    [HideInInspector] public TerrainBiomeSDK.Enum biomeLayerConditions = TerrainBiomeSDK.NOTHING, biomeLayerToPaint = TerrainBiomeSDK.Enum.Temperate;
-    [HideInInspector] public TerrainTopologySDK.Enum topologyLayerConditions = TerrainTopologySDK.NOTHING, topologyLayerToPaint = TerrainTopologySDK.Enum.Beach;
+    [HideInInspector] public TerrainSplat.Enum groundLayerConditions = TerrainSplat.NOTHING, groundLayerToPaint = TerrainSplat.Enum.Grass;
+    [HideInInspector] public TerrainBiome.Enum biomeLayerConditions = TerrainBiome.NOTHING, biomeLayerToPaint = TerrainBiome.Enum.Temperate;
+    [HideInInspector] public TerrainTopology.Enum topologyLayerConditions = TerrainTopology.NOTHING, topologyLayerToPaint = TerrainTopology.Enum.Beach;
     [HideInInspector] public int topologyTexture = 0, alphaTexture = 0, layerConditionalInt = 0, texture = 0;
     [HideInInspector] public bool checkAlpha = false, checkHeight = false, checkSlope = false;
     [HideInInspector] public float slopeLowCndtl = 45f, slopeHighCndtl = 60f, heightLowCndtl = 500f, heightHighCndtl = 600f;
@@ -48,10 +48,10 @@ public class PaintConditionalNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                MapIO.PaintConditional("Ground", TerrainSplatSDK.TypeToIndex(layer.GroundTexture), conditions);
+                MapIO.PaintConditional("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
                 break;
             case 1: // Biome
-                MapIO.PaintConditional("Biome", TerrainBiomeSDK.TypeToIndex(layer.BiomeTexture), conditions);
+                MapIO.PaintConditional("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
                 break;
             case 2: // Alpha
                 MapIO.PaintConditional( "Alpha", layer.AlphaTexture, conditions);

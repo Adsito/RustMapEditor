@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public static class TerrainSplatSDK
+public static class TerrainSplat
 {
 	public enum Enum
 	{

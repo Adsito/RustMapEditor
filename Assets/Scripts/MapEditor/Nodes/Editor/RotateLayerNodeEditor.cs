@@ -19,7 +19,7 @@ public class RotateLayerNodeEditor : NodeEditor
         RotateLayerNode node = target as RotateLayerNode;
         if (node.landLayer == NodeVariables.Texture.LandLayerEnum.Topology)
         {
-            node.topologies = (TerrainTopologySDK.Enum)EditorGUILayout.EnumFlagsField(node.topologies);
+            node.topologies = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(node.topologies);
         }
     }
 }
