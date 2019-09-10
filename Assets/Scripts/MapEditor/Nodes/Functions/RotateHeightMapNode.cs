@@ -14,6 +14,6 @@ public class RotateHeightMapNode : Node
     public void RunNode()
     {
         bool CW = (direction == NodeVariables.Misc.RotateDirection.ClockWise) ? true : false;
-        MapIO.RotateHeightmap(CW);
+        MapIO.RotateHeightMap(CW);
     }
 }

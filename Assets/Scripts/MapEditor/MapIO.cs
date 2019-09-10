@@ -44,6 +44,7 @@ public class PrefabExport
         get; set;
     }
 }
+
 public struct TopologyLayers
 {
     public float[,,] Topologies
@@ -124,7 +125,7 @@ public static class MapIO
 {
     #region Layers
     public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
-    public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, terrainLayer, conditionalGround;
+    public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, groundLayer, conditionalGround;
     public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
     public static int landSelectIndex = 0;
@@ -172,10 +173,6 @@ public static class MapIO
             CreateNewMap(2000);
         }
     }
-    public static void SaveSettings()
-    {
-
-    }
     public static void CentreSceneView()
     {
         SceneView sceneView = SceneView.lastActiveSceneView;
@@ -200,7 +197,7 @@ public static class MapIO
         oldTopologyLayer = TerrainTopology.Enum.Beach;
         biomeLayer = TerrainBiome.Enum.Temperate;
         conditionalBiome = TerrainBiome.NOTHING;
-        terrainLayer = TerrainSplat.Enum.Grass;
+        groundLayer = TerrainSplat.Enum.Grass;
         conditionalGround = TerrainSplat.NOTHING;
     }
     /// <summary>
@@ -325,40 +322,39 @@ public static class MapIO
         return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
-    /// <summary>
-    /// Rotates Terrain Map and Water Map 90°.
-    /// </summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateHeightmap(bool CW)
+    public static void ParseRotateEnumFlags(EditorSelections.RotateSelection rotateSelection, bool CW)
     {
-        float[,] oldHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-        float[,] newHeightMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        float[,] oldWaterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
-        float[,] newWaterMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        if (CW)
+        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.RotateSelection)).Length; i++)
         {
-            for (int i = 0; i < oldHeightMap.GetLength(0); i++)
+            int layer = 1 << i;
+            if (((int)rotateSelection & layer) != 0)
             {
-                for (int j = 0; j < oldHeightMap.GetLength(1); j++)
+                switch (i)
                 {
-                    newHeightMap[i, j] = oldHeightMap[j, oldHeightMap.GetLength(1) - i - 1];
-                    newWaterMap[i, j] = oldWaterMap[j, oldWaterMap.GetLength(1) - i - 1];
+                    case 0:
+                        RotateLayer("ground", CW);
+                        break;
+                    case 1:
+                        RotateLayer("biome", CW);
+                        break;
+                    case 2:
+                        RotateLayer("alpha", CW);
+                        break;
+                    case 3:
+                        RotateAllTopologyLayers(CW);
+                        break;
+                    case 4:
+                        RotateHeightMap(CW);
+                        break;
+                    case 5:
+                        RotatePrefabs(CW);
+                        break;
+                    case 6:
+                        RotatePaths(CW);
+                        break;
                 }
             }
         }
-        else
-        {
-            for (int i = 0; i < oldHeightMap.GetLength(0); i++)
-            {
-                for (int j = 0; j < oldHeightMap.GetLength(1); j++)
-                {
-                    newHeightMap[i, j] = oldHeightMap[oldHeightMap.GetLength(0) - j - 1, i];
-                    newWaterMap[i, j] = oldWaterMap[oldWaterMap.GetLength(0) - j - 1, i];
-                }
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, newHeightMap);
-        water.terrainData.SetHeights(0, 0, newWaterMap);
     }
     /// <summary>
     /// Rotates prefabs 90°.
@@ -392,67 +388,43 @@ public static class MapIO
             pathRotate.transform.Rotate(0, -90, 0, Space.World);
         }
     }
-    /// <summary>
-    /// Rotates the selected layer 90°.
-    /// </summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void RotateLayer(string landLayerToPaint, bool CW, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
-    {
-        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
-        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
-        {
-            progressBar += progressValue;
-            var rotateText = (landLayerToPaint.ToLower() == "topology") ? ((TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt)).ToString() : landLayerToPaint;
-            ProgressBar("Rotating Layers", "Rotating: " + rotateText, progressBar);
-            int textureCount = TextureCount(landLayerToPaint);
-            float[,,] oldLayer = GetSplatMap(landLayerToPaint, topologyInt);
-            float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
-            if (CW)
-            {
-                for (int i = 0; i < newLayer.GetLength(0); i++)
-                {
-                    for (int j = 0; j < newLayer.GetLength(1); j++)
-                    {
-                        for (int k = 0; k < textureCount; k++)
-                        {
-                            newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < newLayer.GetLength(0); i++)
-                {
-                    for (int j = 0; j < newLayer.GetLength(1); j++)
-                    {
-                        for (int k = 0; k < textureCount; k++)
-                        {
-                            newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
-                        }
-                    }
-                }
-            }
-            LandData.SetData(newLayer, landLayerToPaint, topologyInt);
-        }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
-        ClearProgressBar();
-    }
-    /// <summary>
-    /// Rotates all Topology layers 90°.
-    /// </summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateAllTopologymap(bool CW)
-    {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            RotateLayer("topology", CW, (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
-        }
-    }
     #endregion
     #region HeightMap Methods
+    /// <summary>
+    /// Rotates Terrain Map and Water Map 90°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotateHeightMap(bool CW)
+    {
+        float[,] oldHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
+        float[,] newHeightMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+        float[,] oldWaterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
+        float[,] newWaterMap = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+        if (CW)
+        {
+            for (int i = 0; i < oldHeightMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < oldHeightMap.GetLength(1); j++)
+                {
+                    newHeightMap[i, j] = oldHeightMap[j, oldHeightMap.GetLength(1) - i - 1];
+                    newWaterMap[i, j] = oldWaterMap[j, oldWaterMap.GetLength(1) - i - 1];
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < oldHeightMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < oldHeightMap.GetLength(1); j++)
+                {
+                    newHeightMap[i, j] = oldHeightMap[oldHeightMap.GetLength(0) - j - 1, i];
+                    newWaterMap[i, j] = oldWaterMap[oldWaterMap.GetLength(0) - j - 1, i];
+                }
+            }
+        }
+        terrain.terrainData.SetHeights(0, 0, newHeightMap);
+        water.terrainData.SetHeights(0, 0, newWaterMap);
+    }
     /// <summary>
     /// Inverts the HeightMap.
     /// </summary>
@@ -746,11 +718,11 @@ public static class MapIO
     #endregion
     #region SplatMap Methods
     /// <summary>
-    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// Returns the selected TerrainSplat enums.
     /// </summary>
     /// <param name="ground">The TerrainSplat Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainSplat.Enum ground)
+    public static List<int> ReturnSelectedSplats(TerrainSplat.Enum ground)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
@@ -764,11 +736,11 @@ public static class MapIO
         return selectedElements;
     }
     /// <summary>
-    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// Returns the selected TerrainBiome enums.
     /// </summary>
     /// <param name="biome">The TerrainBiome Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainBiome.Enum biome)
+    public static List<int> ReturnSelectedBiomes(TerrainBiome.Enum biome)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
@@ -782,11 +754,11 @@ public static class MapIO
         return selectedElements;
     }
     /// <summary>
-    /// Returns the enums selected in the corresponding TerrainLayer enum group.
+    /// Returns the selected TerrainTopology enums.
     /// </summary>
     /// <param name="topology">The TerrainTopology Enum to parse.</param>
     /// <returns></returns>
-    public static List<int> ReturnSelectedElements(TerrainTopology.Enum topology)
+    public static List<int> ReturnSelectedTopologies(TerrainTopology.Enum topology)
     {
         List<int> selectedElements = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
@@ -852,6 +824,78 @@ public static class MapIO
         return GetSplatMap(landLayer, topology)[x, z, texture];
     }
     /// <summary>
+    /// Rotates the selected layer.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public static void RotateLayer(string landLayerToPaint, bool CW, int topology = 0)
+    {
+        int textureCount = TextureCount(landLayerToPaint);
+        float[,,] oldLayer = GetSplatMap(landLayerToPaint, topology);
+        float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
+        if (CW)
+        {
+            for (int i = 0; i < newLayer.GetLength(0); i++)
+            {
+                for (int j = 0; j < newLayer.GetLength(1); j++)
+                {
+                    for (int k = 0; k < textureCount; k++)
+                    {
+                        newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < newLayer.GetLength(0); i++)
+            {
+                for (int j = 0; j < newLayer.GetLength(1); j++)
+                {
+                    for (int k = 0; k < textureCount; k++)
+                    {
+                        newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
+                    }
+                }
+            }
+        }
+        LandData.SetData(newLayer, landLayerToPaint, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+    }
+    /// <summary>
+    /// Rotates the selected topologies.
+    /// </summary>
+    /// <param name="topologyLayers">The Topology layers to rotate.</param>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotateTopologyLayers(TerrainTopology.Enum topologyLayers, bool CW)
+    {
+        List<int> topologyElements = ReturnSelectedTopologies(topologyLayers);
+        progressValue = 1f / topologyElements.Count;
+        for (int i = 0; i < topologyElements.Count; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            RotateLayer("topology", CW, i);
+        }
+        ClearProgressBar();
+    }
+    /// <summary>
+    /// Rotates all Topology layers°.
+    /// </summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotateAllTopologyLayers(bool CW)
+    {
+        progressValue = 1f / TerrainTopology.COUNT;
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            RotateLayer("topology", CW, TerrainTopology.TypeToIndex(i));
+        }
+        ClearProgressBar();
+    }
+    /// <summary>
     /// Paints if all the conditions passed in are true.
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
@@ -889,21 +933,21 @@ public static class MapIO
         List<GroundTextures> groundTexturesList = new List<GroundTextures>();
         List<BiomeTextures> biomeTexturesList = new List<BiomeTextures>();
         ProgressBar("Conditional Painter", "Gathering Conditions", 0.05f);
-        foreach (var topologyLayerInt in ReturnSelectedElements(conditions.TopologyLayers))
+        foreach (var topologyLayerInt in ReturnSelectedTopologies(conditions.TopologyLayers))
         {
             topologyLayersList.Add(new TopologyLayers()
             {
                 Topologies = GetSplatMap("topology", topologyLayerInt)
             });
         }
-        foreach (var groundTextureInt in ReturnSelectedElements(conditions.GroundConditions))
+        foreach (var groundTextureInt in ReturnSelectedSplats(conditions.GroundConditions))
         {
             groundTexturesList.Add(new GroundTextures()
             {
                 Texture = groundTextureInt
             });
         }
-        foreach (var biomeTextureInt in ReturnSelectedElements(conditions.BiomeConditions))
+        foreach (var biomeTextureInt in ReturnSelectedBiomes(conditions.BiomeConditions))
         {
             biomeTexturesList.Add(new BiomeTextures()
             {
@@ -981,7 +1025,7 @@ public static class MapIO
         biomeTexturesList.Clear();
         topologyLayersList.Clear();
         LandData.SetData(splatMapPaint, landLayerToPaint, topology);
-        LandData.SetLayer(landLayerToPaint, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>
     /// Paints the layer wherever the height conditions are met. Includes option to blend.
@@ -1065,7 +1109,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>
     /// Sets whole layer to the active texture. 
@@ -1075,7 +1119,6 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintLayer(string landLayerToPaint, int t, int topology = 0)
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Layer");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1090,41 +1133,79 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+    }
+    /// <summary>
+    /// Paints the selected Topology layers.
+    /// </summary>
+    /// <param name="topologyLayers">The Topology layers to clear.</param>
+    public static void PaintTopologyLayers(TerrainTopology.Enum topologyLayers)
+    {
+        List<int> topologyElements = ReturnSelectedTopologies(topologyLayers);
+        progressValue = 1f / topologyElements.Count;
+        for (int i = 0; i < topologyElements.Count; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            PaintLayer("topology", i);
+        }
+        ClearProgressBar();
+    }
+    /// <summary>
+    /// Paints all the topology layers.
+    /// </summary>
+    public static void PaintAllTopologyLayers()
+    {
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Painting Layers", "Painting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            PaintLayer("topology", i);
+        }
+        ClearProgressBar();
     }
     /// <summary>
     /// Sets whole layer to the inactive texture. Alpha and Topology only. 
     /// </summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Alpha, Topology)</param>
-    /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void ClearLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    /// <param name="landLayerToPaint">The LandLayer to clear. (Alpha, Topology)</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public static void ClearLayer(string landLayerToPaint, int topology = 0)
     {
-        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
-        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
+        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
+        var alpha = (landLayerToPaint.ToLower() == "alpha") ? true : false;
+        for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
-            float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
-            var alpha = (landLayerToPaint.ToLower() == "alpha") ? true : false;
-            for (int i = 0; i < splatMap.GetLength(0); i++)
+            for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                for (int j = 0; j < splatMap.GetLength(1); j++)
+                if (alpha)
                 {
-                    if (alpha)
-                    {
-                        splatMap[i, j, 0] = 1;
-                        splatMap[i, j, 1] = 0;
-                    }
-                    else
-                    {
-                        splatMap[i, j, 0] = 0;
-                        splatMap[i, j, 1] = 1;
-                    }
+                    splatMap[i, j, 0] = 1;
+                    splatMap[i, j, 1] = 0;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
                 }
             }
-            LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
+        LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+    }
+    /// <summary>
+    /// Clears the selected Topology layers.
+    /// </summary>
+    /// <param name="topologyLayers">The Topology layers to clear.</param>
+    public static void ClearTopologyLayers(TerrainTopology.Enum topologyLayers)
+    {
+        List<int> topologyElements = ReturnSelectedTopologies(topologyLayers);
+        progressValue = 1f / topologyElements.Count;
+        for (int i = 0; i < topologyElements.Count; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            ClearLayer("topology", i);
+        }
         ClearProgressBar();
     }
     /// <summary>
@@ -1134,41 +1215,53 @@ public static class MapIO
     {
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            ClearLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            progressBar += progressValue;
+            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            ClearLayer("topology", i);
         }
+        ClearProgressBar();
     }
     /// <summary>
     /// Inverts the active and inactive textures. Alpha and Topology only. 
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
-    /// <param name="topologyLayers">The Topology enums, if selected.</param>
-    public static void InvertLayer(string landLayerToPaint, TerrainTopology.Enum topologyLayers = TerrainTopology.Enum.Beach)
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public static void InvertLayer(string landLayerToPaint, int topology = 0)
     {
-        progressValue = 1f / ReturnSelectedElements(topologyLayers).Count;
-        foreach (var topologyInt in ReturnSelectedElements(topologyLayers))
+        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
+        for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(topologyInt), progressBar);
-            float[,,] splatMap = GetSplatMap(landLayerToPaint, topologyInt);
-            for (int i = 0; i < splatMap.GetLength(0); i++)
+            for (int j = 0; j < splatMap.GetLength(1); j++)
             {
-                for (int j = 0; j < splatMap.GetLength(1); j++)
+                if (splatMap[i, j, 0] < 0.5f)
                 {
-                    if (splatMap[i, j, 0] < 0.5f)
-                    {
-                        splatMap[i, j, 0] = 1;
-                        splatMap[i, j, 1] = 0;
-                    }
-                    else
-                    {
-                        splatMap[i, j, 0] = 0;
-                        splatMap[i, j, 1] = 1;
-                    }
+                    splatMap[i, j, 0] = 1;
+                    splatMap[i, j, 1] = 0;
+                }
+                else
+                {
+                    splatMap[i, j, 0] = 0;
+                    splatMap[i, j, 1] = 1;
                 }
             }
-            LandData.SetData(splatMap, landLayerToPaint, topologyInt);
         }
+        LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+    }
+    /// <summary>
+    /// Inverts the selected Topology layers.
+    /// </summary>
+    /// <param name="topologyLayers">The Topology layers to invert.</param>
+    public static void InvertTopologyLayers(TerrainTopology.Enum topologyLayers)
+    {
+        List<int> topologyElements = ReturnSelectedTopologies(topologyLayers);
+        progressValue = 1f / topologyElements.Count;
+        for (int i = 0; i < topologyElements.Count; i++)
+        {
+            progressBar += progressValue;
+            ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            InvertLayer("topology", i);
+        }
         ClearProgressBar();
     }
     /// <summary>
@@ -1178,8 +1271,11 @@ public static class MapIO
     {
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            InvertLayer("topology", (TerrainTopology.Enum)TerrainTopology.IndexToType(i));
+            progressBar += progressValue;
+            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
+            InvertLayer("topology", i);
         }
+        ClearProgressBar();
     }
     /// <summary>
     /// Paints the layer wherever the slope conditions are met. Includes option to blend.
@@ -1263,7 +1359,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
@@ -1295,7 +1391,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>
     /// Paints the splats wherever the water is above 500 and is above the terrain.
@@ -1344,34 +1440,9 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, topology);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
-    /// <summary>
-    /// Paints a ground texture to the corresponding coordinate if the alpha is active. 
-    /// Used for debugging the floating ground clutter that occurs when you have a ground splat of either Grass or Forest ontop of an active alpha layer.
-    /// </summary>
-    public static void AlphaDebug()
-    {
-        float[,,] splatMap = GetSplatMap("ground");
-        float[,,] alphaSplatMap = GetSplatMap("alpha");
-        int textureCount = TextureCount("ground");
-        for (int i = 0; i < alphaSplatMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < alphaSplatMap.GetLength(1); j++)
-            {
-                if (alphaSplatMap[i, j, 1] > 0.9f)
-                {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, 3] = 1; // This paints the rock layer. Where 3 = the layer to paint.
-                }
-            }
-        }
-        LandData.SetData(splatMap, landLayer);
-        LandData.SetLayer(landLayer);
-    }
+    
     /// <summary>
     /// Copies the selected texture on a landlayer and paints the same coordinate on another landlayer with the other selected texture.
     /// </summary>
@@ -1404,7 +1475,7 @@ public static class MapIO
         }
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
         LandData.SetData(splatMapTo, landLayerToPaint, topologyToPaint);
-        LandData.SetLayer(landLayer, topologyToPaint);
+        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
         ClearProgressBar();
     }
     #endregion
