@@ -54,112 +54,11 @@ public class MapIOEditor : EditorWindow
         {
             #region File
             case 0:
-                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
-                {
-                    loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
-                    if (loadFile == "")
-                    {
-                        return;
-                    }
-                    var world = new WorldSerializationSDK();
-                    MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
-                    world.Load(loadFile);
-                    MapIO.loadPath = loadFile;
-                    MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
-                    MapIO.Load(world);
-                }
-                if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
-                {
-                    saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
-                    if (saveFile == "")
-                    {
-                        return;
-                    }
-                    Debug.Log("Exported map " + saveFile);
-                    MapIO.savePath = saveFile;
-                    prefabSaveFile = saveFile;
-                    MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
-                    MapIO.Save(saveFile);
-                }
-                if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
-                {
-                    int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
-                    switch (newMap)
-                    {
-                        case 0:
-                            MapIO.loadPath = "New Map";
-                            MapIO.CreateNewMap(mapSize);
-                            break;
-                        case 1:
-                            // User cancelled
-                            break;
-                        case 2:
-                            saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
-                            if (saveFile == "")
-                            {
-                                EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
-                                return;
-                            }
-                            Debug.Log("Exported map " + saveFile);
-                            MapIO.Save(saveFile);
-                            MapIO.loadPath = "New Map";
-                            MapIO.CreateNewMap(mapSize);
-                            break;
-                    }
-                }
-                GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), GUILayout.MaxWidth(30));
-                mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45)), 1000, 6000);
-                EditorGUILayout.EndHorizontal();
-
-                GUILayout.Label("Editor Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
-                GUILayout.Label("OS: " + SystemInfo.operatingSystem);
-                GUILayout.Label("Unity Version: " + Application.unityVersion);
-                GUILayout.Label("Editor Version: " + editorVersion);
-
-                GUILayout.Label(new GUIContent("Links"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
-
-                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(75)))
-                {
-                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
-                }
-                if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(105)))
-                {
-                    Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
-                }
-                if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
-                {
-                    Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
-                }
-                if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
-                {
-                    Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
-                }
-                EditorGUILayout.EndHorizontal();
-
-                GUILayout.Label(new GUIContent("Settings"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
-
-                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                if (GUILayout.Button(new GUIContent("Save Changes", "Sets and saves the current settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
-                {
-                    MapEditorSettings.SaveSettings();
-                }
-                if (GUILayout.Button(new GUIContent("Discard", "Discards the changes to the settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
-                {
-                    MapEditorSettings.LoadSettings();
-                }
-                if (GUILayout.Button(new GUIContent("Default", "Sets the settings back to the default."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
-                {
-                    MapEditorSettings.SetDefaultSettings();
-                }
-                EditorGUILayout.EndHorizontal();
-
-                GUILayout.Label(new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust"), GUILayout.MaxWidth(95));
-                MapEditorSettings.rustDirectory = EditorGUILayout.TextArea(MapEditorSettings.rustDirectory);
-
-                GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), GUILayout.MaxWidth(95));
-                MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200);
+                EditorIO();
+                EditorInfo();
+                MapInfo();
+                EditorLinks();
+                EditorSettings();
                 break;
             #endregion
             #region Prefabs
@@ -173,7 +72,7 @@ public class MapIOEditor : EditorWindow
                 switch (prefabOptions)
                 {
                     case 0:
-                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. FULL OF BUGS ATM", EditorStyles.boldLabel);
+                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. Currently waiting for SDK updates.", EditorStyles.boldLabel);
                         EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
@@ -270,7 +169,7 @@ public class MapIOEditor : EditorWindow
                 layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu);
 
                 ClampValues();
-                LandIndex(layerIndex);
+                SetLandLayer(layerIndex);
 
                 switch (layerIndex)
                 {
@@ -730,7 +629,7 @@ public class MapIOEditor : EditorWindow
     /// Sets the active landLayer to the index.
     /// </summary>
     /// <param name="index">The landLayer to change to.</param>
-    private void LandIndex(int index)
+    private void SetLandLayer(int index)
     {
         MapIO.landSelectIndex = index;
         string oldLandLayer = MapIO.landLayer;
@@ -874,6 +773,7 @@ public class MapIOEditor : EditorWindow
     }
     private void TopologyTools()
     {
+        
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90°")))
         {
@@ -897,10 +797,11 @@ public class MapIOEditor : EditorWindow
     }
     private void AreaTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        z1 = EditorGUILayout.IntField("From Z ", z1);
-        z2 = EditorGUILayout.IntField("To Z ", z2);
-        x1 = EditorGUILayout.IntField("From X ", x1);
-        x2 = EditorGUILayout.IntField("To X ", x2);
+        GUILayout.Label("Area Tools", EditorStyles.boldLabel);
+        z1 = Mathf.Clamp(EditorGUILayout.IntField("From Z ", z1), 0, z2);
+        z2 = Mathf.Clamp(EditorGUILayout.IntField("To Z ", z2), z1, MapIO.terrain.terrainData.alphamapResolution);
+        x1 = Mathf.Clamp(EditorGUILayout.IntField("From X ", x1), 0, x2);
+        x2 = Mathf.Clamp(EditorGUILayout.IntField("To X ", x2), x1, MapIO.terrain.terrainData.alphamapResolution);
         if (index > 1) // Alpha and Topology
         {
             EditorGUILayout.BeginHorizontal();
@@ -924,6 +825,7 @@ public class MapIOEditor : EditorWindow
     }
     private void RiverTools(int index, int texture, int erase = 0, int topology = 0)
     {
+        GUILayout.Label("River Tools", EditorStyles.boldLabel);
         aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
         if (index > 1)
         {
@@ -948,6 +850,7 @@ public class MapIOEditor : EditorWindow
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
     {
+        GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
         if (index > 1)
         {
             EditorGUILayout.BeginHorizontal();
@@ -972,6 +875,128 @@ public class MapIOEditor : EditorWindow
                 MapIO.PaintLayer(landLayers[index], texture);
             }
         }
+    }
+    private void EditorIO()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        {
+            loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
+            if (loadFile == "")
+            {
+                return;
+            }
+            var world = new WorldSerialization();
+            MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
+            world.Load(loadFile);
+            MapIO.loadPath = loadFile;
+            MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
+            MapIO.Load(world);
+        }
+        if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        {
+            saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+            if (saveFile == "")
+            {
+                return;
+            }
+            Debug.Log("Exported map " + saveFile);
+            MapIO.savePath = saveFile;
+            prefabSaveFile = saveFile;
+            MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
+            MapIO.Save(saveFile);
+        }
+        if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        {
+            int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
+            switch (newMap)
+            {
+                case 0:
+                    MapIO.loadPath = "New Map";
+                    MapIO.CreateNewMap(mapSize);
+                    break;
+                case 1:
+                    // User cancelled
+                    break;
+                case 2:
+                    saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+                    if (saveFile == "")
+                    {
+                        EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
+                        return;
+                    }
+                    Debug.Log("Exported map " + saveFile);
+                    MapIO.Save(saveFile);
+                    MapIO.loadPath = "New Map";
+                    MapIO.CreateNewMap(mapSize);
+                    break;
+            }
+        }
+        GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), GUILayout.MaxWidth(30));
+        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45)), 1000, 6000);
+        EditorGUILayout.EndHorizontal();
+    }
+    private void MapInfo()
+    {
+        GUILayout.Label("Map Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
+        GUILayout.Label("Size: " + MapIO.terrain.terrainData.size.x);
+        GUILayout.Label("HeightMap: " + MapIO.terrain.terrainData.heightmapResolution + "x" + MapIO.terrain.terrainData.heightmapResolution);
+        GUILayout.Label("SplatMap: " + MapIO.terrain.terrainData.alphamapResolution + "x" + MapIO.terrain.terrainData.alphamapResolution);
+    }
+    private void EditorInfo()
+    {
+        GUILayout.Label("Editor Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
+        GUILayout.Label("OS: " + SystemInfo.operatingSystem);
+        GUILayout.Label("Unity Version: " + Application.unityVersion);
+        GUILayout.Label("Editor Version: " + editorVersion);
+    }
+    private void EditorLinks()
+    {
+        GUILayout.Label(new GUIContent("Links"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(75)))
+        {
+            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+        }
+        if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(105)))
+        {
+            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
+        }
+        if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        {
+            Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
+        }
+        if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        {
+            Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void EditorSettings()
+    {
+        GUILayout.Label(new GUIContent("Settings"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Save Changes", "Sets and saves the current settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        {
+            MapEditorSettings.SaveSettings();
+        }
+        if (GUILayout.Button(new GUIContent("Discard", "Discards the changes to the settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        {
+            MapEditorSettings.LoadSettings();
+        }
+        if (GUILayout.Button(new GUIContent("Default", "Sets the settings back to the default."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        {
+            MapEditorSettings.SetDefaultSettings();
+        }
+        EditorGUILayout.EndHorizontal();
+
+        GUILayout.Label(new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust"), GUILayout.MaxWidth(95));
+        MapEditorSettings.rustDirectory = EditorGUILayout.TextArea(MapEditorSettings.rustDirectory);
+
+        GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), GUILayout.MaxWidth(95));
+        MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200);
     }
     private void DrawEmpty()
     {
