@@ -26,7 +26,7 @@ public class MapIOEditor : EditorWindow
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
     Vector2 scrollPos = new Vector2(0, 0), presetScrollPos = new Vector2(0, 0);
-    EditorSelections.RotateSelection rotateSelection;
+    EditorSelections.ObjectSeletion rotateSelection;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
     float blurDirection = 0f, filterStrength = 1f;
 
@@ -655,7 +655,7 @@ public class MapIOEditor : EditorWindow
                             #region Misc
                             case 2:
                                 GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
-                                rotateSelection = (EditorSelections.RotateSelection)EditorGUILayout.EnumFlagsField(new GUIContent("Rotation Selection: ", "The items to rotate."), rotateSelection);
+                                rotateSelection = (EditorSelections.ObjectSeletion)EditorGUILayout.EnumFlagsField(new GUIContent("Rotation Selection: ", "The items to rotate."), rotateSelection);
 
                                 EditorGUILayout.BeginHorizontal();
                                 if (GUILayout.Button("Rotate 90°", GUILayout.MaxWidth(90)))
