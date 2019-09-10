@@ -8,7 +8,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
-using static WorldSerializationSDK;
+using static WorldSerialization;
 
 public class CustomPrefab : MonoBehaviour
 {
@@ -1872,7 +1872,7 @@ public static class MapIO
     /// <summary>
     /// Loads a WorldSerialization and calls LoadMapInfo.
     /// </summary>
-    public static void Load(WorldSerializationSDK world)
+    public static void Load(WorldSerialization world)
     {
         WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(world);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
@@ -1893,7 +1893,7 @@ public static class MapIO
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
         ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
-        WorldSerializationSDK world = WorldConverter.TerrainToWorld(terrain, water);
+        WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
         ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
