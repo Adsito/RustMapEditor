@@ -24,10 +24,10 @@ public class PaintRiversNode : Node
         switch (layer.LandLayer)
         {
             case 0: // Ground
-                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplatSDK.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: // Biome
-                MapIO.PaintRiver("Biome", aboveTerrain, TerrainBiomeSDK.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: // Alpha
                 MapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);

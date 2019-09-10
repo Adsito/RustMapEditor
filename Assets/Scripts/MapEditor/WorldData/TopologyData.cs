@@ -43,7 +43,7 @@ public static class TopologyData
     {
         TerrainMapSDK<int> topologyMap = new TerrainMapSDK<int>(top, 1);
         var splatMap = LandData.topologyArray;
-        for (int i = 0; i < TerrainTopologySDK.COUNT; i++)
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             for (int j = 0; j < topologyMap.res; j++)
             {
@@ -51,11 +51,11 @@ public static class TopologyData
                 {
                     if (splatMap[i][j, k, 0] > 0)
                     {
-                        topologyMap[j, k] = topologyMap[j, k] | TerrainTopologySDK.IndexToType(i);
+                        topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
                     }
                     if (splatMap[i][j, k, 1] > 0)
                     {
-                        topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopologySDK.IndexToType(i);
+                        topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
                     }
                 }
             }

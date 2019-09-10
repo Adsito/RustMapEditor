@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public static class TerrainBiomeSDK
+public static class TerrainBiome
 {
 	public enum Enum
 	{

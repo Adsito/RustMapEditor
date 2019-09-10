@@ -23,19 +23,19 @@ public class CopyTextureNodeEditor : NodeEditor
         switch (node.landLayerFrom) // Get texture list from the currently selected landLayer.
         {
             case 0:
-                node.groundLayerFrom = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture:", node.groundLayerFrom);
-                node.textureFrom = TerrainSplatSDK.TypeToIndex((int)node.groundLayerFrom);
+                node.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture:", node.groundLayerFrom);
+                node.textureFrom = TerrainSplat.TypeToIndex((int)node.groundLayerFrom);
                 break;
             case 1:
-                node.biomeLayerFrom = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Texture:", node.biomeLayerFrom);
-                node.textureFrom = TerrainBiomeSDK.TypeToIndex((int)node.biomeLayerFrom);
+                node.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture:", node.biomeLayerFrom);
+                node.textureFrom = TerrainBiome.TypeToIndex((int)node.biomeLayerFrom);
                 break;
             case 2:
                 node.textureFrom = EditorGUILayout.IntPopup("Texture:", node.textureFrom, node.activeTextureAlpha, node.values);
                 break;
             case 3:
-                node.topologyLayerFrom = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology:", node.topologyLayerFrom);
-                node.topologyFrom = TerrainTopologySDK.TypeToIndex((int)node.topologyLayerFrom);
+                node.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology:", node.topologyLayerFrom);
+                node.topologyFrom = TerrainTopology.TypeToIndex((int)node.topologyLayerFrom);
                 node.textureFrom = EditorGUILayout.IntPopup("Texture:", node.textureFrom, node.activeTextureTopo, node.values);
                 break;
         }

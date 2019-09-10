@@ -20,21 +20,21 @@ public class TextureNodeEditor : NodeEditor
         switch (node.landLayer)
         {
             case NodeVariables.Texture.LandLayerEnum.Ground:
-                node.groundEnum = (TerrainSplatSDK.Enum)EditorGUILayout.EnumPopup("Texture", node.groundEnum);
+                node.groundEnum = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture", node.groundEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Biome:
-                node.biomeEnum = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumPopup("Texture", node.biomeEnum);
+                node.biomeEnum = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture", node.biomeEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Alpha:
                 node.alphaEnum = (NodeVariables.Texture.AlphaEnum)EditorGUILayout.EnumPopup("Texture", node.alphaEnum);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Topology:
-                node.topologyLayer = (TerrainTopologySDK.Enum)EditorGUILayout.EnumPopup("Topology", node.topologyLayer);
+                node.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology", node.topologyLayer);
                 node.topologyEnum = (NodeVariables.Texture.TopologyEnum)EditorGUILayout.EnumPopup("Texture", node.topologyEnum);
                 break;
         }
         node.Texture.LandLayer = (int)node.landLayer;
-        node.Texture.TopologyLayer = TerrainTopologySDK.TypeToIndex((int)node.topologyLayer);
+        node.Texture.TopologyLayer = TerrainTopology.TypeToIndex((int)node.topologyLayer);
         node.Texture.GroundTexture = (int)node.groundEnum;
         node.Texture.BiomeTexture = (int)node.biomeEnum;
         node.Texture.AlphaTexture = (int)node.alphaEnum;
