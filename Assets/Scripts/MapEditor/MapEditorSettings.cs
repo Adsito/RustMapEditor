@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class MapEditorSettings
 {
-    const string settingsPath = "EditorSettings.json";
+    public const string settingsPath = "EditorSettings.json";
     public const string bundlePathExt = @"\Bundles\Bundles";
 
     public static string rustDirectory;
