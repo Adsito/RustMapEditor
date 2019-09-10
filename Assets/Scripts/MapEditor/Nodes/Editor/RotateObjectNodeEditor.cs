@@ -17,7 +17,7 @@ public class RotateObjectNodeEditor : NodeEditor
     {
         base.OnBodyGUI();
         RotateObjectNode node = target as RotateObjectNode;
-        node.prefabs = EditorGUILayout.ToggleLeft(new GUIContent("Rotate Prefabs: ", "Rotates the maps prefabs by the direction selected."), node.prefabs);
-        node.paths = EditorGUILayout.ToggleLeft(new GUIContent("Rotate Paths: ", "Rotates the maps paths by the direction selected."), node.paths);
+        node.prefabs = EditorGUILayout.ToggleLeft(new GUIContent("Rotate Prefabs", "Rotates the maps prefabs by the direction selected."), node.prefabs);
+        node.paths = EditorGUILayout.ToggleLeft(new GUIContent("Rotate Paths", "Rotates the maps paths by the direction selected."), node.paths);
     }
 }
