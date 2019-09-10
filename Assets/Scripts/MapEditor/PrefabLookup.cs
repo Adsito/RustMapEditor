@@ -2,7 +2,6 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 public class PrefabAttributes : List<PrefabAttributes>
 {
@@ -125,7 +124,10 @@ public class PrefabLookup : System.IDisposable
             assetsList.Add(asset);
         }
     }
-    public void AssetDump() // Dumps every asset found in the Rust bundle to a text file.
+    /// <summary>
+    /// Dumps every asset found in the Rust content bundle to a text file.
+    /// </summary>
+    public void AssetDump() 
     {
         using (StreamWriter streamWriter = new StreamWriter("AssetDump.txt", false))
         {

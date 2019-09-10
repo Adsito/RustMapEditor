@@ -6,7 +6,7 @@ public class ClearLayerNode : Node
 {
     [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
     [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
-    [HideInInspector, NodeEnum] public TerrainTopologySDK.Enum topologies = TerrainTopologySDK.NOTHING;
+    [HideInInspector, NodeEnum] public TerrainTopology.Enum topologies = TerrainTopology.NOTHING;
     [NodeEnum] public NodeVariables.Misc.DualLayerEnum layer = NodeVariables.Misc.DualLayerEnum.Topology;
     public override object GetValue(NodePort port)
     {

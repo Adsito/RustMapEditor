@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class TerrainTopologySDK
+public class TerrainTopology
 {
     public enum Enum
     {

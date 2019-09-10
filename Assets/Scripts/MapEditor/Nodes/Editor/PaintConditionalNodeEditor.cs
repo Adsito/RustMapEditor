@@ -37,11 +37,11 @@ public class PaintConditionalNodeEditor : NodeEditor
         {
             case 0: // Ground
                 GUILayout.Label("Ground Texture", EditorStyles.boldLabel);
-                node.groundLayerConditions = (TerrainSplatSDK.Enum)EditorGUILayout.EnumFlagsField(node.groundLayerConditions);
+                node.groundLayerConditions = (TerrainSplat.Enum)EditorGUILayout.EnumFlagsField(node.groundLayerConditions);
                 break;
             case 1: // Biome
                 GUILayout.Label("Biome Texture", EditorStyles.boldLabel);
-                node.biomeLayerConditions = (TerrainBiomeSDK.Enum)EditorGUILayout.EnumFlagsField(node.biomeLayerConditions);
+                node.biomeLayerConditions = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(node.biomeLayerConditions);
                 break;
             case 2: // Alpha
                 node.checkAlpha = EditorGUILayout.ToggleLeft("Check Alpha:", node.checkAlpha);
@@ -52,7 +52,7 @@ public class PaintConditionalNodeEditor : NodeEditor
                 break;
             case 3: // Topology
                 GUILayout.Label("Topology Layer", EditorStyles.boldLabel);
-                node.topologyLayerConditions = (TerrainTopologySDK.Enum)EditorGUILayout.EnumFlagsField(node.topologyLayerConditions);
+                node.topologyLayerConditions = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(node.topologyLayerConditions);
                 EditorGUILayout.Space();
                 GUILayout.Label("Topology Texture", EditorStyles.boldLabel);
                 node.topologyTexture = EditorGUILayout.IntPopup("Texture:", node.topologyTexture, activeTextureTopo, values);
