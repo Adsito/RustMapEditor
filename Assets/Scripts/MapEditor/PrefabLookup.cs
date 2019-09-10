@@ -20,8 +20,8 @@ public class PrefabAttributes : List<PrefabAttributes>
 }
 public class PrefabLookup : System.IDisposable
 {
-	private AssetBundleBackendSDK backend;
-	private HashLookupSDK lookup;
+	private AssetBundleBackend backend;
+	private HashLookup lookup;
     public List<Mesh> meshes = new List<Mesh>();
     public List<string> assetsList = new List<string>();
     public List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
@@ -37,13 +37,13 @@ public class PrefabLookup : System.IDisposable
 
     public PrefabLookup(string bundlename)
     {
-        backend = new AssetBundleBackendSDK(bundlename);
+        backend = new AssetBundleBackend(bundlename);
         AssetBundleLookup();
         AssetDump();
         float progress = 0f;
         float progressInterval = 0f;
         var lookupString = "";
-        var manifest = backend.Load<GameManifestSDK>(manifestPath);
+        var manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
             Debug.LogError("Manifest is null");
@@ -57,7 +57,7 @@ public class PrefabLookup : System.IDisposable
                 lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
             }
         }
-        lookup = new HashLookupSDK(lookupString);
+        lookup = new HashLookup(lookupString);
         var lines = File.ReadAllLines(assetsToLoadPath);
         progressInterval = 1f / lines.Length;
         foreach (var line in lines)
@@ -217,7 +217,7 @@ public class PrefabLookup : System.IDisposable
         go.tag = "LoadedPrefab";
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-        prefabDataHolder.prefabData = new WorldSerializationSDK.PrefabData
+        prefabDataHolder.prefabData = new WorldSerialization.PrefabData
         {
             id = rustid,
         };
