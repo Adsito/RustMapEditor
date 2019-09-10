@@ -20,7 +20,7 @@ public class InvertLayerNode : Node
                 MapIO.InvertLayer("Alpha");
                 break;
             case NodeVariables.Misc.DualLayerEnum.Topology:
-                MapIO.InvertLayer("Topology", topologies);
+                MapIO.InvertTopologyLayers(topologies);
                 break;
         }
     }

@@ -20,7 +20,7 @@ public class ClearLayerNode : Node
                 MapIO.ClearLayer("Alpha");
                 break;
             case NodeVariables.Misc.DualLayerEnum.Topology:
-                MapIO.ClearLayer("Topology", topologies);
+                MapIO.ClearTopologyLayers(topologies);
                 break;
         }
     }

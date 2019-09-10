@@ -28,7 +28,7 @@ public class RotateLayerNode : Node
                 MapIO.RotateLayer("alpha", CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Topology:
-                MapIO.RotateLayer("topology", CW, topologies);
+                MapIO.RotateTopologyLayers(topologies, CW);
                 break;
         }
     }
