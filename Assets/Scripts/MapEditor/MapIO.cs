@@ -322,9 +322,9 @@ public static class MapIO
         return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
-    public static void ParseRotateEnumFlags(EditorSelections.RotateSelection rotateSelection, bool CW)
+    public static void ParseRotateEnumFlags(EditorSelections.ObjectSeletion rotateSelection, bool CW)
     {
-        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.RotateSelection)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.ObjectSeletion)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)rotateSelection & layer) != 0)
