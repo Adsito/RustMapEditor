@@ -938,10 +938,13 @@ public class MapIOEditor : EditorWindow
     }
     private void MapInfo()
     {
-        GUILayout.Label("Map Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
-        GUILayout.Label("Size: " + MapIO.terrain.terrainData.size.x);
-        GUILayout.Label("HeightMap: " + MapIO.terrain.terrainData.heightmapResolution + "x" + MapIO.terrain.terrainData.heightmapResolution);
-        GUILayout.Label("SplatMap: " + MapIO.terrain.terrainData.alphamapResolution + "x" + MapIO.terrain.terrainData.alphamapResolution);
+        if (MapIO.terrain != null)
+        {
+            GUILayout.Label("Map Info", EditorStyles.boldLabel, GUILayout.MaxWidth(75));
+            GUILayout.Label("Size: " + MapIO.terrain.terrainData.size.x);
+            GUILayout.Label("HeightMap: " + MapIO.terrain.terrainData.heightmapResolution + "x" + MapIO.terrain.terrainData.heightmapResolution);
+            GUILayout.Label("SplatMap: " + MapIO.terrain.terrainData.alphamapResolution + "x" + MapIO.terrain.terrainData.alphamapResolution);
+        }
     }
     private void EditorInfo()
     {
