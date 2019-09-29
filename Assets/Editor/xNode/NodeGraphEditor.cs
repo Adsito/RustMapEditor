@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using XNode;
 
 namespace XNodeEditor {
     /// <summary> Base class to derive custom Node Graph editors from. Use this to override how graphs are drawn in the editor. </summary>
@@ -67,7 +66,7 @@ namespace XNodeEditor {
             if (NodeEditorUtilities.GetAttrib(type, out attrib)) // Return custom path
                 return attrib.menuName;
             else // Return generated path
-                return ObjectNames.NicifyVariableName(type.ToString().Replace('.', '/'));
+                return NodeEditorUtilities.NodeDefaultPath(type);
         }
 
         /// <summary> Add items for the context menu when right-clicking this node. Override to add custom menu items. </summary>
@@ -81,7 +80,8 @@ namespace XNodeEditor {
                 if (string.IsNullOrEmpty(path)) continue;
 
                 menu.AddItem(new GUIContent(path), false, () => {
-                    CreateNode(type, pos);
+                    XNode.Node node = CreateNode(type, pos);
+                    NodeEditorWindow.current.AutoConnect(node);
                 });
             }
             menu.AddSeparator("");
@@ -91,14 +91,24 @@ namespace XNodeEditor {
             menu.AddCustomContextMenuItems(target);
         }
 
+        /// <summary> Returned color is used to color noodles </summary>
+        public virtual Color GetNoodleColor(XNode.NodePort output, XNode.NodePort input) {
+            Color col = GetTypeColor(output.ValueType);
+            if (window.hoveredPort == output || window.hoveredPort == input) return Color.Lerp(col, Color.white, 0.8f);
+            return col;
+        }
+
+        /// <summary> Returned color is used to color ports </summary>
         public virtual Color GetPortColor(XNode.NodePort port) {
             return GetTypeColor(port.ValueType);
         }
 
+        /// <summary> Returns generated color for a type. This color is editable in preferences </summary>
         public virtual Color GetTypeColor(Type type) {
             return NodeEditorPreferences.GetTypeColor(type);
         }
 
+        /// <summary> Override to display custom tooltips </summary>
         public virtual string GetPortTooltip(XNode.NodePort port) {
             Type portType = port.ValueType;
             string tooltip = "";
@@ -116,13 +126,14 @@ namespace XNodeEditor {
         }
 
         /// <summary> Create a node and save it in the graph asset </summary>
-        public virtual void CreateNode(Type type, Vector2 position) {
+        public virtual XNode.Node CreateNode(Type type, Vector2 position) {
             XNode.Node node = target.AddNode(type);
             node.position = position;
             if (node.name == null || node.name.Trim() == "") node.name = NodeEditorUtilities.NodeDefaultName(type);
             AssetDatabase.AddObjectToAsset(node, target);
             if (NodeEditorPreferences.GetSettings().autoSave) AssetDatabase.SaveAssets();
             NodeEditorWindow.RepaintAll();
+            return node;
         }
 
         /// <summary> Creates a copy of the original node in the graph </summary>
@@ -143,7 +154,7 @@ namespace XNodeEditor {
 
         [AttributeUsage(AttributeTargets.Class)]
         public class CustomNodeGraphEditorAttribute : Attribute,
-            XNodeEditor.Internal.NodeEditorBase<NodeGraphEditor, NodeGraphEditor.CustomNodeGraphEditorAttribute, XNode.NodeGraph>.INodeEditorAttrib {
+        XNodeEditor.Internal.NodeEditorBase<NodeGraphEditor, NodeGraphEditor.CustomNodeGraphEditorAttribute, XNode.NodeGraph>.INodeEditorAttrib {
             private Type inspectedType;
             public string editorPrefsKey;
             /// <summary> Tells a NodeGraphEditor which Graph type it is an editor for </summary>
