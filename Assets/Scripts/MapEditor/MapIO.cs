@@ -131,11 +131,10 @@ public static class MapIO
     public static int landSelectIndex = 0;
     public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
     public static float progressBar = 0f, progressValue = 1f;
-    public static Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
-    public static Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    public static Terrain terrain, water; 
+    public static Terrain terrain, water;
+    public static GameObject defaultPrefab;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -156,6 +155,7 @@ public static class MapIO
     public static void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
+        defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         RefreshAssetList(); // Refreshes the node gen presets.
         SetLayers(); // Resets all the layers to default values.
         EditorApplication.update += OnProjectLoad;
@@ -1797,7 +1797,6 @@ public static class MapIO
     static void LoadPrefabs(MapInfo terrains)
     {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
         float progressValue = 0f;
         if (PrefabManager.prefabsLoaded)
@@ -1806,14 +1805,7 @@ public static class MapIO
             {
                 progressValue += 0.2f / terrains.prefabData.Length;
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
-                if (PrefabManager.prefab.TryGetValue(terrains.prefabData[i].id, out GameObject prefab))
-                {
-                    SpawnPrefab(prefab, terrains.prefabData[i], prefabsParent);
-                }
-                else
-                {
-                    SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-                }
+                SpawnPrefab(PrefabManager.LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
             }
         }
         else
@@ -1822,7 +1814,7 @@ public static class MapIO
             {
                 progressValue += 0.2f / terrains.prefabData.Length;
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
-                SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                SpawnPrefab(defaultPrefab, terrains.prefabData[i], prefabsParent);
             }
         }
     }
