@@ -233,6 +233,7 @@ ice_lake_2:assets/bundled/prefabs/autospawn/monument/ice_lakes/ice_lake_2.prefab
 ice_lake_3:assets/bundled/prefabs/autospawn/monument/ice_lakes/ice_lake_3.prefab:944262640
 ice_lake_4:assets/bundled/prefabs/autospawn/monument/ice_lakes/ice_lake_4.prefab:3242506542
 airfield_1:assets/bundled/prefabs/autospawn/monument/large/airfield_1.prefab:2720666271
+excavator_1:assets/bundled/prefabs/autospawn/monument/large/excavator_1.prefab:1309495556
 junkyard_1:assets/bundled/prefabs/autospawn/monument/large/junkyard_1.prefab:3474775881
 launch_site_1:assets/bundled/prefabs/autospawn/monument/large/launch_site_1.prefab:3830758187
 military_tunnel_1:assets/bundled/prefabs/autospawn/monument/large/military_tunnel_1.prefab:72186600
@@ -437,6 +438,8 @@ cave_well_b:assets/bundled/prefabs/caves/cave_well_b.prefab:4283101809
 cave_well_c:assets/bundled/prefabs/caves/cave_well_c.prefab:3969946034
 desk_greencard_hapis:assets/bundled/prefabs/hapis/desk_greencard_hapis.prefab:3103232858
 hapis_rock_formation_a:assets/bundled/prefabs/hapis/hapis_rock_formation_a.prefab:2605687900
+lake:assets/bundled/prefabs/hapis/lake.prefab:2767337093
+lake_v2:assets/bundled/prefabs/hapis/lake_v2.prefab:2666567578
 military_tunnel_hapis:assets/bundled/prefabs/hapis/military_tunnel_hapis.prefab:21740960
 npcvendingmachine_building_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_building_hapis.prefab:1566614566
 npcvendingmachine_buyres_hapis:assets/bundled/prefabs/hapis/npcvendingmachine_buyres_hapis.prefab:924385556
@@ -560,6 +563,7 @@ diftwood_set_2_static_moss:assets/content/nature/driftwood/diftwood_set_2_static
 diftwood_set_3_static:assets/content/nature/driftwood/diftwood_set_3_static.prefab:1791599199
 diftwood_set_3_static_moss:assets/content/nature/driftwood/diftwood_set_3_static_moss.prefab:2068516867
 dune_lod0:assets/content/nature/dunes/dune_lod0.prefab:2282682854
+dunes_optimized:assets/content/nature/dunes/dunes_optimized.prefab:1329176046
 pfx sand:assets/content/nature/dunes/pfx sand.prefab:1017444056
 glow_worms_dense_bent:assets/content/nature/glow_worms/glow_worms_dense_bent.prefab:1546767668
 glow_worms_dense_cavity:assets/content/nature/glow_worms/glow_worms_dense_cavity.prefab:555626645
@@ -986,6 +990,8 @@ cover_e:assets/content/props/covers/cover_e.prefab:1985143522
 scientist_cover_a:assets/content/props/covers/scientist_cover_a.prefab:990379889
 scientist_cover_b:assets/content/props/covers/scientist_cover_b.prefab:4191836930
 scientist_cover_c:assets/content/props/covers/scientist_cover_c.prefab:3374075872
+excontrolpanel:assets/content/props/crane_control_panel/excontrolpanel.prefab:1940183872
+diesel_engine:assets/content/props/diesel_engine/diesel_engine.prefab:2124234034
 door_barricade_a:assets/content/props/door_barricades_static/door_barricade_a.prefab:3461764197
 door_barricade_b:assets/content/props/door_barricades_static/door_barricade_b.prefab:1529735576
 electrical_box_a:assets/content/props/electrical_boxes/electrical_box_a.prefab:4229645360
@@ -1061,6 +1067,8 @@ sirenlight_upright:assets/content/props/light_fixtures/sirenlight_upright.prefab
 spotlight.off:assets/content/props/light_fixtures/spotlight.off.prefab:3007686595
 spotlight.on:assets/content/props/light_fixtures/spotlight.on.prefab:3729339307
 lantern light glow:assets/content/props/light_fixtures/v2/lantern light glow.prefab:2213734374
+plight.backup.off:assets/content/props/light_fixtures/v2/plight.backup.off.prefab:3072689960
+plight.backup.red:assets/content/props/light_fixtures/v2/plight.backup.red.prefab:2356570233
 plight.flare:assets/content/props/light_fixtures/v2/plight.flare.prefab:4224279294
 plight.fluorescent.off:assets/content/props/light_fixtures/v2/plight.fluorescent.off.prefab:2589723153
 plight.fluorescent.on.cold:assets/content/props/light_fixtures/v2/plight.fluorescent.on.cold.prefab:405099309
@@ -1100,6 +1108,12 @@ cargoship interior lighting:assets/content/props/light_fixtures/v2/radtown work 
 cave large sewers lighting:assets/content/props/light_fixtures/v2/radtown work prefabs/cave large sewers lighting.prefab:2255723136
 clone_vat_fx:assets/content/props/light_fixtures/v2/radtown work prefabs/clone_vat_fx.prefab:850329660
 compound lighting:assets/content/props/light_fixtures/v2/radtown work prefabs/compound lighting.prefab:2424002848
+excavator lighting static:assets/content/props/light_fixtures/v2/radtown work prefabs/excavator lighting static.prefab:1362540524
+excavator_lights:assets/content/props/light_fixtures/v2/radtown work prefabs/excavator_lights.prefab:863874129
+giant excavator dig fx:assets/content/props/light_fixtures/v2/radtown work prefabs/giant excavator dig fx.prefab:4148857532
+giant excavator fx:assets/content/props/light_fixtures/v2/radtown work prefabs/giant excavator fx.prefab:669648531
+giant excavator lighting:assets/content/props/light_fixtures/v2/radtown work prefabs/giant excavator lighting.prefab:2576367769
+giant excavator lighting_backup:assets/content/props/light_fixtures/v2/radtown work prefabs/giant excavator lighting_backup.prefab:413547848
 lighthousefx-ph:assets/content/props/light_fixtures/v2/radtown work prefabs/lighthousefx-ph.prefab:307619289
 militarytunnel lighting v2:assets/content/props/light_fixtures/v2/radtown work prefabs/militarytunnel lighting v2.prefab:2305922457
 oil rig exhaust flame v2.1:assets/content/props/light_fixtures/v2/radtown work prefabs/oil rig exhaust flame v2.1.prefab:1974287225
@@ -1492,7 +1506,69 @@ dredge_bridges:assets/content/structures/dredge/dredge_bridges.prefab:2412281316
 dredge_glass:assets/content/structures/dredge/dredge_glass.prefab:1931995187
 dredge_metal_structure:assets/content/structures/dredge/dredge_metal_structure.prefab:3525345181
 dredge_props:assets/content/structures/dredge/dredge_props.prefab:1958320235
+bucket_excavator:assets/content/structures/excavator/bucket_excavator.prefab:2223110781
+bucket_excavator_arm:assets/content/structures/excavator/bucket_excavator_arm.prefab:3036987818
+bucket_excavator_arm_belt:assets/content/structures/excavator/bucket_excavator_arm_belt.prefab:3227414941
+bucket_excavator_arm_cables:assets/content/structures/excavator/bucket_excavator_arm_cables.prefab:2071405215
+bucket_excavator_arm_end:assets/content/structures/excavator/bucket_excavator_arm_end.prefab:2745391724
+bucket_excavator_arm_railings:assets/content/structures/excavator/bucket_excavator_arm_railings.prefab:1165636598
+bucket_excavator_arm_top:assets/content/structures/excavator/bucket_excavator_arm_top.prefab:1186404897
+bucket_excavator_back:assets/content/structures/excavator/bucket_excavator_back.prefab:3282896048
+bucket_excavator_back_railings:assets/content/structures/excavator/bucket_excavator_back_railings.prefab:369331047
+bucket_excavator_bottom:assets/content/structures/excavator/bucket_excavator_bottom.prefab:3515788216
+bucket_excavator_bottom_railings:assets/content/structures/excavator/bucket_excavator_bottom_railings.prefab:3296163854
+bucket_excavator_bucket:assets/content/structures/excavator/bucket_excavator_bucket.prefab:3855912153
+bucket_excavator_bucket_railings:assets/content/structures/excavator/bucket_excavator_bucket_railings.prefab:646873061
+bucket_excavator_cables:assets/content/structures/excavator/bucket_excavator_cables.prefab:3692759255
+bucket_excavator_control:assets/content/structures/excavator/bucket_excavator_control.prefab:2080997938
+bucket_excavator_core:assets/content/structures/excavator/bucket_excavator_core.prefab:3510208837
+bucket_excavator_core_railings:assets/content/structures/excavator/bucket_excavator_core_railings.prefab:1158699062
+bucket_excavator_head:assets/content/structures/excavator/bucket_excavator_head.prefab:2984952585
+bucket_excavator_head_railings:assets/content/structures/excavator/bucket_excavator_head_railings.prefab:2398565215
+bucket_excavator_head_top:assets/content/structures/excavator/bucket_excavator_head_top.prefab:898541736
+bucket_excavator_leg:assets/content/structures/excavator/bucket_excavator_leg.prefab:4058728339
+bucket_excavator_railings:assets/content/structures/excavator/bucket_excavator_railings.prefab:1859731548
+bucket_excavator_tracks:assets/content/structures/excavator/bucket_excavator_tracks.prefab:107456076
+conveyor_bridge:assets/content/structures/excavator/conveyor_bridge.prefab:2512371915
+conveyor_bridge_belt:assets/content/structures/excavator/conveyor_bridge_belt.prefab:474544746
+conveyor_bridge_railings:assets/content/structures/excavator/conveyor_bridge_railings.prefab:2393093622
+conveyor_unit:assets/content/structures/excavator/conveyor_unit.prefab:3257035948
+conveyor_unit_belt:assets/content/structures/excavator/conveyor_unit_belt.prefab:67016617
+conveyor_unit_buildings:assets/content/structures/excavator/conveyor_unit_buildings.prefab:1403260954
+conveyor_unit_head:assets/content/structures/excavator/conveyor_unit_head.prefab:2564400598
+conveyor_unit_head_railings:assets/content/structures/excavator/conveyor_unit_head_railings.prefab:1128086461
+conveyor_unit_railings:assets/content/structures/excavator/conveyor_unit_railings.prefab:542986396
+large_cable_roll:assets/content/structures/excavator/large_cable_roll.prefab:1878447326
+large_cable_roll_nobase:assets/content/structures/excavator/large_cable_roll_nobase.prefab:3659170304
+ore_node_static_a:assets/content/structures/excavator/ore_node_static_a.prefab:3285522275
+ore_node_static_b:assets/content/structures/excavator/ore_node_static_b.prefab:3885938699
+ore_node_static_c:assets/content/structures/excavator/ore_node_static_c.prefab:3825974692
+ore_node_static_d:assets/content/structures/excavator/ore_node_static_d.prefab:2384706287
+ai:assets/content/structures/excavator/prefabs/ai.prefab:3083644891
+diesel_collectable:assets/content/structures/excavator/prefabs/diesel_collectable.prefab:1388355532
+enginerumble:assets/content/structures/excavator/prefabs/effects/enginerumble.prefab:4095159490
+rockvibration:assets/content/structures/excavator/prefabs/effects/rockvibration.prefab:3507360117
+engine:assets/content/structures/excavator/prefabs/engine.prefab:2982299738
+enginelistener:assets/content/structures/excavator/prefabs/enginelistener.prefab:2833986992
+excavator_lights:assets/content/structures/excavator/prefabs/excavator_lights.prefab:1388803385
+excavator_output_pile:assets/content/structures/excavator/prefabs/excavator_output_pile.prefab:673116596
+excavator_yaw:assets/content/structures/excavator/prefabs/excavator_yaw.prefab:1700590233
+stairs_100:assets/content/structures/excavator/stairs_100.prefab:4235838839
+stairs_150:assets/content/structures/excavator/stairs_150.prefab:3476100758
+stairs_200:assets/content/structures/excavator/stairs_200.prefab:1458911938
+stairs_250:assets/content/structures/excavator/stairs_250.prefab:4028570537
+stairs_300:assets/content/structures/excavator/stairs_300.prefab:1414958142
+stairs_350:assets/content/structures/excavator/stairs_350.prefab:3482091577
+stairs_400:assets/content/structures/excavator/stairs_400.prefab:21719055
+stairs_450:assets/content/structures/excavator/stairs_450.prefab:278666870
+stairs_75:assets/content/structures/excavator/stairs_75.prefab:3449827144
+terrain_belts:assets/content/structures/excavator/terrain_belts.prefab:793195809
+terrain_belts_splitter:assets/content/structures/excavator/terrain_belts_splitter.prefab:1123255096
+terrain_output_bucket:assets/content/structures/excavator/terrain_output_bucket.prefab:534162459
+excavator_cabin_a:assets/content/structures/excavator_cabins/excavator_cabin_a.prefab:3841040179
+excavator_cabin_b:assets/content/structures/excavator_cabins/excavator_cabin_b.prefab:4028021796
 fencetriplets:assets/content/structures/fence_chainlink/fencetriplets.prefab:1191223778
+chainlink_fence_1x3:assets/content/structures/fences_walls/chainlink_fence_1x3.prefab:2476854157
 chainlink_fence_3x3:assets/content/structures/fences_walls/chainlink_fence_3x3.prefab:1850652554
 chainlink_fence_3x3_gate:assets/content/structures/fences_walls/chainlink_fence_3x3_gate.prefab:817541646
 chainlink_fence_3x9:assets/content/structures/fences_walls/chainlink_fence_3x9.prefab:408224184
@@ -2189,12 +2265,21 @@ oldwoodenrowboat:assets/content/vehicles/boats/rowboat/oldwoodenrowboat.prefab:1
 rowboat:assets/content/vehicles/boats/rowboat/rowboat.prefab:1283317166
 fuel_storage:assets/content/vehicles/boats/rowboat/subents/fuel_storage.prefab:198420611
 rowboat_storage:assets/content/vehicles/boats/rowboat/subents/rowboat_storage.prefab:3308040458
+digger_vehicle_a:assets/content/vehicles/digger_vehicle/digger_vehicle_a.prefab:3619143344
+dump_truck_a:assets/content/vehicles/dump_truck/dump_truck_a.prefab:3379932927
+dump_truck_b:assets/content/vehicles/dump_truck/dump_truck_b.prefab:1946683570
+dump_truck_gravel_mound:assets/content/vehicles/dump_truck/dump_truck_gravel_mound.prefab:342059218
 makeshiftcanoe:assets/content/vehicles/makeshift canoe/makeshiftcanoe.prefab:3094560231
 oar:assets/content/vehicles/makeshift canoe/oar.prefab:481807416
 debris_effect:assets/content/vehicles/minicopter/debris_effect.prefab:1663965824
 minicopter.entity:assets/content/vehicles/minicopter/minicopter.entity.prefab:2278499844
-minicopter:assets/content/vehicles/minicopter/minicopter.prefab:1657820012
 fuel_storage:assets/content/vehicles/minicopter/subents/fuel_storage.prefab:1950679400
+debris_effect:assets/content/vehicles/scrap heli carrier/effects/debris_effect.prefab:3229228464
+wheel-impact:assets/content/vehicles/scrap heli carrier/effects/wheel-impact.prefab:3044630680
+scrapheli:assets/content/vehicles/scrap heli carrier/scrapheli.prefab:801313238
+scrapheli_gibs:assets/content/vehicles/scrap heli carrier/scrapheli_gibs.prefab:3431604732
+scraptransporthelicopter:assets/content/vehicles/scrap heli carrier/scraptransporthelicopter.prefab:3484163637
+servergibs_scraptransport:assets/content/vehicles/scrap heli carrier/servergibs_scraptransport.prefab:1202855575
 sedan.entity:assets/content/vehicles/sedan_a/sedan.entity.prefab:1655878423
 sedan_a_black:assets/content/vehicles/sedan_a/sedan_a_black.prefab:3463123806
 sedan_a_blue:assets/content/vehicles/sedan_a/sedan_a_blue.prefab:788274617
@@ -2514,6 +2599,10 @@ furnace-large-deploy:assets/prefabs/deployable/furnace.large/effects/furnace-lar
 furnace.large:assets/prefabs/deployable/furnace.large/furnace.large.prefab:1374462671
 furnace-deploy:assets/prefabs/deployable/furnace/effects/furnace-deploy.prefab:4192425004
 furnace:assets/prefabs/deployable/furnace/furnace.prefab:2931042549
+hitchingpost:assets/prefabs/deployable/hitch & trough/hitchingpost.prefab:281223547
+hitchtrough.deployed:assets/prefabs/deployable/hitch & trough/hitchtrough.deployed.prefab:3238272924
+hitchtroughcombined:assets/prefabs/deployable/hitch & trough/hitchtroughcombined.prefab:1196107750
+trough:assets/prefabs/deployable/hitch & trough/trough.prefab:1897570654
 hotairballoon:assets/prefabs/deployable/hot air balloon/hotairballoon.prefab:3111236903
 hab_storage:assets/prefabs/deployable/hot air balloon/subents/hab_storage.prefab:675927205
 temp_balloon:assets/prefabs/deployable/hot air balloon/temp_balloon.prefab:4256891660
@@ -2577,6 +2666,7 @@ electrical.random.switch.deployed:assets/prefabs/deployable/playerioents/gates/r
 rfbroadcaster:assets/prefabs/deployable/playerioents/gates/rfbroadcaster/rfbroadcaster.prefab:2880296175
 rfreceiver:assets/prefabs/deployable/playerioents/gates/rfreceiver/rfreceiver.prefab:525502317
 xorswitch.entity:assets/prefabs/deployable/playerioents/gates/xorswitch/xorswitch.entity.prefab:1074446568
+small_fuel_generator.deployed:assets/prefabs/deployable/playerioents/generators/fuel generator/small_fuel_generator.deployed.prefab:3518207786
 generator.small:assets/prefabs/deployable/playerioents/generators/generator.small.prefab:1216081662
 solarpanel.large.deployed:assets/prefabs/deployable/playerioents/generators/solar_panels_roof/solarpanel.large.deployed.prefab:2231260353
 electric.flasherlight.deployed:assets/prefabs/deployable/playerioents/lights/flasherlight/electric.flasherlight.deployed.prefab:3742301494
@@ -2584,6 +2674,8 @@ simplelight:assets/prefabs/deployable/playerioents/lights/simplelight.prefab:179
 electric.sirenlight.deployed:assets/prefabs/deployable/playerioents/lights/sirenlight/electric.sirenlight.deployed.prefab:2436926577
 switch:assets/prefabs/deployable/playerioents/simpleswitch/switch.prefab:2374429146
 splitter:assets/prefabs/deployable/playerioents/splitter/splitter.prefab:2864726542
+teslacoil.deployed:assets/prefabs/deployable/playerioents/teslacoil/teslacoil.deployed.prefab:60725884
+teslacoil:assets/prefabs/deployable/playerioents/teslacoil/teslacoil.prefab:798499108
 timer:assets/prefabs/deployable/playerioents/timers/timer.prefab:3673859458
 cabletunnel:assets/prefabs/deployable/playerioents/tunnel/cabletunnel.prefab:3855268767
 primitivelootbox:assets/prefabs/deployable/primitive lootbox/primitivelootbox.prefab:1485552539
@@ -2699,6 +2791,7 @@ water_well_deployable:assets/prefabs/deployable/water well/water_well_deployable
 waterwellstatic:assets/prefabs/deployable/water well/waterwellstatic.prefab:3529835336
 waterwheel:assets/prefabs/deployable/water wheel/waterwheel.prefab:4154378427
 water-purifier-deploy:assets/prefabs/deployable/waterpurifier/effects/water-purifier-deploy.prefab:1059257638
+water_desalinator.gibs:assets/prefabs/deployable/waterpurifier/water_desalinator.gibs.prefab:740729500
 water_desalinator:assets/prefabs/deployable/waterpurifier/water_desalinator.prefab:4130592003
 waterpurifier.deployed:assets/prefabs/deployable/waterpurifier/waterpurifier.deployed.prefab:2905007296
 waterstorage:assets/prefabs/deployable/waterpurifier/waterstorage.prefab:1488612322
@@ -2809,6 +2902,11 @@ paintedegg3:assets/prefabs/misc/easter/painted eggs/paintedegg3.prefab:803819946
 paintedeggs.worldmodel:assets/prefabs/misc/easter/painted eggs/paintedeggs.worldmodel.prefab:1728443604
 silveregg.worldmodel:assets/prefabs/misc/easter/painted eggs/silveregg.worldmodel.prefab:3509327202
 bunnyentry:assets/prefabs/misc/easter/ui/bunnyentry.prefab:3165482671
+candyexplosion:assets/prefabs/misc/halloween/candies/candyexplosion.prefab:256035807
+candyicon:assets/prefabs/misc/halloween/candies/candyicon.prefab:1924835239
+candypickup:assets/prefabs/misc/halloween/candies/candypickup.prefab:81134985
+candyprojectile:assets/prefabs/misc/halloween/candies/candyprojectile.prefab:1465468950
+collectablecandy:assets/prefabs/misc/halloween/candies/collectablecandy.prefab:2495043668
 candles:assets/prefabs/misc/halloween/candles.prefab:3065497305
 largecandleset:assets/prefabs/misc/halloween/candles/largecandleset.prefab:3049520350
 smallcandleset:assets/prefabs/misc/halloween/candles/smallcandleset.prefab:3435611199
@@ -2820,11 +2918,36 @@ particle system:assets/prefabs/misc/halloween/cursed_cauldron/particle system.pr
 gravestone.stone.deployed:assets/prefabs/misc/halloween/deployablegravestone/gravestone.stone.deployed.prefab:2548600751
 gravestone.wood.deployed:assets/prefabs/misc/halloween/deployablegravestone/gravestone.wood.deployed.prefab:2983602886
 graveyardfence:assets/prefabs/misc/halloween/graveyard_fence/graveyardfence.prefab:1766793357
-halloween.lootbag:assets/prefabs/misc/halloween/lootbag/halloween.lootbag.prefab:2070688604
+halloweenhunt:assets/prefabs/misc/halloween/halloweenhunt.prefab:1937756239
+bronze_open:assets/prefabs/misc/halloween/lootbag/effects/bronze_open.prefab:2154269749
+gold_open:assets/prefabs/misc/halloween/lootbag/effects/gold_open.prefab:3139585768
+loot_bag_upgrade:assets/prefabs/misc/halloween/lootbag/effects/loot_bag_upgrade.prefab:1089940569
+silver_open:assets/prefabs/misc/halloween/lootbag/effects/silver_open.prefab:3025311223
+add_egg:assets/prefabs/misc/halloween/pumpkin_bucket/effects/add_egg.prefab:3689838922
+aim:assets/prefabs/misc/halloween/pumpkin_bucket/effects/aim.prefab:4025108820
+aim_cancel:assets/prefabs/misc/halloween/pumpkin_bucket/effects/aim_cancel.prefab:3965725686
+deploy:assets/prefabs/misc/halloween/pumpkin_bucket/effects/deploy.prefab:429068808
+eggexplosion:assets/prefabs/misc/halloween/pumpkin_bucket/effects/eggexplosion.prefab:857314494
+grab_egg_start:assets/prefabs/misc/halloween/pumpkin_bucket/effects/grab_egg_start.prefab:3820136482
+place:assets/prefabs/misc/halloween/pumpkin_bucket/effects/place.prefab:2247964232
+place_grab_egg:assets/prefabs/misc/halloween/pumpkin_bucket/effects/place_grab_egg.prefab:3816866328
+raise:assets/prefabs/misc/halloween/pumpkin_bucket/effects/raise.prefab:810295616
+settle:assets/prefabs/misc/halloween/pumpkin_bucket/effects/settle.prefab:222182393
+throw:assets/prefabs/misc/halloween/pumpkin_bucket/effects/throw.prefab:4271185919
+pumpkin_basket.entity:assets/prefabs/misc/halloween/pumpkin_bucket/pumpkin_basket.entity.prefab:2763047865
+pumpkin_basket.viewmodel:assets/prefabs/misc/halloween/pumpkin_bucket/pumpkin_basket.viewmodel.prefab:2574781446
 scarecrow.deployed:assets/prefabs/misc/halloween/scarecrow/scarecrow.deployed.prefab:482680556
+door_knock_fx:assets/prefabs/misc/halloween/skull_door_knocker/effects/door_knock_fx.prefab:1556414639
+skull_door_knock_fx:assets/prefabs/misc/halloween/skull_door_knocker/effects/skull_door_knock_fx.prefab:3087181013
+skull_door_knocker.deployed:assets/prefabs/misc/halloween/skull_door_knocker/skull_door_knocker.deployed.prefab:622673951
+skull_door_knocker:assets/prefabs/misc/halloween/skull_door_knocker/skull_door_knocker.prefab:1796973138
 skull_fire_pit:assets/prefabs/misc/halloween/skull_fire_pit/skull_fire_pit.prefab:1906669538
 spiderweba:assets/prefabs/misc/halloween/spiderweb/spiderweba.prefab:1177722664
 spookyspeaker:assets/prefabs/misc/halloween/spookyspeaker/spookyspeaker.prefab:25095088
+surgeon_outfit:assets/prefabs/misc/halloween/surgeon_outfit/surgeon_outfit.prefab:741889934
+surgeon_outfit_split:assets/prefabs/misc/halloween/surgeon_outfit/surgeon_outfit_split.prefab:325133832
+surgeon_outfit_vm:assets/prefabs/misc/halloween/surgeon_outfit/surgeon_outfit_vm.prefab:3953262974
+surgeon_outfit_worldmodel:assets/prefabs/misc/halloween/surgeon_outfit/surgeon_outfit_worldmodel.prefab:3071037560
 item_drop:assets/prefabs/misc/item drop/item_drop.prefab:545786656
 item_drop_backpack:assets/prefabs/misc/item drop/item_drop_backpack.prefab:1519640547
 despawn:assets/prefabs/misc/junkpile/effects/despawn.prefab:2052091278
@@ -2860,6 +2983,8 @@ orebonus_generic:assets/prefabs/misc/orebonus/orebonus_generic.prefab:1618627814
 bonussound:assets/prefabs/misc/orebonus/sound/bonussound.prefab:1784733918
 parachute:assets/prefabs/misc/parachute/parachute.prefab:1268659691
 platform.entity:assets/prefabs/misc/platform/platform.entity.prefab:2101896921
+platform.exclusion.entity:assets/prefabs/misc/platform/platform.exclusion.entity.prefab:2065397772
+platform.force.entity:assets/prefabs/misc/platform/platform.force.entity.prefab:1224573690
 recycler:assets/prefabs/misc/recycler/recycler.prefab:2688843000
 skull:assets/prefabs/misc/skull/skull.prefab:248159127
 chickendinner:assets/prefabs/misc/small ration float/chickendinner.prefab:539486180
@@ -2958,6 +3083,7 @@ cctv_camera.worldmodel:assets/prefabs/resource/cctv camera/cctv_camera.worldmode
 charcoal.worldmodel:assets/prefabs/resource/charcoal/charcoal.worldmodel.prefab:3376016089
 cloth.worldmodel:assets/prefabs/resource/cloth/cloth.worldmodel.prefab:486431740
 crude_oil.worldmodel:assets/prefabs/resource/crude oil/crude_oil.worldmodel.prefab:1050797226
+diesel_barrel_world:assets/prefabs/resource/diesel barrel/diesel_barrel_world.prefab:4140706055
 explosives.worldmodel:assets/prefabs/resource/explosives/explosives.worldmodel.prefab:3136871544
 gunpowder.worldmodel:assets/prefabs/resource/gunpowder/gunpowder.worldmodel.prefab:2507764021
 hq_metal_ore.worldmodel:assets/prefabs/resource/hq metal ore/hq_metal_ore.worldmodel.prefab:801538411

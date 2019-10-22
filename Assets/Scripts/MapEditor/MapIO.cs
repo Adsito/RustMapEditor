@@ -130,7 +130,6 @@ public static class MapIO
     #endregion
     public static int landSelectIndex = 0;
     public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
-    private static PrefabLookup prefabLookup;
     public static float progressBar = 0f, progressValue = 1f;
     public static Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
     public static Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
@@ -158,7 +157,6 @@ public static class MapIO
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         RefreshAssetList(); // Refreshes the node gen presets.
-        GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         SetLayers(); // Resets all the layers to default values.
         EditorApplication.update += OnProjectLoad;
     }
@@ -170,7 +168,7 @@ public static class MapIO
         EditorApplication.update -= OnProjectLoad;
         if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
         {
-            CreateNewMap(2000);
+            CreateNewMap(1000);
         }
     }
     public static void CentreSceneView()
@@ -182,6 +180,26 @@ public static class MapIO
             sceneView.pivot = new Vector3(500f, 600f, 500f);
             sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
         }
+    }
+    /// <summary>
+    /// Loads and sets the Land and Water terrains.
+    /// </summary>
+    /// <param name="terrains"></param>
+    public static void LoadTerrains(MapInfo terrains)
+    {
+        terrain.terrainData.heightmapResolution = terrains.resolution;
+        terrain.terrainData.size = terrains.size;
+
+        water.terrainData.heightmapResolution = terrains.resolution;
+        water.terrainData.size = terrains.size;
+
+        terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
+        water.terrainData.SetHeights(0, 0, terrains.water.heights);
+
+        terrain.terrainData.alphamapResolution = terrains.resolution - 1;
+        terrain.terrainData.baseMapResolution = terrains.resolution - 1;
+        water.terrainData.alphamapResolution = terrains.resolution - 1;
+        water.terrainData.baseMapResolution = terrains.resolution - 1;
     }
     public static void SetLayers()
     {
@@ -218,31 +236,13 @@ public static class MapIO
         MapIO.progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
-    public static void SetPrefabLookup(PrefabLookup prefabLookup)
+    /// <summary>
+    /// Loads the prefabs from the Rust prefab bundle.
+    /// </summary>
+    /// <param name="bundlePath">The file path to the bundle.</param>
+    public static void LoadPrefabBundle(string bundlePath)
     {
-        MapIO.prefabLookup = prefabLookup;
-    }
-    public static void GetProjectPrefabs()
-    {
-        prefabsLoaded.Clear();
-        foreach (var asset in AssetDatabase.GetAllAssetPaths())
-        {
-            if (asset.EndsWith(".prefab"))
-            {
-                GameObject loadedAsset = AssetDatabase.LoadAssetAtPath(asset, typeof(GameObject)) as GameObject;
-                if (loadedAsset != null)
-                {
-                    if (loadedAsset.GetComponent<PrefabDataHolder>() != null)
-                    {
-                        prefabsLoaded.Add(loadedAsset.GetComponent<PrefabDataHolder>().prefabData.id, loadedAsset);
-                    }
-                }
-            }
-        }
-    }
-    public static PrefabLookup GetPrefabLookUp()
-    {
-        return prefabLookup;
+        PrefabManager.PrefabLookup(bundlePath);
     }
     /// <summary>
     /// Change the active land layer.
@@ -1780,69 +1780,59 @@ public static class MapIO
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
     /// <summary>
-    /// Loads MapInfo and sets up the map.
+    /// Centres the Prefab and Path parent objects.
     /// </summary>
-    public static void LoadMapInfo(MapInfo terrains)
+    /// <param name="terrains"></param>
+    static void CentreSceneObjects(MapInfo terrains)
     {
-        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
         worldCentrePath.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
-        RemoveMapObjects(true, true);
-        CentreSceneView();
-
-        var terrainPosition = 0.5f * terrains.size;
-        
-        terrain.transform.position = terrainPosition;
-        water.transform.position = terrainPosition;
-
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
-        TopologyData.InitMesh(terrains.topology);
-
-        terrain.terrainData.heightmapResolution = terrains.resolution;
-        terrain.terrainData.size = terrains.size;
-
-        water.terrainData.heightmapResolution = terrains.resolution;
-        water.terrainData.size = terrains.size;
-
-        terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
-        water.terrainData.SetHeights(0, 0, terrains.water.heights);
-
-        terrain.terrainData.alphamapResolution = terrains.resolution - 1;
-        terrain.terrainData.baseMapResolution = terrains.resolution - 1;
-        water.terrainData.alphamapResolution = terrains.resolution - 1;
-        water.terrainData.baseMapResolution = terrains.resolution - 1;
-
-        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
-        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
-
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
-        LandData.SetData(terrains.splatMap, "ground");
-
-        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
-        LandData.SetData(terrains.biomeMap, "biome");
-
-        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
-        LandData.SetData(terrains.alphaMap, "alpha");
-
-        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
-        }
+    }
+    /// <summary>
+    /// Loads and sets up the map Prefabs.
+    /// </summary>
+    /// <param name="terrains"></param>
+    static void LoadPrefabs(MapInfo terrains)
+    {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
         float progressValue = 0f;
-        for (int i = 0; i < terrains.prefabData.Length; i++)
+        if (PrefabManager.prefabsLoaded)
         {
-            progressValue += 0.2f / terrains.prefabData.Length;
-            ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
-            SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                progressValue += 0.2f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                if (PrefabManager.prefab.TryGetValue(terrains.prefabData[i].id, out GameObject prefab))
+                {
+                    SpawnPrefab(prefab, terrains.prefabData[i], prefabsParent);
+                }
+                else
+                {
+                    SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+                }
+            }
         }
+        else
+        {
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                progressValue += 0.2f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+            }
+        }
+    }
+    /// <summary>
+    /// Loads and sets up the map Paths.
+    /// </summary>
+    /// <param name="terrains"></param>
+    static void LoadPaths(MapInfo terrains)
+    {
+        var terrainPosition = 0.5f * terrains.size;
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
@@ -1866,6 +1856,44 @@ public static class MapIO
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
+    }
+    static void LoadSplatMaps(MapInfo terrains)
+    {
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
+        TopologyData.InitMesh(terrains.topology);
+
+        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
+        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
+
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
+        LandData.SetData(terrains.splatMap, "ground");
+
+        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
+        LandData.SetData(terrains.biomeMap, "biome");
+
+        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
+        LandData.SetData(terrains.alphaMap, "alpha");
+
+        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
+        }
+    }
+    /// <summary>
+    /// Loads and sets up the map.
+    /// </summary>
+    static void LoadMapInfo(MapInfo terrains)
+    {
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        RemoveMapObjects(true, true);
+        CentreSceneView();
+        CentreSceneObjects(terrains);
+        LoadTerrains(terrains);
+        LoadSplatMaps(terrains);
+        LoadPrefabs(terrains);
+        LoadPaths(terrains);
         LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
@@ -1874,9 +1902,8 @@ public static class MapIO
     /// </summary>
     public static void Load(WorldSerialization world)
     {
-        WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(world);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
-        LoadMapInfo(terrains);
+        LoadMapInfo(WorldConverter.WorldToTerrain(world));
     }
     /// <summary>
     /// Saves the map.
@@ -1910,10 +1937,6 @@ public static class MapIO
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         SetMinimumHeight(503f);
-    }
-    public static void StartPrefabLookup()
-    {
-        SetPrefabLookup(new PrefabLookup(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt));
     }
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();

@@ -72,24 +72,11 @@ public class MapIOEditor : EditorWindow
                 switch (prefabOptions)
                 {
                     case 0:
-                        EditorGUILayout.LabelField("THIS IS AN EARLY PREVIEW. Currently waiting for SDK updates.", EditorStyles.boldLabel);
                         EditorGUILayout.BeginHorizontal();
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
                             "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
                         {
-                            MapIO.StartPrefabLookup();
-                        }
-                        if (GUILayout.Button(new GUIContent("Unload", "Unloads all the prefabs from the Rust Asset Bundle."), GUILayout.MaxWidth(100)))
-                        {
-                            if (MapIO.GetPrefabLookUp() != null)
-                            {
-                                MapIO.GetPrefabLookUp().Dispose();
-                                MapIO.SetPrefabLookup(null);
-                            }
-                            else
-                            {
-                                EditorUtility.DisplayDialog("ERROR: Can't unload prefabs", "No prefabs loaded.", "Ok");
-                            }
+                            MapIO.LoadPrefabBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
                         }
                         EditorGUILayout.EndHorizontal();
                         break;
