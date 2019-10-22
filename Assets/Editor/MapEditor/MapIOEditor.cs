@@ -5,7 +5,7 @@ using Rotorz.ReorderableList;
 
 public class MapIOEditor : EditorWindow
 {
-    string editorVersion = "v2.0-prerelease";
+    string editorVersion = "v2.1-prerelease";
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
