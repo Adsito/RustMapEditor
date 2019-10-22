@@ -2,32 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 
-public class PrefabAttributes : List<PrefabAttributes>
-{
-    public GameObject Prefab
-    {
-        get; set;
-    }
-    public string Path
-    {
-        get; set;
-    }
-    public uint RustID
-    {
-        get; set;
-    }
-}
 public static class PrefabManager
 {
 	private static AssetBundleBackend backend;
-	private static HashLookup lookup;
-    public static List<Mesh> meshes = new List<Mesh>();
+    public static GameManifest manifest;
+
     public static List<string> assetsList = new List<string>();
-    public static List<PrefabAttributes> prefabsList = new List<PrefabAttributes>();
-    public static Dictionary<uint, GameObject> prefab = new Dictionary<uint, GameObject>();
+    public static List<string> prefabsPrepared = new List<string>();
 
     private static string manifestPath = "assets/manifest.asset";
-    private static string assetsToLoadPath = "AssetsList.txt";
     public static bool prefabsLoaded = false;
 
     public static void PrefabLookup(string bundlename)
@@ -35,48 +18,36 @@ public static class PrefabManager
         backend = new AssetBundleBackend(bundlename);
         AssetBundleLookup();
         AssetDump();
-        var lookupString = "";
-        var manifest = backend.Load<GameManifest>(manifestPath);
+        manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
             Debug.LogError("Manifest is null");
-            backend = null;
+            backend.Dispose();
             return;
         }
-        else
-        {
-            for (uint index = 0; (long)index < (long)manifest.pooledStrings.Length; ++index)
-            {
-                lookupString += "0," + manifest.pooledStrings[index].hash + "," + manifest.pooledStrings[index].str + "\n";
-            }
-        }
-        lookup = new HashLookup(lookupString);
-        var lines = File.ReadAllLines(assetsToLoadPath);
-        float progressInterval = 1f / lines.Length;
-        float progress = 0f;
-        foreach (var line in lines)
-        {
-            MapIO.ProgressBar("Prefab Warmup", "Loading Directory: " + line, progress);
-            progress += progressInterval;
-            if (line.EndsWith("/") || line.EndsWith("\\"))
-            {
-                LoadPrefabs(line);
-            }
-        }
-        PrefabsLoadedDump();
-        MapIO.ClearProgressBar();
         prefabsLoaded = true;
     }
-    private static void LoadPrefabs(string path)
+    /// <summary>
+    /// Loads, sets up and returns the prefab at the asset path.
+    /// </summary>
+    /// <param name="path">The Prefab path in the bundle file.</param>
+    /// <returns>The prefab loaded, or the default prefab if unable to load.</returns>
+    public static GameObject LoadPrefab(string path)
     {
-        var subpaths = backend.FindAll(path);
-        for (int i = 0; i < subpaths.Length; i++)
+        if (prefabsPrepared.Contains(path))
         {
-            if (subpaths[i].Contains(".prefab") && subpaths[i].Contains(".item") == false)
-            {
-                PreparePrefab(backend.Load<GameObject>(subpaths[i]), subpaths[i], lookup[subpaths[i]]);
-            }
+            return backend.LoadPrefab(path); 
         }
+        return PreparePrefab(backend.Load<GameObject>(path), path, StringPool.Get(path));
+    }
+    /// <summary>
+    /// Loads, sets up and returns the prefab at the prefab id.
+    /// </summary>
+    /// <param name="id">The prefab manifest id.</param>
+    /// <returns></returns>
+    public static GameObject LoadPrefab(uint id)
+    {
+        return LoadPrefab(StringPool.Get(id));
     }
     /// <summary>
     /// Gathers a list of strings for every asset found in the content bundle file.
@@ -104,19 +75,12 @@ public static class PrefabManager
         }
     }
     /// <summary>
-    /// Dumps a list of all the prefabs loaded to a file.
+    /// Prepare the loaded prefab for use with the map editor.
     /// </summary>
-    static void PrefabsLoadedDump()
-    {
-        using(StreamWriter streamWriter = new StreamWriter("PrefabsLoaded.txt", false))
-        {
-            foreach (var item in prefabsList)
-            {
-                streamWriter.WriteLine(item.Prefab.name + ":" + item.Path + ":" + item.RustID);
-            }
-        }
-    }
-    private static void PreparePrefab(GameObject go, string path, uint rustid) // Seperates the prefab components and adds them to list.
+    /// <param name="go">The prefab GameObject.</param>
+    /// <param name="path">The prefab path.</param>
+    /// <returns></returns>
+    private static GameObject PreparePrefab(GameObject go, string path, uint rustid)
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
@@ -128,12 +92,7 @@ public static class PrefabManager
         {
             id = rustid,
         };
-        prefab.Add(rustid, go);
-        prefabsList.Add(new PrefabAttributes()
-        {
-            Prefab = go,
-            Path = path,
-            RustID = rustid
-        });
+        prefabsPrepared.Add(path);
+        return go;
     }
 }
