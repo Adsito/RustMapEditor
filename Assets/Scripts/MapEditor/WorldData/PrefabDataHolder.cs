@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [Serializable]
+[SelectionBase]
 public class PrefabDataHolder : MonoBehaviour
 {
     
