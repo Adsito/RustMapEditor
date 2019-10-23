@@ -10,6 +10,7 @@ public static class MapEditorSettings
 
     public static string rustDirectory;
     public static int objectQuality;
+    public static string[] prefabPaths;
 
     [InitializeOnLoadMethod]
     static void Init()
@@ -29,10 +30,12 @@ public static class MapEditorSettings
     /// <returns></returns>
     static EditorSettings DefaultSettings()
     {
+        SetDefaultSettings();
         EditorSettings editorSettings = new EditorSettings
         {
-            ObjectQuality = 200,
-            RustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust"
+            ObjectQuality = objectQuality,
+            RustDirectory = rustDirectory,
+            PrefabPaths = prefabPaths
         };
         return editorSettings;
     }
@@ -46,7 +49,8 @@ public static class MapEditorSettings
             EditorSettings editorSettings = new EditorSettings()
             {
                 ObjectQuality = objectQuality,
-                RustDirectory = rustDirectory
+                RustDirectory = rustDirectory,
+                PrefabPaths = prefabPaths
             };
             write.Write(JsonUtility.ToJson(editorSettings));
         }
@@ -61,6 +65,7 @@ public static class MapEditorSettings
             EditorSettings editorSettings = JsonUtility.FromJson<EditorSettings>(reader.ReadToEnd());
             rustDirectory = editorSettings.RustDirectory;
             objectQuality = editorSettings.ObjectQuality;
+            prefabPaths = editorSettings.PrefabPaths;
         }
     }
     /// <summary>
@@ -70,6 +75,33 @@ public static class MapEditorSettings
     {
         rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust";
         objectQuality = 200;
+        SetDefaultPrefabPaths();
+    }
+    /// <summary>
+    /// Sets the spawnable prefab paths to default paths.
+    /// </summary>
+    public static void SetDefaultPrefabPaths()
+    {
+        prefabPaths = new string[]
+        {
+            @"assets/bundled/prefabs/autospawn/",
+            @"assets/bundled/prefabs/bunker_rooms/",
+            @"assets/bundled/prefabs/caves/",
+            @"assets/bundled/prefabs/hapis/",
+            @"assets/bundled/prefabs/modding/",
+            @"assets/bundled/prefabs/radtown/",
+            @"assets/bundled/prefabs/static/",
+            @"assets/content/nature/",
+            @"assets/content/building/",
+            @"assets/content/props/",
+            @"assets/content/structures/",
+            @"assets/content/vehicles/",
+            @"assets/prefabs/building/",
+            @"assets/prefabs/building core/",
+            @"assets/prefabs/deployable/",
+            @"assets/prefabs/misc/",
+            @"assets/prefabs/resource/" 
+        };
     }
 }
 [Serializable]
@@ -77,4 +109,5 @@ public struct EditorSettings
 {
     public string RustDirectory;
     public int ObjectQuality;
+    public string[] PrefabPaths;
 }
