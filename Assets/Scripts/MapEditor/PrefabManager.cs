@@ -10,22 +10,37 @@ public static class PrefabManager
     public static List<string> assetsList = new List<string>();
     public static List<string> prefabsPrepared = new List<string>();
 
-    private static string manifestPath = "assets/manifest.asset";
+    private const string manifestPath = "assets/manifest.asset";
     public static bool prefabsLoaded = false;
 
-    public static void PrefabLookup(string bundlename)
+    /// <summary>
+    /// Loads the prefabs from the Rust prefab bundle.
+    /// </summary>
+    /// <param name="bundlename">The file path to the bundle.</param>
+    public static void LoadBundle(string bundlename)
     {
         backend = new AssetBundleBackend(bundlename);
-        AssetBundleLookup();
         AssetDump();
         manifest = backend.Load<GameManifest>(manifestPath);
         if (manifest == null)
         {
             Debug.LogError("Manifest is null");
             backend.Dispose();
+            prefabsLoaded = false;
             return;
         }
         prefabsLoaded = true;
+    }
+    /// <summary>
+    /// Disposes the loaded bundle and prefabs.
+    /// </summary>
+    public static void DisposeBundle()
+    {
+        if (prefabsLoaded)
+        {
+            prefabsLoaded = false;
+            backend.Dispose();
+        }
     }
     /// <summary>
     /// Loads, sets up and returns the prefab at the asset path.
@@ -66,6 +81,7 @@ public static class PrefabManager
     /// </summary>
     static void AssetDump() 
     {
+        AssetBundleLookup();
         using (StreamWriter streamWriter = new StreamWriter("AssetDump.txt", false))
         {
             foreach (var item in assetsList)
@@ -86,6 +102,7 @@ public static class PrefabManager
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
         go.SetActive(true);
         go.tag = "LoadedPrefab";
+        go.layer = 8;
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData
