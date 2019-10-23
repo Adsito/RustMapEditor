@@ -1858,7 +1858,7 @@ public static class MapIO
     /// <param name="size">The size of the terrain.</param>
     public static void CreateNewMap(int size)
     {
-        LoadMapInfo(WorldConverter.emptyWorld(size));
+        LoadMapInfo(WorldConverter.EmptyMap(size));
         PaintLayer("Alpha", 0);
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
