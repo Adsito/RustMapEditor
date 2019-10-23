@@ -63,39 +63,31 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Prefabs
             case 1:
-                GUIContent[] prefabsOptionsMenu = new GUIContent[3];
+                GUIContent[] prefabsOptionsMenu = new GUIContent[2];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
                 prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
-                prefabsOptionsMenu[2] = new GUIContent("Spawn Prefabs");
                 prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
 
                 switch (prefabOptions)
                 {
                     case 0:
-                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
                         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
-                            "AssetList.txt in the root directory"), GUILayout.MaxWidth(100)))
+                            "AssetList.txt in the root directory"), EditorStyles.toolbarButton, GUILayout.MaxWidth(40)))
                         {
-                            MapIO.LoadPrefabBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
+                            PrefabManager.LoadBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
+                        }
+                        if (GUILayout.Button(new GUIContent("Unload", "Unloads the loaded bundle and prefabs."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+                        {
+                            PrefabManager.DisposeBundle();
                         }
                         EditorGUILayout.EndHorizontal();
                         break;
-                    case 2:
-                        if (GUILayout.Button(new GUIContent("Prefab List", "Opens a window to drag and drop prefabs onto the map."), GUILayout.MaxWidth(125)))
-                        {
-                            PrefabHierachyEditor.ShowWindow();
-                        }
-                        break;
                     case 1:
-                        if (GUILayout.Button(new GUIContent("Remove Broken Prefabs", "Removes any prefabs known to prevent maps from loading. Use this is you are having" +
-                                    " errors loading a map on a server.")))
-                        {
-                            MapIO.RemoveBrokenPrefabs();
-                        }
-                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes the prefabs after exporting them."), deletePrefabs, GUILayout.MaxWidth(300));
-                        EditorGUILayout.BeginHorizontal();
+                        deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes prefabs/lootcrates after exporting."), deletePrefabs, GUILayout.MaxWidth(300));
+                        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
                         if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
-                            "If you don't delete them after export they will duplicate on first map load.")))
+                            "If you don't delete them after export they will duplicate on first map load."), EditorStyles.toolbarButton))
                         {
                             prefabSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", prefabSaveFile, "LootCrateData", "json");
                             if (prefabSaveFile == "")
@@ -104,7 +96,7 @@ public class MapIOEditor : EditorWindow
                             }
                             MapIO.ExportLootCrates(prefabSaveFile, deletePrefabs);
                         }
-                        if (GUILayout.Button(new GUIContent("Export Map Prefabs", "Exports all map prefabs to plugin data.")))
+                        if (GUILayout.Button(new GUIContent("Export Map Prefabs", "Exports all map prefabs to plugin data."), EditorStyles.toolbarButton))
                         {
                             mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", prefabSaveFile, "MapData", "json");
                             if (mapPrefabSaveFile == "")
@@ -114,27 +106,27 @@ public class MapIOEditor : EditorWindow
                             MapIO.ExportMapPrefabs(mapPrefabSaveFile, deletePrefabs);
                         }
                         EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
                         if (GUILayout.Button(new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from " +
-                            "appearing in RustEdit. Use the break RustEdit Custom Prefabs button to undo.")))
+                            "appearing in RustEdit. Use the break RustEdit Custom Prefabs button to undo."), EditorStyles.toolbarButton))
                         {
                             MapIO.HidePrefabsInRustEdit();
                         }
-                        if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.")))
+                        if (GUILayout.Button(new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file."), EditorStyles.toolbarButton))
                         {
                             MapIO.BreakRustEditCustomPrefabs();
                         }
                         EditorGUILayout.EndHorizontal();
-                        if (GUILayout.Button(new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.")))
+                        if (GUILayout.Button(new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file."), EditorStyles.toolbarButton))
                         {
                             MapIO.GroupRustEditCustomPrefabs();
                         }
-                        EditorGUILayout.BeginHorizontal();
-                        if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.")))
+                        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                        if (GUILayout.Button(new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map."), EditorStyles.toolbarButton))
                         {
                             MapIO.RemoveMapObjects(true, false);
                         }
-                        if (GUILayout.Button(new GUIContent("Delete All Map Paths", "Removes all the paths from the map.")))
+                        if (GUILayout.Button(new GUIContent("Delete All Map Paths", "Removes all the paths from the map."), EditorStyles.toolbarButton))
                         {
                             MapIO.RemoveMapObjects(false, true);
                         }
@@ -162,7 +154,7 @@ public class MapIOEditor : EditorWindow
                 {
                     #region Ground Layer
                     case 0:
-                        MapIO.groundLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint: ", MapIO.groundLayer);
+                        TextureSelect(layerIndex);
                         PaintTools(layerIndex, TerrainSplat.TypeToIndex((int)MapIO.groundLayer));
                         RotateTools(layerIndex);
                         RiverTools(layerIndex, TerrainSplat.TypeToIndex((int)MapIO.groundLayer));
@@ -173,7 +165,7 @@ public class MapIOEditor : EditorWindow
                     #endregion
                     #region Biome Layer
                     case 1:
-                        MapIO.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Biome To Paint:", MapIO.biomeLayer);
+                        TextureSelect(layerIndex);
                         PaintTools(layerIndex, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
                         RotateTools(layerIndex);
                         RiverTools(layerIndex, TerrainBiome.TypeToIndex((int)MapIO.biomeLayer));
@@ -184,7 +176,6 @@ public class MapIOEditor : EditorWindow
                     #endregion
                     #region Alpha Layer
                     case 2:
-                        GUILayout.Label("Green = Terrain Visible \nPurple = Terrain Invisible", EditorStyles.boldLabel);
                         PaintTools(layerIndex, 1, 0);
                         RotateTools(layerIndex);
                         SlopeTools(layerIndex, 1, 0);
@@ -194,21 +185,14 @@ public class MapIOEditor : EditorWindow
                     #endregion
                     #region Topology Layer
                     case 3:
-                        GUILayout.Label("Green = Active \nPurple = Inactive", EditorStyles.boldLabel);
-                        MapIO.oldTopologyLayer = MapIO.topologyLayer;
-                        MapIO.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayer);
-                        if (MapIO.topologyLayer != MapIO.oldTopologyLayer)
-                        {
-                            MapIO.ChangeLandLayer();
-                            Repaint();
-                        }
-                        PaintTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
-                        RotateTools(layerIndex, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                        TopologyLayerSelect();
+                        PaintTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+                        RotateTools(layerIndex, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
                         TopologyTools();
-                        RiverTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
-                        SlopeTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
-                        HeightTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
-                        AreaTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+                        RiverTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+                        SlopeTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+                        HeightTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+                        AreaTools(layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
                         break;
                     #endregion
                 }
@@ -618,12 +602,12 @@ public class MapIOEditor : EditorWindow
     /// <param name="index">The landLayer to change to.</param>
     private void SetLandLayer(int index)
     {
-        MapIO.landSelectIndex = index;
-        string oldLandLayer = MapIO.landLayer;
-        MapIO.landLayer = landLayers[MapIO.landSelectIndex];
-        if (MapIO.landLayer != oldLandLayer)
+        LandData.landIndex = index;
+        string oldLandLayer = LandData.landLayer;
+        LandData.landLayer = landLayers[LandData.landIndex];
+        if (LandData.landLayer != oldLandLayer)
         {
-            MapIO.ChangeLandLayer();
+            LandData.ChangeLandLayer();
             Repaint();
         }
     }
@@ -665,6 +649,36 @@ public class MapIOEditor : EditorWindow
             heightMinBlendLow = heightLow;
         }
     }
+    private void TextureSelect(int index)
+    {
+        if (index == 0)
+        {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            GUILayout.Label(new GUIContent("Texture To Paint: ", "The Ground texture the tools will paint with."), EditorStyles.toolbarButton);
+            MapIO.groundLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup(MapIO.groundLayer, EditorStyles.toolbarDropDown);
+            EditorGUILayout.EndHorizontal();
+        }
+        else
+        {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            GUILayout.Label(new GUIContent("Biome To Paint: ", "The Biome the tools will paint with."), EditorStyles.toolbarButton);
+            MapIO.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup(MapIO.biomeLayer, EditorStyles.toolbarDropDown);
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+    private void TopologyLayerSelect()
+    {
+        LandData.oldTopologyLayer = LandData.topologyLayer;
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(new GUIContent("Topology Layer: ", "The Topology layer to display."), EditorStyles.toolbarButton);
+        LandData.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(LandData.topologyLayer, EditorStyles.toolbarDropDown);
+        EditorGUILayout.EndHorizontal();
+        if (LandData.topologyLayer != LandData.oldTopologyLayer)
+        {
+            LandData.ChangeLandLayer();
+            Repaint();
+        }
+    }
     private void SlopeTools(int index, int texture, int erase = 0, int topology = 0)
     {
         GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
@@ -686,12 +700,12 @@ public class MapIOEditor : EditorWindow
         }
         if (index > 1) // Alpha and Topology
         {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, slopeLow, slopeHigh, texture, topology);
             }
-            if (GUILayout.Button("Erase Slopes"))
+            if (GUILayout.Button(new GUIContent("Erase Slopes", "Erases the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintSlope(landLayers[index], heightLow, heightHigh, heightLow, heightHigh, erase, topology);
             }
@@ -699,7 +713,7 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + MapIO.landLayer + " layer within the slope range.")))
+            if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, texture);
             }
@@ -726,12 +740,12 @@ public class MapIOEditor : EditorWindow
         }
         if (index > 1) // Alpha and Topology
         {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, heightLow, heightHigh, texture, topology);
             }
-            if (GUILayout.Button("Erase Heights"))
+            if (GUILayout.Button(new GUIContent("Erase Heights", "Erases the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, heightLow, heightHigh, erase, topology);
             }
@@ -739,7 +753,7 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + MapIO.landLayer + " layer within the height range.")))
+            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, texture);
             }
@@ -747,12 +761,12 @@ public class MapIOEditor : EditorWindow
     }
     private void RotateTools(int index, int topology = 0)
     {
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate the " + landLayers[index] + " layer 90°.")))
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate the " + landLayers[index] + " layer 90°."), EditorStyles.toolbarButton))
         {
             MapIO.RotateLayer(landLayers[index], true);
         }
-        if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate the " + landLayers[index] + " layer 270°.")))
+        if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate the " + landLayers[index] + " layer 270°."), EditorStyles.toolbarButton))
         {
             MapIO.RotateLayer(landLayers[index], false);
         }
@@ -761,22 +775,22 @@ public class MapIOEditor : EditorWindow
     private void TopologyTools()
     {
         
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90°")))
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90°"), EditorStyles.toolbarButton))
         {
             MapIO.RotateAllTopologyLayers(true);
         }
-        if (GUILayout.Button(new GUIContent("Rotate All 270°", "Rotate all Topology layers 270°")))
+        if (GUILayout.Button(new GUIContent("Rotate All 270°", "Rotate all Topology layers 270°"), EditorStyles.toolbarButton))
         {
             MapIO.RotateAllTopologyLayers(false);
         }
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers.")))
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers."), EditorStyles.toolbarButton))
         {
             MapIO.InvertAllTopologyLayers();
         }
-        if (GUILayout.Button(new GUIContent("Clear All", "Clear all Topology layers.")))
+        if (GUILayout.Button(new GUIContent("Clear All", "Clear all Topology layers."), EditorStyles.toolbarButton))
         {
             MapIO.ClearAllTopologyLayers();
         }
@@ -791,12 +805,12 @@ public class MapIOEditor : EditorWindow
         x2 = Mathf.Clamp(EditorGUILayout.IntField("To X ", x2), x1, MapIO.terrain.terrainData.alphamapResolution);
         if (index > 1) // Alpha and Topology
         {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint Area"))
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, texture, topology);
             }
-            if (GUILayout.Button("Erase Area"))
+            if (GUILayout.Button("Erase Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, erase, topology);
             }
@@ -804,7 +818,7 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            if (GUILayout.Button("Paint Area"))
+            if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, texture);
             }
@@ -816,12 +830,12 @@ public class MapIOEditor : EditorWindow
         aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
         if (index > 1)
         {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint Rivers"))
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture, topology);
             }
-            if (GUILayout.Button("Erase Rivers"))
+            if (GUILayout.Button("Erase Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, erase, topology);
             }
@@ -829,7 +843,7 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            if (GUILayout.Button("Paint Rivers"))
+            if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture);
             }
@@ -840,16 +854,16 @@ public class MapIOEditor : EditorWindow
         GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
         if (index > 1)
         {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Paint Layer"))
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            if (GUILayout.Button("Paint Layer", EditorStyles.toolbarButton))
             {
                 MapIO.PaintLayer(landLayers[index], texture, topology);
             }
-            if (GUILayout.Button("Clear Layer"))
+            if (GUILayout.Button("Clear Layer", EditorStyles.toolbarButton))
             {
                 MapIO.PaintLayer(landLayers[index], erase, topology);
             }
-            if (GUILayout.Button("Invert Layer"))
+            if (GUILayout.Button("Invert Layer", EditorStyles.toolbarButton))
             {
                 MapIO.InvertLayer(landLayers[index], topology);
             }
@@ -857,7 +871,7 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            if (GUILayout.Button("Paint Layer"))
+            if (GUILayout.Button("Paint Layer", EditorStyles.toolbarButton))
             {
                 MapIO.PaintLayer(landLayers[index], texture);
             }
@@ -868,7 +882,7 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
         {
-            loadFile = UnityEditor.EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
+            loadFile = EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
             if (loadFile == "")
             {
                 return;
@@ -882,7 +896,7 @@ public class MapIOEditor : EditorWindow
         }
         if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
         {
-            saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+            saveFile = EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
             if (saveFile == "")
             {
                 return;
@@ -906,7 +920,7 @@ public class MapIOEditor : EditorWindow
                     // User cancelled
                     break;
                 case 2:
-                    saveFile = UnityEditor.EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
+                    saveFile = EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
                     if (saveFile == "")
                     {
                         EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
@@ -982,56 +996,20 @@ public class MapIOEditor : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
 
-        GUILayout.Label(new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust"), GUILayout.MaxWidth(95));
-        MapEditorSettings.rustDirectory = EditorGUILayout.TextArea(MapEditorSettings.rustDirectory);
+        GUILayout.Label(new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust"), EditorStyles.miniBoldLabel, GUILayout.MaxWidth(95));
+        GUILayout.Label(new GUIContent(MapEditorSettings.rustDirectory));
 
-        GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), GUILayout.MaxWidth(95));
-        MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200);
+        if (GUILayout.Button(new GUIContent("Browse", "Browse and select the base directory of Rust."), EditorStyles.miniButton, GUILayout.MaxWidth(50)))
+        {
+            MapEditorSettings.rustDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", MapEditorSettings.rustDirectory, "Rust");
+        }
+
+        GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), EditorStyles.miniBoldLabel, GUILayout.MaxWidth(95));
+        MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200, GUILayout.MaxWidth(300));
     }
     private void DrawEmpty()
     {
         GUILayout.Label("No presets in list.", EditorStyles.miniLabel);
     }
     #endregion
-}
-public class PrefabHierachyEditor : EditorWindow
-{
-    [SerializeField] TreeViewState m_TreeViewState;
-
-    PrefabHierachy m_TreeView;
-    SearchField m_SearchField;
-
-    void OnEnable()
-    {
-        if (m_TreeViewState == null)
-            m_TreeViewState = new TreeViewState();
-
-        m_TreeView = new PrefabHierachy(m_TreeViewState);
-        m_SearchField = new SearchField();
-        m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
-    }
-    void OnGUI()
-    {
-        DoToolbar();
-        DoTreeView();
-    }
-    void DoToolbar()
-    {
-        GUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Space(100);
-        GUILayout.FlexibleSpace();
-        m_TreeView.searchString = m_SearchField.OnToolbarGUI(m_TreeView.searchString);
-        GUILayout.EndHorizontal();
-    }
-    void DoTreeView()
-    {
-        Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
-        m_TreeView.OnGUI(rect);
-    }
-    public static void ShowWindow()
-    {
-        var window = GetWindow<PrefabHierachyEditor>();
-        window.titleContent = new GUIContent("Prefabs");
-        window.Show();
-    }
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
@@ -124,12 +123,11 @@ public struct Conditions
 public static class MapIO
 {
     #region Layers
-    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
+    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, conditionalTopology, topologyLayersList;
     public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, groundLayer, conditionalGround;
     public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
-    public static int landSelectIndex = 0;
-    public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
+    public static string loadPath = "", savePath = "", prefabSavePath = "";
     public static float progressBar = 0f, progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
@@ -209,10 +207,10 @@ public static class MapIO
         groundLayerToPaint = TerrainSplat.Enum.Grass;
         biomeLayerFrom = TerrainBiome.Enum.Temperate;
         biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-        topologyLayer = TerrainTopology.Enum.Beach;
+        LandData.topologyLayer = TerrainTopology.Enum.Beach;
         conditionalTopology = TerrainTopology.NOTHING;
         topologyLayersList = TerrainTopology.Enum.Beach;
-        oldTopologyLayer = TerrainTopology.Enum.Beach;
+        LandData.oldTopologyLayer = TerrainTopology.Enum.Beach;
         biomeLayer = TerrainBiome.Enum.Temperate;
         conditionalBiome = TerrainBiome.NOTHING;
         groundLayer = TerrainSplat.Enum.Grass;
@@ -233,46 +231,10 @@ public static class MapIO
     /// </summary>
     public static void ClearProgressBar()
     {
-        MapIO.progressBar = 0;
+        progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
-    /// <summary>
-    /// Loads the prefabs from the Rust prefab bundle.
-    /// </summary>
-    /// <param name="bundlePath">The file path to the bundle.</param>
-    public static void LoadPrefabBundle(string bundlePath)
-    {
-        PrefabManager.PrefabLookup(bundlePath);
-    }
-    /// <summary>
-    /// Change the active land layer.
-    /// </summary>
-    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
-    public static void ChangeLayer(string layer)
-    {
-        landLayer = layer;
-        ChangeLandLayer();
-    }
-    public static void ChangeLandLayer()
-    {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
-        Undo.ClearAll();
-        switch (landLayer.ToLower())
-        {
-            case "ground":
-                LandData.SetLayer("ground");
-                break;
-            case "biome":
-                LandData.SetLayer("biome");
-                break;
-            case "alpha":
-                LandData.SetLayer("alpha");
-                break;
-            case "topology":
-                LandData.SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
-                break;
-        }
-    }
+    
     public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
         GameObject newObj = GameObject.Instantiate(g);
@@ -861,7 +823,7 @@ public static class MapIO
             }
         }
         LandData.SetData(newLayer, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Rotates the selected topologies.
@@ -1025,7 +987,7 @@ public static class MapIO
         biomeTexturesList.Clear();
         topologyLayersList.Clear();
         LandData.SetData(splatMapPaint, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the layer wherever the height conditions are met. Includes option to blend.
@@ -1109,7 +1071,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Sets whole layer to the active texture. 
@@ -1133,7 +1095,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the selected Topology layers.
@@ -1190,7 +1152,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Clears the selected Topology layers.
@@ -1246,7 +1208,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Inverts the selected Topology layers.
@@ -1359,7 +1321,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
@@ -1391,7 +1353,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the splats wherever the water is above 500 and is above the terrain.
@@ -1440,7 +1402,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     
     /// <summary>
@@ -1475,38 +1437,10 @@ public static class MapIO
         }
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
         LandData.SetData(splatMapTo, landLayerToPaint, topologyToPaint);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
         ClearProgressBar();
     }
     #endregion
-    /// <summary>
-    /// ToDo: Read from a text file instead of having a switch.
-    /// </summary>
-    public static void RemoveBrokenPrefabs()
-    {
-        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        Undo.RegisterCompleteObjectUndo(prefabs, "Remove Broken Prefabs");
-        var prefabsRemovedCount = 0;
-        foreach (PrefabDataHolder p in prefabs)
-        {
-            switch (p.prefabData.id)
-            {
-                case 3493139359:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-                case 1655878423:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-                case 350141265:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-            }
-        }
-        Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
-    }
     /// <summary>
     /// Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.
     /// </summary>
@@ -1886,7 +1820,7 @@ public static class MapIO
         LoadSplatMaps(terrains);
         LoadPrefabs(terrains);
         LoadPaths(terrains);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
     /// <summary>
@@ -1903,7 +1837,7 @@ public static class MapIO
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
         foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
         {
             item.gameObject.SetActive(true);
@@ -1947,59 +1881,5 @@ public static class MapIO
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
         }
-    }
-}
-public class PrefabHierachy : TreeView
-{
-    public PrefabHierachy(TreeViewState treeViewState)
-        : base(treeViewState)
-    {
-        Reload();
-    }
-    Dictionary<string, TreeViewItem> treeviewParents = new Dictionary<string, TreeViewItem>();
-    List<TreeViewItem> allItems = new List<TreeViewItem>();
-    protected override TreeViewItem BuildRoot()
-    {
-        var root = new TreeViewItem { id = 0, depth = -1, displayName = "Root" };
-        allItems.Add(new TreeViewItem { id = 1, depth = 0, displayName = "Editor Tools" });
-        // Add other editor shit like custom prefabs here.
-        if (File.Exists("PrefabsLoaded.txt"))
-        {
-            var lines = File.ReadAllLines("PrefabsLoaded.txt");
-            var parentId = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
-            foreach (var line in lines)
-            {
-                var linesSplit = line.Split(':');
-                var assetNameSplit = linesSplit[1].Split('/');
-                for (int i = 0; i < assetNameSplit.Length; i++)
-                {
-                    var treePath = "";
-                    for (int j = 0; j <= i; j++)
-                    {
-                        treePath += assetNameSplit[j];
-                    }
-                    if (!treeviewParents.ContainsKey(treePath))
-                    {
-                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
-                        var shortenedId = linesSplit[2].Substring(2);
-                        if (i != assetNameSplit.Length - 1)
-                        {
-                            var treeviewItem = new TreeViewItem { id = parentId, depth = i, displayName = assetNameSplit[i] };
-                            allItems.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                            parentId++;
-                        }
-                        else
-                        {
-                            var treeviewItem = new TreeViewItem { id = int.Parse(shortenedId), depth = i, displayName = prefabName };
-                            allItems.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                        }
-                    }
-                }
-            }
-        }
-        SetupParentsAndChildrenFromDepths(root, allItems);
-        return root;
     }
 }
