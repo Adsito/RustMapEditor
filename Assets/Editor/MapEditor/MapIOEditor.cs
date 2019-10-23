@@ -200,10 +200,9 @@ public class MapIOEditor : EditorWindow
             #endregion
             #region Advanced
             case 3:
-                GUIContent[] advancedOptionsMenu = new GUIContent[3];
+                GUIContent[] advancedOptionsMenu = new GUIContent[2];
                 advancedOptionsMenu[0] = new GUIContent("Generation");
                 advancedOptionsMenu[1] = new GUIContent("Map Tools");
-                advancedOptionsMenu[2] = new GUIContent("");
                 advancedOptions = GUILayout.Toolbar(advancedOptions, advancedOptionsMenu);
                 
                 switch (advancedOptions)
@@ -221,6 +220,7 @@ public class MapIOEditor : EditorWindow
                         GUILayout.EndScrollView();
                         break;
                     #endregion
+                    #region Map Tools
                     case 1:
                         GUIContent[] mapToolsMenu = new GUIContent[3];
                         mapToolsMenu[0] = new GUIContent("HeightMap");
@@ -240,65 +240,12 @@ public class MapIOEditor : EditorWindow
                                 switch (heightMapOptions)
                                 {
                                     case 0:
-                                        GUILayout.Label("Heightmap Offset (Increase or Decrease)", EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        offset = EditorGUILayout.FloatField(offset, GUILayout.MaxWidth(40));
-                                        checkHeight = EditorGUILayout.ToggleLeft(new GUIContent("Prevent Flattening", "Prevents the flattening effect if you raise or lower the heightmap" +
-                                            " by too large a value."), checkHeight, GUILayout.MaxWidth(125));
-                                        setWaterMap = EditorGUILayout.ToggleLeft(new GUIContent("Water Heightmap", "If toggled it will raise or lower the water heightmap as well as the " +
-                                            "land heightmap."), setWaterMap, GUILayout.MaxWidth(125));
-                                        EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Offset Heightmap", "Raises or lowers the height of the entire heightmap by " + offset.ToString() + " metres. " +
-                                            "A positive offset will raise the heightmap, a negative offset will lower the heightmap.")))
-                                        {
-                                            MapIO.OffsetHeightmap(offset, checkHeight, setWaterMap);
-                                        }
-                                        GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        heightToSet = EditorGUILayout.FloatField(heightToSet, GUILayout.MaxWidth(40));
-                                        if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
-                                            " metres."), GUILayout.MaxWidth(130)))
-                                        {
-                                            MapIO.SetMinimumHeight(heightToSet);
-                                        }
-                                        if (GUILayout.Button(new GUIContent("Set Maximum Height", "Lowers any of the land above " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
-                                            " metres."), GUILayout.MaxWidth(130)))
-                                        {
-                                            MapIO.SetMaximumHeight(heightToSet);
-                                        }
-                                        EditorGUILayout.EndHorizontal();
-
-                                        GUILayout.Label("Edge of Map Height", EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        sides[0] = EditorGUILayout.ToggleLeft("Top ", sides[0], GUILayout.MaxWidth(60));
-                                        sides[3] = EditorGUILayout.ToggleLeft("Left ", sides[3], GUILayout.MaxWidth(60));
-                                        sides[2] = EditorGUILayout.ToggleLeft("Bottom ", sides[2], GUILayout.MaxWidth(60));
-                                        sides[1] = EditorGUILayout.ToggleLeft("Right ", sides[1], GUILayout.MaxWidth(60));
-                                        EditorGUILayout.EndHorizontal();
-
-                                        if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + " metres on any of the sides selected.")))
-                                        {
-                                            MapIO.SetEdgePixel(heightToSet, sides);
-                                        }
-
+                                        OffsetMap();
+                                        EdgeHeight();
+                                        MinMaxHeight();
+                                        InvertMap();
                                         break;
                                     case 1:
-                                        GUILayout.Label("Flip, Invert and Scale", EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        //EditorGUILayout.LabelField("Scale", GUILayout.MaxWidth(60));
-                                        //mapScale = EditorGUILayout.Slider(mapScale, 0.01f, 10f);
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        /*
-                                        if (GUILayout.Button(new GUIContent("Rescale", "Scales the heightmap by " + mapScale.ToString() + " %.")))
-                                        {
-                                            script.scaleHeightmap(mapScale);
-                                        }*/
-                                        if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself.")))
-                                        {
-                                            MapIO.InvertHeightmap();
-                                        }
-                                        EditorGUILayout.EndHorizontal();
                                         GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
                                         EditorGUILayout.BeginHorizontal();
                                         EditorGUILayout.LabelField(new GUIContent("Low", "The lowest point on the map after being normalised."), GUILayout.MaxWidth(40));
@@ -524,20 +471,7 @@ public class MapIOEditor : EditorWindow
                             #endregion
                             #region Misc
                             case 2:
-                                GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
-                                rotateSelection = (EditorSelections.ObjectSeletion)EditorGUILayout.EnumFlagsField(new GUIContent("Rotation Selection: ", "The items to rotate."), rotateSelection);
-
-                                EditorGUILayout.BeginHorizontal();
-                                if (GUILayout.Button("Rotate 90°", GUILayout.MaxWidth(90)))
-                                {
-                                    MapIO.ParseRotateEnumFlags(rotateSelection, true);
-                                }
-                                if (GUILayout.Button("Rotate 270°", GUILayout.MaxWidth(90)))
-                                {
-                                    MapIO.ParseRotateEnumFlags(rotateSelection, false);
-                                }
-                                EditorGUILayout.EndHorizontal();
-
+                                RotateMap();
                                 GUILayout.Label("Debug", EditorStyles.boldLabel);
                                 if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
                                 {
@@ -547,6 +481,7 @@ public class MapIOEditor : EditorWindow
                                 #endregion
                         }
                         break;
+                        #endregion
                 }
                 break;
             #endregion
@@ -649,6 +584,86 @@ public class MapIOEditor : EditorWindow
             heightMinBlendLow = heightLow;
         }
     }
+    #region MapTools
+    private void EdgeHeight()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        sides[0] = EditorGUILayout.ToggleLeft("Top ", sides[0], GUILayout.MaxWidth(40));
+        sides[3] = EditorGUILayout.ToggleLeft("Left ", sides[3], GUILayout.MaxWidth(40));
+        sides[2] = EditorGUILayout.ToggleLeft("Bottom ", sides[2], GUILayout.MaxWidth(58));
+        sides[1] = EditorGUILayout.ToggleLeft("Right ", sides[1], GUILayout.MaxWidth(50));
+        
+        if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + 
+            " metres on any of the sides selected."), EditorStyles.toolbarButton))
+        {
+            MapIO.SetEdgePixel(heightToSet, sides);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void MinMaxHeight()
+    {
+        GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        heightToSet = EditorGUILayout.FloatField(heightToSet, EditorStyles.toolbarButton, GUILayout.MaxWidth(50));
+        if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
+            " metres."), EditorStyles.toolbarButton))
+        {
+            MapIO.SetMinimumHeight(heightToSet);
+        }
+        if (GUILayout.Button(new GUIContent("Set Maximum Height", "Lowers any of the land above " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
+            " metres."), EditorStyles.toolbarButton))
+        {
+            MapIO.SetMaximumHeight(heightToSet);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void OffsetMap()
+    {
+        GUILayout.Label("Heightmap Offset", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        offset = EditorGUILayout.FloatField(offset, EditorStyles.toolbarButton, GUILayout.MaxWidth(50));
+        checkHeight = EditorGUILayout.ToggleLeft(new GUIContent("Check", "Prevents the flattening effect if you raise or lower the heightmap" +
+            " by too large a value."), checkHeight, GUILayout.MaxWidth(55));
+        setWaterMap = EditorGUILayout.ToggleLeft(new GUIContent("Water", "If toggled it will raise or lower the water heightmap as well as the " +
+            "land heightmap."), setWaterMap, GUILayout.MaxWidth(55));
+        if (GUILayout.Button(new GUIContent("Offset Heightmap", "Raises or lowers the height of the entire heightmap by " + offset.ToString() + " metres. " +
+            "A positive offset will raise the heightmap, a negative offset will lower the heightmap."), EditorStyles.toolbarButton))
+        {
+            MapIO.OffsetHeightmap(offset, checkHeight, setWaterMap);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void RotateMap()
+    {
+        GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(new GUIContent("Rotation Selection: ", "The items to rotate."), EditorStyles.toolbarButton);
+        rotateSelection = (EditorSelections.ObjectSeletion)EditorGUILayout.EnumFlagsField(new GUIContent(), rotateSelection, EditorStyles.toolbarDropDown);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button("Rotate 90°", EditorStyles.toolbarButton))
+        {
+            MapIO.ParseRotateEnumFlags(rotateSelection, true);
+        }
+        if (GUILayout.Button("Rotate 270°", EditorStyles.toolbarButton))
+        {
+            MapIO.ParseRotateEnumFlags(rotateSelection, false);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void InvertMap()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself."), EditorStyles.toolbarButton))
+        {
+            MapIO.InvertHeightmap();
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    #endregion
+    #region LayerTools
     private void TextureSelect(int index)
     {
         if (index == 0)
@@ -877,6 +892,8 @@ public class MapIOEditor : EditorWindow
             }
         }
     }
+    #endregion
+    #region MainMenu
     private void EditorIO()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -933,8 +950,9 @@ public class MapIOEditor : EditorWindow
                     break;
             }
         }
-        GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), GUILayout.MaxWidth(30));
-        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, GUILayout.MaxWidth(45)), 1000, 6000);
+        GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), EditorStyles.toolbarButton, GUILayout.MaxWidth(45));
+        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarButton, GUILayout.MaxWidth(40)), 1000, 6000);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
     }
     private void MapInfo()
@@ -1007,6 +1025,7 @@ public class MapIOEditor : EditorWindow
         GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), EditorStyles.miniBoldLabel, GUILayout.MaxWidth(95));
         MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200, GUILayout.MaxWidth(300));
     }
+    #endregion
     private void DrawEmpty()
     {
         GUILayout.Label("No presets in list.", EditorStyles.miniLabel);

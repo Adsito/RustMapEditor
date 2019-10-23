@@ -42,8 +42,7 @@ public static class LandData
     }
     private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
-        // ToDo: Check for if user released mouse before SetData call.
-        //SetData(terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight), layerName, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+
     }
     /// <summary>
     /// Change the active land layer.

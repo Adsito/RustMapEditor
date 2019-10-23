@@ -21,12 +21,10 @@ public class WorldConverter
 
     public struct TerrainInfo
     {
-        //put splatmaps in here if swamps and oceans add textures to water
         public float[,] heights;
     }
-
     
-    public static MapInfo emptyWorld(int size)
+    public static MapInfo EmptyMap(int size)
     {
         MapInfo terrains = new MapInfo();
         MapIO.ProgressBar("Creating New Map", "Creating Terrain", 0.0f);
@@ -146,7 +144,11 @@ public class WorldConverter
         return terrains;
     }
 
-    public static MapInfo WorldToTerrain(WorldSerialization world) // Loads maps
+    /// <summary>
+    /// Converts World to MapInfo.
+    /// </summary>
+    /// <returns></returns>
+    public static MapInfo WorldToTerrain(WorldSerialization world)
     {
         MapInfo terrains = new MapInfo();
 
@@ -179,7 +181,13 @@ public class WorldConverter
         terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap, true);
         return terrains;
     }
-    public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) // Saves maps
+    /// <summary>
+    /// Converts map to WorldSerialization. 
+    /// </summary>
+    /// <param name="land"></param>
+    /// <param name="water"></param>
+    /// <returns></returns>
+    public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) 
     {
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
