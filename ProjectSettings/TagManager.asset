@@ -8,11 +8,9 @@ TagManager:
   - Paths
   - Land
   - Water
-  - MapIO
   - LoadedPrefab
   - DefaultPrefab
   - World
-  - LandData
   layers:
   - Default
   - TransparentFX
@@ -22,9 +20,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Prefabs
+  - Paths
+  - Land
   - 
   - 
   - 

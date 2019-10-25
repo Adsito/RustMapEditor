@@ -14,18 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RenderPipelineResources: {fileID: 11400000, guid: 3ce144cff5783da45aa5d4fdc2da14b7,
     type: 2}
+  m_RenderPipelineRayTracingResources: {fileID: 0}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
-      data1: 69284264410909
+      data1: 69456063102751
       data2: 4539628424389459968
+    lodBias: 1
+    lodBiasMode: 0
+    maximumLODLevel: 0
+    maximumLODLevelMode: 0
   m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings:
     bitDatas:
-      data1: 64881914049309
+      data1: 64942043591453
       data2: 4539628424389459968
+    lodBias: 1
+    lodBiasMode: 0
+    maximumLODLevel: 0
+    maximumLODLevelMode: 0
   m_RenderingPathDefaultRealtimeReflectionFrameSettings:
     bitDatas:
-      data1: 69279803252509
+      data1: 69417242205981
       data2: 4539628424389459968
+    lodBias: 1
+    lodBiasMode: 0
+    maximumLODLevel: 0
+    maximumLODLevelMode: 0
   m_RenderPipelineSettings:
     supportShadowMask: 1
     supportSSR: 0
@@ -39,7 +52,6 @@ MonoBehaviour:
     supportTransparentBackface: 1
     supportTransparentDepthPrepass: 1
     supportTransparentDepthPostpass: 1
-    supportLowResTransparent: 1
     colorBufferFormat: 74
     supportedLitShaderMode: 2
     supportDecals: 1
@@ -48,6 +60,7 @@ MonoBehaviour:
     supportRuntimeDebugDisplay: 1
     supportDitheringCrossFade: 1
     supportRayTracing: 0
+    supportedRaytracingTier: 2
     lightLoopSettings:
       cookieSize: 128
       cookieTexArraySize: 16
@@ -81,6 +94,8 @@ MonoBehaviour:
         shadowAtlasResolution: 4096
         shadowAtlasDepthBits: 32
         useDynamicViewportRescale: 1
+      supportScreenSpaceShadows: 0
+      maxScreenSpaceShadows: 2
     decalSettings:
       drawDistance: 1000
       atlasWidth: 4096
@@ -106,7 +121,7 @@ MonoBehaviour:
   shaderVariantLogLevel: 0
   diffusionProfileSettings: {fileID: 0}
   diffusionProfileSettingsList: []
-  m_Version: 5
+  m_Version: 6
   m_ObsoleteFrameSettings:
     overrides: 0
     enableShadow: 0
