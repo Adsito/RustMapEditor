@@ -5,6 +5,7 @@ using Rotorz.ReorderableList;
 
 public class MapIOEditor : EditorWindow
 {
+    #region Values
     string editorVersion = "v2.1-prerelease";
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
@@ -29,16 +30,13 @@ public class MapIOEditor : EditorWindow
     EditorSelections.ObjectSeletion rotateSelection;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
     float blurDirection = 0f, filterStrength = 1f;
+    int smoothPasses = 0;
 
     int[] values = { 0, 1 };
     string[] activeTextureAlpha = { "Visible", "Invisible" };
     string[] activeTextureTopo = { "Active", "Inactive" };
+    #endregion
 
-    [MenuItem("Rust Map Editor/Main Menu", false, 0)]
-    static void Initialize()
-    {
-        MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
-    }
     public void OnGUI()
     {
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
@@ -246,56 +244,9 @@ public class MapIOEditor : EditorWindow
                                         InvertMap();
                                         break;
                                     case 1:
-                                        GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Low", "The lowest point on the map after being normalised."), GUILayout.MaxWidth(40));
-                                        EditorGUI.BeginChangeCheck();
-                                        normaliseLow = EditorGUILayout.Slider(normaliseLow, 0f, 1000f);
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("High", "The highest point on the map after being normalised."), GUILayout.MaxWidth(40));
-                                        normaliseHigh = EditorGUILayout.Slider(normaliseHigh, 0f, 1000f);
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        if (EditorGUI.EndChangeCheck() && autoUpdate == true)
-                                        {
-                                            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
-                                        }
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights.")))
-                                        {
-                                            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
-                                        }
-                                        autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
-                                        EditorGUILayout.EndHorizontal();
-                                        GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Strength", "The strength of the smoothing operation."), GUILayout.MaxWidth(85));
-                                        filterStrength = EditorGUILayout.Slider(filterStrength, 0f, 1f);
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Blur Direction", "The direction the terrain should blur towards. Negative is down, " +
-                                            "positive is up."), GUILayout.MaxWidth(85));
-                                        blurDirection = EditorGUILayout.Slider(blurDirection, -1f, 1f);
-                                        EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Smooth Map", "Smoothes the heightmap.")))
-                                        {
-                                            MapIO.SmoothHeightmap(filterStrength, blurDirection);
-                                        }
-                                        GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Feature Size", "The higher the value the more terrace levels generated."), GUILayout.MaxWidth(85));
-                                        terraceErodeFeatureSize = EditorGUILayout.Slider(terraceErodeFeatureSize, 2f, 1000f);
-                                        EditorGUILayout.EndHorizontal();
-                                        EditorGUILayout.BeginHorizontal();
-                                        EditorGUILayout.LabelField(new GUIContent("Corner Weight", "The strength of the corners of the terrace."), GUILayout.MaxWidth(85));
-                                        terraceErodeInteriorCornerWeight = EditorGUILayout.Slider(terraceErodeInteriorCornerWeight, 0f, 1f);
-                                        EditorGUILayout.EndHorizontal();
-                                        if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap.")))
-                                        {
-                                            MapIO.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
-                                        }
+                                        NormaliseMap();
+                                        SmoothMap();
+                                        TerraceMap();
                                         break;
                                 }
                                 break;
@@ -492,21 +443,41 @@ public class MapIOEditor : EditorWindow
         #endregion
         EditorGUILayout.EndScrollView();
     }
-    #region OtherMenus
+    #region Menu Items
+    [MenuItem("Rust Map Editor/Main Menu", false, 0)]
+    static void OpenMainMenu()
+    {
+        MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
+    }
     [MenuItem("Rust Map Editor/Terrain Tools", false, 1)]
     static void OpenTerrainTools()
     {
         Selection.activeGameObject = GameObject.FindGameObjectWithTag("Land");
     }
-    [MenuItem("Rust Map Editor/Wiki", false, 2)]
+    [MenuItem("Rust Map Editor/Links/Wiki", false, 2)]
     static void OpenWiki()
     {
-        Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki");
+        Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
     }
-    [MenuItem("Rust Map Editor/Discord", false, 3)]
+    [MenuItem("Rust Map Editor/Links/Discord", false, 3)]
     static void OpenDiscord()
     {
         Application.OpenURL("https://discord.gg/HPmTWVa");
+    }
+    [MenuItem("Rust Map Editor/Links/RoadMap", false, 3)]
+    static void OpenRoadMap()
+    {
+        Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
+    }
+    [MenuItem("Rust Map Editor/Links/Report Bug", false, 4)]
+    static void OpenReportBug()
+    {
+        Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+    }
+    [MenuItem("Rust Map Editor/Links/Request Feature", false, 5)]
+    static void OpenRequestFeature()
+    {
+        Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
     }
     #endregion
     #region Methods
@@ -585,6 +556,97 @@ public class MapIOEditor : EditorWindow
         }
     }
     #region MapTools
+    private void TerraceMap()
+    {
+        GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("Feature Size", "The higher the value the more terrace levels generated."), GUILayout.MaxWidth(85));
+        terraceErodeFeatureSize = EditorGUILayout.Slider(terraceErodeFeatureSize, 2f, 1000f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("Corner Weight", "The strength of the corners of the terrace."), GUILayout.MaxWidth(85));
+        terraceErodeInteriorCornerWeight = EditorGUILayout.Slider(terraceErodeInteriorCornerWeight, 0f, 1f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Terrace Map", "Terraces the heightmap."), EditorStyles.toolbarButton))
+        {
+            MapIO.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void SmoothMap()
+    {
+        GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.boldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("Strength", "The strength of the smoothing operation."), GUILayout.MaxWidth(85));
+        filterStrength = EditorGUILayout.Slider(filterStrength, 0f, 1f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("Blur Direction", "The direction the terrain should blur towards. Negative is down, " +
+            "positive is up."), GUILayout.MaxWidth(85));
+        blurDirection = EditorGUILayout.Slider(blurDirection, -1f, 1f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Smooth Map", "Smoothes the heightmap " + smoothPasses + " times."), EditorStyles.toolbarButton))
+        {
+            for (int i = 0; i < smoothPasses; i++)
+            {
+                MapIO.SmoothHeightmap(filterStrength, blurDirection);
+            }
+        }
+        smoothPasses = EditorGUILayout.IntSlider(smoothPasses, 1, 100);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+    }
+    private void NormaliseMap()
+    {
+        GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("Low", "The lowest point on the map after being normalised."), GUILayout.MaxWidth(40));
+        EditorGUI.BeginChangeCheck();
+        normaliseLow = EditorGUILayout.Slider(normaliseLow, 0f, 1000f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.LabelField(new GUIContent("High", "The highest point on the map after being normalised."), GUILayout.MaxWidth(40));
+        normaliseHigh = EditorGUILayout.Slider(normaliseHigh, 0f, 1000f);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (EditorGUI.EndChangeCheck() && autoUpdate == true)
+        {
+            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Normalise", "Normalises the heightmap between these heights."), EditorStyles.toolbarButton))
+        {
+            MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+        }
+        autoUpdate = EditorGUILayout.ToggleLeft(new GUIContent("Auto Update", "Automatically applies the changes to the heightmap on value change."), autoUpdate);
+        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+    }
     private void EdgeHeight()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -728,10 +790,12 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, texture);
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
     private void HeightTools(int index, int texture, int erase = 0, int topology = 0)
@@ -768,10 +832,12 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, texture);
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
     private void RotateTools(int index, int topology = 0)
@@ -833,10 +899,12 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, texture);
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
     private void RiverTools(int index, int texture, int erase = 0, int topology = 0)
@@ -858,10 +926,12 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture);
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
@@ -886,10 +956,12 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Layer", EditorStyles.toolbarButton))
             {
                 MapIO.PaintLayer(landLayers[index], texture);
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
     #endregion
@@ -951,7 +1023,7 @@ public class MapIOEditor : EditorWindow
             }
         }
         GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), EditorStyles.toolbarButton, GUILayout.MaxWidth(45));
-        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarButton, GUILayout.MaxWidth(40)), 1000, 6000);
+        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarButton, GUILayout.MaxWidth(60)), 1000, 6000);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
     }
@@ -979,19 +1051,25 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(75)))
         {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+            OpenReportBug();
         }
         if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(105)))
         {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
+            OpenRequestFeature();
         }
         if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
         {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
+            OpenRoadMap();
         }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
         {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
+            OpenWiki();
+        }
+        if (GUILayout.Button(new GUIContent("Discord", "Discord invitation link."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        {
+            OpenDiscord();
         }
         EditorGUILayout.EndHorizontal();
     }

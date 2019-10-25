@@ -1231,6 +1231,7 @@ public static class MapIO
     /// </summary>
     public static void InvertAllTopologyLayers()
     {
+        progressValue = 1f / TerrainTopology.COUNT;
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             progressBar += progressValue;
