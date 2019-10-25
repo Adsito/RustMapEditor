@@ -1,6 +1,5 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor.IMGUI.Controls;
 using Rotorz.ReorderableList;
 
 public class MapIOEditor : EditorWindow
@@ -143,10 +142,15 @@ public class MapIOEditor : EditorWindow
                 layersOptionsMenu[1] = new GUIContent("Biome");
                 layersOptionsMenu[2] = new GUIContent("Alpha");
                 layersOptionsMenu[3] = new GUIContent("Topology");
+
+                EditorGUI.BeginChangeCheck();
                 layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    SetLandLayer(layerIndex);
+                }
 
                 ClampValues();
-                SetLandLayer(layerIndex);
 
                 switch (layerIndex)
                 {
@@ -608,7 +612,7 @@ public class MapIOEditor : EditorWindow
                 MapIO.SmoothHeightmap(filterStrength, blurDirection);
             }
         }
-        smoothPasses = EditorGUILayout.IntSlider(smoothPasses, 1, 100);
+        smoothPasses = EditorGUILayout.IntSlider(smoothPasses, 1, 1000);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
     }
