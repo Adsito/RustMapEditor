@@ -26,7 +26,7 @@ public static class LandData
     private static TerrainLayer[] biomeTextures = null;
     private static TerrainLayer[] miscTextures = null;
 
-    public static string landLayer = "";
+    public static string landLayer = "ground";
     public static int landIndex = 0;
     public static TerrainTopology.Enum topologyLayer, oldTopologyLayer;
 
@@ -96,7 +96,6 @@ public static class LandData
                 topologyArray[topology] = floatArray; 
                 break;
         }
-        landLayer = layer;
     }
     public static void GetTextures()
     {
