@@ -11,7 +11,6 @@ Library/*
 *.log
 *.info
 *.log
-*.dll
 *.pdb
 *.csproj
 /.vs/
