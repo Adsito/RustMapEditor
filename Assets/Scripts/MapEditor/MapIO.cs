@@ -4,11 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
-using static WorldSerializationSDK;
+using static WorldSerialization;
 
 public class CustomPrefab : MonoBehaviour
 {
@@ -124,19 +123,16 @@ public struct Conditions
 public static class MapIO
 {
     #region Layers
-    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, topologyLayer, conditionalTopology, topologyLayersList, oldTopologyLayer;
+    public static TerrainTopology.Enum topologyLayerFrom, topologyLayerToPaint, conditionalTopology, topologyLayersList;
     public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, groundLayer, conditionalGround;
     public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
-    public static int landSelectIndex = 0;
-    public static string landLayer = "Ground", loadPath = "", savePath = "", prefabSavePath = "";
-    private static PrefabLookup prefabLookup;
+    public static string loadPath = "", savePath = "", prefabSavePath = "";
     public static float progressBar = 0f, progressValue = 1f;
-    public static Dictionary<uint, GameObject> prefabsLoaded = new Dictionary<uint, GameObject>();
-    public static Dictionary<string, GameObject> prefabReference = new Dictionary<string, GameObject>();
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    public static Terrain terrain, water; 
+    public static Terrain terrain, water;
+    public static GameObject defaultPrefab;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -157,8 +153,8 @@ public static class MapIO
     public static void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
+        defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         RefreshAssetList(); // Refreshes the node gen presets.
-        GetProjectPrefabs(); // Get all the prefabs saved into the project to a dictionary to reference.
         SetLayers(); // Resets all the layers to default values.
         EditorApplication.update += OnProjectLoad;
     }
@@ -170,7 +166,7 @@ public static class MapIO
         EditorApplication.update -= OnProjectLoad;
         if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
         {
-            CreateNewMap(2000);
+            CreateNewMap(1000);
         }
     }
     public static void CentreSceneView()
@@ -183,6 +179,26 @@ public static class MapIO
             sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
         }
     }
+    /// <summary>
+    /// Loads and sets the Land and Water terrains.
+    /// </summary>
+    /// <param name="terrains"></param>
+    public static void LoadTerrains(MapInfo terrains)
+    {
+        terrain.terrainData.heightmapResolution = terrains.resolution;
+        terrain.terrainData.size = terrains.size;
+
+        water.terrainData.heightmapResolution = terrains.resolution;
+        water.terrainData.size = terrains.size;
+
+        terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
+        water.terrainData.SetHeights(0, 0, terrains.water.heights);
+
+        terrain.terrainData.alphamapResolution = terrains.resolution - 1;
+        terrain.terrainData.baseMapResolution = terrains.resolution - 1;
+        water.terrainData.alphamapResolution = terrains.resolution - 1;
+        water.terrainData.baseMapResolution = terrains.resolution - 1;
+    }
     public static void SetLayers()
     {
         topologyLayerFrom = TerrainTopology.Enum.Beach;
@@ -191,10 +207,10 @@ public static class MapIO
         groundLayerToPaint = TerrainSplat.Enum.Grass;
         biomeLayerFrom = TerrainBiome.Enum.Temperate;
         biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-        topologyLayer = TerrainTopology.Enum.Beach;
+        LandData.topologyLayer = TerrainTopology.Enum.Beach;
         conditionalTopology = TerrainTopology.NOTHING;
         topologyLayersList = TerrainTopology.Enum.Beach;
-        oldTopologyLayer = TerrainTopology.Enum.Beach;
+        LandData.oldTopologyLayer = TerrainTopology.Enum.Beach;
         biomeLayer = TerrainBiome.Enum.Temperate;
         conditionalBiome = TerrainBiome.NOTHING;
         groundLayer = TerrainSplat.Enum.Grass;
@@ -215,64 +231,10 @@ public static class MapIO
     /// </summary>
     public static void ClearProgressBar()
     {
-        MapIO.progressBar = 0;
+        progressBar = 0;
         EditorUtility.ClearProgressBar();
     }
-    public static void SetPrefabLookup(PrefabLookup prefabLookup)
-    {
-        MapIO.prefabLookup = prefabLookup;
-    }
-    public static void GetProjectPrefabs()
-    {
-        prefabsLoaded.Clear();
-        foreach (var asset in AssetDatabase.GetAllAssetPaths())
-        {
-            if (asset.EndsWith(".prefab"))
-            {
-                GameObject loadedAsset = AssetDatabase.LoadAssetAtPath(asset, typeof(GameObject)) as GameObject;
-                if (loadedAsset != null)
-                {
-                    if (loadedAsset.GetComponent<PrefabDataHolder>() != null)
-                    {
-                        prefabsLoaded.Add(loadedAsset.GetComponent<PrefabDataHolder>().prefabData.id, loadedAsset);
-                    }
-                }
-            }
-        }
-    }
-    public static PrefabLookup GetPrefabLookUp()
-    {
-        return prefabLookup;
-    }
-    /// <summary>
-    /// Change the active land layer.
-    /// </summary>
-    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
-    public static void ChangeLayer(string layer)
-    {
-        landLayer = layer;
-        ChangeLandLayer();
-    }
-    public static void ChangeLandLayer()
-    {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
-        Undo.ClearAll();
-        switch (landLayer.ToLower())
-        {
-            case "ground":
-                LandData.SetLayer("ground");
-                break;
-            case "biome":
-                LandData.SetLayer("biome");
-                break;
-            case "alpha":
-                LandData.SetLayer("alpha");
-                break;
-            case "topology":
-                LandData.SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
-                break;
-        }
-    }
+    
     public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
     {
         GameObject newObj = GameObject.Instantiate(g);
@@ -322,9 +284,9 @@ public static class MapIO
         return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
-    public static void ParseRotateEnumFlags(EditorSelections.RotateSelection rotateSelection, bool CW)
+    public static void ParseRotateEnumFlags(EditorSelections.ObjectSeletion rotateSelection, bool CW)
     {
-        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.RotateSelection)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.ObjectSeletion)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)rotateSelection & layer) != 0)
@@ -861,7 +823,7 @@ public static class MapIO
             }
         }
         LandData.SetData(newLayer, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Rotates the selected topologies.
@@ -1025,7 +987,7 @@ public static class MapIO
         biomeTexturesList.Clear();
         topologyLayersList.Clear();
         LandData.SetData(splatMapPaint, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the layer wherever the height conditions are met. Includes option to blend.
@@ -1109,7 +1071,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Sets whole layer to the active texture. 
@@ -1133,7 +1095,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the selected Topology layers.
@@ -1190,7 +1152,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Clears the selected Topology layers.
@@ -1246,7 +1208,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Inverts the selected Topology layers.
@@ -1359,7 +1321,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
@@ -1391,7 +1353,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
     /// Paints the splats wherever the water is above 500 and is above the terrain.
@@ -1440,7 +1402,7 @@ public static class MapIO
             }
         }
         LandData.SetData(splatMap, landLayerToPaint, topology);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     
     /// <summary>
@@ -1475,38 +1437,10 @@ public static class MapIO
         }
         ProgressBar("Copy Textures", "Pasting: " + landLayerToPaint, 0.9f);
         LandData.SetData(splatMapTo, landLayerToPaint, topologyToPaint);
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
         ClearProgressBar();
     }
     #endregion
-    /// <summary>
-    /// ToDo: Read from a text file instead of having a switch.
-    /// </summary>
-    public static void RemoveBrokenPrefabs()
-    {
-        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        Undo.RegisterCompleteObjectUndo(prefabs, "Remove Broken Prefabs");
-        var prefabsRemovedCount = 0;
-        foreach (PrefabDataHolder p in prefabs)
-        {
-            switch (p.prefabData.id)
-            {
-                case 3493139359:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-                case 1655878423:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-                case 350141265:
-                    GameObject.DestroyImmediate(p.gameObject);
-                    prefabsRemovedCount++;
-                    break;
-            }
-        }
-        Debug.Log("Removed " + prefabsRemovedCount + " broken prefabs.");
-    }
     /// <summary>
     /// Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.
     /// </summary>
@@ -1780,69 +1714,51 @@ public static class MapIO
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
     /// <summary>
-    /// Loads MapInfo and sets up the map.
+    /// Centres the Prefab and Path parent objects.
     /// </summary>
-    public static void LoadMapInfo(MapInfo terrains)
+    /// <param name="terrains"></param>
+    static void CentreSceneObjects(MapInfo terrains)
     {
-        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-
         var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
         worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
         var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
         worldCentrePath.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
-        RemoveMapObjects(true, true);
-        CentreSceneView();
-
-        var terrainPosition = 0.5f * terrains.size;
-        
-        terrain.transform.position = terrainPosition;
-        water.transform.position = terrainPosition;
-
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
-        TopologyData.InitMesh(terrains.topology);
-
-        terrain.terrainData.heightmapResolution = terrains.resolution;
-        terrain.terrainData.size = terrains.size;
-
-        water.terrainData.heightmapResolution = terrains.resolution;
-        water.terrainData.size = terrains.size;
-
-        terrain.terrainData.SetHeights(0, 0, terrains.land.heights);
-        water.terrainData.SetHeights(0, 0, terrains.water.heights);
-
-        terrain.terrainData.alphamapResolution = terrains.resolution - 1;
-        terrain.terrainData.baseMapResolution = terrains.resolution - 1;
-        water.terrainData.alphamapResolution = terrains.resolution - 1;
-        water.terrainData.baseMapResolution = terrains.resolution - 1;
-
-        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
-        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
-
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
-        LandData.SetData(terrains.splatMap, "ground");
-
-        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
-        LandData.SetData(terrains.biomeMap, "biome");
-
-        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
-        LandData.SetData(terrains.alphaMap, "alpha");
-
-        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
-        }
+    }
+    /// <summary>
+    /// Loads and sets up the map Prefabs.
+    /// </summary>
+    /// <param name="terrains"></param>
+    static void LoadPrefabs(MapInfo terrains)
+    {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
         float progressValue = 0f;
-        for (int i = 0; i < terrains.prefabData.Length; i++)
+        if (PrefabManager.prefabsLoaded)
         {
-            progressValue += 0.2f / terrains.prefabData.Length;
-            ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
-            SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                progressValue += 0.2f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                SpawnPrefab(PrefabManager.LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
+            }
         }
+        else
+        {
+            for (int i = 0; i < terrains.prefabData.Length; i++)
+            {
+                progressValue += 0.2f / terrains.prefabData.Length;
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                SpawnPrefab(defaultPrefab, terrains.prefabData[i], prefabsParent);
+            }
+        }
+    }
+    /// <summary>
+    /// Loads and sets up the map Paths.
+    /// </summary>
+    /// <param name="terrains"></param>
+    static void LoadPaths(MapInfo terrains)
+    {
+        var terrainPosition = 0.5f * terrains.size;
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
@@ -1866,17 +1782,54 @@ public static class MapIO
             }
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-        LandData.SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the Alphamaps to the layer currently selected.
+    }
+    static void LoadSplatMaps(MapInfo terrains)
+    {
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
+        TopologyData.InitMesh(terrains.topology);
+
+        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
+        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
+
+        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
+        LandData.SetData(terrains.splatMap, "ground");
+
+        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
+        LandData.SetData(terrains.biomeMap, "biome");
+
+        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
+        LandData.SetData(terrains.alphaMap, "alpha");
+
+        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), "topology", i);
+        }
+    }
+    /// <summary>
+    /// Loads and sets up the map.
+    /// </summary>
+    static void LoadMapInfo(MapInfo terrains)
+    {
+        water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
+        terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+        RemoveMapObjects(true, true);
+        CentreSceneView();
+        CentreSceneObjects(terrains);
+        LoadTerrains(terrains);
+        LoadSplatMaps(terrains);
+        LoadPrefabs(terrains);
+        LoadPaths(terrains);
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
     /// <summary>
     /// Loads a WorldSerialization and calls LoadMapInfo.
     /// </summary>
-    public static void Load(WorldSerializationSDK world)
+    public static void Load(WorldSerialization world)
     {
-        WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(world);
         MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
-        LoadMapInfo(terrains);
+        LoadMapInfo(WorldConverter.WorldToTerrain(world));
     }
     /// <summary>
     /// Saves the map.
@@ -1884,7 +1837,7 @@ public static class MapIO
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
+        LandData.SaveLayer(TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
         foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
         {
             item.gameObject.SetActive(true);
@@ -1893,7 +1846,7 @@ public static class MapIO
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
         ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
-        WorldSerializationSDK world = WorldConverter.TerrainToWorld(terrain, water);
+        WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
         ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
         world.Save(path);
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
@@ -1905,15 +1858,11 @@ public static class MapIO
     /// <param name="size">The size of the terrain.</param>
     public static void CreateNewMap(int size)
     {
-        LoadMapInfo(WorldConverter.emptyWorld(size));
+        LoadMapInfo(WorldConverter.EmptyMap(size));
         PaintLayer("Alpha", 0);
         PaintLayer("Biome", 1);
         PaintLayer("Ground", 4);
         SetMinimumHeight(503f);
-    }
-    public static void StartPrefabLookup()
-    {
-        SetPrefabLookup(new PrefabLookup(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt));
     }
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
@@ -1932,59 +1881,5 @@ public static class MapIO
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
         }
-    }
-}
-public class PrefabHierachy : TreeView
-{
-    public PrefabHierachy(TreeViewState treeViewState)
-        : base(treeViewState)
-    {
-        Reload();
-    }
-    Dictionary<string, TreeViewItem> treeviewParents = new Dictionary<string, TreeViewItem>();
-    List<TreeViewItem> allItems = new List<TreeViewItem>();
-    protected override TreeViewItem BuildRoot()
-    {
-        var root = new TreeViewItem { id = 0, depth = -1, displayName = "Root" };
-        allItems.Add(new TreeViewItem { id = 1, depth = 0, displayName = "Editor Tools" });
-        // Add other editor shit like custom prefabs here.
-        if (File.Exists("PrefabsLoaded.txt"))
-        {
-            var lines = File.ReadAllLines("PrefabsLoaded.txt");
-            var parentId = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
-            foreach (var line in lines)
-            {
-                var linesSplit = line.Split(':');
-                var assetNameSplit = linesSplit[1].Split('/');
-                for (int i = 0; i < assetNameSplit.Length; i++)
-                {
-                    var treePath = "";
-                    for (int j = 0; j <= i; j++)
-                    {
-                        treePath += assetNameSplit[j];
-                    }
-                    if (!treeviewParents.ContainsKey(treePath))
-                    {
-                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
-                        var shortenedId = linesSplit[2].Substring(2);
-                        if (i != assetNameSplit.Length - 1)
-                        {
-                            var treeviewItem = new TreeViewItem { id = parentId, depth = i, displayName = assetNameSplit[i] };
-                            allItems.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                            parentId++;
-                        }
-                        else
-                        {
-                            var treeviewItem = new TreeViewItem { id = int.Parse(shortenedId), depth = i, displayName = prefabName };
-                            allItems.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                        }
-                    }
-                }
-            }
-        }
-        SetupParentsAndChildrenFromDepths(root, allItems);
-        return root;
     }
 }

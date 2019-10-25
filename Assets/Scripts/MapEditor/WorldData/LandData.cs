@@ -22,11 +22,13 @@ public static class LandData
     /// </summary>
     public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
-    public static TerrainLayer[] groundTextures = null;
-    public static TerrainLayer[] biomeTextures = null;
-    public static TerrainLayer[] miscTextures = null;
+    private static TerrainLayer[] groundTextures = null;
+    private static TerrainLayer[] biomeTextures = null;
+    private static TerrainLayer[] miscTextures = null;
 
-    static string layerName = "";
+    public static string landLayer = "";
+    public static int landIndex = 0;
+    public static TerrainTopology.Enum topologyLayer, oldTopologyLayer;
 
     [InitializeOnLoadMethod]
     static void OnLoad()
@@ -40,18 +42,46 @@ public static class LandData
     }
     private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
-        // ToDo: Check for if user released mouse before SetData call.
-        //SetData(terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight), layerName, TerrainTopology.TypeToIndex((int)MapIO.topologyLayer));
+
+    }
+    /// <summary>
+    /// Change the active land layer.
+    /// </summary>
+    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
+    public static void ChangeLayer(string layer)
+    {
+        landLayer = layer;
+        ChangeLandLayer();
+    }
+    public static void ChangeLandLayer()
+    {
+        SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
+        Undo.ClearAll();
+        switch (landLayer.ToLower())
+        {
+            case "ground":
+                SetLayer("ground");
+                break;
+            case "biome":
+                SetLayer("biome");
+                break;
+            case "alpha":
+                SetLayer("alpha");
+                break;
+            case "topology":
+                SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+        }
     }
     /// <summary>
     /// Sets the array data of LandLayer.
     /// </summary>
     /// <param name="floatArray">The alphamap array of all the textures.</param>
-    /// <param name="landLayer">The landlayer to save the floatArray to.</param>
+    /// <param name="layer">The landlayer to save the floatArray to.</param>
     /// <param name="topology">The topology layer if the landlayer is topology.</param>
-    public static void SetData(float[,,] floatArray, string landLayer, int topology = 0)
+    public static void SetData(float[,,] floatArray, string layer, int topology = 0)
     {
-        switch (landLayer.ToLower())
+        switch (layer.ToLower())
         {
             case "ground":
                 groundArray = floatArray;
@@ -66,7 +96,7 @@ public static class LandData
                 topologyArray[topology] = floatArray; 
                 break;
         }
-        layerName = landLayer;
+        landLayer = layer;
     }
     public static void GetTextures()
     {
@@ -78,33 +108,33 @@ public static class LandData
     /// <summary>
     /// Sets the terrain alphamaps to the LandLayer.
     /// </summary>
-    /// <param name="landLayer">The LandLayer to set.</param>
+    /// <param name="layer">The LandLayer to set.</param>
     /// <param name="topology">The Topology layer to set.</param>
-    public static void SetLayer(string landLayer, int topology = 0)
+    public static void SetLayer(string layer, int topology = 0)
     {
         if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
             GetTextures();
         }
-        switch (landLayer.ToLower())
+        switch (layer.ToLower())
         {
             case "ground":
-                layerName = "ground";
+                landLayer = "ground";
                 MapIO.terrain.terrainData.terrainLayers = groundTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, groundArray);
                 break;
             case "biome":
-                layerName = "biome";
+                landLayer = "biome";
                 MapIO.terrain.terrainData.terrainLayers = biomeTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
                 break;
             case "alpha":
-                layerName = "alpha";
+                landLayer = "alpha";
                 MapIO.terrain.terrainData.terrainLayers = miscTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
             case "topology":
-                layerName = "topology";
+                landLayer = "topology";
                 MapIO.terrain.terrainData.terrainLayers = miscTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
@@ -116,7 +146,7 @@ public static class LandData
     /// <param name="topologyLayer">The Topology layer, if active.</param>
     public static void SaveLayer(int topologyLayer = 0)
     {
-        switch (layerName)
+        switch (landLayer)
         {
             case "ground":
                 groundArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);

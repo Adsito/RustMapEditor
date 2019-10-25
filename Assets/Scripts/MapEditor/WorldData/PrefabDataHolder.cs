@@ -2,10 +2,11 @@
 using UnityEngine;
 
 [Serializable]
+[SelectionBase]
 public class PrefabDataHolder : MonoBehaviour
 {
     
-    public WorldSerializationSDK.PrefabData prefabData;
+    public WorldSerialization.PrefabData prefabData;
     
     public void MapSave()
     {

@@ -9,20 +9,22 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Default Objects
   m_Shader: {fileID: 4800000, guid: 6e4ae4064600d784cac1e41a9e6f2e59, type: 3}
-  m_ShaderKeywords: _DISABLE_DECALS _DISABLE_SSR _NORMALMAP_TANGENT_SPACE _NORMALMAP_TANGENT_SPACE0
+  m_ShaderKeywords: _BLENDMODE_ALPHA _BLENDMODE_PRESERVE_SPECULAR_LIGHTING _DISABLE_DECALS
+    _DISABLE_SSR _ENABLE_FOG_ON_TRANSPARENT _NORMALMAP_TANGENT_SPACE _NORMALMAP_TANGENT_SPACE0
     _NORMALMAP_TANGENT_SPACE1 _NORMALMAP_TANGENT_SPACE2 _NORMALMAP_TANGENT_SPACE3
-    _TERRAIN_INSTANCED_PERPIXEL_NORMAL
+    _SURFACE_TYPE_TRANSPARENT _TERRAIN_INSTANCED_PERPIXEL_NORMAL
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap: {}
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses:
   - DistortionVectors
+  - MOTIONVECTORS
   - TransparentDepthPrepass
   - TransparentDepthPostpass
   - TransparentBackface
-  - MOTIONVECTORS
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -355,7 +357,7 @@ Material:
     - _DoubleSidedEnable: 0
     - _DoubleSidedNormalMode: 1
     - _Drag: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
     - _EmissiveIntensity: 1
@@ -507,7 +509,7 @@ Material:
     - _SubsurfaceMask2: 1
     - _SubsurfaceMask3: 1
     - _SupportDecals: 0
-    - _SurfaceType: 0
+    - _SurfaceType: 1
     - _TexWorldScale: 1
     - _TexWorldScale0: 1
     - _TexWorldScale1: 1
@@ -523,6 +525,7 @@ Material:
     - _ThicknessMultiplier: 1
     - _TransmissionEnable: 1
     - _TransparentBackfaceEnable: 0
+    - _TransparentCullMode: 2
     - _TransparentDepthPostpassEnable: 0
     - _TransparentDepthPrepassEnable: 0
     - _TransparentSortPriority: 0
@@ -545,9 +548,10 @@ Material:
     - _UseMainLayerInfluence: 0
     - _UseShadowThreshold: 0
     - _VertexColorMode: 0
-    - _ZTestDepthEqualForOpaque: 3
+    - _ZTestDepthEqualForOpaque: 4
     - _ZTestGBuffer: 4
     - _ZTestModeDistortion: 4
+    - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
