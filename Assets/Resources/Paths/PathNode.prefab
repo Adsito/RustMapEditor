@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33728719726921314}
   - component: {fileID: 23046634395923214}
   - component: {fileID: 135193906977609276}
+  - component: {fileID: -3928703522276641438}
   m_Layer: 0
   m_Name: PathNode
   m_TagString: Untagged
@@ -66,6 +67,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -91,3 +93,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!205 &-3928703522276641438
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994630621000320}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.001026447
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23046634395923214}
+  m_Enabled: 1
