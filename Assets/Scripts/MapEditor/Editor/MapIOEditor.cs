@@ -5,7 +5,7 @@ using Rotorz.ReorderableList;
 public class MapIOEditor : EditorWindow
 {
     #region Values
-    string editorVersion = "v2.1-prerelease";
+    string editorVersion = "v2.2-prerelease";
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
@@ -18,7 +18,9 @@ public class MapIOEditor : EditorWindow
     float normaliseLow = 450f, normaliseHigh = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
-    int textureFrom, textureToPaint, landLayerFrom, landLayerToPaint;
+    EditorEnums.Layers.LandLayers landLayerFrom = EditorEnums.Layers.LandLayers.Ground;
+    EditorEnums.Layers.LandLayers landLayerToPaint = EditorEnums.Layers.LandLayers.Ground;
+    int textureFrom, textureToPaint;
     int layerConditionalInt, texture = 0, topologyTexture = 0, alphaTexture;
     bool deletePrefabs = false;
     bool checkHeightCndtl = false, checkSlopeCndtl = false, checkAlpha = false;
@@ -26,7 +28,7 @@ public class MapIOEditor : EditorWindow
     float heightLowCndtl = 500f, heightHighCndtl = 600f;
     bool autoUpdate = false;
     Vector2 scrollPos = new Vector2(0, 0), presetScrollPos = new Vector2(0, 0);
-    EditorSelections.ObjectSeletion rotateSelection;
+    EditorEnums.Selections.ObjectSelection rotateSelection;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
     float blurDirection = 0f, filterStrength = 1f;
     int smoothPasses = 0;
@@ -68,17 +70,7 @@ public class MapIOEditor : EditorWindow
                 switch (prefabOptions)
                 {
                     case 0:
-                        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                        if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
-                            "AssetList.txt in the root directory"), EditorStyles.toolbarButton, GUILayout.MaxWidth(40)))
-                        {
-                            PrefabManager.LoadBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
-                        }
-                        if (GUILayout.Button(new GUIContent("Unload", "Unloads the loaded bundle and prefabs."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
-                        {
-                            PrefabManager.DisposeBundle();
-                        }
-                        EditorGUILayout.EndHorizontal();
+                        AssetBundle();
                         break;
                     case 1:
                         deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes prefabs/lootcrates after exporting."), deletePrefabs, GUILayout.MaxWidth(300));
@@ -149,7 +141,6 @@ public class MapIOEditor : EditorWindow
                 {
                     SetLandLayer(layerIndex);
                 }
-
                 ClampValues();
 
                 switch (layerIndex)
@@ -205,21 +196,19 @@ public class MapIOEditor : EditorWindow
                 GUIContent[] advancedOptionsMenu = new GUIContent[2];
                 advancedOptionsMenu[0] = new GUIContent("Generation");
                 advancedOptionsMenu[1] = new GUIContent("Map Tools");
+
+                EditorGUI.BeginChangeCheck();
                 advancedOptions = GUILayout.Toolbar(advancedOptions, advancedOptionsMenu);
-                
+                if (EditorGUI.EndChangeCheck() && advancedOptions == 0)
+                {
+                    MapIO.RefreshAssetList();
+                }
+
                 switch (advancedOptions)
                 {
                     #region Generation
                     case 0:
-                        GUILayout.Label(new GUIContent("Node Presets", "List of all the node presets in the project."), EditorStyles.boldLabel);
-                        if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Node Presets in the project.")))
-                        {
-                            MapIO.RefreshAssetList();
-                        }
-                        presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
-                        ReorderableListGUI.Title("Node Presets");
-                        ReorderableListGUI.ListField(MapIO.generationPresetList, NodePresetDrawer, DrawEmpty);
-                        GUILayout.EndScrollView();
+                        NodePresets();
                         break;
                     #endregion
                     #region Map Tools
@@ -257,50 +246,7 @@ public class MapIOEditor : EditorWindow
                             #endregion
                             #region Textures
                             case 1:
-                                GUILayout.Label("Copy Textures", EditorStyles.boldLabel);
-                                landLayerFrom = EditorGUILayout.Popup("Layer:", landLayerFrom, landLayers);
-                                switch (landLayerFrom) // Get texture list from the currently selected landLayer.
-                                {
-                                    case 0:
-                                        MapIO.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.groundLayerFrom);
-                                        textureFrom = TerrainSplat.TypeToIndex((int)MapIO.groundLayerFrom);
-                                        break;
-                                    case 1:
-                                        MapIO.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Copy:", MapIO.biomeLayerFrom);
-                                        textureFrom = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerFrom);
-                                        break;
-                                    case 2:
-                                        textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureAlpha, values);
-                                        break;
-                                    case 3:
-                                        MapIO.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Copy:", MapIO.topologyLayerFrom);
-                                        textureFrom = EditorGUILayout.IntPopup("Texture To Copy:", textureFrom, activeTextureTopo, values);
-                                        break;
-                                }
-                                landLayerToPaint = EditorGUILayout.Popup("Layer:", landLayerToPaint, landLayers);
-                                switch (landLayerToPaint) // Get texture list from the currently selected landLayer.
-                                {
-                                    case 0:
-                                        MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
-                                        textureToPaint = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
-                                        break;
-                                    case 1:
-                                        MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
-                                        textureToPaint = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
-                                        break;
-                                    case 2:
-                                        textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureAlpha, values);
-                                        break;
-                                    case 3:
-                                        MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology To Paint:", MapIO.topologyLayerToPaint);
-                                        textureToPaint = EditorGUILayout.IntPopup("Texture To Paint:", textureToPaint, activeTextureTopo, values);
-                                        break;
-                                }
-                                if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[landLayerFrom] + " layer and " +
-                                    "paints it on the " + landLayers[landLayerToPaint] + " layer.")))
-                                {
-                                    MapIO.CopyTexture(landLayers[landLayerFrom], landLayers[landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopology.TypeToIndex((int)MapIO.topologyLayerToPaint));
-                                }
+                                CopyTextures();
                                 GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
 
                                 GUIContent[] conditionalPaintMenu = new GUIContent[5];
@@ -485,13 +431,30 @@ public class MapIOEditor : EditorWindow
     }
     #endregion
     #region Methods
+    #region Prefabs
+    private void AssetBundle()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
+            "AssetList.txt in the root directory"), EditorStyles.toolbarButton))
+        {
+            PrefabManager.LoadBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
+        }
+        if (GUILayout.Button(new GUIContent("Unload", "Unloads the loaded bundle and prefabs."), EditorStyles.toolbarButton))
+        {
+            PrefabManager.DisposeBundle();
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    #endregion
+    #region Misc
     private string NodePresetDrawer(Rect position, string itemValue)
     {
         position.width -= 39;
         GUI.Label(position, itemValue);
         position.x = position.xMax;
         position.width = 39;
-        if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset.")))
+        if (GUI.Button(position, new GUIContent("Open", "Opens the Node Editor for the preset."), EditorStyles.toolbarButton))
         {
             MapIO.RefreshAssetList();
             MapIO.nodePresetLookup.TryGetValue(itemValue, out Object preset);
@@ -559,7 +522,27 @@ public class MapIOEditor : EditorWindow
             heightMinBlendLow = heightLow;
         }
     }
+    #endregion
+    #region Generation Tools
+    private void NodePresets()
+    {
+        GUILayout.Label(new GUIContent("Node Presets", "List of all the node presets in the project."), EditorStyles.boldLabel);
+
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Refresh presets list.", "Refreshes the list of all the Node Presets in the project."), EditorStyles.toolbarButton))
+        {
+            MapIO.RefreshAssetList();
+        }
+        GUILayout.EndHorizontal();
+
+        presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
+        ReorderableListGUI.Title("Node Presets");
+        ReorderableListGUI.ListField(MapIO.generationPresetList, NodePresetDrawer, DrawEmpty);
+        GUILayout.EndScrollView();
+    }
+    #endregion
     #region MapTools
+    #region HeightMap
     private void TerraceMap()
     {
         GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
@@ -700,12 +683,126 @@ public class MapIOEditor : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
     }
+    private void InvertMap()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself."), EditorStyles.toolbarButton))
+        {
+            MapIO.InvertHeightmap();
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    #endregion
+    #region Textures
+    private void CopyTextures()
+    {
+        GUILayout.Label(new GUIContent("Copy Textures", "Copies the texture selected, and paints it with the selected texture."), EditorStyles.boldLabel);
+        
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(new GUIContent("Layer:", "The layer to copy from."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+        EditorGUI.BeginChangeCheck();
+        landLayerFrom = (EditorEnums.Layers.LandLayers)EditorGUILayout.EnumPopup(landLayerFrom, EditorStyles.toolbarDropDown);
+        if (EditorGUI.EndChangeCheck() && (int)landLayerFrom > 1 && textureFrom > 1)
+        {
+            textureFrom = 0;
+        }
+        GUILayout.EndHorizontal();
+
+        switch ((int)landLayerFrom) // Get texture list from the currently selected landLayer.
+        {
+            case 0:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Copy:", "The Ground texture which will be copied."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.groundLayerFrom = (TerrainSplat.Enum)EditorGUILayout.EnumPopup(MapIO.groundLayerFrom, EditorStyles.toolbarDropDown);
+                textureFrom = TerrainSplat.TypeToIndex((int)MapIO.groundLayerFrom);
+                GUILayout.EndHorizontal();
+                break;
+            case 1:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Copy:", "The Biome which will be copied."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.biomeLayerFrom = (TerrainBiome.Enum)EditorGUILayout.EnumPopup(MapIO.biomeLayerFrom, EditorStyles.toolbarDropDown);
+                textureFrom = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerFrom);
+                GUILayout.EndHorizontal();
+                break;
+            case 2:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Copy:", "The active/inactive alpha which will be copied."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                textureFrom = EditorGUILayout.IntPopup(textureFrom, activeTextureAlpha, values, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+                break;
+            case 3:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Topology Layer:", "The Topology layer to copy from."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.topologyLayerFrom = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(MapIO.topologyLayerFrom, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Copy:", "The active/inactive topology which will be copied."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                textureFrom = EditorGUILayout.IntPopup(textureFrom, activeTextureTopo, values, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+                break;
+        }
+
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(new GUIContent("Layer:", "The layer to copy to."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+        EditorGUI.BeginChangeCheck();
+        landLayerToPaint = (EditorEnums.Layers.LandLayers)EditorGUILayout.EnumPopup(landLayerToPaint, EditorStyles.toolbarDropDown);
+        if (EditorGUI.EndChangeCheck() && (int)landLayerToPaint > 1 && textureToPaint > 1)
+        {
+            textureToPaint = 0;
+        }
+        GUILayout.EndHorizontal();
+
+        switch ((int)landLayerToPaint) // Get texture list from the currently selected landLayer.
+        {
+            case 0:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Ground texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup(MapIO.groundLayerToPaint, EditorStyles.toolbarDropDown);
+                textureToPaint = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
+                GUILayout.EndHorizontal();
+                break;
+            case 1:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Biome to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup(MapIO.biomeLayerToPaint, EditorStyles.toolbarDropDown);
+                textureToPaint = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
+                GUILayout.EndHorizontal();
+                break;
+            case 2:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Alpha to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                textureToPaint = EditorGUILayout.IntPopup(textureToPaint, activeTextureAlpha, values, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+                break;
+            case 3:
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Topology Layer:", "The Topology layer to paint to."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(MapIO.topologyLayerToPaint, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Topology texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                textureToPaint = EditorGUILayout.IntPopup(textureToPaint, activeTextureTopo, values, EditorStyles.toolbarDropDown);
+                GUILayout.EndHorizontal();
+                break;
+        }
+
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Copy textures to new layer", "Copies the Texture from the " + landLayers[(int)landLayerFrom] + " layer and " +
+            "paints it on the " + landLayers[(int)landLayerToPaint] + " layer."), EditorStyles.toolbarButton))
+        {
+            MapIO.CopyTexture(landLayers[(int)landLayerFrom], landLayers[(int)landLayerToPaint], textureFrom, textureToPaint, TerrainTopology.TypeToIndex((int)MapIO.topologyLayerFrom), TerrainTopology.TypeToIndex((int)MapIO.topologyLayerToPaint));
+        }
+        GUILayout.EndHorizontal();
+    }
+    #endregion
     private void RotateMap()
     {
         GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Label(new GUIContent("Rotation Selection: ", "The items to rotate."), EditorStyles.toolbarButton);
-        rotateSelection = (EditorSelections.ObjectSeletion)EditorGUILayout.EnumFlagsField(new GUIContent(), rotateSelection, EditorStyles.toolbarDropDown);
+        rotateSelection = (EditorEnums.Selections.ObjectSelection)EditorGUILayout.EnumFlagsField(new GUIContent(), rotateSelection, EditorStyles.toolbarDropDown);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -716,15 +813,6 @@ public class MapIOEditor : EditorWindow
         if (GUILayout.Button("Rotate 270°", EditorStyles.toolbarButton))
         {
             MapIO.ParseRotateEnumFlags(rotateSelection, false);
-        }
-        EditorGUILayout.EndHorizontal();
-    }
-    private void InvertMap()
-    {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself."), EditorStyles.toolbarButton))
-        {
-            MapIO.InvertHeightmap();
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -973,7 +1061,7 @@ public class MapIOEditor : EditorWindow
     private void EditorIO()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        if (GUILayout.Button(new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file."), EditorStyles.toolbarButton))
         {
             loadFile = EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
             if (loadFile == "")
@@ -987,7 +1075,7 @@ public class MapIOEditor : EditorWindow
             MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
             MapIO.Load(world);
         }
-        if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        if (GUILayout.Button(new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file."), EditorStyles.toolbarButton))
         {
             saveFile = EditorUtility.SaveFilePanel("Export Map File", saveFile, mapName, "map");
             if (saveFile == "")
@@ -1000,7 +1088,7 @@ public class MapIOEditor : EditorWindow
             MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
             MapIO.Save(saveFile);
         }
-        if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), EditorStyles.toolbarButton, GUILayout.MaxWidth(45)))
+        if (GUILayout.Button(new GUIContent("New", "Creates a new map " + mapSize.ToString() + " metres in size."), EditorStyles.toolbarButton))
         {
             int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Exit", "Save and Create New Map");
             switch (newMap)
@@ -1026,7 +1114,7 @@ public class MapIOEditor : EditorWindow
                     break;
             }
         }
-        GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), EditorStyles.toolbarButton, GUILayout.MaxWidth(45));
+        GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), EditorStyles.toolbarButton);
         mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarButton, GUILayout.MaxWidth(60)), 1000, 6000);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
@@ -1053,25 +1141,25 @@ public class MapIOEditor : EditorWindow
         GUILayout.Label(new GUIContent("Links"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(75)))
+        if (GUILayout.Button(new GUIContent("Report Bug", "Opens up the editor bug report in GitHub."), EditorStyles.toolbarButton))
         {
             OpenReportBug();
         }
-        if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(105)))
+        if (GUILayout.Button(new GUIContent("Request Feature", "Opens up the editor feature request in GitHub."), EditorStyles.toolbarButton))
         {
             OpenRequestFeature();
         }
-        if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        if (GUILayout.Button(new GUIContent("RoadMap", "Opens up the editor roadmap in GitHub."), EditorStyles.toolbarButton))
         {
             OpenRoadMap();
         }
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        if (GUILayout.Button(new GUIContent("Wiki", "Opens up the editor wiki in GitHub."), EditorStyles.toolbarButton))
         {
             OpenWiki();
         }
-        if (GUILayout.Button(new GUIContent("Discord", "Discord invitation link."), EditorStyles.toolbarButton, GUILayout.MaxWidth(65)))
+        if (GUILayout.Button(new GUIContent("Discord", "Discord invitation link."), EditorStyles.toolbarButton))
         {
             OpenDiscord();
         }
@@ -1082,30 +1170,37 @@ public class MapIOEditor : EditorWindow
         GUILayout.Label(new GUIContent("Settings"), EditorStyles.boldLabel, GUILayout.MaxWidth(60));
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Save Changes", "Sets and saves the current settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        if (GUILayout.Button(new GUIContent("Save Changes", "Sets and saves the current settings."), EditorStyles.toolbarButton))
         {
             MapEditorSettings.SaveSettings();
         }
-        if (GUILayout.Button(new GUIContent("Discard", "Discards the changes to the settings."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        if (GUILayout.Button(new GUIContent("Discard", "Discards the changes to the settings."), EditorStyles.toolbarButton))
         {
             MapEditorSettings.LoadSettings();
         }
-        if (GUILayout.Button(new GUIContent("Default", "Sets the settings back to the default."), EditorStyles.toolbarButton, GUILayout.MaxWidth(82)))
+        if (GUILayout.Button(new GUIContent("Default", "Sets the settings back to the default."), EditorStyles.toolbarButton))
         {
             MapEditorSettings.SetDefaultSettings();
         }
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Label(new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust"), EditorStyles.miniBoldLabel, GUILayout.MaxWidth(95));
-        GUILayout.Label(new GUIContent(MapEditorSettings.rustDirectory));
 
-        if (GUILayout.Button(new GUIContent("Browse", "Browse and select the base directory of Rust."), EditorStyles.miniButton, GUILayout.MaxWidth(50)))
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Browse", "Browse and select the base directory of Rust."), EditorStyles.toolbarButton, GUILayout.MaxWidth(50)))
         {
             MapEditorSettings.rustDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", MapEditorSettings.rustDirectory, "Rust");
         }
+        GUILayout.Label(new GUIContent(MapEditorSettings.rustDirectory, "The install directory of Rust on the local PC."), EditorStyles.toolbarButton);
+        EditorGUILayout.EndHorizontal();
 
         GUILayout.Label(new GUIContent("Object Quality", "Controls the object render distance the exact same as ingame. Between 0-200"), EditorStyles.miniBoldLabel, GUILayout.MaxWidth(95));
-        MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200, GUILayout.MaxWidth(300));
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
     }
     #endregion
     private void DrawEmpty()
