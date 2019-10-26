@@ -10,7 +10,6 @@ TagManager:
   - Water
   - LoadedPrefab
   - DefaultPrefab
-  - World
   layers:
   - Default
   - TransparentFX
