@@ -252,24 +252,23 @@ public static class MapIO
     /// <param name="paths">Delete Path objects.</param>
     public static void RemoveMapObjects(bool prefabs, bool paths)
     {
-        GameObject mapPrefabs = GameObject.Find("Objects");
         if (prefabs)
         {
-            foreach (PrefabDataHolder g in mapPrefabs.GetComponentsInChildren<PrefabDataHolder>())
+            foreach (PrefabDataHolder g in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<PrefabDataHolder>())
             {
                 if (g != null)
                 {
                     GameObject.DestroyImmediate(g.gameObject);
                 }
             }
-            foreach (CustomPrefab p in mapPrefabs.GetComponentsInChildren<CustomPrefab>())
+            foreach (CustomPrefab p in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<CustomPrefab>())
             {
                 GameObject.DestroyImmediate(p.gameObject);
             }
         }
         if (paths)
         {
-            foreach (PathDataHolder g in mapPrefabs.GetComponentsInChildren<PathDataHolder>())
+            foreach (PathDataHolder g in GameObject.FindGameObjectWithTag("Paths").GetComponentsInChildren<PathDataHolder>())
             {
                 GameObject.DestroyImmediate(g.gameObject);
             }
@@ -284,9 +283,9 @@ public static class MapIO
         return 0.5f * GetTerrainSize();
     }
     #region RotateMap Methods
-    public static void ParseRotateEnumFlags(EditorSelections.ObjectSeletion rotateSelection, bool CW)
+    public static void ParseRotateEnumFlags(EditorEnums.Selections.ObjectSelection rotateSelection, bool CW)
     {
-        for (int i = 0; i < Enum.GetValues(typeof(EditorSelections.ObjectSeletion)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(EditorEnums.Selections.ObjectSelection)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)rotateSelection & layer) != 0)
@@ -393,15 +392,7 @@ public static class MapIO
     public static void InvertHeightmap()
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Invert Terrain");
-        float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-        for (int i = 0; i < landHeightMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < landHeightMap.GetLength(1); j++)
-            {
-                landHeightMap[i, j] = 1 - landHeightMap[i, j];
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, landHeightMap);
+        terrain.terrainData.SetHeights(0, 0, ArrayOperations.Invert(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight)));
     }
     /// <summary>
     /// Normalises the HeightMap between two heights.
@@ -411,34 +402,7 @@ public static class MapIO
     public static void NormaliseHeightmap(float normaliseLow, float normaliseHigh)
     {
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Normalise Terrain");
-        float[,] landHeightMap = terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
-        float highestPoint = 0f, lowestPoint = 1f, currentHeight = 0f, heightRange = 0f, normalisedHeightRange = 0f, normalisedHeight = 0f;
-        for (int i = 0; i < landHeightMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < landHeightMap.GetLength(1); j++)
-            {
-                currentHeight = landHeightMap[i, j];
-                if (currentHeight < lowestPoint)
-                {
-                    lowestPoint = currentHeight;
-                }
-                else if (currentHeight > highestPoint)
-                {
-                    highestPoint = currentHeight;
-                }
-            }
-        }
-        heightRange = highestPoint - lowestPoint;
-        normalisedHeightRange = normaliseHigh - normaliseLow;
-        for (int i = 0; i < landHeightMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < landHeightMap.GetLength(1); j++)
-            {
-                normalisedHeight = ((landHeightMap[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
-                landHeightMap[i, j] = normaliseLow + normalisedHeight;
-            }
-        }
-        terrain.terrainData.SetHeights(0, 0, landHeightMap);
+        terrain.terrainData.SetHeights(0, 0, ArrayOperations.Normalise(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), normaliseLow, normaliseHigh));
     }
     /// <summary>
     /// Terraces the HeightMap.
@@ -1788,9 +1752,6 @@ public static class MapIO
     {
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         TopologyData.InitMesh(terrains.topology);
-
-        terrain.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
-        water.GetComponent<UpdateTerrainValues>().SetPosition(Vector3.zero);
 
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
         LandData.SetData(terrains.splatMap, "ground");
