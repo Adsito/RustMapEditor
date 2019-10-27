@@ -282,38 +282,61 @@ public static class MapIO
     {
         return 0.5f * GetTerrainSize();
     }
-    #region RotateMap Methods
-    public static void ParseRotateEnumFlags(EditorEnums.Selections.ObjectSelection rotateSelection, bool CW)
+    public static List<int> ParseObjectSelection(EditorEnums.Selections.ObjectSelection objectSelection)
     {
+        List<int> selectedEnums = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(EditorEnums.Selections.ObjectSelection)).Length; i++)
         {
             int layer = 1 << i;
-            if (((int)rotateSelection & layer) != 0)
+            if (((int)objectSelection & layer) != 0)
             {
-                switch (i)
-                {
-                    case 0:
-                        RotateLayer("ground", CW);
-                        break;
-                    case 1:
-                        RotateLayer("biome", CW);
-                        break;
-                    case 2:
-                        RotateLayer("alpha", CW);
-                        break;
-                    case 3:
-                        RotateAllTopologyLayers(CW);
-                        break;
-                    case 4:
-                        RotateHeightMap(CW);
-                        break;
-                    case 5:
-                        RotatePrefabs(CW);
-                        break;
-                    case 6:
-                        RotatePaths(CW);
-                        break;
-                }
+                selectedEnums.Add(i);
+                
+            }
+        }
+        return selectedEnums;
+    }
+    public static List<int> ParseTerrainSelection(EditorEnums.Selections.Terrains terrainSelection)
+    {
+        List<int> selectedEnums = new List<int>();
+        for (int i = 0; i < Enum.GetValues(typeof(EditorEnums.Selections.Terrains)).Length; i++)
+        {
+            int layer = 1 << i;
+            if (((int)terrainSelection & layer) != 0)
+            {
+                selectedEnums.Add(i);
+            }
+        }
+        return selectedEnums;
+    }
+    #region RotateMap Methods
+    public static void RotateMap(EditorEnums.Selections.ObjectSelection objectSelection, bool CW)
+    {
+        foreach (var item in ParseObjectSelection(objectSelection))
+        {
+            switch (item)
+            {
+                case 0:
+                    RotateLayer("ground", CW);
+                    break;
+                case 1:
+                    RotateLayer("biome", CW);
+                    break;
+                case 2:
+                    RotateLayer("alpha", CW);
+                    break;
+                case 3:
+                    RotateAllTopologyLayers(CW);
+                    break;
+                case 4:
+                    RotateHeightMap(CW);
+                    break;
+                case 5:
+                    RotatePrefabs(CW);
+                    break;
+                case 6:
+                    RotatePaths(CW);
+                    break;
             }
         }
     }
@@ -385,6 +408,29 @@ public static class MapIO
         }
         terrain.terrainData.SetHeights(0, 0, newHeightMap);
         water.terrainData.SetHeights(0, 0, newWaterMap);
+    }
+    /// <summary>
+    /// Sets the selected terrains to the height set.
+    /// </summary>
+    /// <param name="height">The height to set.</param>
+    /// <param name="terrains">The selected terrains.</param>
+    public static void SetHeightmap(float height, EditorEnums.Selections.Terrains terrains)
+    {
+        height /= 1000f;
+        foreach (var item in ParseTerrainSelection(terrains))
+        {
+            switch (item)
+            {
+                case 0:
+                    Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Set Terrain Height");
+                    terrain.terrainData.SetHeights(0, 0, ArrayOperations.SetValues(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), height));
+                    break;
+                case 1:
+                    Undo.RegisterCompleteObjectUndo(water.terrainData, "Set Water Height");
+                    water.terrainData.SetHeights(0, 0, ArrayOperations.SetValues(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), height));
+                    break;
+            }
+        }
     }
     /// <summary>
     /// Inverts the HeightMap.
@@ -650,16 +696,16 @@ public static class MapIO
     /// <returns></returns>
     public static List<int> ReturnSelectedSplats(TerrainSplat.Enum ground)
     {
-        List<int> selectedElements = new List<int>();
+        List<int> selectedEnums = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainSplat.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)ground & layer) != 0)
             {
-                selectedElements.Add(i);
+                selectedEnums.Add(i);
             }
         }
-        return selectedElements;
+        return selectedEnums;
     }
     /// <summary>
     /// Returns the selected TerrainBiome enums.
@@ -668,16 +714,16 @@ public static class MapIO
     /// <returns></returns>
     public static List<int> ReturnSelectedBiomes(TerrainBiome.Enum biome)
     {
-        List<int> selectedElements = new List<int>();
+        List<int> selectedEnums = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainBiome.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)biome & layer) != 0)
             {
-                selectedElements.Add(i);
+                selectedEnums.Add(i);
             }
         }
-        return selectedElements;
+        return selectedEnums;
     }
     /// <summary>
     /// Returns the selected TerrainTopology enums.
@@ -686,16 +732,16 @@ public static class MapIO
     /// <returns></returns>
     public static List<int> ReturnSelectedTopologies(TerrainTopology.Enum topology)
     {
-        List<int> selectedElements = new List<int>();
+        List<int> selectedEnums = new List<int>();
         for (int i = 0; i < Enum.GetValues(typeof(TerrainTopology.Enum)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)topology & layer) != 0)
             {
-                selectedElements.Add(i);
+                selectedEnums.Add(i);
             }
         }
-        return selectedElements;
+        return selectedEnums;
     }
     /// <summary>
     /// Returns the SplatMap at the selected LandLayer.
