@@ -1,6 +1,22 @@
 ﻿public static class ArrayOperations
 {
     /// <summary>
+    /// Sets all the elements in the array to the specified value.
+    /// </summary>
+    /// <param name="value">The value to set.</param>
+    /// <returns></returns>
+    public static float[,] SetValues(float [,] array, float value)
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                array[i, j] = value;
+            }
+        }
+        return array;
+    }
+    /// <summary>
     /// Flips the values of the array
     /// </summary>
     /// <returns></returns>

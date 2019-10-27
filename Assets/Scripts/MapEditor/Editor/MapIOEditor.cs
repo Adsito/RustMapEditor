@@ -9,7 +9,7 @@ public class MapIOEditor : EditorWindow
     string[] landLayers = { "Ground", "Biome", "Alpha", "Topology" };
     string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
-    float heightToSet = 450f, offset = 0f;
+    float heightToSet = 450f, offset = 0f, heightSet = 500f, edgeHeight = 500f;
     bool[] sides = new bool[4]; 
     bool checkHeight = true, setWaterMap = false;
     float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
@@ -46,7 +46,7 @@ public class MapIOEditor : EditorWindow
         mainMenu[1] = new GUIContent("Prefabs");
         mainMenu[2] = new GUIContent("Layers");
         mainMenu[3] = new GUIContent("Advanced");
-        mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu);
+        mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu, EditorStyles.toolbarButton);
 
         #region Menu
         switch (mainMenuOptions)
@@ -65,7 +65,7 @@ public class MapIOEditor : EditorWindow
                 GUIContent[] prefabsOptionsMenu = new GUIContent[2];
                 prefabsOptionsMenu[0] = new GUIContent("Asset Bundle");
                 prefabsOptionsMenu[1] = new GUIContent("Prefab Tools");
-                prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu);
+                prefabOptions = GUILayout.Toolbar(prefabOptions, prefabsOptionsMenu, EditorStyles.toolbarButton);
 
                 switch (prefabOptions)
                 {
@@ -73,6 +73,8 @@ public class MapIOEditor : EditorWindow
                         AssetBundle();
                         break;
                     case 1:
+                        GUILayout.Label("Tools", EditorStyles.miniBoldLabel);
+
                         deletePrefabs = EditorGUILayout.ToggleLeft(new GUIContent("Delete on Export.", "Deletes prefabs/lootcrates after exporting."), deletePrefabs, GUILayout.MaxWidth(300));
                         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
                         if (GUILayout.Button(new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin." +
@@ -136,7 +138,7 @@ public class MapIOEditor : EditorWindow
                 layersOptionsMenu[3] = new GUIContent("Topology");
 
                 EditorGUI.BeginChangeCheck();
-                layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu);
+                layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
                 if (EditorGUI.EndChangeCheck())
                 {
                     SetLandLayer(layerIndex);
@@ -171,6 +173,7 @@ public class MapIOEditor : EditorWindow
                     case 2:
                         PaintTools(layerIndex, 1, 0);
                         RotateTools(layerIndex);
+                        RiverTools(layerIndex, 1, 0);
                         SlopeTools(layerIndex, 1, 0);
                         HeightTools(layerIndex, 1, 0);
                         AreaTools(layerIndex, 1, 0);
@@ -198,7 +201,7 @@ public class MapIOEditor : EditorWindow
                 advancedOptionsMenu[1] = new GUIContent("Map Tools");
 
                 EditorGUI.BeginChangeCheck();
-                advancedOptions = GUILayout.Toolbar(advancedOptions, advancedOptionsMenu);
+                advancedOptions = GUILayout.Toolbar(advancedOptions, advancedOptionsMenu, EditorStyles.toolbarButton);
                 if (EditorGUI.EndChangeCheck() && advancedOptions == 0)
                 {
                     MapIO.RefreshAssetList();
@@ -217,7 +220,7 @@ public class MapIOEditor : EditorWindow
                         mapToolsMenu[0] = new GUIContent("HeightMap");
                         mapToolsMenu[1] = new GUIContent("Textures");
                         mapToolsMenu[2] = new GUIContent("Misc");
-                        mapToolsOptions = GUILayout.Toolbar(mapToolsOptions, mapToolsMenu);
+                        mapToolsOptions = GUILayout.Toolbar(mapToolsOptions, mapToolsMenu, EditorStyles.toolbarButton);
 
                         switch (mapToolsOptions)
                         {
@@ -226,14 +229,17 @@ public class MapIOEditor : EditorWindow
                                 GUIContent[] heightMapMenu = new GUIContent[2];
                                 heightMapMenu[0] = new GUIContent("Heights");
                                 heightMapMenu[1] = new GUIContent("Filters");
-                                heightMapOptions = GUILayout.Toolbar(heightMapOptions, heightMapMenu);
+                                heightMapOptions = GUILayout.Toolbar(heightMapOptions, heightMapMenu, EditorStyles.toolbarButton);
 
                                 switch (heightMapOptions)
                                 {
                                     case 0:
+                                        GUILayout.Label("Heights", EditorStyles.boldLabel);
                                         OffsetMap();
                                         EdgeHeight();
+                                        SetHeight();
                                         MinMaxHeight();
+                                        GUILayout.Label("Misc", EditorStyles.boldLabel);
                                         InvertMap();
                                         break;
                                     case 1:
@@ -247,137 +253,13 @@ public class MapIOEditor : EditorWindow
                             #region Textures
                             case 1:
                                 CopyTextures();
-                                GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
-
-                                GUIContent[] conditionalPaintMenu = new GUIContent[5];
-                                conditionalPaintMenu[0] = new GUIContent("Ground");
-                                conditionalPaintMenu[1] = new GUIContent("Biome");
-                                conditionalPaintMenu[2] = new GUIContent("Alpha");
-                                conditionalPaintMenu[3] = new GUIContent("Topology");
-                                conditionalPaintMenu[4] = new GUIContent("Terrain");
-                                conditionalPaintOptions = GUILayout.Toolbar(conditionalPaintOptions, conditionalPaintMenu);
-
-                                switch (conditionalPaintOptions)
-                                {
-                                    case 0: // Ground
-                                        GUILayout.Label("Ground Texture", EditorStyles.boldLabel);
-                                        MapIO.conditionalGround = (TerrainSplat.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalGround);
-                                        break;
-                                    case 1: // Biome
-                                        GUILayout.Label("Biome Texture", EditorStyles.boldLabel);
-                                        MapIO.conditionalBiome = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalBiome);
-                                        break;
-                                    case 2: // Alpha
-                                        checkAlpha = EditorGUILayout.Toggle("Check Alpha:", checkAlpha);
-                                        if (checkAlpha)
-                                        {
-                                            alphaTexture = EditorGUILayout.IntPopup("Alpha Texture:", alphaTexture, activeTextureAlpha, values);
-                                        }
-                                        break;
-                                    case 3: // Topology
-                                        GUILayout.Label("Topology Layer", EditorStyles.boldLabel);
-                                        MapIO.conditionalTopology = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalTopology);
-                                        EditorGUILayout.Space();
-                                        GUILayout.Label("Topology Texture", EditorStyles.boldLabel);
-                                        topologyTexture = EditorGUILayout.IntPopup("Topology Texture:", topologyTexture, activeTextureTopo, values);
-                                        break;
-                                    case 4: // Terrain
-                                        GUILayout.Label("Slope Range", EditorStyles.boldLabel);
-                                        checkSlopeCndtl = EditorGUILayout.Toggle("Check Slopes:", checkSlopeCndtl);
-                                        if (checkSlopeCndtl == true)
-                                        {
-                                            if (slopeLowCndtl > slopeHighCndtl)
-                                            {
-                                                slopeLowCndtl = slopeHighCndtl - 0.05f;
-                                            }
-                                            if (slopeLowCndtl < 0)
-                                            {
-                                                slopeLowCndtl = 0f;
-                                            }
-                                            if (slopeHighCndtl > 90f)
-                                            {
-                                                slopeHighCndtl = 90f;
-                                            }
-                                            EditorGUILayout.BeginHorizontal();
-                                            slopeLowCndtl = EditorGUILayout.FloatField(slopeLowCndtl);
-                                            slopeHighCndtl = EditorGUILayout.FloatField(slopeHighCndtl);
-                                            EditorGUILayout.EndHorizontal();
-                                            EditorGUILayout.MinMaxSlider(ref slopeLowCndtl, ref slopeHighCndtl, 0f, 90f);
-                                        }
-                                        GUILayout.Label("Height Range", EditorStyles.boldLabel);
-                                        checkHeightCndtl = EditorGUILayout.Toggle("Check Heights:", checkHeightCndtl);
-                                        if (checkHeightCndtl == true)
-                                        {
-                                            if (heightLowCndtl > heightHighCndtl)
-                                            {
-                                                heightLowCndtl = heightHighCndtl - 0.05f;
-                                            }
-                                            if (heightLowCndtl < 0)
-                                            {
-                                                heightLowCndtl = 0f;
-                                            }
-                                            if (heightHighCndtl > 1000f)
-                                            {
-                                                heightHighCndtl = 1000f;
-                                            }
-                                            EditorGUILayout.BeginHorizontal();
-                                            heightLowCndtl = EditorGUILayout.FloatField(heightLowCndtl);
-                                            heightHighCndtl = EditorGUILayout.FloatField(heightHighCndtl);
-                                            EditorGUILayout.EndHorizontal();
-                                            EditorGUILayout.MinMaxSlider(ref heightLowCndtl, ref heightHighCndtl, 0f, 1000f);
-                                        }
-                                        break;
-                                }
-                                GUILayout.Label("Texture To Paint:", EditorStyles.boldLabel);
-                                layerConditionalInt = EditorGUILayout.Popup("Layer:", layerConditionalInt, landLayers);
-                                switch (layerConditionalInt)
-                                {
-                                    default:
-                                        Debug.Log("Layer doesn't exist");
-                                        break;
-                                    case 0:
-                                        MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.groundLayerToPaint);
-                                        texture = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
-                                        break;
-                                    case 1:
-                                        MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup("Texture To Paint:", MapIO.biomeLayerToPaint);
-                                        texture = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
-                                        break;
-                                    case 2:
-                                        texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureAlpha, values);
-                                        break;
-                                    case 3:
-                                        MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup("Topology Layer:", MapIO.topologyLayerToPaint);
-                                        texture = EditorGUILayout.IntPopup("Texture To Paint:", texture, activeTextureTopo, values);
-                                        break;
-                                }
-                                if (GUILayout.Button(new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set.")))
-                                {
-                                    Conditions conditions = new Conditions();
-                                    conditions.GroundConditions = MapIO.conditionalGround;
-                                    conditions.BiomeConditions = MapIO.conditionalBiome;
-                                    conditions.CheckAlpha = checkAlpha;
-                                    conditions.AlphaTexture = alphaTexture;
-                                    conditions.TopologyLayers = MapIO.conditionalTopology;
-                                    conditions.TopologyTexture = topologyTexture;
-                                    conditions.SlopeLow = slopeLowCndtl;
-                                    conditions.SlopeHigh = slopeHighCndtl;
-                                    conditions.HeightLow = heightLowCndtl;
-                                    conditions.HeightHigh = heightHighCndtl;
-                                    conditions.CheckHeight = checkHeightCndtl;
-                                    conditions.CheckSlope = checkSlopeCndtl;
-                                    MapIO.PaintConditional(landLayers[layerConditionalInt], texture, conditions);
-                                }
+                                ConditionalPaint();
                                 break;
                             #endregion
                             #region Misc
                             case 2:
                                 RotateMap();
-                                GUILayout.Label("Debug", EditorStyles.boldLabel);
-                                if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below.")))
-                                {
-                                    MapIO.DebugWaterLevel();
-                                }
+                                DebugMap();
                                 break;
                                 #endregion
                         }
@@ -434,6 +316,8 @@ public class MapIOEditor : EditorWindow
     #region Prefabs
     private void AssetBundle()
     {
+        GUILayout.Label("Asset Bundle", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Load", "Loads all the prefabs from the Rust Asset Bundle for use in the editor. Prefabs paths to be loaded can be changed in " +
             "AssetList.txt in the root directory"), EditorStyles.toolbarButton))
@@ -447,7 +331,7 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
     #endregion
-    #region Misc
+    #region Functions
     private string NodePresetDrawer(Rect position, string itemValue)
     {
         position.width -= 39;
@@ -545,7 +429,7 @@ public class MapIOEditor : EditorWindow
     #region HeightMap
     private void TerraceMap()
     {
-        GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.boldLabel);
+        GUILayout.Label(new GUIContent("Terrace", "Terrace the entire terrain."), EditorStyles.miniBoldLabel);
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
@@ -570,7 +454,7 @@ public class MapIOEditor : EditorWindow
     }
     private void SmoothMap()
     {
-        GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.boldLabel);
+        GUILayout.Label(new GUIContent("Smooth", "Smooth the entire terrain."), EditorStyles.miniBoldLabel);
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
@@ -601,7 +485,7 @@ public class MapIOEditor : EditorWindow
     }
     private void NormaliseMap()
     {
-        GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.boldLabel);
+        GUILayout.Label(new GUIContent("Normalise", "Moves the heightmap heights to between the two heights."), EditorStyles.miniBoldLabel);
 
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
@@ -636,25 +520,48 @@ public class MapIOEditor : EditorWindow
     }
     private void EdgeHeight()
     {
+        GUILayout.Label("Edge Height", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        edgeHeight = EditorGUILayout.FloatField(edgeHeight, EditorStyles.toolbarTextField, GUILayout.MaxWidth(50));
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         sides[0] = EditorGUILayout.ToggleLeft("Top ", sides[0], GUILayout.MaxWidth(40));
         sides[3] = EditorGUILayout.ToggleLeft("Left ", sides[3], GUILayout.MaxWidth(40));
         sides[2] = EditorGUILayout.ToggleLeft("Bottom ", sides[2], GUILayout.MaxWidth(58));
         sides[1] = EditorGUILayout.ToggleLeft("Right ", sides[1], GUILayout.MaxWidth(50));
         
-        if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + heightToSet.ToString() + 
+        if (GUILayout.Button(new GUIContent("Set Edge Height", "Sets the very edge of the map to " + edgeHeight.ToString() + 
             " metres on any of the sides selected."), EditorStyles.toolbarButton))
         {
-            MapIO.SetEdgePixel(heightToSet, sides);
+            MapIO.SetEdgePixel(edgeHeight, sides);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void SetHeight()
+    {
+        GUILayout.Label("Set Height", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        heightSet = EditorGUILayout.FloatField(heightSet, EditorStyles.toolbarTextField, GUILayout.MaxWidth(50));
+        if (GUILayout.Button(new GUIContent("Set Land Height", "Sets the land height to " + heightSet.ToString() + " m."), EditorStyles.toolbarButton))
+        {
+            MapIO.SetHeightmap(heightSet, EditorEnums.Selections.Terrains.Land);
+        }
+        if (GUILayout.Button(new GUIContent("Set Water Height", "Sets the water height to " + heightSet.ToString() + " m."), EditorStyles.toolbarButton))
+        {
+            MapIO.SetHeightmap(heightSet, EditorEnums.Selections.Terrains.Water);
         }
         EditorGUILayout.EndHorizontal();
     }
     private void MinMaxHeight()
     {
-        GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.boldLabel);
+        GUILayout.Label("Heightmap Minimum/Maximum Height", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        heightToSet = EditorGUILayout.FloatField(heightToSet, EditorStyles.toolbarButton, GUILayout.MaxWidth(50));
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        heightToSet = EditorGUILayout.FloatField(heightToSet, EditorStyles.toolbarTextField, GUILayout.MaxWidth(50));
         if (GUILayout.Button(new GUIContent("Set Minimum Height", "Raises any of the land below " + heightToSet.ToString() + " metres to " + heightToSet.ToString() +
             " metres."), EditorStyles.toolbarButton))
         {
@@ -669,9 +576,12 @@ public class MapIOEditor : EditorWindow
     }
     private void OffsetMap()
     {
-        GUILayout.Label("Heightmap Offset", EditorStyles.boldLabel);
+        GUILayout.Label("Heightmap Offset", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        offset = EditorGUILayout.FloatField(offset, EditorStyles.toolbarButton, GUILayout.MaxWidth(50));
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        offset = EditorGUILayout.FloatField(offset, EditorStyles.toolbarTextField, GUILayout.MaxWidth(50));
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         checkHeight = EditorGUILayout.ToggleLeft(new GUIContent("Check", "Prevents the flattening effect if you raise or lower the heightmap" +
             " by too large a value."), checkHeight, GUILayout.MaxWidth(55));
         setWaterMap = EditorGUILayout.ToggleLeft(new GUIContent("Water", "If toggled it will raise or lower the water heightmap as well as the " +
@@ -685,6 +595,8 @@ public class MapIOEditor : EditorWindow
     }
     private void InvertMap()
     {
+        GUILayout.Label("Invert", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Invert", "Inverts the heightmap in on itself."), EditorStyles.toolbarButton))
         {
@@ -694,10 +606,182 @@ public class MapIOEditor : EditorWindow
     }
     #endregion
     #region Textures
+    private void ConditionalPaint()
+    {
+        GUILayout.Label("Conditional Paint", EditorStyles.boldLabel);
+
+        GUIContent[] conditionalPaintMenu = new GUIContent[5];
+        conditionalPaintMenu[0] = new GUIContent("Ground");
+        conditionalPaintMenu[1] = new GUIContent("Biome");
+        conditionalPaintMenu[2] = new GUIContent("Alpha");
+        conditionalPaintMenu[3] = new GUIContent("Topology");
+        conditionalPaintMenu[4] = new GUIContent("Terrain");
+        conditionalPaintOptions = GUILayout.Toolbar(conditionalPaintOptions, conditionalPaintMenu, EditorStyles.toolbarButton);
+
+        GUILayout.Label(new GUIContent("Conditions"), EditorStyles.miniBoldLabel);
+
+        switch (conditionalPaintOptions)
+        {
+            case 0: // Ground
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Textures To Check:", "The Ground textures to check."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.conditionalGround = (TerrainSplat.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalGround, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 1: // Biome
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Textures To Check:", "The Biome textures to check."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.conditionalBiome = (TerrainBiome.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalBiome, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 2: // Alpha
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Check Alpha:", "If toggled the Alpha will be checked on the selected texture."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                checkAlpha = EditorGUILayout.Toggle(checkAlpha);
+                GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+                EditorGUILayout.EndHorizontal();
+
+                if (checkAlpha)
+                {
+                    EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                    GUILayout.Label(new GUIContent("Texture To Check:", "The Alpha texture to check."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                    alphaTexture = EditorGUILayout.IntPopup(alphaTexture, activeTextureAlpha, values, EditorStyles.toolbarDropDown);
+                    EditorGUILayout.EndHorizontal();
+                }
+                break;
+            case 3: // Topology
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Layers:", "The Topology layers to check."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.conditionalTopology = (TerrainTopology.Enum)EditorGUILayout.EnumFlagsField(MapIO.conditionalTopology, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Check:", "The Topology texture to check."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                topologyTexture = EditorGUILayout.IntPopup(topologyTexture, activeTextureTopo, values, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 4: // Terrain
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Check Slopes:", "If toggled the Slopes will be checked within the selected range."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                checkSlopeCndtl = EditorGUILayout.Toggle(checkSlopeCndtl);
+                EditorGUILayout.EndHorizontal();
+
+                if (checkSlopeCndtl == true)
+                {
+                    if (slopeLowCndtl > slopeHighCndtl)
+                    {
+                        slopeLowCndtl = slopeHighCndtl - 0.05f;
+                    }
+                    if (slopeLowCndtl < 0)
+                    {
+                        slopeLowCndtl = 0f;
+                    }
+                    if (slopeHighCndtl > 90f)
+                    {
+                        slopeHighCndtl = 90f;
+                    }
+                    EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                    slopeLowCndtl = EditorGUILayout.FloatField(slopeLowCndtl, EditorStyles.toolbarTextField);
+                    slopeHighCndtl = EditorGUILayout.FloatField(slopeHighCndtl, EditorStyles.toolbarTextField);
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.MinMaxSlider(ref slopeLowCndtl, ref slopeHighCndtl, 0f, 90f);
+                }
+
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Check Heights:", "If toggled the Height will be checked within the selected range."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                checkHeightCndtl = EditorGUILayout.Toggle(checkHeightCndtl);
+                EditorGUILayout.EndHorizontal();
+
+                if (checkHeightCndtl == true)
+                {
+                    if (heightLowCndtl > heightHighCndtl)
+                    {
+                        heightLowCndtl = heightHighCndtl - 0.05f;
+                    }
+                    if (heightLowCndtl < 0)
+                    {
+                        heightLowCndtl = 0f;
+                    }
+                    if (heightHighCndtl > 1000f)
+                    {
+                        heightHighCndtl = 1000f;
+                    }
+                    EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                    heightLowCndtl = EditorGUILayout.FloatField(heightLowCndtl, EditorStyles.toolbarTextField);
+                    heightHighCndtl = EditorGUILayout.FloatField(heightHighCndtl, EditorStyles.toolbarTextField);
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.MinMaxSlider(ref heightLowCndtl, ref heightHighCndtl, 0f, 1000f);
+                }
+                break;
+        }
+        GUILayout.Label(new GUIContent("Texture To Paint"), EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(new GUIContent("Layer:", "The layer to paint to."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+        layerConditionalInt = EditorGUILayout.Popup(layerConditionalInt, landLayers, EditorStyles.toolbarDropDown);
+        EditorGUILayout.EndHorizontal();
+        
+        switch (layerConditionalInt)
+        {
+            case 0:
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Ground texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.groundLayerToPaint = (TerrainSplat.Enum)EditorGUILayout.EnumPopup(MapIO.groundLayerToPaint, EditorStyles.toolbarDropDown);
+                texture = TerrainSplat.TypeToIndex((int)MapIO.groundLayerToPaint);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 1:
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Biome texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.biomeLayerToPaint = (TerrainBiome.Enum)EditorGUILayout.EnumPopup(MapIO.biomeLayerToPaint, EditorStyles.toolbarButton);
+                texture = TerrainBiome.TypeToIndex((int)MapIO.biomeLayerToPaint);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 2:
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Alpha texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                texture = EditorGUILayout.IntPopup(texture, activeTextureAlpha, values, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+                break;
+            case 3:
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Topology Layer:", "The Topology layer to paint to."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                MapIO.topologyLayerToPaint = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(MapIO.topologyLayerToPaint, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+                GUILayout.Label(new GUIContent("Texture To Paint:", "The Topology texture to paint."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
+                texture = EditorGUILayout.IntPopup(texture, activeTextureTopo, values, EditorStyles.toolbarDropDown);
+                EditorGUILayout.EndHorizontal();
+                break;
+        }
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set."), EditorStyles.toolbarButton))
+        {
+            Conditions conditions = new Conditions();
+            conditions.GroundConditions = MapIO.conditionalGround;
+            conditions.BiomeConditions = MapIO.conditionalBiome;
+            conditions.CheckAlpha = checkAlpha;
+            conditions.AlphaTexture = alphaTexture;
+            conditions.TopologyLayers = MapIO.conditionalTopology;
+            conditions.TopologyTexture = topologyTexture;
+            conditions.SlopeLow = slopeLowCndtl;
+            conditions.SlopeHigh = slopeHighCndtl;
+            conditions.HeightLow = heightLowCndtl;
+            conditions.HeightHigh = heightHighCndtl;
+            conditions.CheckHeight = checkHeightCndtl;
+            conditions.CheckSlope = checkSlopeCndtl;
+            MapIO.PaintConditional(landLayers[layerConditionalInt], texture, conditions);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
     private void CopyTextures()
     {
         GUILayout.Label(new GUIContent("Copy Textures", "Copies the texture selected, and paints it with the selected texture."), EditorStyles.boldLabel);
-        
+
+        GUILayout.Label(new GUIContent("Texture To Copy"), EditorStyles.miniBoldLabel);
+
         GUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Label(new GUIContent("Layer:", "The layer to copy from."), EditorStyles.toolbarButton, GUILayout.MaxWidth(120));
         EditorGUI.BeginChangeCheck();
@@ -753,6 +837,8 @@ public class MapIOEditor : EditorWindow
         }
         GUILayout.EndHorizontal();
 
+        GUILayout.Label(new GUIContent("Texture To Paste"), EditorStyles.miniBoldLabel);
+
         switch ((int)landLayerToPaint) // Get texture list from the currently selected landLayer.
         {
             case 0:
@@ -797,9 +883,11 @@ public class MapIOEditor : EditorWindow
         GUILayout.EndHorizontal();
     }
     #endregion
+    #region Misc
     private void RotateMap()
     {
-        GUILayout.Label("Rotate Map", EditorStyles.boldLabel);
+        GUILayout.Label("Rotate Map", EditorStyles.miniBoldLabel);
+
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Label(new GUIContent("Rotation Selection: ", "The items to rotate."), EditorStyles.toolbarButton);
         rotateSelection = (EditorEnums.Selections.ObjectSelection)EditorGUILayout.EnumFlagsField(new GUIContent(), rotateSelection, EditorStyles.toolbarDropDown);
@@ -808,40 +896,57 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button("Rotate 90°", EditorStyles.toolbarButton))
         {
-            MapIO.ParseRotateEnumFlags(rotateSelection, true);
+            MapIO.RotateMap(rotateSelection, true);
         }
         if (GUILayout.Button("Rotate 270°", EditorStyles.toolbarButton))
         {
-            MapIO.ParseRotateEnumFlags(rotateSelection, false);
+            MapIO.RotateMap(rotateSelection, false);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    private void DebugMap()
+    {
+        GUILayout.Label("Debug", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        if (GUILayout.Button(new GUIContent("Debug Water", "Raises the water heightmap to 500 metres if it is below."), EditorStyles.toolbarButton))
+        {
+            MapIO.DebugWaterLevel();
         }
         EditorGUILayout.EndHorizontal();
     }
     #endregion
+    #endregion
     #region LayerTools
     private void TextureSelect(int index)
     {
+        GUILayout.Label("Texture Select", EditorStyles.miniBoldLabel);
+
         if (index == 0)
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            GUILayout.Label(new GUIContent("Texture To Paint: ", "The Ground texture the tools will paint with."), EditorStyles.toolbarButton);
+            GUILayout.Label(new GUIContent("Texture:", "The Ground texture the tools will paint with."), EditorStyles.toolbarButton);
             MapIO.groundLayer = (TerrainSplat.Enum)EditorGUILayout.EnumPopup(MapIO.groundLayer, EditorStyles.toolbarDropDown);
             EditorGUILayout.EndHorizontal();
         }
         else
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            GUILayout.Label(new GUIContent("Biome To Paint: ", "The Biome the tools will paint with."), EditorStyles.toolbarButton);
+            GUILayout.Label(new GUIContent("Texture:", "The Biome the tools will paint with."), EditorStyles.toolbarButton);
             MapIO.biomeLayer = (TerrainBiome.Enum)EditorGUILayout.EnumPopup(MapIO.biomeLayer, EditorStyles.toolbarDropDown);
             EditorGUILayout.EndHorizontal();
         }
     }
     private void TopologyLayerSelect()
     {
+        GUILayout.Label("Layer Select", EditorStyles.miniBoldLabel);
+
         LandData.oldTopologyLayer = LandData.topologyLayer;
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(new GUIContent("Topology Layer: ", "The Topology layer to display."), EditorStyles.toolbarButton);
+        GUILayout.Label(new GUIContent("Topology Layer:", "The Topology layer to display."), EditorStyles.toolbarButton);
         LandData.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(LandData.topologyLayer, EditorStyles.toolbarDropDown);
         EditorGUILayout.EndHorizontal();
+
         if (LandData.topologyLayer != LandData.oldTopologyLayer)
         {
             LandData.ChangeLandLayer();
@@ -850,14 +955,18 @@ public class MapIOEditor : EditorWindow
     }
     private void SlopeTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        GUILayout.Label("Slope Tools", EditorStyles.boldLabel); // From 0 - 90
+        GUILayout.Label("Slope Tools", EditorStyles.miniBoldLabel); // From 0 - 90
         if (index < 2)
         {
-            blendSlopes = EditorGUILayout.ToggleLeft("Toggle Blend Slopes", blendSlopes);
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+            blendSlopes = EditorGUILayout.ToggleLeft("Blend Slopes", blendSlopes);
+            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+            EditorGUILayout.EndHorizontal();
         }
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("From: " + slopeLow.ToString() + "°", EditorStyles.boldLabel);
-        GUILayout.Label("To: " + slopeHigh.ToString() + "°", EditorStyles.boldLabel);
+        GUILayout.Label("From: " + slopeLow.ToString() + "°");
+        GUILayout.Label("To: " + slopeHigh.ToString() + "°");
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref slopeLow, ref slopeHigh, 0f, 90f);
         if (blendSlopes == true)
@@ -892,14 +1001,18 @@ public class MapIOEditor : EditorWindow
     }
     private void HeightTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        GUILayout.Label("Height Tools", EditorStyles.boldLabel);
+        GUILayout.Label("Height Tools", EditorStyles.miniBoldLabel);
         if (index < 2)
         {
-            blendHeights = EditorGUILayout.ToggleLeft("Toggle Blend Heights", blendHeights);
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+            blendHeights = EditorGUILayout.ToggleLeft("Blend Heights", blendHeights);
+            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+            EditorGUILayout.EndHorizontal();
         }
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("From: " + heightLow.ToString() + "m", EditorStyles.boldLabel);
-        GUILayout.Label("To: " + heightHigh.ToString() + "m", EditorStyles.boldLabel);
+        GUILayout.Label("From: " + heightLow.ToString() + "m");
+        GUILayout.Label("To: " + heightHigh.ToString() + "m");
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref heightLow, ref heightHigh, 0f, 1000f);
         if (blendHeights == true)
@@ -971,11 +1084,32 @@ public class MapIOEditor : EditorWindow
     }
     private void AreaTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        GUILayout.Label("Area Tools", EditorStyles.boldLabel);
-        z1 = Mathf.Clamp(EditorGUILayout.IntField("From Z ", z1), 0, z2);
-        z2 = Mathf.Clamp(EditorGUILayout.IntField("To Z ", z2), z1, MapIO.terrain.terrainData.alphamapResolution);
-        x1 = Mathf.Clamp(EditorGUILayout.IntField("From X ", x1), 0, x2);
-        x2 = Mathf.Clamp(EditorGUILayout.IntField("To X ", x2), x1, MapIO.terrain.terrainData.alphamapResolution);
+        GUILayout.Label("Area Tools", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("From Z", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
+        z1 = EditorGUILayout.IntSlider(z1, 0, z2);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("To Z", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
+        z2 = EditorGUILayout.IntSlider(z2, z1, MapIO.terrain.terrainData.alphamapResolution);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("From X", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
+        x1 = EditorGUILayout.IntSlider(x1, 0, x2);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("To X", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
+        x2 = EditorGUILayout.IntSlider(x2, x1, MapIO.terrain.terrainData.alphamapResolution);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+
         if (index > 1) // Alpha and Topology
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -1001,11 +1135,14 @@ public class MapIOEditor : EditorWindow
     }
     private void RiverTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        GUILayout.Label("River Tools", EditorStyles.boldLabel);
-        aboveTerrain = EditorGUILayout.ToggleLeft("Paint only visible part of river.", aboveTerrain);
+        GUILayout.Label("River Tools", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        aboveTerrain = EditorGUILayout.ToggleLeft(new GUIContent("Above Terrain", "Paint only where there is water above sea level and above the terrain."), aboveTerrain, GUILayout.MaxWidth(100));
+
         if (index > 1)
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture, topology);
@@ -1014,17 +1151,15 @@ public class MapIOEditor : EditorWindow
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, erase, topology);
             }
-            EditorGUILayout.EndHorizontal();
         }
         else
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture);
             }
-            EditorGUILayout.EndHorizontal();
         }
+        EditorGUILayout.EndHorizontal();
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
     {
@@ -1115,7 +1250,7 @@ public class MapIOEditor : EditorWindow
             }
         }
         GUILayout.Label(new GUIContent("Size", "The size of the Rust Map to create upon new map. (1000-6000)"), EditorStyles.toolbarButton);
-        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarButton, GUILayout.MaxWidth(60)), 1000, 6000);
+        mapSize = Mathf.Clamp(EditorGUILayout.IntField(mapSize, EditorStyles.toolbarTextField, GUILayout.MaxWidth(60)), 1000, 6000);
         GUILayout.Button("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
     }
