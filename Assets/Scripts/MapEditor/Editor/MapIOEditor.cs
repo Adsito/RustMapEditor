@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Rotorz.ReorderableList;
@@ -15,7 +14,7 @@ public class MapIOEditor : EditorWindow
     bool[] sides = new bool[4]; 
     bool checkHeight = true, setWaterMap = false;
     float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
-    float slopeBlendLow = 25f, slopeMaxBlendLow = 40f, slopeMinBlendHigh = 60f, slopeBlendHigh = 75f;
+    float slopeBlendLow = 25f, slopeBlendHigh = 75f;
     float heightBlendLow = 0f, heightBlendHigh = 1000f;
     float normaliseLow = 450f, normaliseHigh = 1000f;
     int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
@@ -1296,7 +1295,8 @@ public class MapIOEditor : EditorWindow
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (GUILayout.Button(new GUIContent("Browse", "Browse and select the base directory of Rust."), EditorStyles.toolbarButton, GUILayout.MaxWidth(50)))
         {
-            MapEditorSettings.rustDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", MapEditorSettings.rustDirectory, "Rust");
+            var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", MapEditorSettings.rustDirectory, "Rust");
+            MapEditorSettings.rustDirectory = String.IsNullOrEmpty(returnDirectory) ? MapEditorSettings.rustDirectory : returnDirectory;
         }
         GUILayout.Label(new GUIContent(MapEditorSettings.rustDirectory, "The install directory of Rust on the local PC."), EditorStyles.toolbarButton);
         EditorGUILayout.EndHorizontal();
