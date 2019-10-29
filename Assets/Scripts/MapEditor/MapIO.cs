@@ -1000,22 +1000,53 @@ public static class MapIO
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
-    /// Paints the layer wherever the height conditions are met. Includes option to blend.
+    /// Paints the layer wherever the height conditions are met.
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
-    /// <param name="minBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
-    /// <param name="maxBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0)
+    public static void PaintHeight(string landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
-            for (int j = 0; j < (float)splatMap.GetLength(1); j++)
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                float iNorm = (float)i / splatMap.GetLength(0);
+                float jNorm = (float)j / splatMap.GetLength(1);
+                float height = terrain.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
+                if (height >= heightLow && height <= heightHigh)
+                {
+                    for (int k = 0; k < textureCount; k++) // Erases the textures on all the layers.
+                    {
+                        splatMap[i, j, k] = 0;
+                    }
+                    splatMap[i, j, t] = 1; // Paints the texture t.
+                }
+            }
+        }
+        LandData.SetData(splatMap, landLayerToPaint, topology);
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+    }
+    /// <summary>
+    /// Paints the layer wherever the height conditions are met with a weighting determined by the range the height falls in. 
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
+    /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
+    /// <param name="heightBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
+    /// <param name="heightBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
+    /// <param name="t">The texture to paint.</param>
+    public static void PaintHeightBlend(string landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t, int topology = 0)
+    {
+        float[,,] splatMap = GetSplatMap(landLayerToPaint);
+        int textureCount = TextureCount(landLayerToPaint);
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
             {
                 float iNorm = (float)i / (float)splatMap.GetLength(0);
                 float jNorm = (float)j / (float)splatMap.GetLength(1);
@@ -1029,10 +1060,10 @@ public static class MapIO
                     }
                     splatMap[i, j, t] = 1; // Paints the texture t.
                 }
-                else if (height >= minBlendLow && height <= heightLow)
+                else if (height > heightBlendLow && height < heightLow)
                 {
-                    float normalisedHeight = height - minBlendLow;
-                    float heightRange = heightLow - minBlendLow;
+                    float normalisedHeight = height - heightBlendLow;
+                    float heightRange = heightLow - heightBlendLow;
                     float heightBlend = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
                     for (int k = 0; k < textureCount; k++)
                     {
@@ -1053,10 +1084,10 @@ public static class MapIO
                         splatMap[i, j, k] = normalised[k];
                     }
                 }
-                else if (height >= heightHigh && height <= maxBlendHigh)
+                else if (height > heightHigh && height < heightBlendHigh)
                 {
                     float normalisedHeight = height - heightHigh;
-                    float heightRange = maxBlendHigh - heightHigh;
+                    float heightRange = heightBlendHigh - heightHigh;
                     float heightBlendInverted = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
                     float heightBlend = 1 - heightBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
                     for (int k = 0; k < textureCount; k++)
@@ -1256,13 +1287,45 @@ public static class MapIO
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
     /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
+    /// <param name="t">The texture to paint.</param>
+    /// <param name="topology">The Topology layer, if selected.</param>
+    public static void PaintSlope(string landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    {
+        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
+        int textureCount = TextureCount(landLayerToPaint);
+        for (int i = 0; i < splatMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < splatMap.GetLength(1); j++)
+            {
+                float iNorm = (float)i / (float)splatMap.GetLength(0);
+                float jNorm = (float)j / (float)splatMap.GetLength(1);
+                float slope = terrain.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
+                if (slope >= slopeLow && slope <= slopeHigh)
+                {
+                    for (int k = 0; k < textureCount; k++)
+                    {
+                        splatMap[i, j, k] = 0;
+                    }
+                    splatMap[i, j, t] = 1;
+                }
+            }
+        }
+        LandData.SetData(splatMap, landLayerToPaint, topology);
+        LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+    }
+    /// <summary>
+    /// Paints the layer wherever the slope conditions are met. Includes option to blend.
+    /// </summary>
+    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
+    /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
     /// <param name="minBlendLow">The minimum slope to start to paint. The texture weight will increase as it gets closer to the slopeLow.</param>
     /// <param name="maxBlendHigh">The maximum slope to start to paint. The texture weight will increase as it gets closer to the slopeHigh.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintSlope(string landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public static void PaintSlopeBlend(string landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
-        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
+        float[,,] splatMap = GetSplatMap(landLayerToPaint);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -1280,7 +1343,7 @@ public static class MapIO
                     }
                     splatMap[i, j, t] = 1;
                 }
-                else if (slope >= minBlendLow && slope <= slopeLow)
+                else if (slope > minBlendLow && slope < slopeLow)
                 {
                     float normalisedSlope = slope - minBlendLow;
                     float slopeRange = slopeLow - minBlendLow;
@@ -1304,7 +1367,7 @@ public static class MapIO
                         splatMap[i, j, k] = normalised[k];
                     }
                 }
-                else if (slope >= slopeHigh && slope <= maxBlendHigh)
+                else if (slope > slopeHigh && slope < maxBlendHigh)
                 {
                     float normalisedSlope = slope - slopeHigh;
                     float slopeRange = maxBlendHigh - slopeHigh;
@@ -1331,7 +1394,7 @@ public static class MapIO
                 }
             }
         }
-        LandData.SetData(splatMap, landLayerToPaint, topology);
+        LandData.SetData(splatMap, landLayerToPaint);
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
     /// <summary>
@@ -1879,7 +1942,7 @@ public static class MapIO
     /// </summary>
     public static void RefreshAssetList()
     {
-        var list = AssetDatabase.FindAssets("t:NodePreset");
+        var list = AssetDatabase.FindAssets("t:" + NodeAsset.nodeAssetName);
         generationPresetList.Clear();
         nodePresetLookup.Clear();
         foreach (var item in list)

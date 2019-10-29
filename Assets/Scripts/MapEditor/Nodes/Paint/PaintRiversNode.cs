@@ -23,16 +23,16 @@ public class PaintRiversNode : Node
         var layer = (NodeVariables.Texture)GetValue();
         switch (layer.LandLayer)
         {
-            case 0: // Ground
+            case 0:
                 MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
-            case 1: // Biome
+            case 1: 
                 MapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
-            case 2: // Alpha
+            case 2:
                 MapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);
                 break;
-            case 3: // Topology
+            case 3:
                 MapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
