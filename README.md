@@ -30,17 +30,3 @@ Using resources from:
 -https://bitbucket.org/rotorz/reorderable-list-editor-field-for-unity/src/master/ for the draggable UI framework.
 
 -https://assetstore.unity.com/packages/tools/terrain/runswimfly-terrain-tools-142156 for extra terrain tools.
-
-
-## Features
-- Importing and exporting .map files.
-- Ability to edit
-  - Terrain Map
-  - Ground Textures
-  - Biomes
-  - Topology
-  - Alpha Map
-- Simple painting tools to easily edit map features.
-- Paint terrain based on height and slopes.
-- Integration with 3rd party assets.
-- Map Making API and documentation for contributers. 
