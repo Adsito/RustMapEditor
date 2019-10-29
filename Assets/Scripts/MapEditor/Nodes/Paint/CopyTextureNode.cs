@@ -35,16 +35,16 @@ public class CopyTextureNode : Node
         }
         switch (layer.LandLayer)
         {
-            case 0: // Ground
+            case 0: 
                 MapIO.CopyTexture(landLayers[landLayerFrom], "Ground", textureFrom, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
-            case 1: // Biome
+            case 1: 
                 MapIO.CopyTexture(landLayers[landLayerFrom], "Biome", textureFrom, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
-            case 2: // Alpha
+            case 2:
                 MapIO.CopyTexture(landLayers[landLayerFrom], "Alpha", textureFrom, layer.AlphaTexture);
                 break;
-            case 3: // Topology.
+            case 3: 
                 MapIO.CopyTexture(landLayers[landLayerFrom], "Topology", textureFrom, layer.TopologyTexture, topologyFrom, layer.TopologyLayer);
                 break;
         }

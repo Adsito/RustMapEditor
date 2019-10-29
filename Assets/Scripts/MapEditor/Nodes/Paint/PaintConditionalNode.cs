@@ -47,16 +47,16 @@ public class PaintConditionalNode : Node
         }
         switch (layer.LandLayer)
         {
-            case 0: // Ground
+            case 0: 
                 MapIO.PaintConditional("Ground", TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
                 break;
-            case 1: // Biome
+            case 1: 
                 MapIO.PaintConditional("Biome", TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
                 break;
-            case 2: // Alpha
+            case 2: 
                 MapIO.PaintConditional( "Alpha", layer.AlphaTexture, conditions);
                 break;
-            case 3: // Topology.
+            case 3: 
                 MapIO.PaintConditional("Topology", layer.TopologyTexture, conditions, layer.TopologyLayer);
                 break;
         }
