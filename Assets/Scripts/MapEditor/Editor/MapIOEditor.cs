@@ -17,7 +17,7 @@ public class MapIOEditor : EditorWindow
     float slopeBlendLow = 25f, slopeBlendHigh = 75f;
     float heightBlendLow = 0f, heightBlendHigh = 1000f;
     float normaliseLow = 450f, normaliseHigh = 1000f;
-    int z1 = 0, z2 = 0, x1 = 0, x2 = 0;
+    float z1 = 0, z2 = 0, x1 = 0, x2 = 0;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     EditorEnums.Layers.LandLayers landLayerFrom = EditorEnums.Layers.LandLayers.Ground;
     EditorEnums.Layers.LandLayers landLayerToPaint = EditorEnums.Layers.LandLayers.Ground;
@@ -1057,40 +1057,19 @@ public class MapIOEditor : EditorWindow
     {
         GUILayout.Label("Area Tools", EditorStyles.miniBoldLabel);
 
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("From Z", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
-        z1 = EditorGUILayout.IntSlider(z1, 0, z2);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("To Z", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
-        z2 = EditorGUILayout.IntSlider(z2, z1, MapIO.terrain.terrainData.alphamapResolution);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("From X", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
-        x1 = EditorGUILayout.IntSlider(x1, 0, x2);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("To X", EditorStyles.toolbarButton, GUILayout.MaxWidth(60));
-        x2 = EditorGUILayout.IntSlider(x2, x1, MapIO.terrain.terrainData.alphamapResolution);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
+        EditorUI.ToolbarMinMaxInt(EditorVars.ToolTips.fromZ, EditorVars.ToolTips.toZ, ref z1, ref z2, 0f, MapIO.terrain.terrainData.alphamapResolution);
+        EditorUI.ToolbarMinMaxInt(EditorVars.ToolTips.fromX, EditorVars.ToolTips.toX, ref x1, ref x2, 0f, MapIO.terrain.terrainData.alphamapResolution);
 
         if (index > 1) // Alpha and Topology
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
-                MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, texture, topology);
+                MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture, topology);
             }
             if (GUILayout.Button("Erase Area", EditorStyles.toolbarButton))
             {
-                MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, erase, topology);
+                MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, erase, topology);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -1099,7 +1078,7 @@ public class MapIOEditor : EditorWindow
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
-                MapIO.PaintArea(landLayers[index], z1, z2, x1, x2, texture);
+                MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -1134,7 +1113,7 @@ public class MapIOEditor : EditorWindow
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
     {
-        GUILayout.Label("Layer Tools", EditorStyles.boldLabel);
+        GUILayout.Label("Layer Tools", EditorStyles.miniBoldLabel);
         if (index > 1)
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);

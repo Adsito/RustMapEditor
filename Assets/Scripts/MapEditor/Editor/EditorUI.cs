@@ -32,11 +32,30 @@ public static class EditorUI
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
+    public static void ToolbarMinMaxInt(GUIContent minContent, GUIContent maxContent, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(minContent, EditorStyles.toolbarButton);
+        minValue = Mathf.Clamp(EditorGUILayout.DelayedIntField((int)minValue), minLimit, maxValue);
+        GUILayout.Label(maxContent, EditorStyles.toolbarButton);
+        maxValue = Mathf.Clamp(EditorGUILayout.DelayedIntField((int)maxValue), minValue, maxLimit);
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
+    }
     public static void ToolbarToggle(GUIContent guiContent, ref bool toggle)
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         toggle = GUILayout.Toggle(toggle, guiContent, "ToolbarButton");
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
+        EditorGUILayout.EndHorizontal();
+    }
+    public static void ToolbarIntSlider(GUIContent guiContent, ref int value, int leftValue, int rightValue)
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label(guiContent, EditorStyles.toolbarButton);
+        value = EditorGUILayout.IntSlider(value, leftValue, rightValue);
         GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
     }
