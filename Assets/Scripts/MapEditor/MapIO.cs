@@ -1399,16 +1399,13 @@ public static class MapIO
     }
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
-    /// Face downright in the editor with Z axis facing up, and X axis facing right, and the map will draw from the bottom left corner, up to the top right. 
-    /// Note that the results of how much of the map is covered is dependant on the map size, a 2000 map size would paint almost the bottom half of the map,
-    /// whereas a 4000 map would paint up nearly one quarter of the map, and across nearly half of the map.
+    /// Paints from bottom left to top right corner of map if world rotation is 0° in the editor.
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintArea(string landLayerToPaint, int z1, int z2, int x1, int x2, int t, int topology = 0)
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint Area");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         z1 = Mathf.Clamp(z1, 0, splatMap.GetLength(0));
