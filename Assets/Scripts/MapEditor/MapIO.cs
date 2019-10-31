@@ -210,7 +210,6 @@ public static class MapIO
         LandData.topologyLayer = TerrainTopology.Enum.Beach;
         conditionalTopology = TerrainTopology.NOTHING;
         topologyLayersList = TerrainTopology.Enum.Beach;
-        LandData.oldTopologyLayer = TerrainTopology.Enum.Beach;
         biomeLayer = TerrainBiome.Enum.Temperate;
         conditionalBiome = TerrainBiome.NOTHING;
         groundLayer = TerrainSplat.Enum.Grass;
@@ -1435,7 +1434,6 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintRiver(string landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
     {
-        Undo.RegisterCompleteObjectUndo(terrain.terrainData.alphamapTextures, "Paint River");
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();

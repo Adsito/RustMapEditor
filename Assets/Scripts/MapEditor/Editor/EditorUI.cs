@@ -5,70 +5,73 @@ using UnityEditor;
 
 public static class EditorUI
 {
-    public static Enum ToolbarEnumPopup(GUIContent guiContent, Enum enumGroup)
+    public static void BeginToolbarHorizontal()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(guiContent, EditorStyles.toolbarButton);
-        enumGroup = EditorGUILayout.EnumPopup(enumGroup, EditorStyles.toolbarDropDown);
-        EditorGUILayout.EndHorizontal();
-        return enumGroup;
+        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
     }
-    public static void ToolbarDelayedFloatField(ref float value)
+    public static void EndToolbarHorizontal()
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.DelayedFloatField(value, EditorStyles.toolbarTextField);
         GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
+    }
+    public static void ToolbarLabel(GUIContent guiContent)
+    {
+        GUILayout.Label(guiContent, EditorStyles.toolbarButton);
+    }
+    public static bool ToolbarButton(GUIContent guiContent)
+    {
+        return GUILayout.Button(guiContent, EditorStyles.toolbarButton);
+    }
+    public static bool ToolbarToggle(GUIContent guiContent, ref bool toggle)
+    {
+        return toggle = GUILayout.Toggle(toggle, guiContent, "ToolbarButton");
+    }
+    public static Enum ToolbarEnumPopup(Enum enumGroup)
+    {
+        return EditorGUILayout.EnumPopup(enumGroup, EditorStyles.toolbarDropDown);
+    }
+    public static float ToolbarDelayedFloatField(ref float value)
+    {
+        return value = EditorGUILayout.DelayedFloatField(value, EditorStyles.toolbarTextField);
     }
     public static void ToolbarMinMax(GUIContent minContent, GUIContent maxContent, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(minContent, EditorStyles.toolbarButton);
+        BeginToolbarHorizontal();
+        ToolbarLabel(minContent);
         minValue = EditorGUILayout.DelayedFloatField(minValue);
-        GUILayout.Label(maxContent, EditorStyles.toolbarButton);
+        ToolbarLabel(maxContent);
         maxValue = EditorGUILayout.DelayedFloatField(maxValue);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
+        EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
     public static void ToolbarMinMaxInt(GUIContent minContent, GUIContent maxContent, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(minContent, EditorStyles.toolbarButton);
+        BeginToolbarHorizontal();
+        ToolbarLabel(minContent);
         minValue = Mathf.Clamp(EditorGUILayout.DelayedIntField((int)minValue), minLimit, maxValue);
-        GUILayout.Label(maxContent, EditorStyles.toolbarButton);
+        ToolbarLabel(maxContent);
         maxValue = Mathf.Clamp(EditorGUILayout.DelayedIntField((int)maxValue), minValue, maxLimit);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
+        EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
-    public static void ToolbarToggle(GUIContent guiContent, ref bool toggle)
+    public static float ToolbarIntSlider(GUIContent guiContent, ref int value, int leftValue, int rightValue)
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        toggle = GUILayout.Toggle(toggle, guiContent, "ToolbarButton");
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
-    }
-    public static void ToolbarIntSlider(GUIContent guiContent, ref int value, int leftValue, int rightValue)
-    {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(guiContent, EditorStyles.toolbarButton);
+        BeginToolbarHorizontal();
+        ToolbarLabel(guiContent);
         value = EditorGUILayout.IntSlider(value, leftValue, rightValue);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
+        EndToolbarHorizontal();
+        return value;
     }
     public static void ToolbarToggleMinMax(GUIContent toggleContent, GUIContent minContent, GUIContent maxContent, ref bool toggle, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        toggle = GUILayout.Toggle(toggle, toggleContent, "ToolbarButton");
-        GUILayout.Label(minContent, EditorStyles.toolbarButton);
+        BeginToolbarHorizontal();
+        ToolbarToggle(toggleContent, ref toggle);
+        ToolbarLabel(minContent);
         minValue = EditorGUILayout.DelayedFloatField(minValue);
-        GUILayout.Label(maxContent, EditorStyles.toolbarButton);
+        ToolbarLabel(maxContent);
         maxValue = EditorGUILayout.DelayedFloatField(maxValue);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        EditorGUILayout.EndHorizontal();
+        EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
 }
