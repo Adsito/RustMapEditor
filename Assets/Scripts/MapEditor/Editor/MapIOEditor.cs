@@ -17,7 +17,7 @@ public class MapIOEditor : EditorWindow
     float slopeBlendLow = 25f, slopeBlendHigh = 75f;
     float heightBlendLow = 0f, heightBlendHigh = 1000f;
     float normaliseLow = 450f, normaliseHigh = 1000f;
-    float z1 = 0, z2 = 0, x1 = 0, x2 = 0;
+    float z1 = 0, z2 = 256, x1 = 0, x2 = 256;
     bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     EditorEnums.Layers.LandLayers landLayerFrom = EditorEnums.Layers.LandLayers.Ground;
     EditorEnums.Layers.LandLayers landLayerToPaint = EditorEnums.Layers.LandLayers.Ground;
@@ -363,17 +363,11 @@ public class MapIOEditor : EditorWindow
     /// <summary>
     /// Sets the active landLayer to the index.
     /// </summary>
-    /// <param name="index">The landLayer to change to.</param>
-    private void SetLandLayer(int index)
+    /// <param name="landIndex">The landLayer to change to.</param>
+    /// <param name="topology">The Topology layer to set.</param>
+    private void SetLandLayer(int landIndex, int topology = 0)
     {
-        LandData.landIndex = index;
-        string oldLandLayer = LandData.landLayer;
-        LandData.landLayer = landLayers[LandData.landIndex];
-        if (LandData.landLayer != oldLandLayer)
-        {
-            LandData.ChangeLandLayer();
-            Repaint();
-        }
+        LandData.ChangeLandLayer(landLayers[landIndex], topology);
     }
     /// <summary>
     /// Clamps all the Height and Slope tool values.
@@ -909,10 +903,16 @@ public class MapIOEditor : EditorWindow
         switch (index)
         {
             case 0:
-                MapIO.groundLayer = (TerrainSplat.Enum)EditorUI.ToolbarEnumPopup(new GUIContent("Texture:", "The Ground texture the tools will paint with."), MapIO.groundLayer);
+                EditorUI.BeginToolbarHorizontal();
+                EditorUI.ToolbarLabel(EditorVars.ToolTips.groundTextureSelect);
+                MapIO.groundLayer = (TerrainSplat.Enum)EditorUI.ToolbarEnumPopup(MapIO.groundLayer);
+                EditorUI.EndToolbarHorizontal();
                 break;
             case 1:
-                MapIO.biomeLayer = (TerrainBiome.Enum)EditorUI.ToolbarEnumPopup(new GUIContent("Texture:", "The Biome the tools will paint with."), MapIO.biomeLayer);
+                EditorUI.BeginToolbarHorizontal();
+                EditorUI.ToolbarLabel(EditorVars.ToolTips.biomeTextureSelect);
+                MapIO.biomeLayer = (TerrainBiome.Enum)EditorUI.ToolbarEnumPopup(MapIO.biomeLayer);
+                EditorUI.EndToolbarHorizontal();
                 break;
         }
     }
@@ -920,16 +920,15 @@ public class MapIOEditor : EditorWindow
     {
         GUILayout.Label("Layer Select", EditorStyles.miniBoldLabel);
 
-        LandData.oldTopologyLayer = LandData.topologyLayer;
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label(new GUIContent("Topology Layer:", "The Topology layer to display."), EditorStyles.toolbarButton);
-        LandData.topologyLayer = (TerrainTopology.Enum)EditorGUILayout.EnumPopup(LandData.topologyLayer, EditorStyles.toolbarDropDown);
-        EditorGUILayout.EndHorizontal();
+        EditorUI.BeginToolbarHorizontal();
+        EditorUI.ToolbarLabel(EditorVars.ToolTips.topologyLayerSelect);
+        EditorGUI.BeginChangeCheck();
+        LandData.topologyLayer = (TerrainTopology.Enum)EditorUI.ToolbarEnumPopup(LandData.topologyLayer);
+        EditorUI.EndToolbarHorizontal();
 
-        if (LandData.topologyLayer != LandData.oldTopologyLayer)
+        if (EditorGUI.EndChangeCheck())
         {
-            LandData.ChangeLandLayer();
-            Repaint();
+            LandData.ChangeLandLayer("topology", TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
         }
     }
     private void SlopeTools(int index, int texture, int erase = 0, int topology = 0)
@@ -943,35 +942,37 @@ public class MapIOEditor : EditorWindow
             {
                 EditorUI.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref slopeBlendLow, ref slopeBlendHigh, 0f, 90f);
 
-                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
+                EditorUI.BeginToolbarHorizontal();
+                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
                 {
                     MapIO.PaintSlopeBlend(landLayers[index], slopeLow, slopeHigh, slopeBlendLow, slopeBlendHigh, texture);
                 }
-                EditorGUILayout.EndHorizontal();
+                EditorUI.EndToolbarHorizontal();
             }
             else
             {
-                if (GUILayout.Button(new GUIContent("Paint Slopes", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
+                EditorUI.BeginToolbarHorizontal();
+                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
                 {
                     MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, texture);
                 }
+                EditorUI.EndToolbarHorizontal();
             }
         }
         else
         {
             EditorUI.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref slopeLow, ref slopeHigh, 0f, 90f);
 
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            if (GUILayout.Button(new GUIContent("Paint Slope", "Paints the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
+            EditorUI.BeginToolbarHorizontal();
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, texture, topology);
             }
-            if (GUILayout.Button(new GUIContent("Erase Slope", "Erases the terrain on the " + LandData.landLayer + " layer within the slope range."), EditorStyles.toolbarButton))
+            if (GUILayout.Button(EditorVars.ToolTips.eraseSlopes))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, erase, topology);
             }
-            EditorGUILayout.EndHorizontal();
+            EditorUI.EndToolbarHorizontal();
         }
     }
     private void HeightTools(int index, int texture, int erase = 0, int topology = 0)
@@ -985,16 +986,16 @@ public class MapIOEditor : EditorWindow
             {
                 EditorUI.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref heightBlendLow, ref heightBlendHigh, 0f, 1000f);
 
-                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-                if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
+                EditorUI.BeginToolbarHorizontal();
+                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
                 {
                     MapIO.PaintHeightBlend(landLayers[index], heightLow, heightHigh, heightBlendLow, heightBlendHigh, texture, topology);
                 }
-                EditorGUILayout.EndHorizontal();
+                EditorUI.EndToolbarHorizontal();
             }
             else
             {
-                if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
+                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
                 {
                     MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, texture);
                 }
@@ -1004,35 +1005,34 @@ public class MapIOEditor : EditorWindow
         {
             EditorUI.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref heightLow, ref heightHigh, 0f, 1000f);
 
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            if (GUILayout.Button(new GUIContent("Paint Heights", "Paints the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
+            EditorUI.BeginToolbarHorizontal();
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, texture, topology);
             }
-            if (GUILayout.Button(new GUIContent("Erase Heights", "Erases the terrain on the " + LandData.landLayer + " layer within the height range."), EditorStyles.toolbarButton))
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseHeights))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, erase, topology);
             }
-            EditorGUILayout.EndHorizontal();
+            EditorUI.EndToolbarHorizontal();
         }
     }
     private void RotateTools(int index, int topology = 0)
     {
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        if (GUILayout.Button(new GUIContent("Rotate 90°", "Rotate the " + landLayers[index] + " layer 90°."), EditorStyles.toolbarButton))
+        EditorUI.BeginToolbarHorizontal();
+        if (EditorUI.ToolbarButton(EditorVars.ToolTips.rotate90))
         {
             MapIO.RotateLayer(landLayers[index], true);
         }
-        if (GUILayout.Button(new GUIContent("Rotate 270°", "Rotate the " + landLayers[index] + " layer 270°."), EditorStyles.toolbarButton))
+        if (EditorUI.ToolbarButton(EditorVars.ToolTips.rotate270))
         {
             MapIO.RotateLayer(landLayers[index], false);
         }
-        EditorGUILayout.EndHorizontal();
+        EditorUI.EndToolbarHorizontal();
     }
     private void TopologyTools()
     {
-        
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        EditorUI.BeginToolbarHorizontal();
         if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90°"), EditorStyles.toolbarButton))
         {
             MapIO.RotateAllTopologyLayers(true);
@@ -1041,8 +1041,9 @@ public class MapIOEditor : EditorWindow
         {
             MapIO.RotateAllTopologyLayers(false);
         }
-        EditorGUILayout.EndHorizontal();
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        EditorUI.EndToolbarHorizontal();
+
+        EditorUI.BeginToolbarHorizontal();
         if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers."), EditorStyles.toolbarButton))
         {
             MapIO.InvertAllTopologyLayers();
@@ -1051,7 +1052,7 @@ public class MapIOEditor : EditorWindow
         {
             MapIO.ClearAllTopologyLayers();
         }
-        EditorGUILayout.EndHorizontal();
+        EditorUI.EndToolbarHorizontal();
     }
     private void AreaTools(int index, int texture, int erase = 0, int topology = 0)
     {
@@ -1062,7 +1063,7 @@ public class MapIOEditor : EditorWindow
 
         if (index > 1) // Alpha and Topology
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            EditorUI.BeginToolbarHorizontal();
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture, topology);
@@ -1071,11 +1072,11 @@ public class MapIOEditor : EditorWindow
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, erase, topology);
             }
-            EditorGUILayout.EndHorizontal();
+            EditorUI.EndToolbarHorizontal();
         }
         else
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            EditorUI.BeginToolbarHorizontal();
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture);
@@ -1087,29 +1088,32 @@ public class MapIOEditor : EditorWindow
     {
         GUILayout.Label("River Tools", EditorStyles.miniBoldLabel);
 
-        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
-        aboveTerrain = EditorGUILayout.ToggleLeft(new GUIContent("Above Terrain", "Paint only where there is water above sea level and above the terrain."), aboveTerrain, GUILayout.MaxWidth(100));
-
         if (index > 1)
         {
-            if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
+            EditorUI.BeginToolbarHorizontal();
+            EditorUI.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
+
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintRivers))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture, topology);
             }
-            if (GUILayout.Button("Erase Rivers", EditorStyles.toolbarButton))
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseRivers))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, erase, topology);
             }
+            EditorUI.EndToolbarHorizontal();
         }
         else
         {
+            EditorUI.BeginToolbarHorizontal();
+            EditorUI.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
+
             if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture);
             }
+            EditorUI.EndToolbarHorizontal();
         }
-        EditorGUILayout.EndHorizontal();
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
     {
