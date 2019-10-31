@@ -968,7 +968,7 @@ public class MapIOEditor : EditorWindow
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, texture, topology);
             }
-            if (GUILayout.Button(EditorVars.ToolTips.eraseSlopes))
+            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseSlopes))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, erase, topology);
             }
