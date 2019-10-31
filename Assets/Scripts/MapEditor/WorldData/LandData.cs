@@ -27,8 +27,9 @@ public static class LandData
     private static TerrainLayer[] miscTextures = null;
 
     public static string landLayer = "ground";
-    public static int landIndex = 0;
-    public static TerrainTopology.Enum topologyLayer, oldTopologyLayer;
+    public static int topologyIndex = 0;
+
+    public static TerrainTopology.Enum topologyLayer;
 
     [InitializeOnLoadMethod]
     static void OnLoad()
@@ -45,17 +46,13 @@ public static class LandData
 
     }
     /// <summary>
-    /// Change the active land layer.
+    /// Changes the active Land and Topology Layers.
     /// </summary>
-    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
-    public static void ChangeLayer(string layer)
+    /// <param name="landLayer">The LandLayer to change to.</param>
+    /// <param name="topology">The Topology layer to change to.</param>
+    public static void ChangeLandLayer(string landLayer, int topology = 0)
     {
-        landLayer = layer;
-        ChangeLandLayer();
-    }
-    public static void ChangeLandLayer()
-    {
-        SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
+        SaveLayer(topologyIndex);
         Undo.ClearAll();
         switch (landLayer.ToLower())
         {
@@ -69,7 +66,7 @@ public static class LandData
                 SetLayer("alpha");
                 break;
             case "topology":
-                SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer("topology", topology);
                 break;
         }
     }
@@ -133,7 +130,7 @@ public static class LandData
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
             case "topology":
-                landLayer = "topology";
+                landLayer = "topology"; topologyIndex = topology;
                 MapIO.terrain.terrainData.terrainLayers = miscTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
