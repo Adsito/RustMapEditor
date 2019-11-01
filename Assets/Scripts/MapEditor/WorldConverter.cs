@@ -247,7 +247,7 @@ public class WorldConverter
         {
             if (p.prefabData != null)
             {
-                p.MapSave(); // Updates the prefabdata before saving.
+                p.UpdatePrefabData(); // Updates the prefabdata before saving.
                 world.world.prefabs.Insert(0, p.prefabData);
             }
         }

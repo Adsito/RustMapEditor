@@ -903,16 +903,16 @@ public class MapIOEditor : EditorWindow
         switch (index)
         {
             case 0:
-                EditorUI.BeginToolbarHorizontal();
-                EditorUI.ToolbarLabel(EditorVars.ToolTips.groundTextureSelect);
-                MapIO.groundLayer = (TerrainSplat.Enum)EditorUI.ToolbarEnumPopup(MapIO.groundLayer);
-                EditorUI.EndToolbarHorizontal();
+                EditorUIElements.BeginToolbarHorizontal();
+                EditorUIElements.ToolbarLabel(EditorVars.ToolTips.groundTextureSelect);
+                MapIO.groundLayer = (TerrainSplat.Enum)EditorUIElements.ToolbarEnumPopup(MapIO.groundLayer);
+                EditorUIElements.EndToolbarHorizontal();
                 break;
             case 1:
-                EditorUI.BeginToolbarHorizontal();
-                EditorUI.ToolbarLabel(EditorVars.ToolTips.biomeTextureSelect);
-                MapIO.biomeLayer = (TerrainBiome.Enum)EditorUI.ToolbarEnumPopup(MapIO.biomeLayer);
-                EditorUI.EndToolbarHorizontal();
+                EditorUIElements.BeginToolbarHorizontal();
+                EditorUIElements.ToolbarLabel(EditorVars.ToolTips.biomeTextureSelect);
+                MapIO.biomeLayer = (TerrainBiome.Enum)EditorUIElements.ToolbarEnumPopup(MapIO.biomeLayer);
+                EditorUIElements.EndToolbarHorizontal();
                 break;
         }
     }
@@ -920,11 +920,11 @@ public class MapIOEditor : EditorWindow
     {
         GUILayout.Label("Layer Select", EditorStyles.miniBoldLabel);
 
-        EditorUI.BeginToolbarHorizontal();
-        EditorUI.ToolbarLabel(EditorVars.ToolTips.topologyLayerSelect);
+        EditorUIElements.BeginToolbarHorizontal();
+        EditorUIElements.ToolbarLabel(EditorVars.ToolTips.topologyLayerSelect);
         EditorGUI.BeginChangeCheck();
-        LandData.topologyLayer = (TerrainTopology.Enum)EditorUI.ToolbarEnumPopup(LandData.topologyLayer);
-        EditorUI.EndToolbarHorizontal();
+        LandData.topologyLayer = (TerrainTopology.Enum)EditorUIElements.ToolbarEnumPopup(LandData.topologyLayer);
+        EditorUIElements.EndToolbarHorizontal();
 
         if (EditorGUI.EndChangeCheck())
         {
@@ -937,42 +937,42 @@ public class MapIOEditor : EditorWindow
 
         if (index < 2)
         {
-            EditorUI.ToolbarToggleMinMax(EditorVars.ToolTips.toggleBlend, EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref blendSlopes, ref slopeLow, ref slopeHigh, 0f, 90f);
+            EditorUIElements.ToolbarToggleMinMax(EditorVars.ToolTips.toggleBlend, EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref blendSlopes, ref slopeLow, ref slopeHigh, 0f, 90f);
             if (blendSlopes)
             {
-                EditorUI.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref slopeBlendLow, ref slopeBlendHigh, 0f, 90f);
+                EditorUIElements.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref slopeBlendLow, ref slopeBlendHigh, 0f, 90f);
 
-                EditorUI.BeginToolbarHorizontal();
-                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
+                EditorUIElements.BeginToolbarHorizontal();
+                if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintSlopes))
                 {
                     MapIO.PaintSlopeBlend(landLayers[index], slopeLow, slopeHigh, slopeBlendLow, slopeBlendHigh, texture);
                 }
-                EditorUI.EndToolbarHorizontal();
+                EditorUIElements.EndToolbarHorizontal();
             }
             else
             {
-                EditorUI.BeginToolbarHorizontal();
-                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
+                EditorUIElements.BeginToolbarHorizontal();
+                if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintSlopes))
                 {
                     MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, texture);
                 }
-                EditorUI.EndToolbarHorizontal();
+                EditorUIElements.EndToolbarHorizontal();
             }
         }
         else
         {
-            EditorUI.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref slopeLow, ref slopeHigh, 0f, 90f);
+            EditorUIElements.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref slopeLow, ref slopeHigh, 0f, 90f);
 
-            EditorUI.BeginToolbarHorizontal();
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintSlopes))
+            EditorUIElements.BeginToolbarHorizontal();
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintSlopes))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, texture, topology);
             }
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseSlopes))
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.eraseSlopes))
             {
                 MapIO.PaintSlope(landLayers[index], slopeLow, slopeHigh, erase, topology);
             }
-            EditorUI.EndToolbarHorizontal();
+            EditorUIElements.EndToolbarHorizontal();
         }
     }
     private void HeightTools(int index, int texture, int erase = 0, int topology = 0)
@@ -981,21 +981,21 @@ public class MapIOEditor : EditorWindow
 
         if (index < 2)
         {
-            EditorUI.ToolbarToggleMinMax(EditorVars.ToolTips.toggleBlend, EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref blendHeights, ref heightLow, ref heightHigh, 0f, 1000f);
+            EditorUIElements.ToolbarToggleMinMax(EditorVars.ToolTips.toggleBlend, EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref blendHeights, ref heightLow, ref heightHigh, 0f, 1000f);
             if (blendHeights)
             {
-                EditorUI.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref heightBlendLow, ref heightBlendHigh, 0f, 1000f);
+                EditorUIElements.ToolbarMinMax(EditorVars.ToolTips.blendLow, EditorVars.ToolTips.blendHigh, ref heightBlendLow, ref heightBlendHigh, 0f, 1000f);
 
-                EditorUI.BeginToolbarHorizontal();
-                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
+                EditorUIElements.BeginToolbarHorizontal();
+                if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintHeights))
                 {
                     MapIO.PaintHeightBlend(landLayers[index], heightLow, heightHigh, heightBlendLow, heightBlendHigh, texture, topology);
                 }
-                EditorUI.EndToolbarHorizontal();
+                EditorUIElements.EndToolbarHorizontal();
             }
             else
             {
-                if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
+                if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintHeights))
                 {
                     MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, texture);
                 }
@@ -1003,36 +1003,36 @@ public class MapIOEditor : EditorWindow
         }
         else
         {
-            EditorUI.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref heightLow, ref heightHigh, 0f, 1000f);
+            EditorUIElements.ToolbarMinMax(EditorVars.ToolTips.rangeLow, EditorVars.ToolTips.rangeHigh, ref heightLow, ref heightHigh, 0f, 1000f);
 
-            EditorUI.BeginToolbarHorizontal();
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintHeights))
+            EditorUIElements.BeginToolbarHorizontal();
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintHeights))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, texture, topology);
             }
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseHeights))
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.eraseHeights))
             {
                 MapIO.PaintHeight(landLayers[index], heightLow, heightHigh, erase, topology);
             }
-            EditorUI.EndToolbarHorizontal();
+            EditorUIElements.EndToolbarHorizontal();
         }
     }
     private void RotateTools(int index, int topology = 0)
     {
-        EditorUI.BeginToolbarHorizontal();
-        if (EditorUI.ToolbarButton(EditorVars.ToolTips.rotate90))
+        EditorUIElements.BeginToolbarHorizontal();
+        if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.rotate90))
         {
             MapIO.RotateLayer(landLayers[index], true);
         }
-        if (EditorUI.ToolbarButton(EditorVars.ToolTips.rotate270))
+        if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.rotate270))
         {
             MapIO.RotateLayer(landLayers[index], false);
         }
-        EditorUI.EndToolbarHorizontal();
+        EditorUIElements.EndToolbarHorizontal();
     }
     private void TopologyTools()
     {
-        EditorUI.BeginToolbarHorizontal();
+        EditorUIElements.BeginToolbarHorizontal();
         if (GUILayout.Button(new GUIContent("Rotate All 90°", "Rotate all Topology layers 90°"), EditorStyles.toolbarButton))
         {
             MapIO.RotateAllTopologyLayers(true);
@@ -1041,9 +1041,9 @@ public class MapIOEditor : EditorWindow
         {
             MapIO.RotateAllTopologyLayers(false);
         }
-        EditorUI.EndToolbarHorizontal();
+        EditorUIElements.EndToolbarHorizontal();
 
-        EditorUI.BeginToolbarHorizontal();
+        EditorUIElements.BeginToolbarHorizontal();
         if (GUILayout.Button(new GUIContent("Invert All", "Invert all Topology layers."), EditorStyles.toolbarButton))
         {
             MapIO.InvertAllTopologyLayers();
@@ -1052,18 +1052,18 @@ public class MapIOEditor : EditorWindow
         {
             MapIO.ClearAllTopologyLayers();
         }
-        EditorUI.EndToolbarHorizontal();
+        EditorUIElements.EndToolbarHorizontal();
     }
     private void AreaTools(int index, int texture, int erase = 0, int topology = 0)
     {
         GUILayout.Label("Area Tools", EditorStyles.miniBoldLabel);
 
-        EditorUI.ToolbarMinMaxInt(EditorVars.ToolTips.fromZ, EditorVars.ToolTips.toZ, ref z1, ref z2, 0f, MapIO.terrain.terrainData.alphamapResolution);
-        EditorUI.ToolbarMinMaxInt(EditorVars.ToolTips.fromX, EditorVars.ToolTips.toX, ref x1, ref x2, 0f, MapIO.terrain.terrainData.alphamapResolution);
+        EditorUIElements.ToolbarMinMaxInt(EditorVars.ToolTips.fromZ, EditorVars.ToolTips.toZ, ref z1, ref z2, 0f, MapIO.terrain.terrainData.alphamapResolution);
+        EditorUIElements.ToolbarMinMaxInt(EditorVars.ToolTips.fromX, EditorVars.ToolTips.toX, ref x1, ref x2, 0f, MapIO.terrain.terrainData.alphamapResolution);
 
         if (index > 1) // Alpha and Topology
         {
-            EditorUI.BeginToolbarHorizontal();
+            EditorUIElements.BeginToolbarHorizontal();
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture, topology);
@@ -1072,11 +1072,11 @@ public class MapIOEditor : EditorWindow
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, erase, topology);
             }
-            EditorUI.EndToolbarHorizontal();
+            EditorUIElements.EndToolbarHorizontal();
         }
         else
         {
-            EditorUI.BeginToolbarHorizontal();
+            EditorUIElements.BeginToolbarHorizontal();
             if (GUILayout.Button("Paint Area", EditorStyles.toolbarButton))
             {
                 MapIO.PaintArea(landLayers[index], (int)z1, (int)z2, (int)x1, (int)x2, texture);
@@ -1090,29 +1090,29 @@ public class MapIOEditor : EditorWindow
 
         if (index > 1)
         {
-            EditorUI.BeginToolbarHorizontal();
-            EditorUI.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
+            EditorUIElements.BeginToolbarHorizontal();
+            EditorUIElements.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
 
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.paintRivers))
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.paintRivers))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture, topology);
             }
-            if (EditorUI.ToolbarButton(EditorVars.ToolTips.eraseRivers))
+            if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.eraseRivers))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, erase, topology);
             }
-            EditorUI.EndToolbarHorizontal();
+            EditorUIElements.EndToolbarHorizontal();
         }
         else
         {
-            EditorUI.BeginToolbarHorizontal();
-            EditorUI.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
+            EditorUIElements.BeginToolbarHorizontal();
+            EditorUIElements.ToolbarToggle(EditorVars.ToolTips.aboveTerrain, ref aboveTerrain);
 
             if (GUILayout.Button("Paint Rivers", EditorStyles.toolbarButton))
             {
                 MapIO.PaintRiver(landLayers[index], aboveTerrain, texture);
             }
-            EditorUI.EndToolbarHorizontal();
+            EditorUIElements.EndToolbarHorizontal();
         }
     }
     private void PaintTools(int index, int texture, int erase = 0, int topology = 0)
@@ -1291,6 +1291,31 @@ public class MapIOEditor : EditorWindow
         MapEditorSettings.objectQuality = EditorGUILayout.IntSlider(MapEditorSettings.objectQuality, 0, 200);
         GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         EditorGUILayout.EndHorizontal();
+    }
+    #endregion
+    #region PrefabData
+    public static void PrefabCategory(PrefabDataHolder target)
+    {
+        EditorUIElements.BeginToolbarHorizontal();
+        EditorUIElements.ToolbarLabel(EditorVars.ToolTips.prefabCategory);
+        target.prefabData.category = EditorUIElements.ToolbarTextField(target.prefabData.category);
+        EditorUIElements.EndToolbarHorizontal();
+    }
+    public static void PrefabID(PrefabDataHolder target)
+    {
+        EditorUIElements.BeginToolbarHorizontal();
+        EditorUIElements.ToolbarLabel(EditorVars.ToolTips.prefabID);
+        target.prefabData.id = (uint)EditorUIElements.ToolbarIntField((int)target.prefabData.id);
+        EditorUIElements.EndToolbarHorizontal();
+    }
+    public static void SnapToGround(PrefabDataHolder target)
+    {
+        EditorUIElements.BeginToolbarHorizontal();
+        if (EditorUIElements.ToolbarButton(EditorVars.ToolTips.snapToGround))
+        {
+            target.SnapToGround();
+        }
+        EditorUIElements.EndToolbarHorizontal();
     }
     #endregion
     private void DrawEmpty()

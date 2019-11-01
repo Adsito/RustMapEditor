@@ -1,11 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class EditorVars
 {
     public static class ToolTips
     {
+        public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
+        public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
+        public static GUIContent prefabName = new GUIContent("Name:", "The Prefab name.");
+
+        public static GUIContent snapToGround = new GUIContent("Snap To Ground", "Snap the selected prefab to the terrain height.");
+
         public static GUIContent toggleBlend = new GUIContent("Blend", "Blends out the active texture to create a smooth transition the surrounding textures.");
         public static GUIContent rangeLow = new GUIContent("From:", "The lowest value to paint the active texture.");
         public static GUIContent rangeHigh = new GUIContent("To:", "The highest value to paint the active texture.");
