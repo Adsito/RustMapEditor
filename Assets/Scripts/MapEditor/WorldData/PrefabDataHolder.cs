@@ -1,24 +1,23 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEditor;
 
-[Serializable]
+[DisallowMultipleComponent]
 [SelectionBase]
 public class PrefabDataHolder : MonoBehaviour
 {
-    
     public WorldSerialization.PrefabData prefabData;
     
-    public void MapSave()
+    public void UpdatePrefabData()
     {
-        prefabData.position = gameObject.transform.position - (0.5f * GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().terrainData.size);
+        prefabData.position = gameObject.transform.position - (0.5f * MapIO.terrain.terrainData.size);
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
     public void SnapToGround()
     {
         Vector3 newPos = transform.position;
-        float y = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().SampleHeight(transform.position);
-        newPos.y = y;
+        Undo.RecordObject(transform, "Snap to Ground");
+        newPos.y = MapIO.terrain.SampleHeight(transform.position);
         transform.position = newPos;
     }
 }
