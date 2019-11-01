@@ -9,13 +9,6 @@ using UnityEngine.Experimental.TerrainAPI;
 using static WorldConverter;
 using static WorldSerialization;
 
-public class CustomPrefab : MonoBehaviour
-{
-    public void UnGroupPrefab()
-    {
-
-    }
-}
 public class PrefabExport
 {
     public int PrefabNumber
@@ -260,7 +253,7 @@ public static class MapIO
                     GameObject.DestroyImmediate(g.gameObject);
                 }
             }
-            foreach (CustomPrefab p in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<CustomPrefab>())
+            foreach (CustomPrefabData p in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<CustomPrefabData>())
             {
                 GameObject.DestroyImmediate(p.gameObject);
             }
@@ -1573,7 +1566,7 @@ public static class MapIO
                     GameObject customPrefabParent = new GameObject(categoryFields[1]);
                     customPrefabParent.transform.SetParent(prefabHierachy);
                     customPrefabParent.transform.localPosition = prefabDataHolders[i].transform.localPosition;
-                    customPrefabParent.AddComponent<CustomPrefab>();
+                    customPrefabParent.AddComponent<CustomPrefabData>();
                     prefabParents.Add(categoryFields[1], customPrefabParent);
                 }
                 if (prefabParents.TryGetValue(categoryFields[1], out GameObject prefabParent))
@@ -1894,7 +1887,7 @@ public static class MapIO
     /// </summary>
     public static void Load(WorldSerialization world)
     {
-        MapIO.ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
+        ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(WorldConverter.WorldToTerrain(world));
     }
     /// <summary>
@@ -1904,18 +1897,10 @@ public static class MapIO
     public static void Save(string path)
     {
         LandData.SaveLayer(TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
-        foreach (var item in GameObject.FindGameObjectWithTag("World").GetComponentsInChildren<Transform>(true))
-        {
-            item.gameObject.SetActive(true);
-        }
-        Terrain terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        ProgressBar("Saving Map: " + savePath, "Saving Watermap ", 0.25f);
         ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
         WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
-        ProgressBar("Saving Map: " + savePath, "Saving Layers ", 0.6f);
-        world.Save(path);
         ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
+        world.Save(path);
         ClearProgressBar();
     }
     /// <summary>

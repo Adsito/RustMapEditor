@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public static class EditorUI
+public static class EditorUIElements
 {
     public static void BeginToolbarHorizontal()
     {
@@ -19,6 +19,26 @@ public static class EditorUI
     {
         GUILayout.Label(guiContent, EditorStyles.toolbarButton);
     }
+    public static void ToolbarLabelField(GUIContent label, GUIContent label2)
+    {
+        EditorGUILayout.LabelField(label, label2, EditorStyles.toolbarButton);
+    }
+    public static string ToolbarTextField(string text)
+    {
+        return EditorGUILayout.TextField(text, EditorStyles.toolbarTextField);
+    }
+    public static string ToolbarDelayedTextField(string text)
+    {
+        return EditorGUILayout.DelayedTextField(text, EditorStyles.toolbarTextField);
+    }
+    public static int ToolbarIntField(int value)
+    {
+        return EditorGUILayout.IntField(value, EditorStyles.toolbarTextField);
+    }
+    public static int ToolbarDelayedIntField(int value)
+    {
+        return EditorGUILayout.DelayedIntField(value, EditorStyles.toolbarTextField);
+    }
     public static bool ToolbarButton(GUIContent guiContent)
     {
         return GUILayout.Button(guiContent, EditorStyles.toolbarButton);
@@ -31,7 +51,7 @@ public static class EditorUI
     {
         return EditorGUILayout.EnumPopup(enumGroup, EditorStyles.toolbarDropDown);
     }
-    public static float ToolbarDelayedFloatField(ref float value)
+    public static float ToolbarDelayedFloatField(float value)
     {
         return value = EditorGUILayout.DelayedFloatField(value, EditorStyles.toolbarTextField);
     }
@@ -55,7 +75,7 @@ public static class EditorUI
         EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
-    public static float ToolbarIntSlider(GUIContent guiContent, ref int value, int leftValue, int rightValue)
+    public static float ToolbarIntSlider(GUIContent guiContent, int value, int leftValue, int rightValue)
     {
         BeginToolbarHorizontal();
         ToolbarLabel(guiContent);
