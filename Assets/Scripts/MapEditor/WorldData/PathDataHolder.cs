@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
+[SelectionBase]
 public class PathDataHolder : MonoBehaviour {
     
     public WorldSerialization.PathData pathData;
@@ -96,7 +94,6 @@ public class PathDataHolder : MonoBehaviour {
             DestroyImmediate(nodes[i].gameObject);
         }
     }
-
 
     private void OnDrawGizmosSelected()
     {

@@ -15,7 +15,7 @@ class NodeMonitor : AssetPostprocessor
     /// </summary>
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        MapIO.RefreshAssetList();
+        MapIO.RefreshPresetsList();
     }
 
 }

@@ -1216,7 +1216,7 @@ namespace Rotorz.ReorderableList {
                             System.IO.Directory.CreateDirectory("Assets/NodePresets");
                         }
                         AssetDatabase.CreateAsset(NodePreset.CreateInstance(NodeAsset.nodeAssetName), "Assets/NodePresets/NodePreset.asset");
-                        MapIO.RefreshAssetList();
+                        MapIO.RefreshPresetsList();
 					}
 				}
 
