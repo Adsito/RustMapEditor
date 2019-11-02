@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 public static class EditorUIElements
 {
+    #region Toolbar
     public static void BeginToolbarHorizontal()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -43,7 +43,7 @@ public static class EditorUIElements
     {
         return GUILayout.Button(guiContent, EditorStyles.toolbarButton);
     }
-    public static bool ToolbarToggle(GUIContent guiContent, ref bool toggle)
+    public static bool ToolbarToggle(GUIContent guiContent, bool toggle)
     {
         return toggle = GUILayout.Toggle(toggle, guiContent, "ToolbarButton");
     }
@@ -75,7 +75,7 @@ public static class EditorUIElements
         EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
-    public static float ToolbarIntSlider(GUIContent guiContent, int value, int leftValue, int rightValue)
+    public static int ToolbarIntSlider(GUIContent guiContent, int value, int leftValue, int rightValue)
     {
         BeginToolbarHorizontal();
         ToolbarLabel(guiContent);
@@ -83,10 +83,18 @@ public static class EditorUIElements
         EndToolbarHorizontal();
         return value;
     }
-    public static void ToolbarToggleMinMax(GUIContent toggleContent, GUIContent minContent, GUIContent maxContent, ref bool toggle, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
+    public static float ToolbarSlider(GUIContent guiContent, float value, float leftValue, float rightValue)
     {
         BeginToolbarHorizontal();
-        ToolbarToggle(toggleContent, ref toggle);
+        ToolbarLabel(guiContent);
+        value = EditorGUILayout.Slider(value, leftValue, rightValue);
+        EndToolbarHorizontal();
+        return value;
+    }
+    public static void ToolbarToggleMinMax(GUIContent toggleContent, GUIContent minContent, GUIContent maxContent, bool toggle, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
+    {
+        BeginToolbarHorizontal();
+        toggle = ToolbarToggle(toggleContent, toggle);
         ToolbarLabel(minContent);
         minValue = EditorGUILayout.DelayedFloatField(minValue);
         ToolbarLabel(maxContent);
@@ -94,4 +102,23 @@ public static class EditorUIElements
         EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
     }
+    #endregion
+    #region Other
+    public static void MiniBoldLabel(GUIContent guiContent)
+    {
+        GUILayout.Label(guiContent, EditorStyles.miniBoldLabel);
+    }
+    public static void BoldLabel(GUIContent guiContent)
+    {
+        GUILayout.Label(guiContent, EditorStyles.boldLabel);
+    }
+    public static void MiniLabel(GUIContent guiContent)
+    {
+        GUILayout.Label(guiContent, EditorStyles.miniLabel);
+    }
+    public static void Label(GUIContent guiContent)
+    {
+        GUILayout.Label(guiContent, EditorStyles.label);
+    }
+    #endregion
 }

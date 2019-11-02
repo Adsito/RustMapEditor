@@ -10,6 +10,7 @@ TagManager:
   - Water
   - LoadedPrefab
   - DefaultPrefab
+  - LoadedPath
   layers:
   - Default
   - TransparentFX

@@ -3,7 +3,7 @@ name: Bug Report
 about: Bug Reports with the Editor
 title: "[BUG] Bug name goes here"
 labels: bug
-assignees: Adsitoz
+assignees: Adsito
 
 ---
 
