@@ -120,7 +120,6 @@ public static class MapIO
     public static TerrainSplat.Enum groundLayerFrom, groundLayerToPaint, groundLayer, conditionalGround;
     public static TerrainBiome.Enum biomeLayerFrom, biomeLayerToPaint, biomeLayer, conditionalBiome;
     #endregion
-    public static string loadPath = "", savePath = "", prefabSavePath = "";
     public static float progressBar = 0f, progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
@@ -147,7 +146,7 @@ public static class MapIO
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        RefreshAssetList(); // Refreshes the node gen presets.
+        RefreshPresetsList(); // Refreshes the node gen presets.
         SetLayers(); // Resets all the layers to default values.
         EditorApplication.update += OnProjectLoad;
     }
@@ -439,6 +438,7 @@ public static class MapIO
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
     public static void NormaliseHeightmap(float normaliseLow, float normaliseHigh)
     {
+        normaliseLow /= 1000f; normaliseHigh /= 1000f;
         Undo.RegisterCompleteObjectUndo(terrain.terrainData, "Normalise Terrain");
         terrain.terrainData.SetHeights(0, 0, ArrayOperations.Normalise(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), normaliseLow, normaliseHigh));
     }
@@ -564,24 +564,6 @@ public static class MapIO
         {
             Debug.Log("Heightmap offset exceeds heightmap limits, try a smaller value.");
         }
-    }
-    /// <summary>
-    /// Sets the water level up to 500 if it's below 500 in height.
-    /// </summary>
-    public static void DebugWaterLevel()
-    {
-        float[,] waterMap = water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight);
-        for (int i = 0; i < waterMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < waterMap.GetLength(1); j++)
-            {
-                if (waterMap[i, j] < 0.5f)
-                {
-                    waterMap[i, j] = 0.5f;
-                }
-            }
-        }
-        water.terrainData.SetHeights(0, 0, waterMap);
     }
     /// <summary>
     /// Sets the HeightMap level to the minimum if it's below.
@@ -1790,11 +1772,11 @@ public static class MapIO
     /// Loads and sets up the map Prefabs.
     /// </summary>
     /// <param name="terrains"></param>
-    static void LoadPrefabs(MapInfo terrains)
+    static void LoadPrefabs(MapInfo terrains, string loadPath = "")
     {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        ProgressBar("Loading: " + loadPath, "Spawning Prefabs ", 0.8f);
-        float progressValue = 0f;
+        ProgressBar("Loading: ", "Spawning Prefabs ", 0.8f);
+        progressValue = 0f;
         if (PrefabManager.prefabsLoaded)
         {
             for (int i = 0; i < terrains.prefabData.Length; i++)
@@ -1818,7 +1800,7 @@ public static class MapIO
     /// Loads and sets up the map Paths.
     /// </summary>
     /// <param name="terrains"></param>
-    static void LoadPaths(MapInfo terrains)
+    static void LoadPaths(MapInfo terrains, string loadPath = "")
     {
         var terrainPosition = 0.5f * terrains.size;
         Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
@@ -1845,7 +1827,7 @@ public static class MapIO
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
     }
-    static void LoadSplatMaps(MapInfo terrains)
+    static void LoadSplatMaps(MapInfo terrains, string loadPath = "")
     {
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         TopologyData.InitMesh(terrains.topology);
@@ -1868,7 +1850,7 @@ public static class MapIO
     /// <summary>
     /// Loads and sets up the map.
     /// </summary>
-    static void LoadMapInfo(MapInfo terrains)
+    static void LoadMapInfo(MapInfo terrains, string loadPath = "")
     {
         water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
@@ -1876,16 +1858,17 @@ public static class MapIO
         CentreSceneView();
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
-        LoadSplatMaps(terrains);
-        LoadPrefabs(terrains);
-        LoadPaths(terrains);
+        LoadSplatMaps(terrains, loadPath);
+        LoadPrefabs(terrains, loadPath);
+        LoadPaths(terrains, loadPath);
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
     /// <summary>
     /// Loads a WorldSerialization and calls LoadMapInfo.
     /// </summary>
-    public static void Load(WorldSerialization world)
+    /// <param name="loadPath">The path of the map, used by the progress bars.</param>
+    public static void Load(WorldSerialization world, string loadPath = "")
     {
         ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
         LoadMapInfo(WorldConverter.WorldToTerrain(world));
@@ -1897,9 +1880,9 @@ public static class MapIO
     public static void Save(string path)
     {
         LandData.SaveLayer(TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
-        ProgressBar("Saving Map: " + savePath, "Saving Prefabs ", 0.4f);
+        ProgressBar("Saving Map: " + path, "Saving Prefabs ", 0.4f);
         WorldSerialization world = WorldConverter.TerrainToWorld(terrain, water);
-        ProgressBar("Saving Map: " + savePath, "Saving to disk ", 0.8f);
+        ProgressBar("Saving Map: " + path, "Saving to disk ", 0.8f);
         world.Save(path);
         ClearProgressBar();
     }
@@ -1920,7 +1903,7 @@ public static class MapIO
     /// <summary>
     /// Refreshes and adds the new NodePresets in the generationPresetList.
     /// </summary>
-    public static void RefreshAssetList()
+    public static void RefreshPresetsList()
     {
         var list = AssetDatabase.FindAssets("t:" + NodeAsset.nodeAssetName);
         generationPresetList.Clear();
