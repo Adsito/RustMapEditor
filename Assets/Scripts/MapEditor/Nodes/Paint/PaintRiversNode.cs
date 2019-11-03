@@ -1,6 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Rivers")]
 public class PaintRiversNode : Node
@@ -23,17 +23,17 @@ public class PaintRiversNode : Node
         var layer = (NodeVariables.Texture)GetValue();
         switch (layer.LandLayer)
         {
-            case 0: // Ground
-                MapIO.PaintRiver("Ground", aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
+            case 0:
+                MapIO.PaintRiver(LandLayers.Ground, aboveTerrain, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
-            case 1: // Biome
-                MapIO.PaintRiver("Biome", aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+            case 1: 
+                MapIO.PaintRiver(LandLayers.Biome, aboveTerrain, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
-            case 2: // Alpha
-                MapIO.PaintRiver("Alpha", aboveTerrain, layer.AlphaTexture);
+            case 2:
+                MapIO.PaintRiver(LandLayers.Alpha, aboveTerrain, layer.AlphaTexture);
                 break;
-            case 3: // Topology
-                MapIO.PaintRiver("Topology", aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
+            case 3:
+                MapIO.PaintRiver(LandLayers.Topology, aboveTerrain, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

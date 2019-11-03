@@ -1,7 +1,7 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
+using EditorVariables;
 
 public static class LandData
 {
@@ -26,9 +26,9 @@ public static class LandData
     private static TerrainLayer[] biomeTextures = null;
     private static TerrainLayer[] miscTextures = null;
 
-    public static string landLayer = "";
-    public static int landIndex = 0;
-    public static TerrainTopology.Enum topologyLayer, oldTopologyLayer;
+    public static LandLayers landLayer;
+    public static TerrainTopology.Enum topologyLayer;
+    private static int lastTopologyLayer = 0;
 
     [InitializeOnLoadMethod]
     static void OnLoad()
@@ -45,31 +45,26 @@ public static class LandData
 
     }
     /// <summary>
-    /// Change the active land layer.
+    /// Changes the active Land and Topology Layers.
     /// </summary>
-    /// <param name="layer">The LandLayer to change to. (Ground, Biome, Alpha & Topology)</param>
-    public static void ChangeLayer(string layer)
+    /// <param name="layer">The LandLayer to change to.</param>
+    /// <param name="topology">The Topology layer to change to.</param>
+    public static void ChangeLandLayer(LandLayers layer, int topology = 0)
     {
-        landLayer = layer;
-        ChangeLandLayer();
-    }
-    public static void ChangeLandLayer()
-    {
-        SaveLayer(TerrainTopology.TypeToIndex((int)oldTopologyLayer));
-        Undo.ClearAll();
-        switch (landLayer.ToLower())
+        SaveLayer(lastTopologyLayer);
+        switch (layer)
         {
-            case "ground":
-                SetLayer("ground");
+            case LandLayers.Ground:
+                SetLayer(LandLayers.Ground);
                 break;
-            case "biome":
-                SetLayer("biome");
+            case LandLayers.Biome:
+                SetLayer(LandLayers.Biome);
                 break;
-            case "alpha":
-                SetLayer("alpha");
+            case LandLayers.Alpha:
+                SetLayer(LandLayers.Alpha);
                 break;
-            case "topology":
-                SetLayer("topology", TerrainTopology.TypeToIndex((int)topologyLayer));
+            case LandLayers.Topology:
+                SetLayer(LandLayers.Topology, topology);
                 break;
         }
     }
@@ -79,24 +74,23 @@ public static class LandData
     /// <param name="floatArray">The alphamap array of all the textures.</param>
     /// <param name="layer">The landlayer to save the floatArray to.</param>
     /// <param name="topology">The topology layer if the landlayer is topology.</param>
-    public static void SetData(float[,,] floatArray, string layer, int topology = 0)
+    public static void SetData(float[,,] floatArray, LandLayers layer, int topology = 0)
     {
-        switch (layer.ToLower())
+        switch (layer)
         {
-            case "ground":
+            case LandLayers.Ground:
                 groundArray = floatArray;
                 break;
-            case "biome":
+            case LandLayers.Biome:
                 biomeArray = floatArray;
                 break;
-            case "alpha":
+            case LandLayers.Alpha:
                 alphaArray = floatArray;
                 break;
-            case "topology":
+            case LandLayers.Topology:
                 topologyArray[topology] = floatArray; 
                 break;
         }
-        landLayer = layer;
     }
     public static void GetTextures()
     {
@@ -110,35 +104,34 @@ public static class LandData
     /// </summary>
     /// <param name="layer">The LandLayer to set.</param>
     /// <param name="topology">The Topology layer to set.</param>
-    public static void SetLayer(string layer, int topology = 0)
+    public static void SetLayer(LandLayers layer, int topology = 0)
     {
         if (groundTextures == null || biomeTextures == null || miscTextures == null)
         {
             GetTextures();
         }
-        switch (layer.ToLower())
+        switch (layer)
         {
-            case "ground":
-                landLayer = "ground";
+            case LandLayers.Ground:
                 MapIO.terrain.terrainData.terrainLayers = groundTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, groundArray);
                 break;
-            case "biome":
-                landLayer = "biome";
+            case LandLayers.Biome:
                 MapIO.terrain.terrainData.terrainLayers = biomeTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, biomeArray);
                 break;
-            case "alpha":
-                landLayer = "alpha";
+            case LandLayers.Alpha:
                 MapIO.terrain.terrainData.terrainLayers = miscTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, alphaArray);
                 break;
-            case "topology":
-                landLayer = "topology";
+            case LandLayers.Topology:
+                lastTopologyLayer = topology;
                 MapIO.terrain.terrainData.terrainLayers = miscTextures;
                 MapIO.terrain.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
                 break;
         }
+        landLayer = layer;
+        topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
     }
     /// <summary>
     /// Saves any changes made to the Alphamaps, like the paint brush.
@@ -148,21 +141,21 @@ public static class LandData
     {
         switch (landLayer)
         {
-            case "ground":
+            case LandLayers.Ground:
                 groundArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
-            case "biome":
+            case LandLayers.Biome:
                 biomeArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
-            case "alpha":
+            case LandLayers.Alpha:
                 alphaArray = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
-            case "topology":
+            case LandLayers.Topology:
                 topologyArray[topologyLayer] = MapIO.terrain.terrainData.GetAlphamaps(0, 0, MapIO.terrain.terrainData.alphamapWidth, MapIO.terrain.terrainData.alphamapHeight);
                 break;
         }
     }
-    public static TerrainLayer[] GetAlphaTextures()
+    private static TerrainLayer[] GetAlphaTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/Active.terrainlayer");
@@ -171,7 +164,7 @@ public static class LandData
         textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
         return textures;
     }
-    public static TerrainLayer[] GetBiomeTextures()
+    private static TerrainLayer[] GetBiomeTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[4];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Tundra.terrainlayer");
@@ -184,7 +177,7 @@ public static class LandData
         textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
         return textures;
     }
-    public static TerrainLayer[] GetGroundTextures()
+    private static TerrainLayer[] GetGroundTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[8];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Dirt.terrainlayer");
