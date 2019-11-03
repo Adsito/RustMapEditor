@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Functions/Rotate/Rotate Layer")]
 public class RotateLayerNode : Node
@@ -19,13 +20,13 @@ public class RotateLayerNode : Node
         switch (landLayer)
         {
             case NodeVariables.Texture.LandLayerEnum.Ground:
-                MapIO.RotateLayer(EditorVars.LandLayers.Ground, CW);
+                MapIO.RotateLayer(LandLayers.Ground, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Biome:
-                MapIO.RotateLayer(EditorVars.LandLayers.Biome, CW);
+                MapIO.RotateLayer(LandLayers.Biome, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Alpha:
-                MapIO.RotateLayer(EditorVars.LandLayers.Alpha, CW);
+                MapIO.RotateLayer(LandLayers.Alpha, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Topology:
                 MapIO.RotateTopologyLayers(topologies, CW);

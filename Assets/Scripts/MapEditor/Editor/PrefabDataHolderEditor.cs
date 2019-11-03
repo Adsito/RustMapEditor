@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using EditorUI;
 
 [CustomEditor(typeof(PrefabDataHolder))]
 public class PrefabDataHolderEditor : Editor
@@ -11,8 +12,8 @@ public class PrefabDataHolderEditor : Editor
             return;
         }
 
-        EditorUIFunctions.PrefabCategory(script);
-        EditorUIFunctions.PrefabID(script);
-        EditorUIFunctions.SnapToGround(script);
+        Functions.PrefabCategory(script);
+        Functions.PrefabID(script);
+        Functions.SnapToGround(script);
     }
 }

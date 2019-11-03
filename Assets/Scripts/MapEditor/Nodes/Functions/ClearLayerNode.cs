@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Functions/Clear/Clear Layer")]
 public class ClearLayerNode : Node
@@ -17,7 +18,7 @@ public class ClearLayerNode : Node
         switch (layer)
         {
             case NodeVariables.Misc.DualLayerEnum.Alpha:
-                MapIO.ClearLayer(EditorVars.LandLayers.Alpha);
+                MapIO.ClearLayer(LandLayers.Alpha);
                 break;
             case NodeVariables.Misc.DualLayerEnum.Topology:
                 MapIO.ClearTopologyLayers(topologies);

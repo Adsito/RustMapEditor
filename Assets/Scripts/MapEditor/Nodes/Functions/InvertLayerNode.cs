@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Functions/Invert/Invert Layer")]
 public class InvertLayerNode : Node
@@ -17,7 +18,7 @@ public class InvertLayerNode : Node
         switch (layer)
         {
             case NodeVariables.Misc.DualLayerEnum.Alpha:
-                MapIO.InvertLayer(EditorVars.LandLayers.Alpha);
+                MapIO.InvertLayer(LandLayers.Alpha);
                 break;
             case NodeVariables.Misc.DualLayerEnum.Topology:
                 MapIO.InvertTopologyLayers(topologies);

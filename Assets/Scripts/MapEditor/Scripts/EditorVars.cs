@@ -1,7 +1,99 @@
 ﻿using UnityEngine;
 
-public static class EditorVars
+namespace EditorVariables
 {
+    public struct Conditions
+    {
+        public TerrainSplat.Enum GroundConditions
+        {
+            get; set;
+        }
+        public TerrainBiome.Enum BiomeConditions
+        {
+            get; set;
+        }
+        public TerrainTopology.Enum TopologyLayers
+        {
+            get; set;
+        }
+        public AlphaTextures AlphaTextures
+        {
+            get; set;
+        }
+        public TopologyTextures TopologyTextures
+        {
+            get; set;
+        }
+        public bool CheckAlpha
+        {
+            get; set;
+        }
+        public int AlphaTexture
+        {
+            get; set;
+        }
+        public int TopologyTexture
+        {
+            get; set;
+        }
+        public bool CheckHeight
+        {
+            get; set;
+        }
+        public float HeightLow
+        {
+            get; set;
+        }
+        public float HeightHigh
+        {
+            get; set;
+        }
+        public bool CheckSlope
+        {
+            get; set;
+        }
+        public float SlopeLow
+        {
+            get; set;
+        }
+        public float SlopeHigh
+        {
+            get; set;
+        }
+        public Dimensions Dimensions
+        {
+            get; set;
+        }
+    }
+    public struct TopologyLayers
+    {
+        public float[,,] Topologies
+        {
+            get; set;
+        }
+    }
+    public struct GroundTextures
+    {
+        public int Texture
+        {
+            get; set;
+        }
+    }
+    public struct BiomeTextures
+    {
+        public int Texture
+        {
+            get; set;
+        }
+    }
+    public class Dimensions
+    {
+        public int x0 { get; set; }
+        public int x1 { get; set; }
+        public int z0 { get; set; }
+        public int z1 { get; set; }
+
+    }
     public enum LandLayers
     {
         Ground = 0,
@@ -18,6 +110,22 @@ public static class EditorVars
     {
         Active = 0,
         InActive = 1,
+    }
+    public struct SlopesInfo
+    {
+        public bool BlendSlopes { get; set; }
+        public float SlopeBlendLow { get; set; }
+        public float SlopeLow { get; set; }
+        public float SlopeHigh { get; set; }
+        public float SlopeBlendHigh { get; set; }
+    }
+    public struct HeightsInfo
+    {
+        public bool BlendHeights { get; set; }
+        public float HeightBlendLow { get; set; }
+        public float HeightLow { get; set; }
+        public float HeightHigh { get; set; }
+        public float HeightBlendHigh { get; set; }
     }
     public class Selections
     {
@@ -43,6 +151,33 @@ public static class EditorVars
             Biome = 1 << 1,
             Alpha = 1 << 2,
             Topology = 1 << 3,
+        }
+    }
+    public class PrefabExport
+    {
+        public int PrefabNumber
+        {
+            get; set;
+        }
+        public uint PrefabID
+        {
+            get; set;
+        }
+        public string PrefabPath
+        {
+            get; set;
+        }
+        public string PrefabPosition
+        {
+            get; set;
+        }
+        public string PrefabScale
+        {
+            get; set;
+        }
+        public string PrefabRotation
+        {
+            get; set;
         }
     }
     public class Layers
@@ -122,7 +257,7 @@ public static class EditorVars
         public static GUIContent groupRustEditPrefabs = new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.");
         public static GUIContent breakRustEditPrefabs = new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.");
         public static GUIContent hidePrefabsInRustEdit = new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from appearing in RustEdit.");
-        
+
         public static GUIContent deleteMapPrefabs = new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.");
         public static GUIContent deleteMapPaths = new GUIContent("Delete All Map Paths", "Removes all the paths from the map.");
 
@@ -149,11 +284,16 @@ public static class EditorVars
 
         public static GUIContent slopeToolsLabel = new GUIContent("Slope Tools");
         public static GUIContent paintSlopes = new GUIContent("Paint Slopes", "Paints the active texture within the slope range.");
+        public static GUIContent paintSlopesBlend = new GUIContent("Paint Slopes Blend", "Paints the active texture within the slope range, whilst blending out to the blend range.");
         public static GUIContent eraseSlopes = new GUIContent("Erase Slopes", "Paints the inactive texture within the slope range.");
 
         public static GUIContent heightsLabel = new GUIContent("Heights");
+        public static GUIContent heightToolsLabel = new GUIContent("Height Tools");
         public static GUIContent paintHeights = new GUIContent("Paint Heights", "Paints the active texture within the height range.");
+        public static GUIContent paintHeightsBlend = new GUIContent("Paint Heights Blend", "Paints the active texture within the height range, whilst blending out to the blend range.");
         public static GUIContent eraseHeights = new GUIContent("Erase Heights", "Paints the inactive texture within the height range.");
+
+
         public static GUIContent miscLabel = new GUIContent("Misc");
 
         public static GUIContent rotateMapLabel = new GUIContent("Rotate Map");
@@ -184,7 +324,7 @@ public static class EditorVars
         public static GUIContent setLandHeight = new GUIContent("Set Land Height", "Sets the terrain height to the height selected.");
         public static GUIContent setWaterHeight = new GUIContent("Set Water Height", "Sets the water height to the height selected.");
 
-        public static GUIContent minMaxHeightLabel = new GUIContent("terrain Minimum/Maximum Height");
+        public static GUIContent minMaxHeightLabel = new GUIContent("Min/Max Height");
         public static GUIContent setMinHeight = new GUIContent("Set Minimum Height", "Raises any of the terrain below the minimum height to the minimum height.");
         public static GUIContent setMaxHeight = new GUIContent("Set Maximum Height", "Lowers any of the terrain above the maximum height to the maximum height.");
 
@@ -201,9 +341,9 @@ public static class EditorVars
         public static GUIContent conditionalPaintLabel = new GUIContent("Conditional Paint");
         public static GUIContent conditionsLabel = new GUIContent("Conditions");
         public static GUIContent textureCheck = new GUIContent("Textures To Check:", "Check for all the selected textures before painting.");
-        public static GUIContent checkAlpha = new GUIContent("Check Alpha:", "If toggled the Alpha will be checked on the selected texture.");
-        public static GUIContent checkSlopes = new GUIContent("Check Slopes:", "If toggled the Slopes will be checked within the selected range.");
-        public static GUIContent checkHeights = new GUIContent("Check Heights:", "If toggled the Height will be checked within the selected range.");
+        public static GUIContent checkAlpha = new GUIContent("Check Alpha", "If toggled the Alpha will be checked on the selected texture.");
+        public static GUIContent checkSlopes = new GUIContent("Check Slopes", "If toggled the Slopes will be checked within the selected range.");
+        public static GUIContent checkHeights = new GUIContent("Check Heights", "If toggled the Height will be checked within the selected range.");
         public static GUIContent paintConditional = new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set.");
 
         public static GUIContent textureToPaintLabel = new GUIContent("Texture To Paint");
