@@ -11,56 +11,6 @@ using EditorVariables;
 using static WorldConverter;
 using static WorldSerialization;
 
-public class PrefabExport
-{
-    public int PrefabNumber
-    {
-        get; set;
-    }
-    public uint PrefabID
-    {
-        get; set;
-    }
-    public string PrefabPath
-    {
-        get; set;
-    }
-    public string PrefabPosition
-    {
-        get; set;
-    }
-    public string PrefabScale
-    {
-        get; set;
-    }
-    public string PrefabRotation
-    {
-        get; set;
-    }
-}
-
-public struct TopologyLayers
-{
-    public float[,,] Topologies
-    {
-        get; set;
-    }
-}
-public struct GroundTextures
-{
-    public int Texture
-    {
-        get; set;
-    }
-}
-public struct BiomeTextures
-{
-    public int Texture
-    {
-        get; set;
-    }
-}
-
 public static class MapIO
 {
     public static float progressBar = 0f, progressValue = 1f;
