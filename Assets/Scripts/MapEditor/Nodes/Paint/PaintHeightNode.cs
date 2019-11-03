@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Height")]
 public class PaintHeightNode : Node
@@ -27,17 +28,17 @@ public class PaintHeightNode : Node
         }
         switch (layer.LandLayer)
         {
-            case 0: // Ground
-                MapIO.PaintHeight("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+            case 0: 
+                MapIO.PaintHeightBlend(LandLayers.Ground, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
-            case 1: // Biome
-                MapIO.PaintHeight("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+            case 1: 
+                MapIO.PaintHeightBlend(LandLayers.Biome, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
-            case 2: // Alpha
-                MapIO.PaintHeight("Alpha", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.AlphaTexture);
+            case 2: 
+                MapIO.PaintHeight(LandLayers.Alpha, heightLow, heightHigh, layer.AlphaTexture);
                 break;
-            case 3: // Topology. Going to overhaul the topology layers soon to avoid all the changing of layer values.
-                MapIO.PaintHeight("Topology", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
+            case 3: 
+                MapIO.PaintHeight(LandLayers.Topology, heightLow, heightHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

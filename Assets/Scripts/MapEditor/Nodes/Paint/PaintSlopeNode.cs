@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Slope")]
 public class PaintSlopeNode : Node
@@ -27,17 +28,17 @@ public class PaintSlopeNode : Node
         }
         switch (layer.LandLayer)
         {
-            case 0: // Ground
-                MapIO.PaintSlope("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+            case 0:
+                MapIO.PaintSlopeBlend(LandLayers.Ground, slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
-            case 1: // Biome
-                MapIO.PaintSlope("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+            case 1: 
+                MapIO.PaintSlopeBlend(LandLayers.Biome, slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
-            case 2: // Alpha
-                MapIO.PaintSlope("Alpha", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.AlphaTexture);
+            case 2: 
+                MapIO.PaintSlope(LandLayers.Alpha, slopeLow, slopeHigh, layer.AlphaTexture);
                 break;
-            case 3: // Topology
-                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, layer.TopologyTexture, layer.TopologyLayer);
+            case 3: 
+                MapIO.PaintSlope(LandLayers.Topology, slopeLow, slopeHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

@@ -3,7 +3,7 @@ name: Feature Request
 about: Suggest an idea for the Editor
 title: "[REQUEST] Request name goes here"
 labels: enhancement
-assignees: Adsitoz
+assignees: Adsito
 
 ---
 
