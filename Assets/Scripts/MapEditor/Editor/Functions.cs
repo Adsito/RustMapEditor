@@ -654,22 +654,26 @@ namespace EditorUI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.rotateAll90))
             {
-                MapIO.RotateAllTopologyLayers(true);
+                MapIO.RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, true);
             }
             if (Elements.ToolbarButton(ToolTips.rotateAll270))
             {
-                MapIO.RotateAllTopologyLayers(false);
+                MapIO.RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, false);
             }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.invertAll))
+            if (Elements.ToolbarButton(ToolTips.paintAll))
             {
-                MapIO.InvertAllTopologyLayers();
+                MapIO.PaintTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
             }
             if (Elements.ToolbarButton(ToolTips.clearAll))
             {
-                MapIO.ClearAllTopologyLayers();
+                MapIO.ClearTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
+            }
+            if (Elements.ToolbarButton(ToolTips.invertAll))
+            {
+                MapIO.InvertTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
             }
             Elements.EndToolbarHorizontal();
         }

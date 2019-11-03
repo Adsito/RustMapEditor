@@ -193,7 +193,7 @@ public static class MapIO
                     RotateLayer(LandLayers.Alpha, CW);
                     break;
                 case 3:
-                    RotateAllTopologyLayers(CW);
+                    RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, CW);
                     break;
                 case 4:
                     RotateHeightMap(CW, Selections.Terrains.Land);
@@ -628,21 +628,6 @@ public static class MapIO
         ClearProgressBar();
     }
     /// <summary>
-    /// Rotates all Topology layers°.
-    /// </summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateAllTopologyLayers(bool CW)
-    {
-        progressValue = 1f / TerrainTopology.COUNT;
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            RotateLayer(LandLayers.Topology, CW, TerrainTopology.TypeToIndex(i));
-        }
-        ClearProgressBar();
-    }
-    /// <summary>
     /// Paints if all the conditions passed in are true.
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
@@ -925,20 +910,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            PaintLayer(LandLayers.Topology, i);
-        }
-        ClearProgressBar();
-    }
-    /// <summary>
-    /// Paints all the topology layers.
-    /// </summary>
-    public static void PaintAllTopologyLayers()
-    {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Painting Layers", "Painting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            PaintLayer(LandLayers.Topology, i);
+            PaintLayer(LandLayers.Topology, 0, i);
         }
         ClearProgressBar();
     }
@@ -987,19 +959,6 @@ public static class MapIO
         ClearProgressBar();
     }
     /// <summary>
-    /// Clears all the topology layers.
-    /// </summary>
-    public static void ClearAllTopologyLayers()
-    {
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            ClearLayer(LandLayers.Topology, i);
-        }
-        ClearProgressBar();
-    }
-    /// <summary>
     /// Inverts the active and inactive textures. Alpha and Topology only. 
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
@@ -1038,20 +997,6 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            InvertLayer(LandLayers.Topology, i);
-        }
-        ClearProgressBar();
-    }
-    /// <summary>
-    /// Inverts all the Topology layers.
-    /// </summary>
-    public static void InvertAllTopologyLayers()
-    {
-        progressValue = 1f / TerrainTopology.COUNT;
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
             InvertLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
