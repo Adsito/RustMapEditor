@@ -359,5 +359,6 @@ namespace EditorVariables
         public static GUIContent invertLayer = new GUIContent("Invert Layer", "Inverts the active and inactive textures over the entire terrain.");
         public static GUIContent invertAll = new GUIContent("Invert All", "Invert all Topology layers.");
         public static GUIContent clearAll = new GUIContent("Clear All", "Clear all Topology layers.");
+        public static GUIContent paintAll = new GUIContent("Paint All", "Paint all Topology layers.");
     }
 }
