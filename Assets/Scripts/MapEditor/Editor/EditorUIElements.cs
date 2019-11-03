@@ -51,6 +51,10 @@ public static class EditorUIElements
     {
         return EditorGUILayout.EnumPopup(enumGroup, EditorStyles.toolbarDropDown);
     }
+    public static Enum ToolbarEnumFlagsField(Enum enumGroup)
+    {
+        return EditorGUILayout.EnumFlagsField(enumGroup, EditorStyles.toolbarDropDown);
+    }
     public static float ToolbarDelayedFloatField(float value)
     {
         return value = EditorGUILayout.DelayedFloatField(value, EditorStyles.toolbarTextField);
@@ -91,7 +95,7 @@ public static class EditorUIElements
         EndToolbarHorizontal();
         return value;
     }
-    public static void ToolbarToggleMinMax(GUIContent toggleContent, GUIContent minContent, GUIContent maxContent, bool toggle, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
+    public static bool ToolbarToggleMinMax(GUIContent toggleContent, GUIContent minContent, GUIContent maxContent, bool toggle, ref float minValue, ref float maxValue, float minLimit, float maxLimit)
     {
         BeginToolbarHorizontal();
         toggle = ToolbarToggle(toggleContent, toggle);
@@ -101,6 +105,7 @@ public static class EditorUIElements
         maxValue = EditorGUILayout.DelayedFloatField(maxValue);
         EndToolbarHorizontal();
         EditorGUILayout.MinMaxSlider(ref minValue, ref maxValue, minLimit, maxLimit);
+        return toggle;
     }
     #endregion
     #region Other

@@ -28,5 +28,3 @@ Using resources from:
 -https://github.com/Siccity/xNode for the node system.
 
 -https://bitbucket.org/rotorz/reorderable-list-editor-field-for-unity/src/master/ for the draggable UI framework.
-
--https://assetstore.unity.com/packages/tools/terrain/runswimfly-terrain-tools-142156 for extra terrain tools.
