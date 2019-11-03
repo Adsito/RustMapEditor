@@ -28,16 +28,16 @@ public class PaintHeightNode : Node
         switch (layer.LandLayer)
         {
             case 0: 
-                MapIO.PaintHeightBlend("Ground", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintHeightBlend(EditorVars.LandLayers.Ground, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: 
-                MapIO.PaintHeightBlend("Biome", heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintHeightBlend(EditorVars.LandLayers.Biome, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: 
-                MapIO.PaintHeight("Alpha", heightLow, heightHigh, layer.AlphaTexture);
+                MapIO.PaintHeight(EditorVars.LandLayers.Alpha, heightLow, heightHigh, layer.AlphaTexture);
                 break;
             case 3: 
-                MapIO.PaintHeight("Topology", heightLow, heightHigh, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintHeight(EditorVars.LandLayers.Topology, heightLow, heightHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

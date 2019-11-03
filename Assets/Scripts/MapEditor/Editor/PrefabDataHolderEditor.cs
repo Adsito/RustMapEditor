@@ -11,8 +11,8 @@ public class PrefabDataHolderEditor : Editor
             return;
         }
 
-        MapIOEditor.PrefabCategory(script);
-        MapIOEditor.PrefabID(script);
-        MapIOEditor.SnapToGround(script);
+        EditorUIFunctions.PrefabCategory(script);
+        EditorUIFunctions.PrefabID(script);
+        EditorUIFunctions.SnapToGround(script);
     }
 }

@@ -28,16 +28,16 @@ public class PaintSlopeNode : Node
         switch (layer.LandLayer)
         {
             case 0:
-                MapIO.PaintSlopeBlend("Ground", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintSlopeBlend(EditorVars.LandLayers.Ground, slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: 
-                MapIO.PaintSlopeBlend("Biome", slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintSlopeBlend(EditorVars.LandLayers.Biome, slopeLow, slopeHigh, slopeMinBlendLow, slopeMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: 
-                MapIO.PaintSlope("Alpha", slopeLow, slopeHigh, layer.AlphaTexture);
+                MapIO.PaintSlope(EditorVars.LandLayers.Alpha, slopeLow, slopeHigh, layer.AlphaTexture);
                 break;
             case 3: 
-                MapIO.PaintSlope("Topology", slopeLow, slopeHigh, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintSlope(EditorVars.LandLayers.Topology, slopeLow, slopeHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

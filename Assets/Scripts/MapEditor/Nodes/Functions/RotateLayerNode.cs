@@ -19,13 +19,13 @@ public class RotateLayerNode : Node
         switch (landLayer)
         {
             case NodeVariables.Texture.LandLayerEnum.Ground:
-                MapIO.RotateLayer("ground", CW);
+                MapIO.RotateLayer(EditorVars.LandLayers.Ground, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Biome:
-                MapIO.RotateLayer("biome", CW);
+                MapIO.RotateLayer(EditorVars.LandLayers.Biome, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Alpha:
-                MapIO.RotateLayer("alpha", CW);
+                MapIO.RotateLayer(EditorVars.LandLayers.Alpha, CW);
                 break;
             case NodeVariables.Texture.LandLayerEnum.Topology:
                 MapIO.RotateTopologyLayers(topologies, CW);
