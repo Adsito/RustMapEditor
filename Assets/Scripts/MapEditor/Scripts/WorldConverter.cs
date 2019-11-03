@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using EditorMaths;
 using static WorldSerialization;
 
 public class WorldConverter
@@ -60,8 +61,8 @@ public class WorldConverter
                 waterHeight[i, j] = 500f / 1000f;
             }
         }
-        byte[] landHeightBytes = TypeConverter.floatArrayToByteArray(landHeight);
-        byte[] waterHeightBytes = TypeConverter.floatArrayToByteArray(waterHeight);
+        byte[] landHeightBytes = ArrayMaths.FloatArrayToByteArray(landHeight);
+        byte[] waterHeightBytes = ArrayMaths.FloatArrayToByteArray(waterHeight);
 
         MapIO.ProgressBar("Creating New Map", "Setting TerrainMaps", 0.5f);
 
@@ -81,9 +82,9 @@ public class WorldConverter
         terrains.resolution = heightMap.res;
         terrains.size = terrainSize;
 
-        terrains.terrain.heights = TypeConverter.shortMapToFloatArray(terrainMap);
-        terrains.land.heights = TypeConverter.shortMapToFloatArray(terrainMap);
-        terrains.water.heights = TypeConverter.shortMapToFloatArray(waterMap);
+        terrains.terrain.heights = ArrayMaths.ShortMapToFloatArray(terrainMap);
+        terrains.land.heights = ArrayMaths.ShortMapToFloatArray(terrainMap);
+        terrains.water.heights = ArrayMaths.ShortMapToFloatArray(waterMap);
 
         MapIO.ProgressBar("Creating New Map", "Converting to Terrain", 0.75f);
 
@@ -110,7 +111,7 @@ public class WorldConverter
                 }
             }
         }
-        terrains.splatMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.splatMap, 8) : terrains.splatMap;
+        terrains.splatMap = (normaliseMulti) ? ArrayMaths.MultiToSingleNormalised(terrains.splatMap, 8) : terrains.splatMap;
 
         terrains.biomeMap = new float[biomeMap.res, biomeMap.res, 4];
         for (int i = 0; i < terrains.biomeMap.GetLength(0); i++)
@@ -123,7 +124,7 @@ public class WorldConverter
                 }
             }
         }
-        terrains.biomeMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.biomeMap, 4) : terrains.biomeMap;
+        terrains.biomeMap = (normaliseMulti) ? ArrayMaths.MultiToSingleNormalised(terrains.biomeMap, 4) : terrains.biomeMap;
 
         terrains.alphaMap = new float[alphaMap.res, alphaMap.res, 2];
         for (int i = 0; i < terrains.alphaMap.GetLength(0); i++)
@@ -140,7 +141,7 @@ public class WorldConverter
                 }
             }
         }
-        terrains.alphaMap = (normaliseMulti) ? TypeConverter.MultiNormalised(terrains.alphaMap, 2) : terrains.alphaMap;
+        terrains.alphaMap = (normaliseMulti) ? ArrayMaths.MultiToSingleNormalised(terrains.alphaMap, 2) : terrains.alphaMap;
         return terrains;
     }
 
@@ -174,9 +175,9 @@ public class WorldConverter
         terrains.resolution = heightMap.res;
         terrains.size = terrainSize;
 
-        terrains.terrain.heights = TypeConverter.shortMapToFloatArray(terrainMap);
-        terrains.land.heights = TypeConverter.shortMapToFloatArray(terrainMap);
-        terrains.water.heights = TypeConverter.shortMapToFloatArray(waterMap);
+        terrains.terrain.heights = ArrayMaths.ShortMapToFloatArray(terrainMap);
+        terrains.land.heights = ArrayMaths.ShortMapToFloatArray(terrainMap);
+        terrains.water.heights = ArrayMaths.ShortMapToFloatArray(waterMap);
 
         terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap, true);
         return terrains;
@@ -192,9 +193,9 @@ public class WorldConverter
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
 
-        byte[] landHeightBytes = TypeConverter.floatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight));
+        byte[] landHeightBytes = ArrayMaths.FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapWidth, land.terrainData.heightmapHeight));
 
-        byte[] waterHeightBytes = TypeConverter.floatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight));
+        byte[] waterHeightBytes = ArrayMaths.FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight));
     
         var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 

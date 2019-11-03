@@ -6,6 +6,8 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
+using EditorMaths;
+using EditorVariables;
 using static WorldConverter;
 using static WorldSerialization;
 
@@ -58,61 +60,7 @@ public struct BiomeTextures
         get; set;
     }
 }
-public struct Conditions
-{
-    public TerrainSplat.Enum GroundConditions
-    {
-        get; set;
-    }
-    public TerrainBiome.Enum BiomeConditions
-    {
-        get; set;
-    }
-    public TerrainTopology.Enum TopologyLayers
-    {
-        get; set;
-    }
-    public bool CheckAlpha
-    {
-        get; set;
-    }
-    public int AlphaTexture
-    {
-        get; set;
-    }
-    public int TopologyTexture
-    {
-        get; set;
-    }
-    public bool CheckHeight
-    {
-        get; set;
-    }
-    public float HeightLow
-    {
-        get; set;
-    }
-    public float HeightHigh
-    {
-        get; set;
-    }
-    public bool CheckSlope
-    {
-        get; set;
-    }
-    public float SlopeLow
-    {
-        get; set;
-    }
-    public float SlopeHigh
-    {
-        get; set;
-    }
-    public int[,,,] AreaRange
-    {
-        get; set;
-    }
-}
+
 public static class MapIO
 {
     public static float progressBar = 0f, progressValue = 1f;
@@ -251,10 +199,10 @@ public static class MapIO
     {
         return 0.5f * GetTerrainSize();
     }
-    public static List<int> ParseObjectSelection(EditorVars.Selections.Objects objectSelection)
+    public static List<int> ParseObjectSelection(Selections.Objects objectSelection)
     {
         List<int> selectedEnums = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(EditorVars.Selections.Objects)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(Selections.Objects)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)objectSelection & layer) != 0)
@@ -265,10 +213,10 @@ public static class MapIO
         }
         return selectedEnums;
     }
-    public static List<int> ParseTerrainSelection(EditorVars.Selections.Terrains terrainSelection)
+    public static List<int> ParseTerrainSelection(Selections.Terrains terrainSelection)
     {
         List<int> selectedEnums = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(EditorVars.Selections.Terrains)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(Selections.Terrains)).Length; i++)
         {
             int layer = 1 << i;
             if (((int)terrainSelection & layer) != 0)
@@ -279,29 +227,29 @@ public static class MapIO
         return selectedEnums;
     }
     #region RotateMap Methods
-    public static void RotateMap(EditorVars.Selections.Objects objectSelection, bool CW)
+    public static void RotateMap(Selections.Objects objectSelection, bool CW)
     {
         foreach (var item in ParseObjectSelection(objectSelection))
         {
             switch (item)
             {
                 case 0:
-                    RotateLayer(EditorVars.LandLayers.Ground, CW);
+                    RotateLayer(LandLayers.Ground, CW);
                     break;
                 case 1:
-                    RotateLayer(EditorVars.LandLayers.Biome, CW);
+                    RotateLayer(LandLayers.Biome, CW);
                     break;
                 case 2:
-                    RotateLayer(EditorVars.LandLayers.Alpha, CW);
+                    RotateLayer(LandLayers.Alpha, CW);
                     break;
                 case 3:
                     RotateAllTopologyLayers(CW);
                     break;
                 case 4:
-                    RotateHeightMap(CW, EditorVars.Selections.Terrains.Land);
+                    RotateHeightMap(CW, Selections.Terrains.Land);
                     break;
                 case 5:
-                    RotateHeightMap(CW, EditorVars.Selections.Terrains.Water);
+                    RotateHeightMap(CW, Selections.Terrains.Water);
                     break;
                 case 6:
                     RotatePrefabs(CW);
@@ -350,17 +298,17 @@ public static class MapIO
     /// Rotates the selected terrains 90° CW/CCW.
     /// </summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateHeightMap(bool CW, EditorVars.Selections.Terrains terrains, ArrayOperations.Dimensions dmns = null)
+    public static void RotateHeightMap(bool CW, Selections.Terrains terrains, Dimensions dmns = null)
     {
         foreach (var item in ParseTerrainSelection(terrains))
         {
             switch (item)
             {
                 case 0:
-                    terrain.terrainData.SetHeights(0, 0, ArrayOperations.Rotate(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), CW, dmns));
+                    terrain.terrainData.SetHeights(0, 0, ArrayMaths.Rotate(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), CW, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, ArrayOperations.Rotate(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), CW, dmns));
+                    water.terrainData.SetHeights(0, 0, ArrayMaths.Rotate(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), CW, dmns));
                     break;
             }
         }
@@ -369,7 +317,7 @@ public static class MapIO
     /// Sets the selected terrains to the height set.
     /// </summary>
     /// <param name="height">The height to set.</param>
-    public static void SetHeightmap(float height, EditorVars.Selections.Terrains terrains, ArrayOperations.Dimensions dmns = null)
+    public static void SetHeightmap(float height, Selections.Terrains terrains, Dimensions dmns = null)
     {
         height /= 1000f;
         foreach (var item in ParseTerrainSelection(terrains))
@@ -377,10 +325,10 @@ public static class MapIO
             switch (item)
             {
                 case 0:
-                    terrain.terrainData.SetHeights(0, 0, ArrayOperations.SetValues(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), height, dmns));
+                    terrain.terrainData.SetHeights(0, 0, ArrayMaths.SetValues(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), height, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, ArrayOperations.SetValues(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), height, dmns));
+                    water.terrainData.SetHeights(0, 0, ArrayMaths.SetValues(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), height, dmns));
                     break;
             }
         }
@@ -388,17 +336,17 @@ public static class MapIO
     /// <summary>
     /// Inverts the HeightMap.
     /// </summary>
-    public static void InvertHeightmap(EditorVars.Selections.Terrains terrains, ArrayOperations.Dimensions dmns = null)
+    public static void InvertHeightmap(Selections.Terrains terrains, Dimensions dmns = null)
     {
         foreach (var item in ParseTerrainSelection(terrains))
         {
             switch (item)
             {
                 case 0:
-                    terrain.terrainData.SetHeights(0, 0, ArrayOperations.Invert(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), dmns));
+                    terrain.terrainData.SetHeights(0, 0, ArrayMaths.Invert(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, ArrayOperations.Invert(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), dmns));
+                    water.terrainData.SetHeights(0, 0, ArrayMaths.Invert(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), dmns));
                     break;
             }
         }
@@ -408,10 +356,10 @@ public static class MapIO
     /// </summary>
     /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
-    public static void NormaliseHeightmap(float normaliseLow, float normaliseHigh, ArrayOperations.Dimensions dmns = null)
+    public static void NormaliseHeightmap(float normaliseLow, float normaliseHigh, Dimensions dmns = null)
     {
         normaliseLow /= 1000f; normaliseHigh /= 1000f;
-        terrain.terrainData.SetHeights(0, 0, ArrayOperations.Normalise(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), normaliseLow, normaliseHigh, dmns));
+        terrain.terrainData.SetHeights(0, 0, ArrayMaths.Normalise(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), normaliseLow, normaliseHigh, dmns));
     }
     /// <summary>
     /// Terraces the HeightMap.
@@ -454,7 +402,7 @@ public static class MapIO
     /// </summary>
     /// <param name="offset">The amount to offset by. Negative values offset down.</param>
     /// <param name="clampOffset">Check if offsetting the heightmap would exceed the min-max values.</param>
-    public static void OffsetHeightmap(float offset, bool clampOffset, EditorVars.Selections.Terrains terrains)
+    public static void OffsetHeightmap(float offset, bool clampOffset, Selections.Terrains terrains)
     {
         offset /= 1000f;
         foreach (var item in ParseTerrainSelection(terrains))
@@ -462,10 +410,10 @@ public static class MapIO
             switch (item)
             {
                 case 0:
-                    ArrayOperations.Offset(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), offset, clampOffset);
+                    terrain.terrainData.SetHeights(0, 0, ArrayMaths.Offset(terrain.terrainData.GetHeights(0, 0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight), offset, clampOffset));
                     break;
                 case 1:
-                    ArrayOperations.Offset(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), offset, clampOffset);
+                    terrain.terrainData.SetHeights(0, 0, ArrayMaths.Offset(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapWidth, water.terrainData.heightmapHeight), offset, clampOffset));
                     break;
             }
         }
@@ -626,17 +574,17 @@ public static class MapIO
     /// <param name="landLayer">The LandLayer to return. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     /// <returns></returns>
-    public static float[,,] GetSplatMap(EditorVars.LandLayers landLayer, int topology = 0)
+    public static float[,,] GetSplatMap(LandLayers landLayer, int topology = 0)
     {
         switch (landLayer)
         {
-            case EditorVars.LandLayers.Ground:
+            case LandLayers.Ground:
                 return LandData.groundArray;
-            case EditorVars.LandLayers.Biome:
+            case LandLayers.Biome:
                 return LandData.biomeArray;
-            case EditorVars.LandLayers.Alpha:
+            case LandLayers.Alpha:
                 return LandData.alphaArray;
-            case EditorVars.LandLayers.Topology:
+            case LandLayers.Topology:
                 return LandData.topologyArray[topology];
             default:
                 return null;
@@ -647,13 +595,13 @@ public static class MapIO
     /// </summary>
     /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
     /// <returns></returns>
-    public static int TextureCount(EditorVars.LandLayers landLayer)
+    public static int TextureCount(LandLayers landLayer)
     {
         switch (landLayer)
         {
-            case EditorVars.LandLayers.Ground:
+            case LandLayers.Ground:
                 return 8;
-            case EditorVars.LandLayers.Biome:
+            case LandLayers.Biome:
                 return 4;
             default:
                 return 2;
@@ -668,7 +616,7 @@ public static class MapIO
     /// <param name="z">The Z coordinate.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     /// <returns></returns>
-    public static float GetTexture(EditorVars.LandLayers landLayer, int texture, int x, int z, int topology = 0)
+    public static float GetTexture(LandLayers landLayer, int texture, int x, int z, int topology = 0)
     {
         return GetSplatMap(landLayer, topology)[x, z, texture];
     }
@@ -678,7 +626,7 @@ public static class MapIO
     /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void RotateLayer(EditorVars.LandLayers landLayerToPaint, bool CW, int topology = 0)
+    public static void RotateLayer(LandLayers landLayerToPaint, bool CW, int topology = 0)
     {
         int textureCount = TextureCount(landLayerToPaint);
         float[,,] oldLayer = GetSplatMap(landLayerToPaint, topology);
@@ -725,7 +673,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            RotateLayer(EditorVars.LandLayers.Topology, CW, i);
+            RotateLayer(LandLayers.Topology, CW, i);
         }
         ClearProgressBar();
     }
@@ -740,7 +688,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            RotateLayer(EditorVars.LandLayers.Topology, CW, TerrainTopology.TypeToIndex(i));
+            RotateLayer(LandLayers.Topology, CW, TerrainTopology.TypeToIndex(i));
         }
         ClearProgressBar();
     }
@@ -751,12 +699,12 @@ public static class MapIO
     /// <param name="texture">The texture to paint.</param>
     /// <param name="conditions">The conditions to check.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintConditional(EditorVars.LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
+    public static void PaintConditional(LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
-        float[,,] groundSplatMap = GetSplatMap(EditorVars.LandLayers.Ground);
-        float[,,] biomeSplatMap = GetSplatMap(EditorVars.LandLayers.Biome);
-        float[,,] alphaSplatMap = GetSplatMap(EditorVars.LandLayers.Alpha);
-        float[,,] topologySplatMap = GetSplatMap(EditorVars.LandLayers.Topology, topology);
+        float[,,] groundSplatMap = GetSplatMap(LandLayers.Ground);
+        float[,,] biomeSplatMap = GetSplatMap(LandLayers.Biome);
+        float[,,] alphaSplatMap = GetSplatMap(LandLayers.Alpha);
+        float[,,] topologySplatMap = GetSplatMap(LandLayers.Topology, topology);
         float[,,] splatMapPaint = new float[groundSplatMap.GetLength(0), groundSplatMap.GetLength(1), TextureCount(landLayerToPaint)];
         int textureCount = TextureCount(landLayerToPaint);
         float slope, height;
@@ -765,16 +713,16 @@ public static class MapIO
         ProgressBar("Conditional Painter", "Preparing SplatMaps", 0.025f);
         switch (landLayerToPaint)
         {
-            case EditorVars.LandLayers.Ground:
+            case LandLayers.Ground:
                 splatMapPaint = groundSplatMap;
                 break;
-            case EditorVars.LandLayers.Biome:
+            case LandLayers.Biome:
                 splatMapPaint = biomeSplatMap;
                 break;
-            case EditorVars.LandLayers.Alpha:
+            case LandLayers.Alpha:
                 splatMapPaint = alphaSplatMap;
                 break;
-            case EditorVars.LandLayers.Topology:
+            case LandLayers.Topology:
                 splatMapPaint = topologySplatMap;
                 break;
         }
@@ -786,7 +734,7 @@ public static class MapIO
         {
             topologyLayersList.Add(new TopologyLayers()
             {
-                Topologies = GetSplatMap(EditorVars.LandLayers.Topology, topologyLayerInt)
+                Topologies = GetSplatMap(LandLayers.Topology, topologyLayerInt)
             });
         }
         foreach (var groundTextureInt in ReturnSelectedSplats(conditions.GroundConditions))
@@ -884,7 +832,7 @@ public static class MapIO
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintHeight(EditorVars.LandLayers landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
+    public static void PaintHeight(LandLayers landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -917,7 +865,7 @@ public static class MapIO
     /// <param name="heightBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
     /// <param name="heightBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
-    public static void PaintHeightBlend(EditorVars.LandLayers landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t, int topology = 0)
+    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint);
         int textureCount = TextureCount(landLayerToPaint);
@@ -997,7 +945,7 @@ public static class MapIO
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintLayer(EditorVars.LandLayers landLayerToPaint, int t, int topology = 0)
+    public static void PaintLayer(LandLayers landLayerToPaint, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1027,7 +975,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            PaintLayer(EditorVars.LandLayers.Topology, i);
+            PaintLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1040,7 +988,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Painting Layers", "Painting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            PaintLayer(EditorVars.LandLayers.Topology, i);
+            PaintLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1049,10 +997,10 @@ public static class MapIO
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to clear. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void ClearLayer(EditorVars.LandLayers landLayerToPaint, int topology = 0)
+    public static void ClearLayer(LandLayers landLayerToPaint, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-        var alpha = (landLayerToPaint == EditorVars.LandLayers.Alpha) ? true : false;
+        var alpha = (landLayerToPaint == LandLayers.Alpha) ? true : false;
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -1084,7 +1032,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            ClearLayer(EditorVars.LandLayers.Topology, i);
+            ClearLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1097,7 +1045,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Clearing Layers", "Clearing: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            ClearLayer(EditorVars.LandLayers.Topology, i);
+            ClearLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1106,7 +1054,7 @@ public static class MapIO
     /// </summary>
     /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void InvertLayer(EditorVars.LandLayers landLayerToPaint, int topology = 0)
+    public static void InvertLayer(LandLayers landLayerToPaint, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         for (int i = 0; i < splatMap.GetLength(0); i++)
@@ -1140,7 +1088,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
-            InvertLayer(EditorVars.LandLayers.Topology, i);
+            InvertLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1154,7 +1102,7 @@ public static class MapIO
         {
             progressBar += progressValue;
             ProgressBar("Inverting Layers", "Inverting: " + (TerrainTopology.Enum)TerrainTopology.IndexToType(i), progressBar);
-            InvertLayer(EditorVars.LandLayers.Topology, i);
+            InvertLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
     }
@@ -1166,7 +1114,7 @@ public static class MapIO
     /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintSlope(EditorVars.LandLayers landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public static void PaintSlope(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1200,7 +1148,7 @@ public static class MapIO
     /// <param name="maxBlendHigh">The maximum slope to start to paint. The texture weight will increase as it gets closer to the slopeHigh.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintSlopeBlend(EditorVars.LandLayers landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public static void PaintSlopeBlend(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1281,7 +1229,7 @@ public static class MapIO
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintArea(EditorVars.LandLayers landLayerToPaint, ArrayOperations.Dimensions dmns, int t, int topology = 0)
+    public static void PaintArea(LandLayers landLayerToPaint, Dimensions dmns, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1310,7 +1258,7 @@ public static class MapIO
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintRiver(EditorVars.LandLayers landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
+    public static void PaintRiver(LandLayers landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
@@ -1700,18 +1648,18 @@ public static class MapIO
         TopologyData.InitMesh(terrains.topology);
 
         ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
-        LandData.SetData(terrains.splatMap, EditorVars.LandLayers.Ground);
+        LandData.SetData(terrains.splatMap, LandLayers.Ground);
 
         ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
-        LandData.SetData(terrains.biomeMap, EditorVars.LandLayers.Biome);
+        LandData.SetData(terrains.biomeMap, LandLayers.Biome);
 
         ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
-        LandData.SetData(terrains.alphaMap, EditorVars.LandLayers.Alpha);
+        LandData.SetData(terrains.alphaMap, LandLayers.Alpha);
 
         ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
-            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), EditorVars.LandLayers.Topology, i);
+            LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
         }
     }
     /// <summary>
@@ -1760,9 +1708,9 @@ public static class MapIO
     public static void CreateNewMap(int size)
     {
         LoadMapInfo(WorldConverter.EmptyMap(size));
-        PaintLayer(EditorVars.LandLayers.Alpha, 0);
-        PaintLayer(EditorVars.LandLayers.Biome, 1);
-        PaintLayer(EditorVars.LandLayers.Ground, 4);
+        PaintLayer(LandLayers.Alpha, 0);
+        PaintLayer(LandLayers.Biome, 1);
+        PaintLayer(LandLayers.Ground, 4);
         SetMinimumHeight(503f);
     }
     public static List<string> generationPresetList = new List<string>();

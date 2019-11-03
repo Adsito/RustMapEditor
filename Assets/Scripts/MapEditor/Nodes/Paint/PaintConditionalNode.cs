@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Conditional")]
 [NodeWidth(350)]
@@ -48,16 +49,16 @@ public class PaintConditionalNode : Node
         switch (layer.LandLayer)
         {
             case 0: 
-                MapIO.PaintConditional(EditorVars.LandLayers.Ground, TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
+                MapIO.PaintConditional(LandLayers.Ground, TerrainSplat.TypeToIndex(layer.GroundTexture), conditions);
                 break;
             case 1: 
-                MapIO.PaintConditional(EditorVars.LandLayers.Biome, TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
+                MapIO.PaintConditional(LandLayers.Biome, TerrainBiome.TypeToIndex(layer.BiomeTexture), conditions);
                 break;
             case 2: 
-                MapIO.PaintConditional(EditorVars.LandLayers.Alpha, layer.AlphaTexture, conditions);
+                MapIO.PaintConditional(LandLayers.Alpha, layer.AlphaTexture, conditions);
                 break;
             case 3: 
-                MapIO.PaintConditional(EditorVars.LandLayers.Topology, layer.TopologyTexture, conditions, layer.TopologyLayer);
+                MapIO.PaintConditional(LandLayers.Topology, layer.TopologyTexture, conditions, layer.TopologyLayer);
                 break;
         }
     }
