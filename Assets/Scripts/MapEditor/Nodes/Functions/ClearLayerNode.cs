@@ -17,7 +17,7 @@ public class ClearLayerNode : Node
         switch (layer)
         {
             case NodeVariables.Misc.DualLayerEnum.Alpha:
-                MapIO.ClearLayer("Alpha");
+                MapIO.ClearLayer(EditorVars.LandLayers.Alpha);
                 break;
             case NodeVariables.Misc.DualLayerEnum.Topology:
                 MapIO.ClearTopologyLayers(topologies);
