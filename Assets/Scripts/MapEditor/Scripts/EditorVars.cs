@@ -213,7 +213,7 @@ namespace EditorVariables
         public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
         public static GUIContent systemRAM = new GUIContent("RAM: " + SystemInfo.systemMemorySize / 1000 + "GB");
         public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
-        public static GUIContent editorVersion = new GUIContent("Editor Version: v2.2-prerelease");
+        public static GUIContent editorVersion = new GUIContent("Editor Version: v2.3-prerelease");
 
         public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
         public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
