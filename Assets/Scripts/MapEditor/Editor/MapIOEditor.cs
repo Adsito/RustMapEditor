@@ -1,32 +1,26 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
+using EditorUI;
+using EditorVariables;
 
 public class MapIOEditor : EditorWindow
 {
     #region Values
-    string loadFile = "", saveFile = "", mapName = "", prefabSaveFile = "", mapPrefabSaveFile = "";
+    string loadFile = "", saveFile = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
     float heightToSet = 450f, offset = 0f, heightSet = 500f;
-    bool clampOffset = true;
-    float heightLow = 0f, heightHigh = 500f, slopeLow = 40f, slopeHigh = 60f;
-    float slopeBlendLow = 25f, slopeBlendHigh = 75f;
-    float heightBlendLow = 0f, heightBlendHigh = 1000f;
+    bool clampOffset = true, aboveTerrain = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
-    float z1 = 0, z2 = 256, x1 = 0, x2 = 256;
-    bool blendSlopes = false, blendHeights = false, aboveTerrain = false;
     Conditions conditions = new Conditions() { CheckAlpha = true};
-    EditorVars.Layers layers = new EditorVars.Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field};
-    ArrayOperations.Dimensions dimensions = new ArrayOperations.Dimensions() { x0 = 0, x1 = 256, z0 = 0, z1 = 256 };
-    int layerConditionalInt, texture = 0, topologyTexture = 0, alphaTexture;
+    Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field};
+    Dimensions dimensions = new Dimensions() { x0 = 0, x1 = 256, z0 = 0, z1 = 256 };
+    SlopesInfo slopesInfo = new SlopesInfo() { SlopeLow = 40f, SlopeHigh = 60f, SlopeBlendLow = 25f, SlopeBlendHigh = 75f, BlendSlopes = false };
+    HeightsInfo heightsInfo = new HeightsInfo() { HeightLow = 400f, HeightHigh = 600f, HeightBlendLow = 300f, HeightBlendHigh = 700f, BlendHeights = false };
+    int texture = 0, smoothPasses = 0;
     bool deletePrefabs = false, autoUpdate = false;
-    bool checkHeightCndtl = false, checkSlopeCndtl = false, checkAlpha = false;
-    float slopeLowCndtl = 45f, slopeHighCndtl = 60f, heightLowCndtl = 500f, heightHighCndtl = 600f;
     Vector2 scrollPos = new Vector2(0, 0), presetScrollPos = new Vector2(0, 0);
-    EditorVars.Selections.Objects rotateSelection;
-    float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f;
-    float blurDirection = 0f, filterStrength = 1f;
-    int smoothPasses = 0;
+    Selections.Objects rotateSelection;
+    float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f, blurDirection = 0f, filterStrength = 1f;
     #endregion
 
     public void OnGUI()
@@ -42,7 +36,7 @@ public class MapIOEditor : EditorWindow
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu, EditorStyles.toolbarButton);
         if (EditorGUI.EndChangeCheck() && mainMenuOptions == 2)
         {
-            EditorUIFunctions.SetLandLayer(layerIndex);
+            Functions.SetLandLayer((LandLayers)layerIndex);
         }
 
         #region Menu
@@ -50,11 +44,11 @@ public class MapIOEditor : EditorWindow
         {
             #region File
             case 0:
-                EditorUIFunctions.EditorIO(ref loadFile, ref saveFile, ref mapSize);
-                EditorUIFunctions.EditorInfo();
-                EditorUIFunctions.MapInfo();
-                EditorUIFunctions.EditorLinks();
-                EditorUIFunctions.EditorSettings();
+                Functions.EditorIO(ref loadFile, ref saveFile, ref mapSize);
+                Functions.EditorInfo();
+                Functions.MapInfo();
+                Functions.EditorLinks();
+                Functions.EditorSettings();
                 break;
             #endregion
             #region Prefabs
@@ -67,10 +61,10 @@ public class MapIOEditor : EditorWindow
                 switch (prefabOptions)
                 {
                     case 0:
-                        EditorUIFunctions.AssetBundle();
+                        Functions.AssetBundle();
                         break;
                     case 1:
-                        EditorUIFunctions.PrefabTools(ref deletePrefabs, prefabSaveFile, mapPrefabSaveFile);
+                        Functions.PrefabTools(ref deletePrefabs, prefabSaveFile, mapPrefabSaveFile);
                         break;
                 }
                 break;
@@ -87,47 +81,46 @@ public class MapIOEditor : EditorWindow
                 layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    EditorUIFunctions.SetLandLayer(layerIndex);
+                    Functions.SetLandLayer((LandLayers)layerIndex);
                 }
-                ClampValues();
 
                 switch (layerIndex)
                 {
                     case 0:
-                        EditorUIFunctions.TextureSelect((EditorVars.LandLayers)layerIndex, ref layers);
-                        EditorUIFunctions.LayerTools((EditorVars.LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground));
-                        EditorUIFunctions.RotateTools((EditorVars.LandLayers)layerIndex);
-                        EditorUIFunctions.RiverTools((EditorVars.LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref aboveTerrain);
-                        //EditorUIFunctions.SlopeTools((EditorVars.LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground));
-                        //EditorUIFunctions.HeightTools((EditorVars.LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground));
-                        EditorUIFunctions.AreaTools((EditorVars.LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), dimensions);
+                        Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                        Functions.LayerTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground));
+                        Functions.RotateTools((LandLayers)layerIndex);
+                        Functions.RiverTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref aboveTerrain);
+                        Functions.SlopeTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref slopesInfo);
+                        Functions.HeightTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
+                        Functions.AreaTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), dimensions);
                         break;
                     case 1:
-                        EditorUIFunctions.TextureSelect((EditorVars.LandLayers)layerIndex, ref layers);
-                        EditorUIFunctions.LayerTools((EditorVars.LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome));
-                        EditorUIFunctions.RotateTools((EditorVars.LandLayers)layerIndex);
-                        EditorUIFunctions.RiverTools((EditorVars.LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref aboveTerrain);
-                        //EditorUIFunctions.SlopeTools((EditorVars.LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome));
-                        //EditorUIFunctions.HeightTools((EditorVars.LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome));
-                        EditorUIFunctions.AreaTools((EditorVars.LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), dimensions);
+                        Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                        Functions.LayerTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome));
+                        Functions.RotateTools((LandLayers)layerIndex);
+                        Functions.RiverTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref aboveTerrain);
+                        Functions.SlopeTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref slopesInfo);
+                        Functions.HeightTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref heightsInfo);
+                        Functions.AreaTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), dimensions);
                         break;
                     case 2:
-                        EditorUIFunctions.LayerTools((EditorVars.LandLayers)layerIndex, 0, 1);
-                        EditorUIFunctions.RotateTools((EditorVars.LandLayers)layerIndex);
-                        EditorUIFunctions.RiverTools((EditorVars.LandLayers)layerIndex, 1, ref aboveTerrain, 0);
-                        //EditorUIFunctions.SlopeTools((EditorVars.LandLayers)layerIndex, 1, 0);
-                        //EditorUIFunctions.HeightTools((EditorVars.LandLayers)layerIndex, 1, 0);
-                        EditorUIFunctions.AreaTools((EditorVars.LandLayers)layerIndex, 1, dimensions, 0);
+                        Functions.LayerTools((LandLayers)layerIndex, 0, 1);
+                        Functions.RotateTools((LandLayers)layerIndex);
+                        Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1);
+                        Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1);
+                        Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1);
+                        Functions.AreaTools((LandLayers)layerIndex, 0, dimensions, 1);
                         break;
                     case 3:
-                        EditorUIFunctions.TopologyLayerSelect(ref layers);
-                        EditorUIFunctions.LayerTools((EditorVars.LandLayers)layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        EditorUIFunctions.RotateTools((EditorVars.LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        EditorUIFunctions.TopologyTools();
-                        EditorUIFunctions.RiverTools((EditorVars.LandLayers)layerIndex, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        //EditorUIFunctions.SlopeTools((EditorVars.LandLayers)layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        //EditorUIFunctions.HeightTools((EditorVars.LandLayers)layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        EditorUIFunctions.AreaTools((EditorVars.LandLayers)layerIndex, 0, dimensions, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.TopologyLayerSelect(ref layers);
+                        Functions.LayerTools((LandLayers)layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.RotateTools((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.TopologyTools();
+                        Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                        Functions.AreaTools((LandLayers)layerIndex, 0, dimensions, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         break;
                 }
                 break;
@@ -149,7 +142,7 @@ public class MapIOEditor : EditorWindow
                 {
                     #region Generation
                     case 0:
-                        EditorUIFunctions.NodePresets(presetScrollPos);
+                        Functions.NodePresets(presetScrollPos);
                         break;
                     #endregion
                     #region Map Tools
@@ -172,29 +165,29 @@ public class MapIOEditor : EditorWindow
                                 switch (heightMapOptions)
                                 {
                                     case 0:
-                                        EditorUIElements.BoldLabel(EditorVars.ToolTips.heightsLabel);
-                                        EditorUIFunctions.OffsetMap(ref offset, ref clampOffset);
-                                        EditorUIFunctions.SetHeight(ref heightSet);
-                                        EditorUIFunctions.MinMaxHeight(ref heightToSet);
-                                        EditorUIElements.BoldLabel(EditorVars.ToolTips.miscLabel);
-                                        EditorUIFunctions.InvertMap();
+                                        Elements.BoldLabel(ToolTips.heightsLabel);
+                                        Functions.OffsetMap(ref offset, ref clampOffset);
+                                        Functions.SetHeight(ref heightSet);
+                                        Functions.MinMaxHeight(ref heightToSet);
+                                        Elements.BoldLabel(ToolTips.miscLabel);
+                                        Functions.InvertMap();
                                         break;
                                     case 1:
-                                        EditorUIFunctions.NormaliseMap(ref normaliseLow, ref normaliseHigh, ref autoUpdate);
-                                        EditorUIFunctions.SmoothMap(ref filterStrength, ref blurDirection, ref smoothPasses);
-                                        EditorUIFunctions.TerraceMap(ref terraceErodeFeatureSize, ref terraceErodeInteriorCornerWeight);
+                                        Functions.NormaliseMap(ref normaliseLow, ref normaliseHigh, ref autoUpdate);
+                                        Functions.SmoothMap(ref filterStrength, ref blurDirection, ref smoothPasses);
+                                        Functions.TerraceMap(ref terraceErodeFeatureSize, ref terraceErodeInteriorCornerWeight);
                                         break;
                                 }
                                 break;
                             #endregion
                             #region Textures
                             case 1:
-                                EditorUIFunctions.ConditionalPaint(ref conditionalPaintOptions, ref layerConditionalInt, ref texture, ref conditions, ref layers);
+                                Functions.ConditionalPaint(ref conditionalPaintOptions, ref texture, ref conditions, ref layers);
                                 break;
                             #endregion
                             #region Misc
                             case 2:
-                                EditorUIFunctions.RotateMap(rotateSelection);
+                                Functions.RotateMap(ref rotateSelection);
                                 break;
                                 #endregion
                         }
@@ -209,20 +202,5 @@ public class MapIOEditor : EditorWindow
         Event e = Event.current;
         #endregion
         EditorGUILayout.EndScrollView();
-    }
-    /// <summary>
-    /// Clamps all the Height and Slope tool values.
-    /// </summary>
-    private void ClampValues()
-    {
-        slopeLow = Mathf.Clamp(slopeLow, 0f, slopeHigh);
-        slopeHigh = Mathf.Clamp(slopeHigh, slopeLow, 90f);
-        slopeBlendLow = Mathf.Clamp(slopeBlendLow, 0f, slopeLow);
-        slopeBlendHigh = Mathf.Clamp(slopeBlendHigh, slopeHigh, 90f);
-
-        heightLow = Mathf.Clamp(heightLow, 0f, heightHigh);
-        heightHigh = Mathf.Clamp(heightHigh, heightLow, 1000f);
-        heightBlendLow = Mathf.Clamp(heightBlendLow, 0f, heightLow);
-        heightBlendHigh = Mathf.Clamp(heightBlendHigh, heightHigh, 1000f);
     }
 }

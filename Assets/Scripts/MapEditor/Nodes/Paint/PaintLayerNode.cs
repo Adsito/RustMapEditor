@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Layer")]
 public class PaintLayerNode : Node
@@ -26,16 +27,16 @@ public class PaintLayerNode : Node
         switch (layer.LandLayer)
         {
             case 0: 
-                MapIO.PaintLayer(EditorVars.LandLayers.Ground, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintLayer(LandLayers.Ground, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: 
-                MapIO.PaintLayer(EditorVars.LandLayers.Biome, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintLayer(LandLayers.Biome, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: 
-                MapIO.PaintLayer(EditorVars.LandLayers.Alpha, layer.AlphaTexture);
+                MapIO.PaintLayer(LandLayers.Alpha, layer.AlphaTexture);
                 break;
             case 3: 
-                MapIO.PaintLayer(EditorVars.LandLayers.Topology, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintLayer(LandLayers.Topology, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }

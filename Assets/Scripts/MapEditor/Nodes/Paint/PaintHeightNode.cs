@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
+using EditorVariables;
 
 [CreateNodeMenu("Paint/Paint Height")]
 public class PaintHeightNode : Node
@@ -28,16 +29,16 @@ public class PaintHeightNode : Node
         switch (layer.LandLayer)
         {
             case 0: 
-                MapIO.PaintHeightBlend(EditorVars.LandLayers.Ground, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
+                MapIO.PaintHeightBlend(LandLayers.Ground, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainSplat.TypeToIndex(layer.GroundTexture));
                 break;
             case 1: 
-                MapIO.PaintHeightBlend(EditorVars.LandLayers.Biome, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
+                MapIO.PaintHeightBlend(LandLayers.Biome, heightLow, heightHigh, heightMinBlendLow, heightMaxBlendHigh, TerrainBiome.TypeToIndex(layer.BiomeTexture));
                 break;
             case 2: 
-                MapIO.PaintHeight(EditorVars.LandLayers.Alpha, heightLow, heightHigh, layer.AlphaTexture);
+                MapIO.PaintHeight(LandLayers.Alpha, heightLow, heightHigh, layer.AlphaTexture);
                 break;
             case 3: 
-                MapIO.PaintHeight(EditorVars.LandLayers.Topology, heightLow, heightHigh, layer.TopologyTexture, layer.TopologyLayer);
+                MapIO.PaintHeight(LandLayers.Topology, heightLow, heightHigh, layer.TopologyTexture, layer.TopologyLayer);
                 break;
         }
     }
