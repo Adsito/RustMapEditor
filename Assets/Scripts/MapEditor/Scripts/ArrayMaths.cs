@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using EditorVariables;
 
 namespace EditorMaths
@@ -14,24 +15,23 @@ namespace EditorMaths
         {
             if (dmns != null)
             {
-                for (int i = dmns.x0; i < dmns.x1; i++)
+                Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         array[i, j] = value;
                     }
-                }
+                });
             }
             else
             {
-                for (int i = 0; i < array.GetLength(0); i++)
+                Parallel.For(0, array.GetLength(0), i =>
                 {
                     for (int j = 0; j < array.GetLength(1); j++)
                     {
                         array[i, j] = value;
                     }
-                }
-
+                });
             }
             return array;
         }
