@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
@@ -884,7 +885,7 @@ public static class MapIO
     {
         float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        Parallel.For(0, splatMap.GetLength(0), i =>
         {
             for (int j = 0; j < splatMap.GetLength(1); j++)
             {
@@ -894,7 +895,7 @@ public static class MapIO
                 }
                 splatMap[i, j, t] = 1;
             }
-        }
+        });
         LandData.SetData(splatMap, landLayerToPaint, topology);
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
     }
@@ -1552,10 +1553,10 @@ public static class MapIO
         LandData.SetData(terrains.alphaMap, LandLayers.Alpha);
 
         ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-        }
+        });
     }
     /// <summary>
     /// Loads and sets up the map.
@@ -1603,10 +1604,11 @@ public static class MapIO
     public static void CreateNewMap(int size)
     {
         LoadMapInfo(WorldConverter.EmptyMap(size));
-        PaintLayer(LandLayers.Alpha, 0);
-        PaintLayer(LandLayers.Biome, 1);
         PaintLayer(LandLayers.Ground, 4);
-        SetMinimumHeight(503f);
+        PaintLayer(LandLayers.Biome, 1);
+        PaintLayer(LandLayers.Alpha, 0);
+        SetHeightmap(503f, Selections.Terrains.Land);
+        SetHeightmap(500f, Selections.Terrains.Water);
     }
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();

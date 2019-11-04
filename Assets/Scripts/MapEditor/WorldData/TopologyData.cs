@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [Serializable]
@@ -20,7 +21,7 @@ public static class TopologyData
     {
         TerrainMap<int> topology = GetTerrainMap();
         float[,,] splatMap = new float[topology.res, topology.res, 2];
-        for (int i = 0; i < topology.res; i++)
+        Parallel.For(0, topology.res, i =>
         {
             for (int j = 0; j < topology.res; j++)
             {
@@ -33,7 +34,7 @@ public static class TopologyData
                     splatMap[i, j, 1] = float.MaxValue;
                 }
             }
-        }
+        });
         return splatMap;
     }
     /// <summary>
