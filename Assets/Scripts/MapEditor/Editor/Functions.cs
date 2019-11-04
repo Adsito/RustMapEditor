@@ -95,7 +95,7 @@ namespace EditorUI
                 }
             }
             Elements.ToolbarLabel(ToolTips.mapSize);
-            mapSize = Mathf.Clamp(Elements.ToolbarDelayedIntField(mapSize), 1000, 6000);
+            mapSize = Mathf.Clamp(Elements.ToolbarIntField(mapSize), 1000, 6000);
             Elements.EndToolbarHorizontal();
         }
         public static void MapInfo()
