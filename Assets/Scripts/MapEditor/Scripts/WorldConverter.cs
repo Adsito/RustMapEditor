@@ -4,7 +4,7 @@ using UnityEngine;
 using EditorMaths;
 using static WorldSerialization;
 
-public class WorldConverter
+public static class WorldConverter
 {
     public struct MapInfo
     {
@@ -27,8 +27,6 @@ public class WorldConverter
     
     public static MapInfo EmptyMap(int size)
     {
-        MapIO.ProgressBar("Creating New Map", "Setting TerrainMaps", 0.5f);
-
         MapInfo terrains = new MapInfo();
 
         int splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(size * 0.50f)), 16, 2048);
@@ -45,13 +43,10 @@ public class WorldConverter
         terrains.land.heights = new float[terrains.resolution, terrains.resolution];
         terrains.water.heights = new float[terrains.resolution, terrains.resolution];
 
-        MapIO.ProgressBar("Creating New Map", "Converting to Terrain", 0.75f);
-
         terrains.splatMap = new float[splatRes, splatRes, 8];
         terrains.biomeMap = new float[splatRes, splatRes, 4];
         terrains.alphaMap = new float[splatRes, splatRes, 2];
         terrains.topology = new TerrainMap<int>(new byte[(int)Mathf.Pow(splatRes, 2) * 4 * 1], 1);
-
         return terrains;
     }
     /// <summary>
@@ -106,15 +101,9 @@ public class WorldConverter
     /// <summary>
     /// Converts World to MapInfo.
     /// </summary>
-    /// <returns></returns>
     public static MapInfo WorldToTerrain(WorldSerialization world)
     {
         MapInfo terrains = new MapInfo();
-
-        if (world.GetMap("terrain") == null)
-        {
-            Debug.LogError("Old map file");
-        }
 
         var terrainSize = new Vector3(world.world.size, 1000, world.world.size);
         var terrainMap = new TerrainMap<short>(world.GetMap("terrain").data, 1);
@@ -142,9 +131,6 @@ public class WorldConverter
     /// <summary>
     /// Converts map to WorldSerialization. 
     /// </summary>
-    /// <param name="land"></param>
-    /// <param name="water"></param>
-    /// <returns></returns>
     public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) 
     {
         WorldSerialization world = new WorldSerialization();

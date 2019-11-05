@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Linq;
 using System.IO;
 using ProtoBuf;
@@ -16,17 +15,11 @@ public class WorldSerialization
         get; private set;
     }
 
-    public static string Checksum
-    {
-        get; private set;
-    }
-
     public WorldData world = new WorldData();
 
     public WorldSerialization()
     {
         Version = CurrentVersion;
-        Checksum = null;
     }
 
     [ProtoContract]
@@ -180,7 +173,6 @@ public class WorldSerialization
         world.paths.Clear();
 
         Version = CurrentVersion;
-        Checksum = null;
     }
 
     public void Save(string fileName)

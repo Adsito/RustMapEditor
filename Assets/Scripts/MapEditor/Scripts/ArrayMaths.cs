@@ -42,54 +42,54 @@ namespace EditorMaths
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] Rotate(float[,] array, bool CW, Dimensions dmns = null)
         {
-            float[,] tempArray = array;
+            float[,] newArray = new float[array.GetLength(0), array.GetLength(1)];
             if (dmns != null)
             {
                 if (CW)
                 {
-                    for (int i = dmns.x0; i < dmns.x1; i++)
+                    Parallel.For(dmns.x0, dmns.x1, i =>
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            tempArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
                         }
-                    }
+                    });
                 }
                 else
                 {
-                    for (int i = dmns.x0; i < dmns.x1; i++)
+                    Parallel.For(dmns.x0, dmns.x1, i =>
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            tempArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
                         }
-                    }
+                    });
                 }
             }
             else
             {
                 if (CW)
                 {
-                    for (int i = 0; i < array.GetLength(0); i++)
+                    Parallel.For(0, array.GetLength(0), i =>
                     {
                         for (int j = 0; j < array.GetLength(1); j++)
                         {
-                            tempArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
                         }
-                    }
+                    });
                 }
                 else
                 {
-                    for (int i = 0; i < array.GetLength(0); i++)
+                    Parallel.For(0, array.GetLength(0), i =>
                     {
                         for (int j = 0; j < array.GetLength(1); j++)
                         {
-                            tempArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
                         }
-                    }
+                    });
                 }
             }
-            return tempArray;
+            return newArray;
         }
         /// <summary>
         /// Flips the values of the array.
@@ -99,23 +99,23 @@ namespace EditorMaths
         {
             if (dmns != null)
             {
-                for (int i = dmns.x0; i < dmns.x1; i++)
+                Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         array[i, j] = 1 - array[i, j];
                     }
-                }
+                });
             }
             else
             {
-                for (int i = 0; i < array.GetLength(0); i++)
+                Parallel.For(0, array.GetLength(0), i =>
                 {
                     for (int j = 0; j < array.GetLength(1); j++)
                     {
                         array[i, j] = 1 - array[i, j];
                     }
-                }
+                });
             }
             return array;
         }
@@ -130,7 +130,7 @@ namespace EditorMaths
             float highestPoint = 0f, lowestPoint = 1f, currentHeight = 0f, heightRange = 0f, normalisedHeightRange = 0f, normalisedHeight = 0f;
             if (dmns != null)
             {
-                for (int i = dmns.x0; i < dmns.x1; i++)
+                Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
@@ -144,21 +144,21 @@ namespace EditorMaths
                             highestPoint = currentHeight;
                         }
                     }
-                }
+                });
                 heightRange = highestPoint - lowestPoint;
                 normalisedHeightRange = normaliseHigh - normaliseLow;
-                for (int i = dmns.x0; i < dmns.x1; i++)
+                Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         normalisedHeight = ((array[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
                         array[i, j] = normaliseLow + normalisedHeight;
                     }
-                }
+                });
             }
             else
             {
-                for (int i = 0; i < array.GetLength(0); i++)
+                Parallel.For(0, array.GetLength(0), i =>
                 {
                     for (int j = 0; j < array.GetLength(1); j++)
                     {
@@ -172,17 +172,17 @@ namespace EditorMaths
                             highestPoint = currentHeight;
                         }
                     }
-                }
+                });
                 heightRange = highestPoint - lowestPoint;
                 normalisedHeightRange = normaliseHigh - normaliseLow;
-                for (int i = 0; i < array.GetLength(0); i++)
+                Parallel.For(0, array.GetLength(0), i =>
                 {
                     for (int j = 0; j < array.GetLength(1); j++)
                     {
                         normalisedHeight = ((array[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
                         array[i, j] = normaliseLow + normalisedHeight;
                     }
-                }
+                });
             }
             return array;
         }
@@ -247,26 +247,26 @@ namespace EditorMaths
         public static float[,] ShortMapToFloatArray(TerrainMap<short> terrainMap)
         {
             float[,] heights = new float[terrainMap.res, terrainMap.res];
-            for (int i = 0; i < heights.GetLength(0); i++)
+            Parallel.For(0, heights.GetLength(0), i =>
             {
                 for (int j = 0; j < heights.GetLength(1); j++)
                 {
                     heights[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
                 }
-            }
+            });
             return heights;
         }
         public static byte[] FloatArrayToByteArray(float[,] floatArray)
         {
             short[] shortArray = new short[floatArray.GetLength(0) * floatArray.GetLength(1)];
 
-            for (int i = 0; i < floatArray.GetLength(0); i++)
+            Parallel.For(0, floatArray.GetLength(0), i =>
             {
                 for (int j = 0; j < floatArray.GetLength(1); j++)
                 {
                     shortArray[(i * floatArray.GetLength(0)) + j] = BitUtility.Float2Short(floatArray[i, j]);
                 }
-            }
+            });
 
             byte[] byteArray = new byte[shortArray.Length * 2];
 
@@ -278,7 +278,7 @@ namespace EditorMaths
         {
             float[] singleArray = new float[multiArray.GetLength(0) * multiArray.GetLength(1) * size];
 
-            for (int i = 0; i < multiArray.GetLength(0); i++)
+            Parallel.For(0, multiArray.GetLength(0), i =>
             {
                 for (int j = 0; j < multiArray.GetLength(1); j++)
                 {
@@ -287,7 +287,7 @@ namespace EditorMaths
                         singleArray[i * multiArray.GetLength(1) * size + (j * size + k)] = multiArray[i, j, k];
                     }
                 }
-            }
+            });
             return singleArray;
         }
         public static float[] MultiToSingle(float[,,] multiArray)
@@ -298,7 +298,7 @@ namespace EditorMaths
         {
             int length = (int)Math.Sqrt(singleArray.Length / texturesAmount);
             float[,,] multiArray = new float[length, length, texturesAmount];
-            for (int i = 0; i < multiArray.GetLength(0); i++)
+            Parallel.For(0, multiArray.GetLength(0), i =>
             {
                 for (int j = 0; j < multiArray.GetLength(1); j++)
                 {
@@ -307,15 +307,15 @@ namespace EditorMaths
                         multiArray[i, j, k] = singleArray[i * multiArray.GetLength(1) * multiArray.GetLength(2) + (j * multiArray.GetLength(2) + k)];
                     }
                 }
-            }
+            });
             return multiArray;
         }
         public static float[,,] MultiToSingleNormalised(float[,,] multiArray, int texturesAmount)
         {
             int length = (int)Math.Sqrt(multiArray.Length / texturesAmount);
-            float[] splatWeights = new float[multiArray.GetLength(2)];
-            for (int i = 0; i < multiArray.GetLength(0); i++)
+            Parallel.For(0, multiArray.GetLength(0), i =>
             {
+                float[] splatWeights = new float[multiArray.GetLength(2)];
                 for (int j = 0; j < multiArray.GetLength(1); j++)
                 {
                     for (int k = 0; k < multiArray.GetLength(2); k++)
@@ -329,7 +329,7 @@ namespace EditorMaths
                         multiArray[i, j, k] = splatWeights[k];
                     }
                 }
-            }
+            });
             return multiArray;
         }
     }
