@@ -144,7 +144,7 @@ public static class MapIO
     }
     public static Vector3 GetTerrainSize()
     {
-        return GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>().terrainData.size;
+        return terrain.terrainData.size;
     }
     public static Vector3 GetMapOffset()
     {
@@ -159,7 +159,6 @@ public static class MapIO
             if (((int)objectSelection & layer) != 0)
             {
                 selectedEnums.Add(i);
-                
             }
         }
         return selectedEnums;
@@ -584,7 +583,7 @@ public static class MapIO
         float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
         if (CW)
         {
-            for (int i = 0; i < newLayer.GetLength(0); i++)
+            Parallel.For(0, newLayer.GetLength(0), i =>
             {
                 for (int j = 0; j < newLayer.GetLength(1); j++)
                 {
@@ -593,11 +592,11 @@ public static class MapIO
                         newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
                     }
                 }
-            }
+            });
         }
         else
         {
-            for (int i = 0; i < newLayer.GetLength(0); i++)
+            Parallel.For(0, newLayer.GetLength(0), i =>
             {
                 for (int j = 0; j < newLayer.GetLength(1); j++)
                 {
@@ -606,7 +605,7 @@ public static class MapIO
                         newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
                     }
                 }
-            }
+            });
         }
         LandData.SetData(newLayer, landLayerToPaint, topology);
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
@@ -1474,10 +1473,8 @@ public static class MapIO
     /// <param name="terrains"></param>
     static void CentreSceneObjects(MapInfo terrains)
     {
-        var worldCentrePrefab = GameObject.FindGameObjectWithTag("Prefabs");
-        worldCentrePrefab.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
-        var worldCentrePath = GameObject.FindGameObjectWithTag("Paths");
-        worldCentrePath.transform.position = new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2);
+        GameObject.FindGameObjectWithTag("Prefabs").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
+        GameObject.FindGameObjectWithTag("Paths").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
     }
     /// <summary>
     /// Loads and sets up the map Prefabs.
@@ -1487,13 +1484,19 @@ public static class MapIO
     {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         ProgressBar("Loading: ", "Spawning Prefabs ", 0.8f);
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         progressValue = 0f;
         if (PrefabManager.prefabsLoaded)
         {
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
-                progressValue += 0.2f / terrains.prefabData.Length;
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                progressValue += 1f / terrains.prefabData.Length;
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    sw.Restart();
+                    ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
+                }
                 SpawnPrefab(PrefabManager.LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
             }
         }
@@ -1501,8 +1504,12 @@ public static class MapIO
         {
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
-                progressValue += 0.2f / terrains.prefabData.Length;
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue + 0.8f);
+                progressValue += 1f / terrains.prefabData.Length;
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    sw.Restart();
+                    ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
+                }
                 SpawnPrefab(defaultPrefab, terrains.prefabData[i], prefabsParent);
             }
         }
@@ -1540,19 +1547,10 @@ public static class MapIO
     }
     static void LoadSplatMaps(MapInfo terrains, string loadPath = "")
     {
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.4f);
         TopologyData.InitMesh(terrains.topology);
-
-        ProgressBar("Loading: " + loadPath, "Loading Ground Data ", 0.5f);
         LandData.SetData(terrains.splatMap, LandLayers.Ground);
-
-        ProgressBar("Loading: " + loadPath, "Loading Biome Data ", 0.6f);
         LandData.SetData(terrains.biomeMap, LandLayers.Biome);
-
-        ProgressBar("Loading: " + loadPath, "Loading Alpha Data ", 0.7f);
         LandData.SetData(terrains.alphaMap, LandLayers.Alpha);
-
-        ProgressBar("Loading: " + loadPath, "Loading Topology Data ", 0.8f);
         Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             LandData.SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
@@ -1563,6 +1561,7 @@ public static class MapIO
     /// </summary>
     static void LoadMapInfo(MapInfo terrains, string loadPath = "")
     {
+        ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
         water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         RemoveMapObjects(true, true);
@@ -1572,6 +1571,7 @@ public static class MapIO
         LoadSplatMaps(terrains, loadPath);
         LoadPrefabs(terrains, loadPath);
         LoadPaths(terrains, loadPath);
+        ProgressBar("Loading: " + loadPath, "Setting Layers", 0.75f);
         LandData.SetLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer)); // Sets the Alphamaps to the layer currently selected.
         ClearProgressBar();
     }
@@ -1581,7 +1581,7 @@ public static class MapIO
     /// <param name="loadPath">The path of the map, used by the progress bars.</param>
     public static void Load(WorldSerialization world, string loadPath = "")
     {
-        ProgressBar("Loading: " + loadPath, "Loading Land Heightmap Data ", 0.3f);
+        ProgressBar("Loading: " + loadPath, "Loading Map", 0.1f);
         LoadMapInfo(WorldConverter.WorldToTerrain(world));
     }
     /// <summary>

@@ -50,10 +50,11 @@ public class LockObject : MonoBehaviour
     /// <summary>
     /// Moves the locked object to a new position.
     /// </summary>
-    /// <param name="position">Local position to set the object to.</param>
+    /// <param name="pos">Local position to set the object to.</param>
     public void SetPosition(Vector3 pos)
     {
         position = pos;
+        transform.localPosition = pos;
     }
     /// <summary>
     /// Rotates the locked object to a new rotation.
@@ -62,6 +63,7 @@ public class LockObject : MonoBehaviour
     public void SetRotation(Quaternion rot)
     {
         rotation = rot;
+        transform.localRotation = rot;
     }
     /// <summary>
     /// Scales the locked object to a new size.
@@ -70,5 +72,6 @@ public class LockObject : MonoBehaviour
     public void SetScale(Vector3 scl)
     {
         scale = scl;
+        transform.localScale = scl;
     }
 }
