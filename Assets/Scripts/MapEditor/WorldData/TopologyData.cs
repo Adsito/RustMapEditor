@@ -44,9 +44,9 @@ public static class TopologyData
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
         var splatMap = LandData.topologyArray;
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        Parallel.For(0, TerrainTopology.COUNT, i =>
         {
-            for (int j = 0; j < topologyMap.res; j++)
+            Parallel.For(0, topologyMap.res, j =>
             {
                 for (int k = 0; k < topologyMap.res; k++)
                 {
@@ -59,8 +59,8 @@ public static class TopologyData
                         topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
                     }
                 }
-            }
-        }
+            });
+        });
         top = topologyMap.ToByteArray();
     }
     public static void InitMesh(TerrainMap<int> topology)

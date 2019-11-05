@@ -38,6 +38,7 @@ public static class PrefabManager
     {
         if (prefabsLoaded)
         {
+            prefabsPrepared.Clear();
             prefabsLoaded = false;
             backend.Dispose();
         }

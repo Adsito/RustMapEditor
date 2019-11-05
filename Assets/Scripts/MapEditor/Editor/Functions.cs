@@ -57,9 +57,7 @@ namespace EditorUI
                     return;
                 }
                 var world = new WorldSerialization();
-                MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.1f);
                 world.Load(loadFile);
-                MapIO.ProgressBar("Loading: " + loadFile, "Loading Land Heightmap Data ", 0.2f);
                 MapIO.Load(world);
             }
             if (Elements.ToolbarButton(ToolTips.saveMap))
