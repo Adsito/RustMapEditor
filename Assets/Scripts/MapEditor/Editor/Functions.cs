@@ -775,7 +775,7 @@ namespace EditorUI
         {
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(ToolTips.prefabID);
-            target.prefabData.id = (uint)Elements.ToolbarIntField((int)target.prefabData.id);
+            target.prefabData.id = uint.Parse(Elements.ToolbarDelayedTextField(target.prefabData.id.ToString()));
             Elements.EndToolbarHorizontal();
         }
         public static void SnapToGround(PrefabDataHolder target)

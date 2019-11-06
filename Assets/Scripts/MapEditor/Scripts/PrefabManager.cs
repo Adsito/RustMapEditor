@@ -19,17 +19,24 @@ public static class PrefabManager
     /// <param name="bundlename">The file path to the bundle.</param>
     public static void LoadBundle(string bundlename)
     {
-        backend = new AssetBundleBackend(bundlename);
-        AssetDump();
-        manifest = backend.Load<GameManifest>(manifestPath);
-        if (manifest == null)
+        if (!prefabsLoaded)
         {
-            Debug.LogError("Manifest is null");
-            backend.Dispose();
-            prefabsLoaded = false;
-            return;
+            backend = new AssetBundleBackend(bundlename);
+            AssetDump();
+            manifest = backend.Load<GameManifest>(manifestPath);
+            if (manifest == null)
+            {
+                Debug.LogError("Manifest is null");
+                backend.Dispose();
+                prefabsLoaded = false;
+                return;
+            }
+            prefabsLoaded = true;
         }
-        prefabsLoaded = true;
+        else
+        {
+            Debug.Log("Prefabs already loaded!");
+        }
     }
     /// <summary>
     /// Disposes the loaded bundle and prefabs.
@@ -101,6 +108,10 @@ public static class PrefabManager
     {
         var prefabPath = path.Split('/');
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
+        foreach (var renderer in go.GetComponentsInChildren<RendererLOD>())
+        {
+            renderer.SetLODS();
+        }
         go.SetActive(true);
         go.tag = "LoadedPrefab";
         go.layer = 8;
