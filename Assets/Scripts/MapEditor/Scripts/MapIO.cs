@@ -54,15 +54,25 @@ public static class MapIO
             CreateNewMap(1000);
         }
     }
-    public static void CentreSceneView()
+    public static SceneView GetLastSceneView()
     {
-        SceneView sceneView = SceneView.lastActiveSceneView;
+        return SceneView.lastActiveSceneView;
+    }
+    public static void CentreSceneView(SceneView sceneView)
+    {
         if (sceneView != null)
         {
             sceneView.orthographic = false;
             sceneView.pivot = new Vector3(500f, 600f, 500f);
             sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
         }
+    }
+    public static void SetCullingDistances(Camera camera)
+    {
+        float[] distances = new float[32];
+        distances[8] = 750f;
+        distances[9] = 250f;
+        camera.layerCullDistances = distances;
     }
     /// <summary>
     /// Loads and sets the Land and Water terrains.
@@ -1565,7 +1575,8 @@ public static class MapIO
         water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
         terrain = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         RemoveMapObjects(true, true);
-        CentreSceneView();
+        CentreSceneView(GetLastSceneView());
+        SetCullingDistances(GetLastSceneView().camera);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
         LoadSplatMaps(terrains, loadPath);

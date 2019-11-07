@@ -110,7 +110,7 @@ public static class PrefabManager
         var prefabName = prefabPath[prefabPath.Length - 1].Replace(".prefab", "");
         foreach (var renderer in go.GetComponentsInChildren<RendererLOD>())
         {
-            renderer.SetLODS();
+            renderer.SetLODs();
         }
         go.SetActive(true);
         go.tag = "LoadedPrefab";

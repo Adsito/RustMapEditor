@@ -24,8 +24,8 @@ public class MeshLOD : MonoBehaviour
 
 	private bool force;
 
-    public void SetLODS()
+    public void SetLODs()
+
     {
-        
     }
 }

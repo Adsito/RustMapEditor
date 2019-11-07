@@ -26,7 +26,7 @@ public class RendererLOD : MonoBehaviour
 
 	private bool force;
 
-    public void SetLODS()
+    public void SetLODs()
     {
         if (gameObject.GetComponent<LODGroup>() == null)
         {
