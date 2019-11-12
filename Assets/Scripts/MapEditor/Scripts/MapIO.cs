@@ -48,9 +48,9 @@ public static class MapIO
     /// </summary>
     static void OnProjectLoad()
     {
-        EditorApplication.update -= OnProjectLoad;
-        if (EditorApplication.timeSinceStartup < 30.0) // Prevents methods from being called everytime the assembly is recompiled.
+        if (terrain == null)
         {
+            EditorApplication.update -= OnProjectLoad;
             CreateNewMap(1000);
         }
     }
@@ -120,6 +120,7 @@ public static class MapIO
         newObj.transform.position = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z) + GetMapOffset();
         newObj.transform.rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
         newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
+        newObj.name = g.name;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
         return newObj;
     }
