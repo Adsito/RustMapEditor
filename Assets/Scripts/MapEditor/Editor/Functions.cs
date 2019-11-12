@@ -3,6 +3,7 @@ using Rotorz.ReorderableList;
 using UnityEngine;
 using UnityEditor;
 using EditorVariables;
+using EditorTreeView;
 
 namespace EditorUI
 {
@@ -14,32 +15,42 @@ namespace EditorUI
         {
             MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
         }
-        [MenuItem("Rust Map Editor/Terrain Tools", false, 1)]
+        [MenuItem("Rust Map Editor/Hierachy/Prefabs", false, 1)]
+        static void OpenPrefabHierachy()
+        {
+            PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
+        }
+        //[MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
+        static void OpenPathHierachy()
+        {
+
+        }
+        [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
         {
             Selection.activeGameObject = MapIO.terrain.gameObject;
         }
-        [MenuItem("Rust Map Editor/Links/Wiki", false, 2)]
+        [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
         public static void OpenWiki()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
         }
-        [MenuItem("Rust Map Editor/Links/Discord", false, 3)]
+        [MenuItem("Rust Map Editor/Links/Discord", false, 10)]
         public static void OpenDiscord()
         {
             Application.OpenURL("https://discord.gg/HPmTWVa");
         }
-        [MenuItem("Rust Map Editor/Links/RoadMap", false, 3)]
+        [MenuItem("Rust Map Editor/Links/RoadMap", false, 10)]
         public static void OpenRoadMap()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
         }
-        [MenuItem("Rust Map Editor/Links/Report Bug", false, 4)]
+        [MenuItem("Rust Map Editor/Links/Report Bug", false, 10)]
         public static void OpenReportBug()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
         }
-        [MenuItem("Rust Map Editor/Links/Request Feature", false, 5)]
+        [MenuItem("Rust Map Editor/Links/Request Feature", false, 10)]
         public static void OpenRequestFeature()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");

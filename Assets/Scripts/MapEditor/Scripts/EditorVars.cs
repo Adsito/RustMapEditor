@@ -215,6 +215,11 @@ namespace EditorVariables
         public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
         public static GUIContent editorVersion = new GUIContent("Editor Version: v2.3-prerelease");
 
+        public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
+        public static GUIContent prefabHierachyType= new GUIContent("Type", "If the prefab is custom built or native to Rust.");
+        public static GUIContent prefabHierachyCategory = new GUIContent("Category", "The prefab category if from Rust.");
+        public static GUIContent prefabHierachyRustID = new GUIContent("ID", "The prefab ID in the Rust game manifest.");
+
         public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
         public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
         public static GUIContent prefabName = new GUIContent("Name:", "The Prefab name.");
