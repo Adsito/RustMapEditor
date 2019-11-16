@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using EditorUI;
-using EditorVariables;
+using RustMapEditor.UI;
+using RustMapEditor.Variables;
 
 public class MapIOEditor : EditorWindow
 {
@@ -81,7 +81,7 @@ public class MapIOEditor : EditorWindow
                 layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    Functions.SetLandLayer((LandLayers)layerIndex);
+                    Functions.SetLandLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 }
 
                 switch (layerIndex)

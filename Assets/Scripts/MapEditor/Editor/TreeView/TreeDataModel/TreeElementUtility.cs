@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace EditorTreeView
+namespace RustMapEditor
 {
 
 	// TreeElementUtility and TreeElement are useful helper classes for backend tree data structures.

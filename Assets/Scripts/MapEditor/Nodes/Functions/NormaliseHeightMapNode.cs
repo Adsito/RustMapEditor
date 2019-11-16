@@ -13,6 +13,6 @@ public class NormaliseHeightMapNode : Node
     }
     public void RunNode()
     {
-        MapIO.NormaliseHeightmap(normaliseLow / 1000f, normaliseHigh / 1000f);
+        MapIO.NormaliseHeightmap(normaliseLow, normaliseHigh, RustMapEditor.Variables.Selections.Terrains.Land);
     }
 }

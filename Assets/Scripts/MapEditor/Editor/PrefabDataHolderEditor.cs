@@ -1,5 +1,5 @@
 ﻿using UnityEditor;
-using EditorUI;
+using RustMapEditor.UI;
 
 [CustomEditor(typeof(PrefabDataHolder))]
 public class PrefabDataHolderEditor : Editor

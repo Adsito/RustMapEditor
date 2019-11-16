@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace EditorUI
+namespace RustMapEditor.UI
 {
     public static class Elements
     {
