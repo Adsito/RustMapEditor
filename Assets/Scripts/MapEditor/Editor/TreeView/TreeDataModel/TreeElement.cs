@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace EditorTreeView
+namespace RustMapEditor
 {
 
 	[Serializable]

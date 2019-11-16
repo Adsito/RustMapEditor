@@ -2,10 +2,10 @@
 using Rotorz.ReorderableList;
 using UnityEngine;
 using UnityEditor;
-using EditorVariables;
-using EditorTreeView;
+using RustMapEditor.Variables;
+using static RustMapEditor.Data.LandData;
 
-namespace EditorUI
+namespace RustMapEditor.UI
 {
     public static class Functions
     {
@@ -28,7 +28,7 @@ namespace EditorUI
         [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
         {
-            Selection.activeGameObject = MapIO.terrain.gameObject;
+            Selection.activeGameObject = land.gameObject;
         }
         [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
         public static void OpenWiki()
@@ -109,12 +109,12 @@ namespace EditorUI
         }
         public static void MapInfo()
         {
-            if (MapIO.terrain != null)
+            if (land != null)
             {
                 Elements.BoldLabel(ToolTips.mapInfoLabel);
-                GUILayout.Label("Size: " + MapIO.terrain.terrainData.size.x);
-                GUILayout.Label("HeightMap: " + MapIO.terrain.terrainData.heightmapResolution + "x" + MapIO.terrain.terrainData.heightmapResolution);
-                GUILayout.Label("SplatMap: " + MapIO.terrain.terrainData.alphamapResolution + "x" + MapIO.terrain.terrainData.alphamapResolution);
+                GUILayout.Label("Size: " + land.terrainData.size.x);
+                GUILayout.Label("HeightMap: " + land.terrainData.heightmapResolution + "x" + land.terrainData.heightmapResolution);
+                GUILayout.Label("SplatMap: " + land.terrainData.alphamapResolution + "x" + land.terrainData.alphamapResolution);
             }
         }
         public static void EditorInfo()
@@ -325,13 +325,13 @@ namespace EditorUI
             normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
             if (EditorGUI.EndChangeCheck() && autoUpdate == true)
             {
-                MapIO.NormaliseHeightmap(normaliseLow, normaliseHigh);
+                MapIO.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
             }
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.normaliseMap))
             {
-                MapIO.NormaliseHeightmap(normaliseLow, normaliseHigh);
+                MapIO.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
             }
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
@@ -360,11 +360,11 @@ namespace EditorUI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
             {
-                MapIO.SetMinimumHeight(height);
+                //MapIO.SetMinimumHeight(height);
             }
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
             {
-                MapIO.SetMaximumHeight(height);
+                //MapIO.SetMaximumHeight(height);
             }
             Elements.EndToolbarHorizontal();
         }
@@ -563,7 +563,7 @@ namespace EditorUI
 
             if (EditorGUI.EndChangeCheck())
             {
-                LandData.ChangeLandLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                ChangeLandLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
             }
         }
         public static void SlopeTools(LandLayers landLayer, int texture, ref SlopesInfo slopeInfo, int erase = 0, int topology = 0)
@@ -691,8 +691,8 @@ namespace EditorUI
             Elements.MiniBoldLabel(ToolTips.areaToolsLabel);
 
             float tmpz0 = dmns.z0; float tmpz1 = dmns.z1; float tmpx0 = dmns.x0; float tmpx1 = dmns.x1;
-            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref tmpz0, ref tmpz1, 0f, MapIO.terrain.terrainData.alphamapResolution);
-            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref tmpx0, ref tmpx1, 0f, MapIO.terrain.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref tmpz0, ref tmpz1, 0f, land.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref tmpx0, ref tmpx1, 0f, land.terrainData.alphamapResolution);
             dmns.z0 = (int)tmpz0; dmns.z1 = (int)tmpz1; dmns.x0 = (int)tmpx0; dmns.x1 = (int)tmpx1;
 
             Elements.BeginToolbarHorizontal();
@@ -764,7 +764,7 @@ namespace EditorUI
             {
                 if (Elements.ToolbarButton(ToolTips.clearLayer))
                 {
-                    MapIO.PaintLayer(landLayer, erase, topology);
+                    MapIO.ClearLayer(landLayer, topology);
                 }
                 if (Elements.ToolbarButton(ToolTips.invertLayer))
                 {
@@ -821,14 +821,12 @@ namespace EditorUI
             }
             return itemValue;
         }
-        /// <summary>
-        /// Sets the active landLayer to the index.
-        /// </summary>
+        /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>
         /// <param name="topology">The Topology layer to set.</param>
         public static void SetLandLayer(LandLayers landIndex, int topology = 0)
         {
-            LandData.ChangeLandLayer(landIndex, topology);
+            ChangeLandLayer(landIndex, topology);
         }
         public static SlopesInfo ClampValues(SlopesInfo info)
         {

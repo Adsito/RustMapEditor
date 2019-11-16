@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-namespace EditorTreeView
+namespace RustMapEditor.UI
 {
 	[Serializable]
 	internal class PrefabHierachyElement : TreeElement
