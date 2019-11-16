@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using static RustMapEditor.Data.LandData;
 
 [DisallowMultipleComponent]
 [SelectionBase]
@@ -18,7 +19,7 @@ public class PrefabDataHolder : MonoBehaviour
     }
     public void UpdatePrefabData()
     {
-        prefabData.position = gameObject.transform.position - (0.5f * MapIO.terrain.terrainData.size);
+        prefabData.position = gameObject.transform.position - (0.5f * land.terrainData.size);
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
@@ -26,7 +27,7 @@ public class PrefabDataHolder : MonoBehaviour
     {
         Vector3 newPos = transform.position;
         Undo.RecordObject(transform, "Snap to Ground");
-        newPos.y = MapIO.terrain.SampleHeight(transform.position);
+        newPos.y = land.SampleHeight(transform.position);
         transform.position = newPos;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
+using static RustMapEditor.Data.LandData;
 
 [Serializable]
 public static class TopologyData
@@ -12,11 +13,8 @@ public static class TopologyData
     {
         return new TerrainMap<int>(top, 1);
     }
-    /// <summary>
-    /// Returns the Splatmap of the selected Topology Layer.
-    /// </summary>
+    /// <summary>Returns the Splatmap of the selected Topology Layer.</summary>
     /// <param name="layer">The Topology layer to return.</param>
-    /// <returns></returns>
     public static float[,,] GetTopologyLayer(int layer)
     {
         TerrainMap<int> topology = GetTerrainMap();
@@ -37,24 +35,22 @@ public static class TopologyData
         });
         return splatMap;
     }
-    /// <summary>
-    /// Converts all the Topology Layer arrays back into a single byte array.
-    /// </summary>
+    /// <summary>Converts all the Topology Layer arrays back into a single byte array.</summary>
     public static void SaveTopologyLayers()
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
-        var splatMap = LandData.topologyArray;
+        var topologyLayer = topologyArray;
         Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             Parallel.For(0, topologyMap.res, j =>
             {
                 for (int k = 0; k < topologyMap.res; k++)
                 {
-                    if (splatMap[i][j, k, 0] > 0)
+                    if (topologyLayer[i][j, k, 0] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
                     }
-                    if (splatMap[i][j, k, 1] > 0)
+                    if (topologyLayer[i][j, k, 1] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
                     }

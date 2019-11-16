@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
-using EditorVariables;
+using RustMapEditor.Variables;
 
 [CreateNodeMenu("Functions/Rotate/Rotate HeightMap")]
 public class RotateHeightMapNode : Node
@@ -16,6 +16,6 @@ public class RotateHeightMapNode : Node
     public void RunNode()
     {
         bool CW = (direction == NodeVariables.Misc.RotateDirection.ClockWise) ? true : false;
-        MapIO.RotateHeightMap(CW, terrains);
+        MapIO.RotateTerrains(CW, terrains);
     }
 }

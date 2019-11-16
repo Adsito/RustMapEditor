@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEditor;
 
-namespace EditorTreeView
+namespace RustMapEditor.UI
 {
 	internal class PrefabHierachyTreeView : TreeViewWithTreeModel<PrefabHierachyElement>
 	{

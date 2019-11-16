@@ -13,6 +13,6 @@ public class SetMaximumHeightNode : Node
     }
     public void RunNode()
     {
-        MapIO.SetMaximumHeight(maximumHeight);
+        MapIO.ClampHeightmap(0f, maximumHeight, RustMapEditor.Variables.Selections.Terrains.Land);
     }
 }

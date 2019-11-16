@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
-using EditorVariables;
+using RustMapEditor.Variables;
 
 [CreateNodeMenu("Paint/Paint Rivers")]
 public class PaintRiversNode : Node

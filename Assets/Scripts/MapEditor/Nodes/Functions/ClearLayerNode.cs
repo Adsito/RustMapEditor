@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
-using EditorVariables;
+using RustMapEditor.Variables;
 
 [CreateNodeMenu("Functions/Clear/Clear Layer")]
 public class ClearLayerNode : Node

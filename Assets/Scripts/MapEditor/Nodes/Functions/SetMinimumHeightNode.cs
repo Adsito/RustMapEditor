@@ -13,6 +13,6 @@ public class SetMinimumHeightNode : Node
     }
     public void RunNode()
     {
-        MapIO.SetMinimumHeight(minimumHeight);
+        MapIO.ClampHeightmap(minimumHeight, 1000f, RustMapEditor.Variables.Selections.Terrains.Land);
     }
 }

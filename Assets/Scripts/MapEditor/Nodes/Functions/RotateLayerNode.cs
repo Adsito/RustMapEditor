@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using XNode;
-using EditorVariables;
+using RustMapEditor.Variables;
 
 [CreateNodeMenu("Functions/Rotate/Rotate Layer")]
 public class RotateLayerNode : Node

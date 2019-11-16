@@ -18,6 +18,11 @@ public class BitUtility
 		return b * byte2float;
 	}
 
+    public static byte Bool2Byte(bool b)
+    {
+        return (b == true) ? Float2Byte(1f) : Float2Byte(0f);
+    }
+
 	// No idea why we're subtracting one here, but changing it now would fuck everything up
 	private const float float2short = short.MaxValue - 1;
 	private const float short2float = 1f / float2short;

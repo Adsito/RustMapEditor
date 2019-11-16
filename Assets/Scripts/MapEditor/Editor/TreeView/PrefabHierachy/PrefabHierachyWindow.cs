@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEditor;
-using EditorVariables;
+using RustMapEditor.Variables;
 
-namespace EditorTreeView
+namespace RustMapEditor.UI
 {
 	class PrefabHierachyWindow : EditorWindow
 	{

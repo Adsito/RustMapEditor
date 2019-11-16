@@ -5,7 +5,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEditor;
 
-namespace EditorTreeView
+namespace RustMapEditor
 {
 
 	internal class TreeViewItem<T> : TreeViewItem where T : TreeElement
