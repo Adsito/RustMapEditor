@@ -60,10 +60,7 @@ public static class WorldConverter
         terrains.topology = new TerrainMap<int>(new byte[(int)Mathf.Pow(splatRes, 2) * 4 * 1], 1);
         return terrains;
     }
-    /// <summary>
-    /// Converts the MapInfo and TerrainMaps into a Unity map format.
-    /// </summary>
-    /// <param name="normaliseMulti">Controls if the splatmaps have their values normalised to equal 1.0f or not. Should be set to true unless creating a new map.</param>
+    /// <summary>Converts the MapInfo and TerrainMaps into a Unity map format.</summary>
     public static MapInfo ConvertMaps(MapInfo terrains, TerrainMap<byte> splatMap, TerrainMap<byte> biomeMap, TerrainMap<byte> alphaMap)
     {
         terrains.splatMap = new float[splatMap.res, splatMap.res, 8];
@@ -80,7 +77,7 @@ public static class WorldConverter
                 }
             }
         });
-        terrains.splatMap = MultiToSingleNormalised(terrains.splatMap, 8);
+        terrains.splatMap = NormaliseMulti(terrains.splatMap, 8);
         Parallel.For(0, terrains.biomeMap.GetLength(0), i => 
         {
             for (int j = 0; j < terrains.biomeMap.GetLength(1); j++)
@@ -91,7 +88,7 @@ public static class WorldConverter
                 }
             }
         });
-        terrains.biomeMap = MultiToSingleNormalised(terrains.biomeMap, 4);
+        terrains.biomeMap = NormaliseMulti(terrains.biomeMap, 4);
         Parallel.For(0, terrains.alphaMap.GetLength(0), i =>
         {
             for (int j = 0; j < terrains.alphaMap.GetLength(1); j++)
@@ -108,9 +105,8 @@ public static class WorldConverter
         });
         return terrains;
     }
-    /// <summary>
-    /// Converts World to MapInfo.
-    /// </summary>
+    /// <summary>Parses World Serialization and converts into MapInfo struct.</summary>
+    /// <param name="world">Serialization of the map file to parse.</param>
     public static MapInfo WorldToTerrain(WorldSerialization world)
     {
         MapInfo terrains = new MapInfo();
@@ -139,9 +135,7 @@ public static class WorldConverter
         terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap);
         return terrains;
     }
-    /// <summary>
-    /// Converts map to WorldSerialization. 
-    /// </summary>
+    /// <summary>Converts Unity terrains to WorldSerialization.</summary>
     public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) 
     {
         WorldSerialization world = new WorldSerialization();

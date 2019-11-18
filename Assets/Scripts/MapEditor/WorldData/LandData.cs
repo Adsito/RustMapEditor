@@ -11,8 +11,6 @@ namespace RustMapEditor.Data
         private static float[,,] groundArray;
         /// <summary>The Biome textures of the map. [Res, Res, Textures(4)</summary>
         private static float[,,] biomeArray;
-        /// <summary>The Alpha holes of the map. True = Visible, False = Hole. [Res, Res]</summary>
-        private static bool[,] alphaArray;
         /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
         public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
@@ -106,7 +104,7 @@ namespace RustMapEditor.Data
         /// <summary>Returns the current maps alphaArray.</summary>
         public static bool[,] GetAlphaMap()
         {
-            return alphaArray;
+            return land.terrainData.GetHoles(0, 0, GetSplatMapResolution(), GetSplatMapResolution());
         }
         /// <summary>Sets the array data of LandLayer.</summary>
         /// <param name="layer">The layer to set the data to.</param>
@@ -133,7 +131,7 @@ namespace RustMapEditor.Data
             switch (layer)
             {
                 case LandLayers.Alpha:
-                    alphaArray = array;
+                    land.terrainData.SetHoles(0, 0, array);
                     break;
             }
         }
@@ -158,9 +156,6 @@ namespace RustMapEditor.Data
                     land.terrainData.SetAlphamaps(0, 0, biomeArray);
                     landLayer = layer;
                     break;
-                case LandLayers.Alpha:
-                    land.terrainData.SetHoles(0, 0, alphaArray);
-                    break;
                 case LandLayers.Topology:
                     lastTopologyLayer = topology;
                     land.terrainData.terrainLayers = miscTextures;
@@ -169,11 +164,6 @@ namespace RustMapEditor.Data
                     break;
             }
             topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
-        }
-        /// <summary>Updates the stored alphaArray with the current terrain holes.</summary>
-        public static void UpdateAlpha()
-        {
-            alphaArray = land.terrainData.GetHoles(0, 0, land.terrainData.holesResolution, land.terrainData.holesResolution);
         }
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
         /// <param name="topologyLayer">The Topology layer, if active.</param>
