@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.rustmapmaking.terrainbrushes": "https://github.com/RustMapMaking/TerrainBrushes.git",
     "com.unity.render-pipelines.high-definition": "7.1.2",
     "com.unity.terrain-tools": "2.0.2-preview",
     "com.unity.modules.ai": "1.0.0",
@@ -33,5 +34,11 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
+  },
+  "lock": {
+    "com.rustmapmaking.terrainbrushes": {
+      "revision": "HEAD",
+      "hash": "da62b53b29b4506ac1296b47762889a59f90cb5a"
+    }
   }
 }
