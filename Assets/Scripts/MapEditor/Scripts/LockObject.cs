@@ -6,7 +6,7 @@ public class LockObject : MonoBehaviour
     private Vector3 position;
     private Vector3 scale;
     private Quaternion rotation;
-    public bool locked;
+    private bool locked;
 
     private void OnEnable()
     {
@@ -39,6 +39,14 @@ public class LockObject : MonoBehaviour
             rotation = transform.localRotation;
         }
     }
+    /// <summary>Updates the fixed transform values to current transform values.
+    /// Call if moving an object that is locked when the Main Thread is in use.</summary>
+    public void UpdateTransform()
+    {
+        position = transform.localPosition;
+        scale = transform.localScale;
+        rotation = transform.localRotation;
+    }
     public void Lock()
     {
         locked = true;
@@ -47,27 +55,25 @@ public class LockObject : MonoBehaviour
     {
         locked = false;
     }
-    /// <summary>
-    /// Moves the locked object to a new position.
-    /// </summary>
+    public bool IsLocked()
+    {
+        return locked;
+    }
+    /// <summary>Moves the locked object to a new position.</summary>
     /// <param name="pos">Local position to set the object to.</param>
     public void SetPosition(Vector3 pos)
     {
         position = pos;
         transform.localPosition = pos;
     }
-    /// <summary>
-    /// Rotates the locked object to a new rotation.
-    /// </summary>
+    /// <summary>Rotates the locked object to a new rotation.</summary>
     /// <param name="rot">Local rotation to set the object to.</param>
     public void SetRotation(Quaternion rot)
     {
         rotation = rot;
         transform.localRotation = rot;
     }
-    /// <summary>
-    /// Scales the locked object to a new size.
-    /// </summary>
+    /// <summary> Scales the locked object to a new size.</summary>
     /// <param name="scl">Local scale to set the object to.</param>
     public void SetScale(Vector3 scl)
     {

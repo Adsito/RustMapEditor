@@ -8,7 +8,7 @@ public class MapIOEditor : EditorWindow
     #region Values
     string loadFile = "", saveFile = "", prefabSaveFile = "", mapPrefabSaveFile = "";
     int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
-    float heightToSet = 450f, offset = 0f, heightSet = 500f;
+    float offset = 0f, heightSet = 500f, heightLow = 450f, heightHigh = 750f;
     bool clampOffset = true, aboveTerrain = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
     Conditions conditions = new Conditions() { CheckAlpha = false};
@@ -168,7 +168,7 @@ public class MapIOEditor : EditorWindow
                                         Elements.BoldLabel(ToolTips.heightsLabel);
                                         Functions.OffsetMap(ref offset, ref clampOffset);
                                         Functions.SetHeight(ref heightSet);
-                                        Functions.MinMaxHeight(ref heightToSet);
+                                        Functions.ClampHeight(ref heightLow, ref heightHigh);
                                         Elements.BoldLabel(ToolTips.miscLabel);
                                         Functions.InvertMap();
                                         break;

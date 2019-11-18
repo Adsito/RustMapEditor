@@ -26,7 +26,7 @@
         {
             get; set;
         }
-        public int AlphaTexture
+        public bool AlphaTexture
         {
             get; set;
         }

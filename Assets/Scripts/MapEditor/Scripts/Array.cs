@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using RustMapEditor.Variables;
+using System.Threading;
 
 namespace RustMapEditor.Maths
 {
@@ -90,6 +91,120 @@ namespace RustMapEditor.Maths
         public static float[,] Rotate(float[,] array, bool CW, Dimensions dmns = null)
         {
             float[,] newArray = new float[array.GetLength(0), array.GetLength(1)];
+            if (dmns != null)
+            {
+                if (CW)
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                        }
+                    });
+                }
+            }
+            else
+            {
+                if (CW)
+                {
+                    Parallel.For(0, array.GetLength(0), i =>
+                    {
+                        for (int j = 0; j < array.GetLength(1); j++)
+                        {
+                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, array.GetLength(0), i =>
+                    {
+                        for (int j = 0; j < array.GetLength(1); j++)
+                        {
+                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                        }
+                    });
+                }
+            }
+            return newArray;
+        }
+        public static float[,,] Rotate(float[,,] array, bool CW, Dimensions dmns = null)
+        {
+            float[,,] newArray = new float[array.GetLength(0), array.GetLength(1), array.GetLength(2)];
+            if (dmns != null)
+            {
+                if (CW)
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            for (int k = 0; k < array.GetLength(2); k++)
+                            {
+                                newArray[i, j, k] = array[j, array.GetLength(1) - i - 1, k];
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            for (int k = 0; k < array.GetLength(2); k++)
+                            {
+                                newArray[i, j, k] = array[array.GetLength(0) - j - 1, i, k];
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                if (CW)
+                {
+                    Parallel.For(0, array.GetLength(0), i =>
+                    {
+                        for (int j = 0; j < array.GetLength(1); j++)
+                        {
+                            for (int k = 0; k < array.GetLength(2); k++)
+                            {
+                                newArray[i, j, k] = array[j, array.GetLength(1) - i - 1, k];
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, array.GetLength(0), i =>
+                    {
+                        for (int j = 0; j < array.GetLength(1); j++)
+                        {
+                            for (int k = 0; k < array.GetLength(2); k++)
+                            {
+                                newArray[i, j, k] = array[array.GetLength(0) - j - 1, i, k];
+                            }
+                        }
+                    });
+                }
+            }
+            return newArray;
+        }
+        public static bool[,] Rotate(bool[,] array, bool CW, Dimensions dmns = null)
+        {
+            bool[,] newArray = new bool[array.GetLength(0), array.GetLength(1)];
             if (dmns != null)
             {
                 if (CW)
@@ -285,53 +400,62 @@ namespace RustMapEditor.Maths
         public static float[,] Offset(float[,] array, float offset, bool clampOffset, Dimensions dmns = null)
         {
             float[,] tempArray = array;
-            if (dmns != null)
+            CancellationTokenSource source = new CancellationTokenSource();
+            ParallelOptions options = new ParallelOptions() { CancellationToken = source.Token};
+            try
             {
-                for (int i = dmns.x0; i < dmns.x1; i++)
+                if (dmns != null)
                 {
-                    for (int j = dmns.z0; j < dmns.z1; j++)
+                    Parallel.For(dmns.x0, dmns.x1, options, i =>
                     {
-                        if (clampOffset == true)
+                        for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            if ((array[i, j] + offset > 1f || array[i, j] + offset < 0f))
+                            if (clampOffset == true)
                             {
-                                return array;
+                                if ((array[i, j] + offset > 1f || array[i, j] + offset < 0f))
+                                {
+                                    source.Cancel();
+                                }
+                                else
+                                {
+                                    tempArray[i, j] += offset;
+                                }
                             }
                             else
                             {
                                 tempArray[i, j] += offset;
                             }
                         }
-                        else
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, array.GetLength(0), i =>
+                    {
+                        for (int j = 0; j < array.GetLength(1); j++)
                         {
-                            tempArray[i, j] += offset;
+                            if (clampOffset == true)
+                            {
+                                if ((array[i, j] + offset > 1f || array[i, j] + offset < 0f))
+                                {
+                                    source.Cancel();
+                                }
+                                else
+                                {
+                                    tempArray[i, j] += offset;
+                                }
+                            }
+                            else
+                            {
+                                tempArray[i, j] += offset;
+                            }
                         }
-                    }
+                    });
                 }
             }
-            else
+            catch (OperationCanceledException)
             {
-                for (int i = 0; i < array.GetLength(0); i++)
-                {
-                    for (int j = 0; j < array.GetLength(1); j++)
-                    {
-                        if (clampOffset == true)
-                        {
-                            if ((array[i, j] + offset > 1f || array[i, j] + offset < 0f))
-                            {
-                                return array;
-                            }
-                            else
-                            {
-                                tempArray[i, j] += offset;
-                            }
-                        }
-                        else
-                        {
-                            tempArray[i, j] += offset;
-                        }
-                    }
-                }
+                return array;
             }
             return tempArray;
         }
@@ -365,26 +489,6 @@ namespace RustMapEditor.Maths
 
             return byteArray;
         }
-        public static float[] MultiToSingle(float[,,] array, int size)
-        {
-            float[] singleArray = new float[array.GetLength(0) * array.GetLength(1) * size];
-
-            Parallel.For(0, array.GetLength(0), i =>
-            {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    for (int k = 0; k < size; k++)
-                    {
-                        singleArray[i * array.GetLength(1) * size + (j * size + k)] = array[i, j, k];
-                    }
-                }
-            });
-            return singleArray;
-        }
-        public static float[] MultiToSingle(float[,,] array)
-        {
-            return MultiToSingle(array, array.GetLength(2));
-        }
         public static float[,,] SingleToMulti(float[] array, int texturesAmount)
         {
             int length = (int)Math.Sqrt(array.Length / texturesAmount);
@@ -401,7 +505,7 @@ namespace RustMapEditor.Maths
             });
             return multiArray;
         }
-        public static float[,,] MultiToSingleNormalised(float[,,] array, int texturesAmount)
+        public static float[,,] NormaliseMulti(float[,,] array, int texturesAmount)
         {
             int length = (int)Math.Sqrt(array.Length / texturesAmount);
             Parallel.For(0, array.GetLength(0), i =>
