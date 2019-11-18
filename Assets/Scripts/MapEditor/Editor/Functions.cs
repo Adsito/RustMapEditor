@@ -352,19 +352,19 @@ namespace RustMapEditor.UI
             }
             Elements.EndToolbarHorizontal();
         }
-        public static void MinMaxHeight(ref float height)
+        public static void ClampHeight(ref float heightLow, ref float heightHigh)
         {
-            Elements.MiniBoldLabel(ToolTips.minMaxHeightLabel);
+            Elements.MiniBoldLabel(ToolTips.clampHeight);
 
-            height = Elements.ToolbarSlider(ToolTips.heightToSet, height, 0f, 1000f);
+            Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
             {
-                //MapIO.SetMinimumHeight(height);
+                MapIO.ClampHeightmap(heightLow, 1000f, Selections.Terrains.Land);
             }
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
             {
-                //MapIO.SetMaximumHeight(height);
+                MapIO.ClampHeightmap(0f, heightHigh, Selections.Terrains.Land);
             }
             Elements.EndToolbarHorizontal();
         }
@@ -433,7 +433,7 @@ namespace RustMapEditor.UI
                     Elements.BeginToolbarHorizontal();
                     cnds.CheckAlpha = Elements.ToolbarToggle(ToolTips.checkAlpha, cnds.CheckAlpha);
                     cnds.AlphaTextures = (AlphaTextures)Elements.ToolbarEnumPopup(cnds.AlphaTextures);
-                    cnds.AlphaTexture = (int)cnds.AlphaTextures;
+                    cnds.AlphaTexture = (cnds.AlphaTextures == 0) ? true : false;
                     Elements.EndToolbarHorizontal();
                     break;
                 case 3: // Topology

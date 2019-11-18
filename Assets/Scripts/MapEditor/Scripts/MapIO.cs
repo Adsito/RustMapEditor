@@ -178,10 +178,12 @@ public static class MapIO
         if (CW)
         {
             prefabRotate.transform.Rotate(0, 90, 0, Space.World);
+            prefabRotate.GetComponent<LockObject>().UpdateTransform();
         }
         else
         {
             prefabRotate.transform.Rotate(0, -90, 0, Space.World);
+            prefabRotate.GetComponent<LockObject>().UpdateTransform();
         }
     }
     /// <summary>Rotates paths 90°.</summary>
@@ -192,10 +194,12 @@ public static class MapIO
         if (CW)
         {
             pathRotate.transform.Rotate(0, 90, 0, Space.World);
+            pathRotate.GetComponent<LockObject>().UpdateTransform();
         }
         else
         {
             pathRotate.transform.Rotate(0, -90, 0, Space.World);
+            pathRotate.GetComponent<LockObject>().UpdateTransform();
         }
     }
     /// <summary>Rotates the selected terrains.</summary>
@@ -392,9 +396,7 @@ public static class MapIO
                 return 2;
         }
     }
-    /// <summary>
-    /// Returns the value of a texture at the selected coords.
-    /// </summary>
+    /// <summary>Returns the value of a texture at the selected coords.</summary>
     /// <param name="landLayer">The LandLayer of the texture. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="texture">The texture to get.</param>
     /// <param name="x">The X coordinate.</param>
@@ -402,51 +404,28 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static float GetTexture(LandLayers landLayer, int texture, int x, int z, int topology = 0)
     {
-        return RustMapEditor.Data.LandData.GetSplatMap(landLayer, topology)[x, z, texture];
+        return GetSplatMap(landLayer, topology)[x, z, texture];
     }
-    /// <summary>
-    /// Rotates the selected layer.
-    /// </summary>
+    /// <summary>Rotates the selected layer.</summary>
     /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void RotateLayer(LandLayers landLayerToPaint, bool CW, int topology = 0)
     {
-        int textureCount = TextureCount(landLayerToPaint);
-        float[,,] oldLayer = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
-        float[,,] newLayer = new float[oldLayer.GetLength(0), oldLayer.GetLength(1), textureCount];
-        if (CW)
+        switch (landLayerToPaint)
         {
-            Parallel.For(0, newLayer.GetLength(0), i =>
-            {
-                for (int j = 0; j < newLayer.GetLength(1); j++)
-                {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        newLayer[i, j, k] = oldLayer[j, oldLayer.GetLength(1) - i - 1, k];
-                    }
-                }
-            });
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                SetData(Rotate(GetAlphaMap(), CW), LandLayers.Alpha);
+                break;
         }
-        else
-        {
-            Parallel.For(0, newLayer.GetLength(0), i =>
-            {
-                for (int j = 0; j < newLayer.GetLength(1); j++)
-                {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        newLayer[i, j, k] = oldLayer[oldLayer.GetLength(0) - j - 1, i, k];
-                    }
-                }
-            });
-        }
-        RustMapEditor.Data.LandData.SetData(newLayer, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
-    /// <summary>
-    /// Rotates the selected topologies.
-    /// </summary>
+    /// <summary>Rotates the selected topologies.</summary>
     /// <param name="topologyLayers">The Topology layers to rotate.</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateTopologyLayers(TerrainTopology.Enum topologyLayers, bool CW)
@@ -461,20 +440,19 @@ public static class MapIO
         }
         ClearProgressBar();
     }
-    /// <summary>
-    /// Paints if all the conditions passed in are true.
-    /// </summary>
+    /// <summary>Paints if all the conditions passed in are true.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="texture">The texture to paint.</param>
     /// <param name="conditions">The conditions to check.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintConditional(LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
-        float[,,] groundSplatMap = RustMapEditor.Data.LandData.GetSplatMap(LandLayers.Ground);
-        float[,,] biomeSplatMap = RustMapEditor.Data.LandData.GetSplatMap(LandLayers.Biome);
-        float[,,] alphaSplatMap = RustMapEditor.Data.LandData.GetSplatMap(LandLayers.Alpha);
-        float[,,] topologySplatMap = RustMapEditor.Data.LandData.GetSplatMap(LandLayers.Topology, topology);
+        float[,,] groundSplatMap = GetSplatMap(LandLayers.Ground);
+        float[,,] biomeSplatMap = GetSplatMap(LandLayers.Biome);
+        bool[,] alphaMap = GetAlphaMap();
+        float[,,] topologySplatMap = GetSplatMap(LandLayers.Topology, topology);
         float[,,] splatMapPaint = new float[groundSplatMap.GetLength(0), groundSplatMap.GetLength(1), TextureCount(landLayerToPaint)];
+        bool[,] alphaMapPaint = new bool[alphaMap.GetLength(0), alphaMap.GetLength(1)];
         int textureCount = TextureCount(landLayerToPaint);
         float slope, height;
         float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
@@ -489,7 +467,7 @@ public static class MapIO
                 splatMapPaint = biomeSplatMap;
                 break;
             case LandLayers.Alpha:
-                splatMapPaint = alphaSplatMap;
+                alphaMapPaint = alphaMap;
                 break;
             case LandLayers.Topology:
                 splatMapPaint = topologySplatMap;
@@ -503,7 +481,7 @@ public static class MapIO
         {
             topologyLayersList.Add(new TopologyLayers()
             {
-                Topologies = RustMapEditor.Data.LandData.GetSplatMap(LandLayers.Topology, topologyLayerInt)
+                Topologies = GetSplatMap(LandLayers.Topology, topologyLayerInt)
             });
         }
         foreach (var groundTextureInt in GetEnumSelection(conditions.GroundConditions))
@@ -567,7 +545,7 @@ public static class MapIO
                 }
                 if (conditions.CheckAlpha)
                 {
-                    if (alphaSplatMap[i, j, conditions.AlphaTexture] < 1f)
+                    if (alphaMap[i, j] == conditions.AlphaTexture)
                     {
                         continue;
                     }
@@ -586,16 +564,22 @@ public static class MapIO
                 splatMapPaint[i, j, texture] = 1f;
             }
         }
+        switch (landLayerToPaint)
+        {
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(splatMapPaint, landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                SetData(alphaMapPaint, LandLayers.Alpha);
+                SetLayer(LandLayers.Alpha);
+                break;
+        }
         ClearProgressBar();
-        groundTexturesList.Clear();
-        biomeTexturesList.Clear();
-        topologyLayersList.Clear();
-        RustMapEditor.Data.LandData.SetData(splatMapPaint, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
-    /// <summary>
-    /// Paints the layer wherever the height conditions are met.
-    /// </summary>
+    /// <summary>Paints the layer wherever the height conditions are met.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
@@ -603,7 +587,7 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintHeight(LandLayers landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
+        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         for (int i = 0; i < splatMap.GetLength(0); i++)
         {
@@ -611,14 +595,14 @@ public static class MapIO
             {
                 float iNorm = (float)i / splatMap.GetLength(0);
                 float jNorm = (float)j / splatMap.GetLength(1);
-                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
+                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm);
                 if (height >= heightLow && height <= heightHigh)
                 {
-                    for (int k = 0; k < textureCount; k++) // Erases the textures on all the layers.
+                    for (int k = 0; k < textureCount; k++) 
                     {
                         splatMap[i, j, k] = 0;
                     }
-                    splatMap[i, j, t] = 1; // Paints the texture t.
+                    splatMap[i, j, t] = 1; 
                 }
             }
         }
@@ -705,8 +689,8 @@ public static class MapIO
                 }
             }
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
+        SetData(splatMap, landLayerToPaint);
+        SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>
     /// Sets whole layer to the active texture. 
@@ -721,7 +705,7 @@ public static class MapIO
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
+                float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
                 int textureCount = TextureCount(landLayerToPaint);
                 Parallel.For(0, splatMap.GetLength(0), i =>
                 {
@@ -734,18 +718,16 @@ public static class MapIO
                         splatMap[i, j, t] = 1;
                     }
                 });
-                RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-                RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
+                SetData(splatMap, landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                RustMapEditor.Data.LandData.SetData(SetValues(RustMapEditor.Data.LandData.GetAlphaMap(), true), LandLayers.Alpha);
-                RustMapEditor.Data.LandData.SetLayer(landLayerToPaint);
+                SetData(SetValues(GetAlphaMap(), true), LandLayers.Alpha);
+                SetLayer(landLayerToPaint);
                 break;
         }
     }
-    /// <summary>
-    /// Paints the selected Topology layers.
-    /// </summary>
+    /// <summary>Paints the selected Topology layers.</summary>
     /// <param name="topologyLayers">The Topology layers to clear.</param>
     public static void PaintTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
@@ -759,9 +741,7 @@ public static class MapIO
         }
         ClearProgressBar();
     }
-    /// <summary>
-    /// Sets whole layer to the inactive texture. Alpha and Topology only. 
-    /// </summary>
+    /// <summary>Sets whole layer to the inactive texture. Alpha and Topology only.</summary>
     /// <param name="landLayerToPaint">The LandLayer to clear. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void ClearLayer(LandLayers landLayerToPaint, int topology = 0)
@@ -769,7 +749,7 @@ public static class MapIO
         switch (landLayerToPaint)
         {
             case LandLayers.Topology:
-                float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
+                float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
                 Parallel.For(0, splatMap.GetLength(0), i =>
                 {
                     for (int j = 0; j < splatMap.GetLength(1); j++)
@@ -778,18 +758,15 @@ public static class MapIO
                         splatMap[i, j, 1] = 1;
                     }
                 });
-                RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-                RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
+                SetData(splatMap, landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                RustMapEditor.Data.LandData.SetData(SetValues(RustMapEditor.Data.LandData.GetAlphaMap(), false), LandLayers.Alpha);
-                RustMapEditor.Data.LandData.SetLayer(landLayerToPaint);
+                SetData(SetValues(GetAlphaMap(), false), LandLayers.Alpha);
                 break;
         }
     }
-    /// <summary>
-    /// Clears the selected Topology layers.
-    /// </summary>
+    /// <summary>Clears the selected Topology layers.</summary>
     /// <param name="topologyLayers">The Topology layers to clear.</param>
     public static void ClearTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
@@ -811,13 +788,11 @@ public static class MapIO
         switch (landLayerToPaint)
         {
             case LandLayers.Topology:
-                RustMapEditor.Data.LandData.SetData(Invert(RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
-                RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
+                SetData(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                RustMapEditor.Data.LandData.UpdateAlpha();
-                RustMapEditor.Data.LandData.SetData(Invert(RustMapEditor.Data.LandData.GetAlphaMap()), LandLayers.Alpha);
-                RustMapEditor.Data.LandData.SetLayer(landLayerToPaint);
+                SetData(Invert(GetAlphaMap()), LandLayers.Alpha);
                 break;
         }
     }
@@ -958,7 +933,7 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintArea(LandLayers landLayerToPaint, Dimensions dmns, int t, int topology = 0)
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
+        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
         int textureCount = TextureCount(landLayerToPaint);
         dmns.z0 = Mathf.Clamp(dmns.z0, 0, splatMap.GetLength(0));
         dmns.z1 = Mathf.Clamp(dmns.z1, 0, splatMap.GetLength(1));
@@ -975,12 +950,10 @@ public static class MapIO
                 splatMap[i, j, t] = 1;
             }
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
+        SetData(splatMap, landLayerToPaint, topology);
+        SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
-    /// <summary>
-    /// Paints the splats wherever the water is above 500 and is above the terrain.
-    /// </summary>
+    /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
     /// <param name="t">The texture to paint.</param>
@@ -1033,30 +1006,40 @@ public static class MapIO
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
         ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: ", 0f);
         int prefabsHidden = 0;
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
             progressBar += progressValue;
-            ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            }
             prefabDataHolders[i].prefabData.category = @":\RustEditHiddenPrefab:" + prefabsHidden + ":";
             prefabsHidden++;
         }
         Debug.Log("Hid " + prefabsHidden + " prefabs.");
         ClearProgressBar();
     }
-    /// <summary>
-    /// Breaks down RustEdit custom prefabs back into the individual prefabs.
-    /// </summary>
+    /// <summary>Breaks down RustEdit custom prefabs back into the individual prefabs.</summary>
     public static void BreakRustEditCustomPrefabs()
     {
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
         ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs", 0f);
         int prefabsBroken = 0;
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
             progressBar += progressValue;
-            ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            }
             if (prefabDataHolders[i].prefabData.category.Contains(':'))
             {
                 prefabDataHolders[i].prefabData.category = "Decor";
@@ -1066,9 +1049,7 @@ public static class MapIO
         Debug.Log("Broke down " + prefabsBroken + " prefabs.");
         ClearProgressBar();
     }
-    /// <summary>
-    /// Parents all the RustEdit custom prefabs in the map to parent gameobjects.
-    /// </summary>
+    /// <summary>Parents all the RustEdit custom prefabs in the map to parent gameobjects.</summary>
     public static void GroupRustEditCustomPrefabs()
     {
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
@@ -1099,9 +1080,7 @@ public static class MapIO
         }
         ClearProgressBar();
     }
-    /// <summary>
-    /// Exports information about all the map prefabs to a JSON file.
-    /// </summary>
+    /// <summary>Exports information about all the map prefabs to a JSON file.</summary>
     /// <param name="mapPrefabFilePath">The JSON file path and name.</param>
     /// <param name="deletePrefabs">Deletes the prefab after the data is exported.</param>
     public static void ExportMapPrefabs(string mapPrefabFilePath, bool deletePrefabs)
@@ -1141,9 +1120,7 @@ public static class MapIO
         ClearProgressBar();
         Debug.Log("Exported " + prefabDataHolders.Length + " prefabs.");
     }
-    /// <summary>
-    /// Exports lootcrates to a JSON for use with Oxide.
-    /// </summary>
+    /// <summary>Exports lootcrates to a JSON for use with Oxide.</summary>
     /// <param name="prefabFilePath">The path to save the JSON.</param>
     /// <param name="deletePrefabs">Delete the lootcrates after exporting.</param>
     public static void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
@@ -1297,10 +1274,7 @@ public static class MapIO
         prefabExports.Clear();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
-    /// <summary>
-    /// Centres the Prefab and Path parent objects.
-    /// </summary>
-    /// <param name="terrains"></param>
+    /// <summary>Centres the Prefab and Path parent objects.</summary>
     static void CentreSceneObjects(MapInfo terrains)
     {
         GameObject.FindGameObjectWithTag("Prefabs").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
@@ -1323,10 +1297,7 @@ public static class MapIO
         water.terrainData.alphamapResolution = terrains.splatRes;
         water.terrainData.baseMapResolution = terrains.splatRes;
     }
-    /// <summary>
-    /// Loads and sets up the map Prefabs.
-    /// </summary>
-    /// <param name="terrains"></param>
+    /// <summary>Loads and sets up the map Prefabs.</summary>
     static void LoadPrefabs(MapInfo terrains, string loadPath = "")
     {
         Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
@@ -1361,10 +1332,7 @@ public static class MapIO
             }
         }
     }
-    /// <summary>
-    /// Loads and sets up the map Paths.
-    /// </summary>
-    /// <param name="terrains"></param>
+    /// <summary>Loads and sets up the map Paths.</summary>
     static void LoadPaths(MapInfo terrains, string loadPath = "")
     {
         var terrainPosition = 0.5f * terrains.size;
@@ -1392,7 +1360,7 @@ public static class MapIO
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
     }
-    static void LoadSplatMaps(MapInfo terrains, string loadPath = "")
+    static void LoadSplatMaps(MapInfo terrains)
     {
         TopologyData.InitMesh(terrains.topology);
         SetData(terrains.splatMap, LandLayers.Ground);
@@ -1407,18 +1375,17 @@ public static class MapIO
     static void LoadMapInfo(MapInfo terrains, string loadPath = "")
     {
         ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
-        SetTerrainReferences();
         RemoveMapObjects();
         CentreSceneView(GetLastSceneView());
         SetCullingDistances(GetLastSceneView().camera);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
-        LoadSplatMaps(terrains, loadPath);
+        LoadSplatMaps(terrains);
         LoadPrefabs(terrains, loadPath);
         LoadPaths(terrains, loadPath);
         ProgressBar("Loading: " + loadPath, "Setting Layers", 0.75f);
         SetLayer(LandLayers.Alpha); // Sets the terrain holes.
-        SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer)); // Sets the alphamaps to Ground.
+        SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the alphamaps to Ground.
         ClearProgressBar();
     }
     /// <summary>Loads a WorldSerialization and calls LoadMapInfo.</summary>

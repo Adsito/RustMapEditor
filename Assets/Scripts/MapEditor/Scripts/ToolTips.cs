@@ -123,9 +123,11 @@ namespace RustMapEditor.Variables
         public static GUIContent setLandHeight = new GUIContent("Set Land Height", "Sets the terrain height to the height selected.");
         public static GUIContent setWaterHeight = new GUIContent("Set Water Height", "Sets the water height to the height selected.");
 
-        public static GUIContent minMaxHeightLabel = new GUIContent("Min/Max Height");
-        public static GUIContent setMinHeight = new GUIContent("Set Minimum Height", "Raises any of the terrain below the minimum height to the minimum height.");
-        public static GUIContent setMaxHeight = new GUIContent("Set Maximum Height", "Lowers any of the terrain above the maximum height to the maximum height.");
+        public static GUIContent clampHeight = new GUIContent("Clamp Height");
+        public static GUIContent minHeight = new GUIContent("Minimum Height", "The minimum height to set the terrain to.");
+        public static GUIContent maxHeight = new GUIContent("Maximum Height", "The maximum height to set the terrain to.");
+        public static GUIContent setMinHeight = new GUIContent("Set Minimum Height", "Lowers any of the terrain below the minimum height to the minimum height.");
+        public static GUIContent setMaxHeight = new GUIContent("Set Maximum Height", "Raises any of the terrain above the maximum height to the maximum height.");
 
         public static GUIContent offsetLabel = new GUIContent("Offset");
         public static GUIContent offsetHeight = new GUIContent("Height", "The height to offset.");

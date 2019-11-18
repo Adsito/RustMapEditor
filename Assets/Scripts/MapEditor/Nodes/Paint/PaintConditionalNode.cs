@@ -32,7 +32,7 @@ public class PaintConditionalNode : Node
         conditions.GroundConditions = groundLayerConditions;
         conditions.BiomeConditions = biomeLayerConditions;
         conditions.CheckAlpha = checkAlpha;
-        conditions.AlphaTexture = alphaTexture;
+        conditions.AlphaTexture = (alphaTexture == 0) ? true : false;
         conditions.TopologyLayers = topologyLayerConditions;
         conditions.TopologyTexture = topologyTexture;
         conditions.CheckSlope = checkSlope;
