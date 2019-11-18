@@ -23,8 +23,6 @@ This editor originates from the codebase of the very first Rust Map Making commu
 
 Using resources from:
 
--https://github.com/Roland09/Terrain-Stamps for some extra stamps.
-
 -https://github.com/Siccity/xNode for the node system.
 
 -https://bitbucket.org/rotorz/reorderable-list-editor-field-for-unity/src/master/ for the draggable UI framework.
