@@ -13,6 +13,7 @@ namespace RustMapEditor.Maths
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] SetValues(float[,] array, float value, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -25,9 +26,9 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = value;
                     }
@@ -37,6 +38,7 @@ namespace RustMapEditor.Maths
         }
         public static bool[,] SetValues(bool[,] array, bool value, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -49,11 +51,82 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = value;
+                    }
+                });
+            }
+            return array;
+        }
+        public static float[,,] PaintRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        {
+            int arrayLength = array.GetLength(0);
+            int channelCount = array.GetLength(2);
+            if (dmns != null)
+            {
+                Parallel.For(dmns.x0, dmns.x1, i =>
+                {
+                    for (int j = dmns.z0; j < dmns.z1; j++)
+                    {
+                        if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                        {
+                            for (int k = 0; k < channelCount; k++)
+                            {
+                                array[i, j, k] = 0;
+                            }
+                            array[i, j, channel] = 1;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                Parallel.For(0, arrayLength, i =>
+                {
+                    for (int j = 0; j < arrayLength; j++)
+                    {
+                        if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                        {
+                            for (int k = 0; k < channelCount; k++)
+                            {
+                                array[i, j, k] = 0;
+                            }
+                            array[i, j, channel] = 1;
+                        }
+                    }
+                });
+            }
+            return array;
+        }
+        public static bool[,] PaintRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        {
+            int arrayLength = array.GetLength(0);
+            if (dmns != null)
+            {
+                Parallel.For(dmns.x0, dmns.x1, i =>
+                {
+                    for (int j = dmns.z0; j < dmns.z1; j++)
+                    {
+                        if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                        {
+                            array[i, j] = value;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                Parallel.For(0, arrayLength, i =>
+                {
+                    for (int j = 0; j < arrayLength; j++)
+                    {
+                        if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                        {
+                            array[i, j] = value;
+                        }
                     }
                 });
             }
@@ -63,6 +136,7 @@ namespace RustMapEditor.Maths
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] ClampValues(float[,] array, float minValue, float maxValue, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -75,9 +149,9 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = Mathf.Clamp(array[i, j], minValue, maxValue);
                     }
@@ -90,6 +164,7 @@ namespace RustMapEditor.Maths
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] Rotate(float[,] array, bool CW, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             float[,] newArray = new float[array.GetLength(0), array.GetLength(1)];
             if (dmns != null)
             {
@@ -99,7 +174,7 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, arrayLength - i - 1];
                         }
                     });
                 }
@@ -109,7 +184,7 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[arrayLength - j - 1, i];
                         }
                     });
                 }
@@ -118,21 +193,21 @@ namespace RustMapEditor.Maths
             {
                 if (CW)
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, arrayLength - i - 1];
                         }
                     });
                 }
                 else
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[arrayLength - j - 1, i];
                         }
                     });
                 }
@@ -141,6 +216,8 @@ namespace RustMapEditor.Maths
         }
         public static float[,,] Rotate(float[,,] array, bool CW, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
             float[,,] newArray = new float[array.GetLength(0), array.GetLength(1), array.GetLength(2)];
             if (dmns != null)
             {
@@ -150,9 +227,9 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            for (int k = 0; k < array.GetLength(2); k++)
+                            for (int k = 0; k < channelLength; k++)
                             {
-                                newArray[i, j, k] = array[j, array.GetLength(1) - i - 1, k];
+                                newArray[i, j, k] = array[j, arrayLength - i - 1, k];
                             }
                         }
                     });
@@ -163,9 +240,9 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            for (int k = 0; k < array.GetLength(2); k++)
+                            for (int k = 0; k < channelLength; k++)
                             {
-                                newArray[i, j, k] = array[array.GetLength(0) - j - 1, i, k];
+                                newArray[i, j, k] = array[arrayLength - j - 1, i, k];
                             }
                         }
                     });
@@ -175,11 +252,11 @@ namespace RustMapEditor.Maths
             {
                 if (CW)
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            for (int k = 0; k < array.GetLength(2); k++)
+                            for (int k = 0; k < channelLength; k++)
                             {
                                 newArray[i, j, k] = array[j, array.GetLength(1) - i - 1, k];
                             }
@@ -188,13 +265,13 @@ namespace RustMapEditor.Maths
                 }
                 else
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            for (int k = 0; k < array.GetLength(2); k++)
+                            for (int k = 0; k < channelLength; k++)
                             {
-                                newArray[i, j, k] = array[array.GetLength(0) - j - 1, i, k];
+                                newArray[i, j, k] = array[arrayLength - j - 1, i, k];
                             }
                         }
                     });
@@ -204,6 +281,7 @@ namespace RustMapEditor.Maths
         }
         public static bool[,] Rotate(bool[,] array, bool CW, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             bool[,] newArray = new bool[array.GetLength(0), array.GetLength(1)];
             if (dmns != null)
             {
@@ -213,7 +291,7 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, arrayLength - i - 1];
                         }
                     });
                 }
@@ -223,7 +301,7 @@ namespace RustMapEditor.Maths
                     {
                         for (int j = dmns.z0; j < dmns.z1; j++)
                         {
-                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[arrayLength - j - 1, i];
                         }
                     });
                 }
@@ -232,21 +310,21 @@ namespace RustMapEditor.Maths
             {
                 if (CW)
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            newArray[i, j] = array[j, array.GetLength(1) - i - 1];
+                            newArray[i, j] = array[j, arrayLength - i - 1];
                         }
                     });
                 }
                 else
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
-                            newArray[i, j] = array[array.GetLength(0) - j - 1, i];
+                            newArray[i, j] = array[arrayLength - j - 1, i];
                         }
                     });
                 }
@@ -257,6 +335,7 @@ namespace RustMapEditor.Maths
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] Invert(float[,] array, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -269,9 +348,9 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = 1 - array[i, j];
                     }
@@ -281,13 +360,15 @@ namespace RustMapEditor.Maths
         }
         public static float[,,] Invert(float[,,] array, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
-                        for (int k = 0; k < array.GetLength(2); k++)
+                        for (int k = 0; k < channelLength; k++)
                         {
                             array[i, j, k] = 1 - array[i, j, k];
                         }
@@ -296,11 +377,11 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
-                        for (int k = 0; k < array.GetLength(2); k++)
+                        for (int k = 0; k < channelLength; k++)
                         {
                             array[i, j, k] = 1 - array[i, j, k];
                         }
@@ -311,6 +392,7 @@ namespace RustMapEditor.Maths
         }
         public static bool[,] Invert(bool[,] array, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -323,9 +405,9 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = !array[i, j];
                     }
@@ -340,6 +422,7 @@ namespace RustMapEditor.Maths
         public static float[,] Normalise(float[,] array, float normaliseLow, float normaliseHigh, Dimensions dmns = null)
         {
             float highestPoint = 0f, lowestPoint = 1f, heightRange = 0f, normalisedHeightRange = 0f;
+            int arrayLength = array.GetLength(0);
             if (dmns != null)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -368,9 +451,9 @@ namespace RustMapEditor.Maths
             }
             else
             {
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         if (array[i, j] < lowestPoint)
                         {
@@ -384,9 +467,9 @@ namespace RustMapEditor.Maths
                 });
                 heightRange = highestPoint - lowestPoint;
                 normalisedHeightRange = normaliseHigh - normaliseLow;
-                Parallel.For(0, array.GetLength(0), i =>
+                Parallel.For(0, arrayLength, i =>
                 {
-                    for (int j = 0; j < array.GetLength(1); j++)
+                    for (int j = 0; j < arrayLength; j++)
                     {
                         array[i, j] = normaliseLow + ((array[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
                     }
@@ -399,6 +482,7 @@ namespace RustMapEditor.Maths
         /// <param name="clampOffset">Prevent array values from overflowing.</param>
         public static float[,] Offset(float[,] array, float offset, bool clampOffset, Dimensions dmns = null)
         {
+            int arrayLength = array.GetLength(0);
             float[,] tempArray = array;
             CancellationTokenSource source = new CancellationTokenSource();
             ParallelOptions options = new ParallelOptions() { CancellationToken = source.Token};
@@ -430,9 +514,9 @@ namespace RustMapEditor.Maths
                 }
                 else
                 {
-                    Parallel.For(0, array.GetLength(0), i =>
+                    Parallel.For(0, arrayLength, i =>
                     {
-                        for (int j = 0; j < array.GetLength(1); j++)
+                        for (int j = 0; j < arrayLength; j++)
                         {
                             if (clampOffset == true)
                             {
@@ -461,25 +545,26 @@ namespace RustMapEditor.Maths
         }
         public static float[,] ShortMapToFloatArray(TerrainMap<short> terrainMap)
         {
-            float[,] heights = new float[terrainMap.res, terrainMap.res];
-            Parallel.For(0, heights.GetLength(0), i =>
+            float[,] array = new float[terrainMap.res, terrainMap.res];
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
             {
-                for (int j = 0; j < heights.GetLength(1); j++)
+                for (int j = 0; j < arrayLength; j++)
                 {
-                    heights[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
+                    array[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
                 }
             });
-            return heights;
+            return array;
         }
         public static byte[] FloatArrayToByteArray(float[,] array)
         {
             short[] shortArray = new short[array.GetLength(0) * array.GetLength(1)];
-
-            Parallel.For(0, array.GetLength(0), i =>
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
             {
-                for (int j = 0; j < array.GetLength(1); j++)
+                for (int j = 0; j < arrayLength; j++)
                 {
-                    shortArray[(i * array.GetLength(0)) + j] = BitUtility.Float2Short(array[i, j]);
+                    shortArray[(i * arrayLength) + j] = BitUtility.Float2Short(array[i, j]);
                 }
             });
 
@@ -493,13 +578,13 @@ namespace RustMapEditor.Maths
         {
             int length = (int)Math.Sqrt(array.Length / texturesAmount);
             float[,,] multiArray = new float[length, length, texturesAmount];
-            Parallel.For(0, multiArray.GetLength(0), i =>
+            Parallel.For(0, length, i =>
             {
-                for (int j = 0; j < multiArray.GetLength(1); j++)
+                for (int j = 0; j < length; j++)
                 {
-                    for (int k = 0; k < multiArray.GetLength(2); k++)
+                    for (int k = 0; k < texturesAmount; k++)
                     {
-                        multiArray[i, j, k] = array[i * multiArray.GetLength(1) * multiArray.GetLength(2) + (j * multiArray.GetLength(2) + k)];
+                        multiArray[i, j, k] = array[i * length * texturesAmount + (j * texturesAmount + k)];
                     }
                 }
             });
@@ -508,17 +593,19 @@ namespace RustMapEditor.Maths
         public static float[,,] NormaliseMulti(float[,,] array, int texturesAmount)
         {
             int length = (int)Math.Sqrt(array.Length / texturesAmount);
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
             Parallel.For(0, array.GetLength(0), i =>
             {
-                float[] splatWeights = new float[array.GetLength(2)];
-                for (int j = 0; j < array.GetLength(1); j++)
+                float[] splatWeights = new float[channelLength];
+                for (int j = 0; j < arrayLength; j++)
                 {
-                    for (int k = 0; k < array.GetLength(2); k++)
+                    for (int k = 0; k < channelLength; k++)
                     {
                         splatWeights[k] = array[i, j, k];
                     }
                     float normalisedWeights = splatWeights.Sum();
-                    for (int k = 0; k < array.GetLength(2); k++)
+                    for (int k = 0; k < channelLength; k++)
                     {
                         splatWeights[k] /= normalisedWeights;
                         array[i, j, k] = splatWeights[k];
@@ -530,9 +617,10 @@ namespace RustMapEditor.Maths
         public static float[,,] BoolToMulti(bool[,] array)
         {
             float[,,] multiArray = new float[array.GetLength(0), array.GetLength(1), 2];
-            Parallel.For(0, array.GetLength(0), i =>
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
             {
-                for (int j = 0; j < array.GetLength(1); j++)
+                for (int j = 0; j < arrayLength; j++)
                 {
                     for (int k = 0; k < 2; k++)
                     {
@@ -545,9 +633,10 @@ namespace RustMapEditor.Maths
         public static bool[,] MultiToBool(float[,,] array)
         {
             bool[,] boolArray = new bool[array.GetLength(0), array.GetLength(1)];
-            Parallel.For(0, array.GetLength(0), i =>
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
             {
-                for (int j = 0; j < array.GetLength(1); j++)
+                for (int j = 0; j < arrayLength; j++)
                 {
                     boolArray[i, j] = (array[i, j, 0] > 0.5f) ? true : false; 
                 }

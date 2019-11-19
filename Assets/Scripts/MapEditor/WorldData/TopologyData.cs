@@ -39,18 +39,17 @@ public static class TopologyData
     public static void SaveTopologyLayers()
     {
         TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
-        var topologyLayer = topologyArray;
         Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             Parallel.For(0, topologyMap.res, j =>
             {
                 for (int k = 0; k < topologyMap.res; k++)
                 {
-                    if (topologyLayer[i][j, k, 0] > 0)
+                    if (topologyArray[i][j, k, 0] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
                     }
-                    if (topologyLayer[i][j, k, 1] > 0)
+                    if (topologyArray[i][j, k, 1] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
                     }
