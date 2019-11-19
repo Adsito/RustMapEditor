@@ -78,7 +78,6 @@ namespace RustMapEditor.UI
                 {
                     return;
                 }
-                Debug.Log("Saved map " + saveFile);
                 MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
                 MapIO.Save(saveFile);
             }
@@ -97,7 +96,6 @@ namespace RustMapEditor.UI
                             EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
                             return;
                         }
-                        Debug.Log("Saved map " + saveFile);
                         MapIO.Save(saveFile);
                         MapIO.CreateNewMap(mapSize);
                         break;
@@ -354,7 +352,7 @@ namespace RustMapEditor.UI
         }
         public static void ClampHeight(ref float heightLow, ref float heightHigh)
         {
-            Elements.MiniBoldLabel(ToolTips.clampHeight);
+            Elements.MiniBoldLabel(ToolTips.clampHeightLabel);
 
             Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();

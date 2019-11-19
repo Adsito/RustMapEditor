@@ -352,9 +352,7 @@ public static class MapIO
     /// <summary>Returns a 2D array of the height values.</summary>
     public static float[,] GetHeights()
     {
-        float alphamapInterp = 1f / land.terrainData.alphamapWidth;
-        float[,] heights = land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapWidth, alphamapInterp, alphamapInterp);
-        return heights;
+        return land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight);
     }
     /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
     /// <param name="x">The X coordinate.</param>
@@ -587,31 +585,21 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintHeight(LandLayers landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
     {
-        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-        int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        switch (landLayerToPaint)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float iNorm = (float)i / splatMap.GetLength(0);
-                float jNorm = (float)j / splatMap.GetLength(1);
-                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm);
-                if (height >= heightLow && height <= heightHigh)
-                {
-                    for (int k = 0; k < textureCount; k++) 
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1; 
-                }
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(PaintRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                bool value = (t == 0) ? true : false;
+                SetData(PaintRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh), LandLayers.Alpha);
+                break;
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
-    /// <summary>
-    /// Paints the layer wherever the height conditions are met with a weighting determined by the range the height falls in. 
-    /// </summary>
+    /// <summary>Paints the layer wherever the height conditions are met with a weighting determined by the range the height falls in.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>

@@ -8,9 +8,9 @@ namespace RustMapEditor.Data
     public static class LandData
     {
         /// <summary>The Ground textures of the map. [Res, Res, Textures(8)].</summary>
-        private static float[,,] groundArray;
+        public static float[,,] groundArray;
         /// <summary>The Biome textures of the map. [Res, Res, Textures(4)</summary>
-        private static float[,,] biomeArray;
+        public static float[,,] biomeArray;
         /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
         public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
