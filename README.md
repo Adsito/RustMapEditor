@@ -12,8 +12,8 @@
 [![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)](https://discord.gg/HPmTWVa)
 ### Contribute
 
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Editor/issues)
-![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Editor.svg)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Editor/blob/master/CONTRIBUTING.md)
+[![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Editor.svg)](https://github.com/RustMapMaking/Editor/issues)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/RustMapMaking)
 
 ### Credits
