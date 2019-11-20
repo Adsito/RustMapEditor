@@ -36,6 +36,40 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
+        public static float[,,] SetValues(float[,,] array, int channel, Dimensions dmns = null)
+        {
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
+            if (dmns != null)
+            {
+                Parallel.For(dmns.x0, dmns.x1, i =>
+                {
+                    for (int j = dmns.z0; j < dmns.z1; j++)
+                    {
+                        for (int k = 0; k < channelLength; k++)
+                        {
+                            array[i, j, k] = 0;
+                        }
+                        array[i, j, channel] = 1;
+                    }
+                });
+            }
+            else
+            {
+                Parallel.For(0, arrayLength, i =>
+                {
+                    for (int j = 0; j < arrayLength; j++)
+                    {
+                        for (int k = 0; k < channelLength; k++)
+                        {
+                            array[i, j, k] = 0;
+                        }
+                        array[i, j, channel] = 1;
+                    }
+                });
+            }
+            return array;
+        }
         public static bool[,] SetValues(bool[,] array, bool value, Dimensions dmns = null)
         {
             int arrayLength = array.GetLength(0);
@@ -61,7 +95,7 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
-        public static float[,,] PaintRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        public static float[,,] SetRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             int arrayLength = array.GetLength(0);
             int channelCount = array.GetLength(2);
@@ -101,7 +135,7 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
-        public static bool[,] PaintRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             int arrayLength = array.GetLength(0);
             if (dmns != null)

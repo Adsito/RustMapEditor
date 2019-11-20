@@ -372,9 +372,7 @@ public static class MapIO
         {
             for (int j = 0; j < land.terrainData.alphamapHeight; j++)
             {
-                float iNorm = (float)i / (float)land.terrainData.alphamapHeight;
-                float jNorm = (float)j / (float)land.terrainData.alphamapHeight;
-                slopes[i, j] = land.terrainData.GetSteepness(iNorm, jNorm);
+                slopes[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
             }
         }
         return slopes;
@@ -419,7 +417,7 @@ public static class MapIO
                 SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Rotate(GetAlphaMap(), CW), LandLayers.Alpha);
+                SetData(Rotate(GetAlphaMap(), CW), landLayerToPaint);
                 break;
         }
     }
@@ -590,12 +588,12 @@ public static class MapIO
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                SetData(PaintRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
+                SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
                 SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(PaintRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh), LandLayers.Alpha);
+                SetData(SetRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
                 break;
         }
     }
@@ -680,9 +678,7 @@ public static class MapIO
         SetData(splatMap, landLayerToPaint);
         SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
-    /// <summary>
-    /// Sets whole layer to the active texture. 
-    /// </summary>
+    /// <summary>Sets whole layer to the active texture.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
@@ -693,25 +689,11 @@ public static class MapIO
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-                int textureCount = TextureCount(landLayerToPaint);
-                Parallel.For(0, splatMap.GetLength(0), i =>
-                {
-                    for (int j = 0; j < splatMap.GetLength(1); j++)
-                    {
-                        for (int k = 0; k < textureCount; k++)
-                        {
-                            splatMap[i, j, k] = 0;
-                        }
-                        splatMap[i, j, t] = 1;
-                    }
-                });
-                SetData(splatMap, landLayerToPaint, topology);
+                SetData(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
                 SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), true), LandLayers.Alpha);
-                SetLayer(landLayerToPaint);
+                SetData(SetValues(GetAlphaMap(), true), landLayerToPaint);
                 break;
         }
     }
@@ -737,20 +719,11 @@ public static class MapIO
         switch (landLayerToPaint)
         {
             case LandLayers.Topology:
-                float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-                Parallel.For(0, splatMap.GetLength(0), i =>
-                {
-                    for (int j = 0; j < splatMap.GetLength(1); j++)
-                    {
-                        splatMap[i, j, 0] = 0;
-                        splatMap[i, j, 1] = 1;
-                    }
-                });
-                SetData(splatMap, landLayerToPaint, topology);
+                SetData(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
                 SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), false), LandLayers.Alpha);
+                SetData(SetValues(GetAlphaMap(), false), landLayerToPaint);
                 break;
         }
     }
@@ -780,7 +753,7 @@ public static class MapIO
                 SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Invert(GetAlphaMap()), LandLayers.Alpha);
+                SetData(Invert(GetAlphaMap()), landLayerToPaint);
                 break;
         }
     }
@@ -806,31 +779,21 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintSlope(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
-        int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        switch (landLayerToPaint)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float iNorm = (float)i / (float)splatMap.GetLength(0);
-                float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float slope = land.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
-                if (slope >= slopeLow && slope <= slopeHigh)
-                {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1;
-                }
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                bool value = (t == 0) ? true : false;
+                SetData(SetRange(GetAlphaMap(), GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
+                break;
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
-    /// <summary>
-    /// Paints the layer wherever the slope conditions are met. Includes option to blend.
-    /// </summary>
+    /// <summary> Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
     /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
