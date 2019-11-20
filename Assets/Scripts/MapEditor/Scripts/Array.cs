@@ -95,6 +95,10 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
+        /// <summary>Sets all the elements with values within the range limits on the channel selected.</summary>
+        /// <param name="range">Array of values to check against the range limits.</param>
+        /// <param name="channel">The channel to set the values to.</param>
+        /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,,] SetRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             int arrayLength = array.GetLength(0);
@@ -163,6 +167,149 @@ namespace RustMapEditor.Maths
                         }
                     }
                 });
+            }
+            return array;
+        }
+        public static float[,,] SetRiver(float[,,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, int channel, Dimensions dmns = null)
+        {
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
+            if (dmns != null)
+            {
+                if (aboveTerrain)
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
+                            {
+                                for (int k = 0; k < channelLength; k++)
+                                {
+                                    array[i, j, k] = 0;
+                                }
+                                array[i, j, channel] = 1;
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            if (waterHeights[i, j] > 500)
+                            {
+                                for (int k = 0; k < channelLength; k++)
+                                {
+                                    array[i, j, k] = 0;
+                                }
+                                array[i, j, channel] = 1;
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                if (aboveTerrain)
+                {
+                    Parallel.For(0, arrayLength, i =>
+                    {
+                        for (int j = 0; j < arrayLength; j++)
+                        {
+                            if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
+                            {
+                                for (int k = 0; k < channelLength; k++)
+                                {
+                                    array[i, j, k] = 0;
+                                }
+                                array[i, j, channel] = 1;
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, arrayLength, i =>
+                    {
+                        for (int j = 0; j < arrayLength; j++)
+                        {
+                            if (waterHeights[i, j] > 500)
+                            {
+                                for (int k = 0; k < channelLength; k++)
+                                {
+                                    array[i, j, k] = 0;
+                                }
+                                array[i, j, channel] = 1;
+                            }
+                        }
+                    });
+                }
+            }
+            return array;
+        }
+        public static bool[,] SetRiver(bool[,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, bool value, Dimensions dmns = null)
+        {
+            int arrayLength = array.GetLength(0);
+            if (dmns != null)
+            {
+                if (aboveTerrain)
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
+                            {
+                                array[i, j] = value;
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(dmns.x0, dmns.x1, i =>
+                    {
+                        for (int j = dmns.z0; j < dmns.z1; j++)
+                        {
+                            if (waterHeights[i, j] > 500)
+                            {
+                                array[i, j] = value;
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                if (aboveTerrain)
+                {
+                    Parallel.For(0, arrayLength, i =>
+                    {
+                        for (int j = 0; j < arrayLength; j++)
+                        {
+                            if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
+                            {
+                                array[i, j] = value;
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, arrayLength, i =>
+                    {
+                        for (int j = 0; j < arrayLength; j++)
+                        {
+                            if (waterHeights[i, j] > 500)
+                            {
+                                array[i, j] = value;
+                            }
+                        }
+                    });
+                }
             }
             return array;
         }
