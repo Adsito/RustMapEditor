@@ -1,9 +1,9 @@
 # Rust Map Making Unity Editor
-![HitCount](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity.svg)
-[![GitHub All Releases](https://img.shields.io/github/downloads/RustMapMaking/Rust-Map-Editor-Unity/total.svg)](https://github.com/RustMapMaking/Editor/releases)
-[![GitHub](https://img.shields.io/github/license/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/blob/master/LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/commits/master)
-[![GitHub repo size](https://img.shields.io/github/repo-size/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/releases)
+[![HitCount](http://hits.dwyl.io/Adsitoz/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/releases)
+[![GitHub All Releases](https://img.shields.io/github/downloads/Editor/total.svg)](https://github.com/RustMapMaking/Editor/releases)
+[![GitHub](https://img.shields.io/github/license/RustMapMaking/Editor.svg)](https://github.com/RustMapMaking/Editor/blob/master/LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Editor.svg)](https://github.com/RustMapMaking/Editor/commits/master)
+[![GitHub repo size](https://img.shields.io/github/repo-size/RustMapMaking/Editor.svg)](https://github.com/RustMapMaking/Editor/releases)
 
 
 
