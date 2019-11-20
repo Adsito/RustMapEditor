@@ -20,10 +20,10 @@ namespace RustMapEditor.UI
         {
             PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
         }
-        //[MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
+        [MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
         static void OpenPathHierachy()
         {
-
+            PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PathHierachyWindow), false, "Path Hierachy");
         }
         [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
