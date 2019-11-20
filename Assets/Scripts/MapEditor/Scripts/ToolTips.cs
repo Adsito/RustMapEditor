@@ -15,6 +15,12 @@ namespace RustMapEditor.Variables
         public static GUIContent prefabHierachyCategory = new GUIContent("Category", "The prefab category if from Rust.");
         public static GUIContent prefabHierachyRustID = new GUIContent("ID", "The prefab ID in the Rust game manifest.");
 
+        public static GUIContent pathHierachyName = new GUIContent("Name", "The name of the path.");
+        public static GUIContent pathHierachyInnerPadding = new GUIContent("Inner Padding", "The inner padding of the path.");
+        public static GUIContent pathHierachyOuterPadding = new GUIContent("Outer Padding", "The outer padding of the path.");
+        public static GUIContent pathHierachyInnerFade = new GUIContent("Inner Fade", "The inner fade of the path");
+        public static GUIContent pathHierachyOuterFade = new GUIContent("Outer Fade", "The outer fade of the path");
+
         public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
         public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
         public static GUIContent prefabName = new GUIContent("Name:", "The Prefab name.");
