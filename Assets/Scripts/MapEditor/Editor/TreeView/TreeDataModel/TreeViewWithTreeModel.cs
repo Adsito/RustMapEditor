@@ -58,12 +58,12 @@ namespace RustMapEditor
 			int depthForHiddenRoot = -1;
 			return new TreeViewItem<T>(m_TreeModel.root.id, depthForHiddenRoot, m_TreeModel.root.name, m_TreeModel.root);
 		}
-
+        
 		protected override IList<TreeViewItem> BuildRows (TreeViewItem root)
 		{
-			if (m_TreeModel.root == null)
+			if (m_TreeModel.root == null || m_TreeModel.numberOfDataElements < 2)
 			{
-				Debug.LogError ("tree model root is null. did you call SetData()?");
+                return m_Rows;
 			}
 
 			m_Rows.Clear ();
@@ -83,7 +83,7 @@ namespace RustMapEditor
 
 			return m_Rows;
 		}
-
+        
 		void AddChildrenRecursive (T parent, int depth, IList<TreeViewItem> newRows)
 		{
 			foreach (T child in parent.children)
