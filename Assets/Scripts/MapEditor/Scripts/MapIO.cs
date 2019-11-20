@@ -354,6 +354,10 @@ public static class MapIO
     {
         return land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight);
     }
+    public static float[,] GetWaterHeights()
+    {
+        return water.terrainData.GetInterpolatedHeights(0, 0, water.terrainData.alphamapHeight, water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight);
+    }
     /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
     /// <param name="x">The X coordinate.</param>
     /// <param name="z">The Z coordinate.</param>
@@ -884,25 +888,19 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintArea(LandLayers landLayerToPaint, Dimensions dmns, int t, int topology = 0)
     {
-        float[,,] splatMap = GetSplatMap(landLayerToPaint, topology);
-        int textureCount = TextureCount(landLayerToPaint);
-        dmns.z0 = Mathf.Clamp(dmns.z0, 0, splatMap.GetLength(0));
-        dmns.z1 = Mathf.Clamp(dmns.z1, 0, splatMap.GetLength(1));
-        dmns.x0 = Mathf.Clamp(dmns.x0, 0, splatMap.GetLength(0));
-        dmns.x1 = Mathf.Clamp(dmns.x1, 0, splatMap.GetLength(1));
-        for (int i = dmns.z0; i < dmns.z1; i++)
+        switch (landLayerToPaint)
         {
-            for (int j = dmns.x0; j < dmns.x1; j++)
-            {
-                for (int k = 0; k < textureCount; k++)
-                {
-                    splatMap[i, j, k] = 0;
-                }
-                splatMap[i, j, t] = 1;
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(SetValues(GetSplatMap(landLayerToPaint, topology), t, dmns), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                bool value = (t == 0) ? true : false;
+                SetData(SetValues(GetAlphaMap(), value, dmns), landLayerToPaint);
+                break;
         }
-        SetData(splatMap, landLayerToPaint, topology);
-        SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
@@ -911,44 +909,20 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintRiver(LandLayers landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint, topology);
-        int textureCount = TextureCount(landLayerToPaint);
-        Terrain water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        switch (landLayerToPaint)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float iNorm = (float)i / (float)splatMap.GetLength(0);
-                float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float waterHeight = water.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
-                float landHeight = land.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
-                switch (aboveTerrain)
-                {
-                    case true:
-                        if (waterHeight > 500 && waterHeight > landHeight)
-                        {
-                            for (int k = 0; k < textureCount; k++)
-                            {
-                                splatMap[i, j, k] = 0;
-                            }
-                            splatMap[i, j, t] = 1;
-                        }
-                        break;
-                    case false:
-                        if (waterHeight > 500)
-                        {
-                            for (int k = 0; k < textureCount; k++)
-                            {
-                                splatMap[i, j, k] = 0;
-                            }
-                            splatMap[i, j, t] = 1;
-                        }
-                        break;
-                }
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+            case LandLayers.Topology:
+                SetData(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, t), landLayerToPaint, topology);
+                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                break;
+            case LandLayers.Alpha:
+                bool value = (t == 0) ? true : false;
+                SetData(SetRiver(GetAlphaMap(), GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
+                break;
+            
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint, topology);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
     #endregion
     /// <summary>Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.</summary>
