@@ -13,9 +13,7 @@ public static class PrefabManager
     private const string manifestPath = "assets/manifest.asset";
     public static bool prefabsLoaded = false;
 
-    /// <summary>
-    /// Loads the prefabs from the Rust prefab bundle.
-    /// </summary>
+    /// <summary>Loads the prefabs from the Rust prefab bundle.</summary>
     /// <param name="bundlename">The file path to the bundle.</param>
     public static void LoadBundle(string bundlename)
     {
@@ -38,9 +36,7 @@ public static class PrefabManager
             Debug.Log("Prefabs already loaded!");
         }
     }
-    /// <summary>
-    /// Disposes the loaded bundle and prefabs.
-    /// </summary>
+    /// <summary>Disposes the loaded bundle and prefabs.</summary>
     public static void DisposeBundle()
     {
         if (prefabsLoaded)
@@ -50,9 +46,7 @@ public static class PrefabManager
             backend.Dispose();
         }
     }
-    /// <summary>
-    /// Loads, sets up and returns the prefab at the asset path.
-    /// </summary>
+    /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
     /// <param name="path">The Prefab path in the bundle file.</param>
     /// <returns>The prefab loaded, or the default prefab if unable to load.</returns>
     public static GameObject LoadPrefab(string path)
@@ -63,18 +57,13 @@ public static class PrefabManager
         }
         return PreparePrefab(backend.Load<GameObject>(path), path, StringPool.Get(path));
     }
-    /// <summary>
-    /// Loads, sets up and returns the prefab at the prefab id.
-    /// </summary>
+    /// <summary>Loads, sets up and returns the prefab at the prefab id.</summary>
     /// <param name="id">The prefab manifest id.</param>
-    /// <returns></returns>
     public static GameObject LoadPrefab(uint id)
     {
         return LoadPrefab(StringPool.Get(id));
     }
-    /// <summary>
-    /// Gathers a list of strings for every asset found in the content bundle file.
-    /// </summary>
+    /// <summary>Gathers a list of strings for every asset found in the content bundle file.</summary>
     static void AssetBundleLookup() 
     {
         var assets = backend.FindAll("");
@@ -84,9 +73,7 @@ public static class PrefabManager
             assetsList.Add(asset);
         }
     }
-    /// <summary>
-    /// Dumps every asset found in the Rust content bundle to a text file.
-    /// </summary>
+    /// <summary>Dumps every asset found in the Rust content bundle to a text file.</summary>
     static void AssetDump() 
     {
         AssetBundleLookup();
@@ -98,12 +85,9 @@ public static class PrefabManager
             }
         }
     }
-    /// <summary>
-    /// Prepare the loaded prefab for use with the map editor.
-    /// </summary>
+    /// <summary>Prepare the loaded prefab for use with the map editor.</summary>
     /// <param name="go">The prefab GameObject.</param>
     /// <param name="path">The prefab path.</param>
-    /// <returns></returns>
     private static GameObject PreparePrefab(GameObject go, string path, uint rustid)
     {
         var prefabPath = path.Split('/');
