@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using RustMapEditor.Variables;
 
 public static class MapEditorSettings
 {
@@ -10,6 +11,7 @@ public static class MapEditorSettings
 
     public static string rustDirectory;
     public static int objectQuality;
+    public static float prefabRenderDistance, pathRenderDistance;
     public static string[] prefabPaths;
 
     [InitializeOnLoadMethod]
@@ -24,10 +26,7 @@ public static class MapEditorSettings
         }
         LoadSettings();
     }
-    /// <summary>
-    /// Returns a new EditorSettings struct set with the default settings.
-    /// </summary>
-    /// <returns></returns>
+    /// <summary>Returns a new EditorSettings struct set with the default settings.</summary>
     static EditorSettings DefaultSettings()
     {
         SetDefaultSettings();
@@ -35,13 +34,13 @@ public static class MapEditorSettings
         {
             ObjectQuality = objectQuality,
             RustDirectory = rustDirectory,
+            PrefabRenderDistance = prefabRenderDistance,
+            PathRenderDistance = pathRenderDistance,
             PrefabPaths = prefabPaths
         };
         return editorSettings;
     }
-    /// <summary>
-    /// Saves the current EditorSettings to a JSON file.
-    /// </summary>
+    /// <summary>Saves the current EditorSettings to a JSON file.</summary>
     public static void SaveSettings()
     {
         using (StreamWriter write = new StreamWriter(settingsPath, false))
@@ -50,14 +49,14 @@ public static class MapEditorSettings
             {
                 ObjectQuality = objectQuality,
                 RustDirectory = rustDirectory,
+                PrefabRenderDistance = prefabRenderDistance,
+                PathRenderDistance = pathRenderDistance,
                 PrefabPaths = prefabPaths
             };
             write.Write(JsonUtility.ToJson(editorSettings));
         }
     }
-    /// <summary>
-    /// Loads and sets the current EditorSettings from a JSON file.
-    /// </summary>
+    /// <summary>Loads and sets the current EditorSettings from a JSON file.</summary>
     public static void LoadSettings()
     {
         using (StreamReader reader = new StreamReader(settingsPath))
@@ -65,21 +64,22 @@ public static class MapEditorSettings
             EditorSettings editorSettings = JsonUtility.FromJson<EditorSettings>(reader.ReadToEnd());
             rustDirectory = editorSettings.RustDirectory;
             objectQuality = editorSettings.ObjectQuality;
+            prefabRenderDistance = editorSettings.PrefabRenderDistance;
+            pathRenderDistance = editorSettings.PathRenderDistance;
             prefabPaths = editorSettings.PrefabPaths;
         }
     }
-    /// <summary>
-    /// Sets the EditorSettings back to default values.
-    /// </summary>
+    /// <summary> Sets the EditorSettings back to default values.</summary>
     public static void SetDefaultSettings()
     {
         rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust";
+        ToolTips.rustDirectoryPath.text = rustDirectory;
         objectQuality = 200;
+        prefabRenderDistance = 750f;
+        pathRenderDistance = 250f;
         SetDefaultPrefabPaths();
     }
-    /// <summary>
-    /// Sets the spawnable prefab paths to default paths.
-    /// </summary>
+    /// <summary>Sets the spawnable prefab paths to default paths.</summary>
     public static void SetDefaultPrefabPaths()
     {
         prefabPaths = new string[]
@@ -109,5 +109,7 @@ public struct EditorSettings
 {
     public string RustDirectory;
     public int ObjectQuality;
+    public float PrefabRenderDistance;
+    public float PathRenderDistance;
     public string[] PrefabPaths;
 }

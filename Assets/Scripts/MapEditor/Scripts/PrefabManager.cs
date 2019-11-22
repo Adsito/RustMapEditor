@@ -96,9 +96,12 @@ public static class PrefabManager
         {
             renderer.SetLODs();
         }
+        foreach (var transform in go.GetComponentsInChildren<Transform>())
+        {
+            transform.gameObject.layer = 8;
+        }
         go.SetActive(true);
         go.tag = "LoadedPrefab";
-        go.layer = 8;
         go.name = prefabName;
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new WorldSerialization.PrefabData

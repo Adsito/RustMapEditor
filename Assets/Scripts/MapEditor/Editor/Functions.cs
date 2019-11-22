@@ -170,7 +170,6 @@ namespace RustMapEditor.UI
             if (Elements.ToolbarButton(ToolTips.defaultSettings))
             {
                 MapEditorSettings.SetDefaultSettings();
-                ToolTips.rustDirectoryPath.text = MapEditorSettings.rustDirectory;
             }
             Elements.EndToolbarHorizontal();
 
@@ -186,9 +185,16 @@ namespace RustMapEditor.UI
             Elements.ToolbarLabel(ToolTips.rustDirectoryPath);
             Elements.EndToolbarHorizontal();
 
-            Elements.MiniBoldLabel(ToolTips.objectQuality);
+            Elements.MiniBoldLabel(ToolTips.renderDistanceLabel);
+            EditorGUI.BeginChangeCheck();
+            MapEditorSettings.prefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, MapEditorSettings.prefabRenderDistance, 0, 5000f);
+            MapEditorSettings.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, MapEditorSettings.pathRenderDistance, 0, 5000f);
+            if (EditorGUI.EndChangeCheck())
+            {
+                MapIO.SetCullingDistances(MapIO.GetLastSceneView().camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
+            }
 
-            MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
+            //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
         }
         #endregion
         #region Prefabs

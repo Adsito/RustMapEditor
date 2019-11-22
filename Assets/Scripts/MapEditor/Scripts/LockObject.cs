@@ -6,7 +6,7 @@ public class LockObject : MonoBehaviour
     private Vector3 position;
     private Vector3 scale;
     private Quaternion rotation;
-    private bool locked;
+    public bool locked;
 
     private void OnEnable()
     {
