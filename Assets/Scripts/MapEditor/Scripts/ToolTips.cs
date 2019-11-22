@@ -150,8 +150,9 @@ namespace RustMapEditor.Variables
 
         public static GUIContent conditionalPaintLabel = new GUIContent("Conditional Paint");
         public static GUIContent conditionsLabel = new GUIContent("Conditions");
-        public static GUIContent textureCheck = new GUIContent("Textures To Check:", "Check for all the selected textures before painting.");
-        public static GUIContent checkAlpha = new GUIContent("Check Alpha", "If toggled the Alpha will be checked on the selected texture.");
+        public static GUIContent conditionalTextureWeight = new GUIContent("Weight", "The minimum texture weight when checking the texture.");
+        public static GUIContent checkTexture = new GUIContent("Check Texture", "If toggled the texture selected will be checked.");
+        public static GUIContent checkTopologyLayer = new GUIContent("Check Topology", "If toggled the topology selected will be checked.");
         public static GUIContent checkSlopes = new GUIContent("Check Slopes", "If toggled the Slopes will be checked within the selected range.");
         public static GUIContent checkHeights = new GUIContent("Check Heights", "If toggled the Height will be checked within the selected range.");
         public static GUIContent paintConditional = new GUIContent("Paint Conditional", "Paints the selected texture if it matches all of the conditions set.");

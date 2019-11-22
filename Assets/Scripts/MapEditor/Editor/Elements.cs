@@ -10,11 +10,9 @@ namespace RustMapEditor.UI
         public static void BeginToolbarHorizontal()
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
         }
         public static void EndToolbarHorizontal()
         {
-            GUILayout.Label("", EditorStyles.toolbarButton, GUILayout.MaxWidth(0));
             EditorGUILayout.EndHorizontal();
         }
         public static void ToolbarLabel(GUIContent guiContent)

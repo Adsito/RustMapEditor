@@ -313,6 +313,56 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
+        public static bool[,] CheckConditions(float[,] array, bool[,] conditionsMet, float minValue, float maxValue)
+        {
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
+            {
+                for (int j = 0; j < arrayLength; j++)
+                {
+                    if (array[i, j] < minValue)
+                    {
+                        conditionsMet[i, j] = true;
+                    }
+                    else if (array[i, j] > maxValue)
+                    {
+                        conditionsMet[i, j] = true;
+                    }
+                }
+            });
+            return conditionsMet;
+        }
+        public static bool[,] CheckConditions(float[,,] array, bool[,] conditionsMet, int layer, float weight)
+        {
+            int arrayLength = array.GetLength(0);
+            int channelLength = array.GetLength(2);
+            Parallel.For(0, arrayLength, i =>
+            {
+                for (int j = 0; j < arrayLength; j++)
+                {
+                    if (array[i, j, layer] < weight)
+                    {
+                        conditionsMet[i, j] = true;
+                    }
+                }
+            });
+            return conditionsMet;
+        }
+        public static bool[,] CheckConditions(bool[,] array, bool[,] conditionsMet, bool value)
+        {
+            int arrayLength = array.GetLength(0);
+            Parallel.For(0, arrayLength, i =>
+            {
+                for (int j = 0; j < arrayLength; j++)
+                {
+                    if (array[i, j] != value)
+                    {
+                        conditionsMet[i, j] = true;
+                    }
+                }
+            });
+            return conditionsMet;
+        }
         /// <summary>Clamps all the values to within the set range.</summary>
         /// <param name="dmns">The area of the array to perform the operations.</param>
         public static float[,] ClampValues(float[,] array, float minValue, float maxValue, Dimensions dmns = null)
