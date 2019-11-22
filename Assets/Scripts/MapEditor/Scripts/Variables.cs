@@ -2,84 +2,74 @@
 {
     public struct Conditions
     {
-        public TerrainSplat.Enum GroundConditions
+        public GroundConditions GroundConditions;
+        public BiomeConditions BiomeConditions;
+        public AlphaConditions AlphaConditions;
+        public TopologyConditions TopologyConditions;
+        public TerrainConditions TerrainConditions;
+        public AreaConditions AreaConditions;
+    }
+    public struct GroundConditions
+    {
+        public GroundConditions(TerrainSplat.Enum layer)
         {
-            get; set;
+            Layer = layer;
+            Weight = new float[TerrainSplat.COUNT];
+            CheckLayer = new bool[TerrainSplat.COUNT];
         }
-        public TerrainBiome.Enum BiomeConditions
+        public TerrainSplat.Enum Layer;
+        public float[] Weight;
+        public bool[] CheckLayer;
+    }
+    public struct BiomeConditions
+    {
+        public BiomeConditions(TerrainBiome.Enum layer)
         {
-            get; set;
+            Layer = layer;
+            Weight = new float[TerrainBiome.COUNT];
+            CheckLayer = new bool[TerrainBiome.COUNT];
         }
-        public TerrainTopology.Enum TopologyLayers
+        public TerrainBiome.Enum Layer;
+        public float[] Weight;
+        public bool[] CheckLayer;
+    }
+    public struct AlphaConditions
+    {
+        public AlphaConditions(AlphaTextures texture)
         {
-            get; set;
+            Texture = texture;
+            CheckAlpha = false;
         }
-        public AlphaTextures AlphaTextures
+        public AlphaTextures Texture;
+        public bool CheckAlpha;
+    }
+    public struct TopologyConditions
+    {
+        public TopologyConditions(TerrainTopology.Enum layer)
         {
-            get; set;
+            Layer = layer;
+            Texture = new TopologyTextures[TerrainTopology.COUNT];
+            CheckLayer = new bool[TerrainTopology.COUNT];
         }
-        public TopologyTextures TopologyTextures
-        {
-            get; set;
-        }
-        public bool CheckAlpha
-        {
-            get; set;
-        }
-        public bool AlphaTexture
-        {
-            get; set;
-        }
-        public int TopologyTexture
-        {
-            get; set;
-        }
-        public bool CheckHeight
-        {
-            get; set;
-        }
-        public float HeightLow
-        {
-            get; set;
-        }
-        public float HeightHigh
-        {
-            get; set;
-        }
-        public bool CheckSlope
-        {
-            get; set;
-        }
-        public float SlopeLow
-        {
-            get; set;
-        }
-        public float SlopeHigh
-        {
-            get; set;
-        }
-        public Dimensions Dimensions
-        {
-            get; set;
-        }
+        public TerrainTopology.Enum Layer;
+        public TopologyTextures[] Texture;
+        public bool[] CheckLayer;
+    }
+    public struct TerrainConditions
+    {
+        public HeightsInfo Heights;
+        public bool CheckHeights;
+        public SlopesInfo Slopes;
+        public bool CheckSlopes;
+    }
+    public struct AreaConditions
+    {
+        public Dimensions Area;
+        public bool CheckArea;
     }
     public struct TopologyLayers
     {
         public float[,,] Topologies
-        {
-            get; set;
-        }
-    }
-    public struct GroundTextures
-    {
-        public int Texture
-        {
-            get; set;
-        }
-    }
-    public struct BiomeTextures
-    {
-        public int Texture
         {
             get; set;
         }
@@ -111,19 +101,19 @@
     }
     public struct SlopesInfo
     {
-        public bool BlendSlopes { get; set; }
-        public float SlopeBlendLow { get; set; }
-        public float SlopeLow { get; set; }
-        public float SlopeHigh { get; set; }
-        public float SlopeBlendHigh { get; set; }
+        public bool BlendSlopes;
+        public float SlopeBlendLow;
+        public float SlopeLow;
+        public float SlopeHigh;
+        public float SlopeBlendHigh;
     }
     public struct HeightsInfo
     {
-        public bool BlendHeights { get; set; }
-        public float HeightBlendLow { get; set; }
-        public float HeightLow { get; set; }
-        public float HeightHigh { get; set; }
-        public float HeightBlendHigh { get; set; }
+        public bool BlendHeights;
+        public float HeightBlendLow;
+        public float HeightLow;
+        public float HeightHigh;
+        public float HeightBlendHigh;
     }
     public class Selections
     {

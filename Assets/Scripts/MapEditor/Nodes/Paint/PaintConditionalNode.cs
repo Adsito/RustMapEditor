@@ -10,12 +10,9 @@ public class PaintConditionalNode : Node
     [Input(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask PreviousTask;
     [Output(ShowBackingValue.Never, ConnectionType.Override, TypeConstraint.Strict)] public NodeVariables.NextTask NextTask;
     #region Fields
-    [HideInInspector] public TerrainSplat.Enum groundLayerConditions = TerrainSplat.NOTHING, groundLayerToPaint = TerrainSplat.Enum.Grass;
-    [HideInInspector] public TerrainBiome.Enum biomeLayerConditions = TerrainBiome.NOTHING, biomeLayerToPaint = TerrainBiome.Enum.Temperate;
-    [HideInInspector] public TerrainTopology.Enum topologyLayerConditions = TerrainTopology.NOTHING, topologyLayerToPaint = TerrainTopology.Enum.Beach;
-    [HideInInspector] public int topologyTexture = 0, alphaTexture = 0, layerConditionalInt = 0, texture = 0;
-    [HideInInspector] public bool checkAlpha = false, checkHeight = false, checkSlope = false;
-    [HideInInspector] public float slopeLowCndtl = 45f, slopeHighCndtl = 60f, heightLowCndtl = 500f, heightHighCndtl = 600f;
+    [HideInInspector] public int cndOptions, texture;
+    [HideInInspector] public Conditions conditions;
+    [HideInInspector] public Layers layers;
     #endregion
     public override object GetValue(NodePort port)
     {
@@ -28,21 +25,8 @@ public class PaintConditionalNode : Node
     }
     public void RunNode()
     {
-        Conditions conditions = new Conditions();
-        conditions.GroundConditions = groundLayerConditions;
-        conditions.BiomeConditions = biomeLayerConditions;
-        conditions.CheckAlpha = checkAlpha;
-        conditions.AlphaTexture = (alphaTexture == 0) ? true : false;
-        conditions.TopologyLayers = topologyLayerConditions;
-        conditions.TopologyTexture = topologyTexture;
-        conditions.CheckSlope = checkSlope;
-        conditions.SlopeLow = slopeLowCndtl;
-        conditions.SlopeHigh = slopeHighCndtl;
-        conditions.CheckHeight = checkHeight;
-        conditions.HeightLow = heightLowCndtl;
-        conditions.HeightHigh = heightHighCndtl;
         var layer = (NodeVariables.Texture)GetValue();
-        if (layer == null) // Check for if the textures node is not connected.
+        if (layer == null)
         {
             return;
         }

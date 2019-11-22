@@ -11,7 +11,10 @@ public class MapIOEditor : EditorWindow
     float offset = 0f, heightSet = 500f, heightLow = 450f, heightHigh = 750f;
     bool clampOffset = true, aboveTerrain = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
-    Conditions conditions = new Conditions() { CheckAlpha = false};
+    Conditions conditions = new Conditions() 
+    { 
+        GroundConditions = new GroundConditions(TerrainSplat.Enum.Grass), BiomeConditions = new BiomeConditions(TerrainBiome.Enum.Temperate), TopologyConditions = new TopologyConditions(TerrainTopology.Enum.Beach)
+    };
     Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field};
     Dimensions dimensions = new Dimensions() { x0 = 0, x1 = 256, z0 = 0, z1 = 256 };
     SlopesInfo slopesInfo = new SlopesInfo() { SlopeLow = 40f, SlopeHigh = 60f, SlopeBlendLow = 25f, SlopeBlendHigh = 75f, BlendSlopes = false };

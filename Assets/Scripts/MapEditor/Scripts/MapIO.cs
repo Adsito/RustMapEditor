@@ -447,134 +447,83 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintConditional(LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
-        float[,,] groundSplatMap = GetSplatMap(LandLayers.Ground);
-        float[,,] biomeSplatMap = GetSplatMap(LandLayers.Biome);
-        bool[,] alphaMap = GetAlphaMap();
-        float[,,] topologySplatMap = GetSplatMap(LandLayers.Topology, topology);
-        float[,,] splatMapPaint = new float[groundSplatMap.GetLength(0), groundSplatMap.GetLength(1), TextureCount(landLayerToPaint)];
-        bool[,] alphaMapPaint = new bool[alphaMap.GetLength(0), alphaMap.GetLength(1)];
-        int textureCount = TextureCount(landLayerToPaint);
-        float slope, height;
-        float[,] heights = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
-        float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
-        ProgressBar("Conditional Painter", "Preparing SplatMaps", 0.025f);
-        switch (landLayerToPaint)
+        int splatRes = GetSplatMapResolution();
+        bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
+
+        ProgressBar("Paint Conditional", "Checking Ground", 0f);
+        for(int i = 0; i < TerrainSplat.COUNT; i++)
         {
-            case LandLayers.Ground:
-                splatMapPaint = groundSplatMap;
-                break;
-            case LandLayers.Biome:
-                splatMapPaint = biomeSplatMap;
-                break;
-            case LandLayers.Alpha:
-                alphaMapPaint = alphaMap;
-                break;
-            case LandLayers.Topology:
-                splatMapPaint = topologySplatMap;
-                break;
-        }
-        List<TopologyLayers> topologyLayersList = new List<TopologyLayers>();
-        List<GroundTextures> groundTexturesList = new List<GroundTextures>();
-        List<BiomeTextures> biomeTexturesList = new List<BiomeTextures>();
-        ProgressBar("Conditional Painter", "Gathering Conditions", 0.05f);
-        foreach (var topologyLayerInt in GetEnumSelection(conditions.TopologyLayers))
-        {
-            topologyLayersList.Add(new TopologyLayers()
+            if (conditions.GroundConditions.CheckLayer[i])
             {
-                Topologies = GetSplatMap(LandLayers.Topology, topologyLayerInt)
-            });
-        }
-        foreach (var groundTextureInt in GetEnumSelection(conditions.GroundConditions))
+                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Ground), conditionsMet, i, conditions.GroundConditions.Weight[i]);
+            }
+        };
+        ProgressBar("Paint Conditional", "Checking Biome", 0.2f);
+        for (int i = 0; i < TerrainBiome.COUNT; i++)
         {
-            groundTexturesList.Add(new GroundTextures()
+            if (conditions.BiomeConditions.CheckLayer[i])
             {
-                Texture = groundTextureInt
-            });
-        }
-        foreach (var biomeTextureInt in GetEnumSelection(conditions.BiomeConditions))
-        {
-            biomeTexturesList.Add(new BiomeTextures()
-            {
-                Texture = biomeTextureInt
-            });
-        }
-        if (conditions.CheckHeight)
-        {
-            heights = GetHeights();
-        }
-        if (conditions.CheckSlope)
-        {
-            slopes = GetSlopes();
-        }
-        progressValue = 1f / groundSplatMap.GetLength(0);
-        for (int i = 0; i < groundSplatMap.GetLength(0); i++)
-        {
-            progressBar += progressValue;
-            ProgressBar("Conditional Painter", "Painting", progressBar);
-            for (int j = 0; j < groundSplatMap.GetLength(1); j++)
-            {
-                if (conditions.CheckSlope)
-                {
-                    slope = slopes[j, i];
-                    if (!(slope >= conditions.SlopeLow && slope <= conditions.SlopeHigh))
-                    {
-                        continue;
-                    }
-                }
-                if (conditions.CheckHeight)
-                {
-                    height = heights[i, j];
-                    if (!(height >= conditions.HeightLow & height <= conditions.HeightHigh))
-                    {
-                        continue;
-                    }
-                }
-                foreach (GroundTextures groundTextureCheck in groundTexturesList)
-                {
-                    if (groundSplatMap[i, j, groundTextureCheck.Texture] < 0.5f)
-                    {
-                        continue;
-                    }
-                }
-                foreach (BiomeTextures biomeTextureCheck in biomeTexturesList)
-                {
-                    if (biomeSplatMap[i, j, biomeTextureCheck.Texture] < 0.5f)
-                    {
-                        continue;
-                    }
-                }
-                if (conditions.CheckAlpha)
-                {
-                    if (alphaMap[i, j] == conditions.AlphaTexture)
-                    {
-                        continue;
-                    }
-                }
-                foreach (TopologyLayers layer in topologyLayersList)
-                {
-                    if (layer.Topologies[i, j, conditions.TopologyTexture] < 0.5f)
-                    {
-                        continue;
-                    }
-                }
-                for (int k = 0; k < textureCount; k++)
-                {
-                    splatMapPaint[i, j, k] = 0;
-                }
-                splatMapPaint[i, j, texture] = 1f;
+                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Biome), conditionsMet, i, conditions.BiomeConditions.Weight[i]);
             }
         }
+        ProgressBar("Paint Conditional", "Checking Alpha", 0.3f);
+        if (conditions.AlphaConditions.CheckAlpha)
+        {
+            conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
+        }
+        ProgressBar("Paint Conditional", "Checking Topology", 0.5f);
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
+        {
+            if (conditions.TopologyConditions.CheckLayer[i])
+            {
+                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Topology, i), conditionsMet, (int)conditions.TopologyConditions.Texture[i], 0.5f);
+            }
+        }
+        ProgressBar("Paint Conditional", "Checking Heights", 0.7f);
+        if (conditions.TerrainConditions.CheckHeights)
+        {
+            conditionsMet = CheckConditions(GetHeights(), conditionsMet, conditions.TerrainConditions.Heights.HeightLow, conditions.TerrainConditions.Heights.HeightHigh);
+        }
+        ProgressBar("Paint Conditional", "Checking Slopes", 0.8f);
+        if (conditions.TerrainConditions.CheckSlopes)
+        {
+            conditionsMet = CheckConditions(GetSlopes(), conditionsMet, conditions.TerrainConditions.Slopes.SlopeLow, conditions.TerrainConditions.Slopes.SlopeHigh);
+        }
+        ProgressBar("Paint Conditional", "Painting", 0.9f);
         switch (landLayerToPaint)
         {
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                SetData(splatMapPaint, landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                float[,,] splatMapToPaint = GetSplatMap(landLayerToPaint, topology);
+                int textureCount = TextureCount(landLayerToPaint);
+                Parallel.For(0, splatRes, i =>
+                {
+                    for (int j = 0; j < splatRes; j++)
+                    {
+                        if (conditionsMet[i, j] == false)
+                        {
+                            for (int k = 0; k < textureCount; k++)
+                            {
+                                splatMapToPaint[i, j, k] = 0f;
+                            }
+                            splatMapToPaint[i, j, texture] = 1f;
+                        }
+                    }
+                });
+                SetData(splatMapToPaint, landLayerToPaint, topology);
+                SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
-                SetData(alphaMapPaint, LandLayers.Alpha);
-                SetLayer(LandLayers.Alpha);
+                bool[,] alphaMapToPaint = GetAlphaMap();
+                Parallel.For(0, splatRes, i =>
+                {
+                    for (int j = 0; j < splatRes; j++)
+                    {
+                        alphaMapToPaint[i, j] = (conditionsMet[i, j] == false) ? conditionsMet[i, j] : alphaMapToPaint[i, j];
+                    }
+                });
+                SetData(alphaMapToPaint, landLayerToPaint);
                 break;
         }
         ClearProgressBar();
