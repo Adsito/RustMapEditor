@@ -65,11 +65,11 @@ public static class MapIO
             sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
         }
     }
-    public static void SetCullingDistances(Camera camera)
+    public static void SetCullingDistances(Camera camera, float prefabDist, float pathDist)
     {
         float[] distances = new float[32];
-        distances[8] = 750f;
-        distances[9] = 250f;
+        distances[8] = prefabDist;
+        distances[9] = pathDist;
         camera.layerCullDistances = distances;
     }
     /// <summary>Displays a popup progress bar, the progress is also visible in the taskbar.</summary>
@@ -1302,7 +1302,7 @@ public static class MapIO
         ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
         RemoveMapObjects();
         CentreSceneView(GetLastSceneView());
-        SetCullingDistances(GetLastSceneView().camera);
+        SetCullingDistances(GetLastSceneView().camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
         LoadSplatMaps(terrains);
