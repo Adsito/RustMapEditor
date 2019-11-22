@@ -405,7 +405,7 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
         #endregion
-        public static void ConditionalPaint(ref int cndsOptions, ref int texture, ref Conditions cnds, ref Layers layers)
+        public static void ConditionalPaintConditions(ref Conditions cnds, ref int cndsOptions)
         {
             Elements.BoldLabel(ToolTips.conditionalPaintLabel);
 
@@ -423,45 +423,54 @@ namespace RustMapEditor.UI
             {
                 case 0: // Ground
                     Elements.BeginToolbarHorizontal();
-                    Elements.ToolbarLabel(ToolTips.textureCheck);
-                    cnds.GroundConditions = (TerrainSplat.Enum)Elements.ToolbarEnumFlagsField(cnds.GroundConditions);
+                    cnds.GroundConditions.CheckLayer[TerrainSplat.TypeToIndex((int)cnds.GroundConditions.Layer)] = Elements.ToolbarToggle(ToolTips.checkTexture, cnds.GroundConditions.CheckLayer[TerrainSplat.TypeToIndex((int)cnds.GroundConditions.Layer)]);
+                    cnds.GroundConditions.Layer = (TerrainSplat.Enum)Elements.ToolbarEnumPopup(cnds.GroundConditions.Layer);
+                    Elements.EndToolbarHorizontal();
+
+                    Elements.BeginToolbarHorizontal();
+                    cnds.GroundConditions.Weight[TerrainSplat.TypeToIndex((int)cnds.GroundConditions.Layer)] = Elements.ToolbarSlider(ToolTips.conditionalTextureWeight, cnds.GroundConditions.Weight[TerrainSplat.TypeToIndex((int)cnds.GroundConditions.Layer)], 0.01f, 1f);
                     Elements.EndToolbarHorizontal();
                     break;
                 case 1: // Biome
                     Elements.BeginToolbarHorizontal();
-                    Elements.ToolbarLabel(ToolTips.textureCheck);
-                    cnds.BiomeConditions = (TerrainBiome.Enum)Elements.ToolbarEnumFlagsField(cnds.BiomeConditions);
+                    cnds.BiomeConditions.CheckLayer[TerrainBiome.TypeToIndex((int)cnds.BiomeConditions.Layer)] = Elements.ToolbarToggle(ToolTips.checkTexture, cnds.BiomeConditions.CheckLayer[TerrainBiome.TypeToIndex((int)cnds.BiomeConditions.Layer)]);
+                    cnds.BiomeConditions.Layer = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(cnds.BiomeConditions.Layer);
+                    Elements.EndToolbarHorizontal();
+
+                    Elements.BeginToolbarHorizontal();
+                    cnds.BiomeConditions.Weight[TerrainBiome.TypeToIndex((int)cnds.BiomeConditions.Layer)] = Elements.ToolbarSlider(ToolTips.conditionalTextureWeight, cnds.BiomeConditions.Weight[TerrainBiome.TypeToIndex((int)cnds.BiomeConditions.Layer)], 0.01f, 1f);
                     Elements.EndToolbarHorizontal();
                     break;
                 case 2: // Alpha
                     Elements.BeginToolbarHorizontal();
-                    cnds.CheckAlpha = Elements.ToolbarToggle(ToolTips.checkAlpha, cnds.CheckAlpha);
-                    cnds.AlphaTextures = (AlphaTextures)Elements.ToolbarEnumPopup(cnds.AlphaTextures);
-                    cnds.AlphaTexture = (cnds.AlphaTextures == 0) ? true : false;
+                    cnds.AlphaConditions.CheckAlpha = Elements.ToolbarToggle(ToolTips.checkTexture, cnds.AlphaConditions.CheckAlpha);
+                    cnds.AlphaConditions.Texture = (AlphaTextures)Elements.ToolbarEnumPopup(cnds.AlphaConditions.Texture);
                     Elements.EndToolbarHorizontal();
                     break;
                 case 3: // Topology
                     Elements.BeginToolbarHorizontal();
-                    Elements.ToolbarLabel(ToolTips.topologyLayerSelect);
-                    cnds.TopologyLayers = (TerrainTopology.Enum)Elements.ToolbarEnumFlagsField(cnds.TopologyLayers);
+                    cnds.TopologyConditions.CheckLayer[TerrainTopology.TypeToIndex((int)cnds.TopologyConditions.Layer)] = Elements.ToolbarToggle(ToolTips.checkTopologyLayer, cnds.TopologyConditions.CheckLayer[TerrainTopology.TypeToIndex((int)cnds.TopologyConditions.Layer)]);
+                    cnds.TopologyConditions.Layer = (TerrainTopology.Enum)Elements.ToolbarEnumPopup(cnds.TopologyConditions.Layer);
                     Elements.EndToolbarHorizontal();
 
                     Elements.BeginToolbarHorizontal();
-                    Elements.ToolbarLabel(ToolTips.textureCheck);
-                    cnds.TopologyTextures = (TopologyTextures)Elements.ToolbarEnumPopup(cnds.TopologyTextures);
-                    cnds.TopologyTexture = (int)cnds.TopologyTextures;
+                    Elements.ToolbarLabel(ToolTips.checkTexture);
+                    cnds.TopologyConditions.Texture[TerrainTopology.TypeToIndex((int)cnds.TopologyConditions.Layer)] = (TopologyTextures)Elements.ToolbarEnumPopup(cnds.TopologyConditions.Texture[TerrainTopology.TypeToIndex((int)cnds.TopologyConditions.Layer)]);
                     Elements.EndToolbarHorizontal();
                     break;
                 case 4: // Terrain
-                    float tempSlopeLow = cnds.SlopeLow, tempSlopeHigh = cnds.SlopeHigh;
-                    cnds.CheckSlope = Elements.ToolbarToggleMinMax(ToolTips.checkSlopes, ToolTips.rangeLow, ToolTips.rangeHigh, cnds.CheckSlope, ref tempSlopeLow, ref tempSlopeHigh, 0f, 90f);
-                    cnds.SlopeLow = tempSlopeLow; cnds.SlopeHigh = tempSlopeHigh;
+                    float tempSlopeLow = cnds.TerrainConditions.Slopes.SlopeLow, tempSlopeHigh = cnds.TerrainConditions.Slopes.SlopeHigh;
+                    cnds.TerrainConditions.CheckSlopes = Elements.ToolbarToggleMinMax(ToolTips.checkSlopes, ToolTips.rangeLow, ToolTips.rangeHigh, cnds.TerrainConditions.CheckSlopes, ref tempSlopeLow, ref tempSlopeHigh, 0f, 90f);
+                    cnds.TerrainConditions.Slopes.SlopeLow = tempSlopeLow; cnds.TerrainConditions.Slopes.SlopeHigh = tempSlopeHigh;
 
-                    float tempHeightLow = cnds.HeightLow, tempHeightHigh = cnds.HeightHigh;
-                    cnds.CheckHeight = Elements.ToolbarToggleMinMax(ToolTips.checkHeights, ToolTips.rangeLow, ToolTips.rangeHigh, cnds.CheckHeight, ref tempHeightLow, ref tempHeightHigh, 0f, 1000f);
-                    cnds.HeightLow = tempHeightLow; cnds.HeightHigh = tempHeightHigh;
+                    float tempHeightLow = cnds.TerrainConditions.Heights.HeightLow, tempHeightHigh = cnds.TerrainConditions.Heights.HeightHigh;
+                    cnds.TerrainConditions.CheckHeights = Elements.ToolbarToggleMinMax(ToolTips.checkHeights, ToolTips.rangeLow, ToolTips.rangeHigh, cnds.TerrainConditions.CheckHeights, ref tempHeightLow, ref tempHeightHigh, 0f, 1000f);
+                    cnds.TerrainConditions.Heights.HeightLow = tempHeightLow; cnds.TerrainConditions.Heights.HeightHigh = tempHeightHigh;
                     break;
             }
+        }
+        public static void ConditionalPaintLayerSelect(ref Conditions cnds, ref Layers layers, ref int texture)
+        {
             Elements.MiniBoldLabel(ToolTips.textureToPaintLabel);
 
             Elements.BeginToolbarHorizontal();
@@ -512,6 +521,11 @@ namespace RustMapEditor.UI
                 MapIO.PaintConditional(layers.LandLayer, texture, cnds, TerrainTopology.TypeToIndex((int)layers.Topologies));
             }
             Elements.EndToolbarHorizontal();
+        }
+        public static void ConditionalPaint(ref int cndsOptions, ref int texture, ref Conditions cnds, ref Layers layers)
+        {
+            ConditionalPaintConditions(ref cnds, ref cndsOptions);
+            ConditionalPaintLayerSelect(ref cnds, ref layers, ref texture);
         }
         public static void RotateMap(ref Selections.Objects selection)
         {
