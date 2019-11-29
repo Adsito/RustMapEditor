@@ -863,5 +863,33 @@ namespace RustMapEditor.UI
             return info;
         }
         #endregion
+        #region NodeGraph
+        public static void NodeGraphToolbar(XNode.NodeGraph nodeGraph)
+        {
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.runPreset))
+            {
+                NodeAsset.Parse(nodeGraph);
+            }
+            if (Elements.ToolbarButton(ToolTips.deletePreset))
+            {
+                if (EditorUtility.DisplayDialog("Delete Preset", "Are you sure you wish to delete this preset? Once deleted it can't be undone.", "Ok", "Cancel"))
+                {
+                    XNodeEditor.NodeEditorWindow.focusedWindow.Close();
+                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeGraph));
+                    MapIO.RefreshPresetsList();
+                }
+            }
+            if (Elements.ToolbarButton(ToolTips.renamePreset))
+            {
+                XNodeEditor.RenamePreset.Show(nodeGraph);
+            }
+            if (Elements.ToolbarButton(ToolTips.presetWiki))
+            {
+                Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Node-System");
+            }
+            Elements.EndToolbarHorizontal();
+        }
+        #endregion
     }
 }

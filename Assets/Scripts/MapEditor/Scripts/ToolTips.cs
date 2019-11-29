@@ -10,6 +10,11 @@ namespace RustMapEditor.Variables
         public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
         public static GUIContent editorVersion = new GUIContent("Editor Version: v2.3-prerelease");
 
+        public static GUIContent runPreset = new GUIContent("Run Preset", "Run this preset with all it's current nodes.");
+        public static GUIContent deletePreset = new GUIContent("Delete Preset", "Delete this preset from Unity.");
+        public static GUIContent renamePreset = new GUIContent("Rename Preset", "Rename this preset.");
+        public static GUIContent presetWiki = new GUIContent("Wiki", "Opens the wiki at the NodeSystem page.");
+
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");
         public static GUIContent prefabHierachyCategory = new GUIContent("Category", "The prefab category if from Rust.");
