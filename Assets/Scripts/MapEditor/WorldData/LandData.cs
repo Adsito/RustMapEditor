@@ -14,8 +14,11 @@ namespace RustMapEditor.Data
         /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
         public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
 
-        /// <summary>The terrain layers used by the terrain for paint operations</summary>
+        /// <summary>The Terrain layers used by the terrain for paint operations</summary>
         private static TerrainLayer[] groundTextures = null, biomeTextures = null, miscTextures = null;
+
+        /// <summary>The current slopearray of the terrain.</summary>
+        private static float[,] slopeArray;
 
         /// <summary>The LandLayer currently being displayed on the terrain.</summary>
         public static LandLayers landLayer;
@@ -50,6 +53,22 @@ namespace RustMapEditor.Data
         {
             return land.terrainData.alphamapResolution;
         }
+        public static float[,] GetSlopes()
+        {
+            if (slopeArray != null)
+            {
+                return slopeArray;
+            }
+            slopeArray = new float[GetHeightMapResolution(), GetHeightMapResolution()];
+            for (int i = 0; i < land.terrainData.alphamapHeight; i++)
+            {
+                for (int j = 0; j < land.terrainData.alphamapHeight; j++)
+                {
+                    slopeArray[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
+                }
+            }
+            return slopeArray;
+        }
         public static void SetTerrainReferences()
         {
             water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
@@ -63,7 +82,10 @@ namespace RustMapEditor.Data
         /// <summary>Callback for whenever the heightmap is updated.</summary>
         private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
         {
-
+            if (terrain == land)
+            {
+                slopeArray = null;
+            }
         }
         /// <summary>Callback for whenever the alphamap is updated.</summary>
         private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
