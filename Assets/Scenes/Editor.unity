@@ -620,7 +620,7 @@ GameObject:
   m_TagString: Land
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!154 &1175142914
 TerrainCollider:
@@ -646,13 +646,13 @@ Terrain:
   m_TreeDistance: 0
   m_TreeBillboardDistance: 5
   m_TreeCrossFadeLength: 0
-  m_TreeMaximumFullLODCount: 50
+  m_TreeMaximumFullLODCount: 0
   m_DetailObjectDistance: 0
   m_DetailObjectDensity: 0
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 2000
   m_HeightmapMaximumLOD: 0
-  m_ShadowCastingMode: 2
+  m_ShadowCastingMode: 1
   m_DrawHeightmap: 1
   m_DrawInstanced: 1
   m_DrawTreesAndFoliage: 0
@@ -660,7 +660,7 @@ Terrain:
   m_MaterialTemplate: {fileID: 2100000, guid: 05b9a38dd90fbaa4aa4bacef38c03e4f, type: 2}
   m_BakeLightProbesForTrees: 0
   m_PreserveTreePrototypeLayers: 0
-  m_DeringLightProbesForTrees: 1
+  m_DeringLightProbesForTrees: 0
   m_ScaleInLightmap: 0.1024
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
@@ -710,7 +710,7 @@ GameObject:
   m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!154 &1365878324
 TerrainCollider:
@@ -721,7 +721,7 @@ TerrainCollider:
   m_GameObject: {fileID: 1365878323}
   m_Material: {fileID: 0}
   m_Enabled: 0
-  m_TerrainData: {fileID: 15600000, guid: 286ae22f168cf3b4c8e1b2c63e4a409a, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: 1338dadce0fdd8c498fe262b79b0e3cf, type: 2}
   m_EnableTreeColliders: 0
 --- !u!218 &1365878325
 Terrain:
@@ -732,25 +732,25 @@ Terrain:
   m_GameObject: {fileID: 1365878323}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: 286ae22f168cf3b4c8e1b2c63e4a409a, type: 2}
-  m_TreeDistance: 2000
-  m_TreeBillboardDistance: 50
-  m_TreeCrossFadeLength: 5
-  m_TreeMaximumFullLODCount: 50
-  m_DetailObjectDistance: 80
-  m_DetailObjectDensity: 1
+  m_TerrainData: {fileID: 15600000, guid: 1338dadce0fdd8c498fe262b79b0e3cf, type: 2}
+  m_TreeDistance: 0
+  m_TreeBillboardDistance: 5
+  m_TreeCrossFadeLength: 0
+  m_TreeMaximumFullLODCount: 0
+  m_DetailObjectDistance: 0
+  m_DetailObjectDensity: 0
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 2000
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 1
   m_DrawHeightmap: 1
   m_DrawInstanced: 1
-  m_DrawTreesAndFoliage: 1
-  m_ReflectionProbeUsage: 3
+  m_DrawTreesAndFoliage: 0
+  m_ReflectionProbeUsage: 1
   m_MaterialTemplate: {fileID: 2100000, guid: 05b9a38dd90fbaa4aa4bacef38c03e4f, type: 2}
-  m_BakeLightProbesForTrees: 1
+  m_BakeLightProbesForTrees: 0
   m_PreserveTreePrototypeLayers: 0
-  m_DeringLightProbesForTrees: 1
+  m_DeringLightProbesForTrees: 0
   m_ScaleInLightmap: 0.1024
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
