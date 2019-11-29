@@ -139,6 +139,146 @@ namespace RustMapEditor.Maths
             }
             return array;
         }
+        public static float[,,] SetRangeBlend(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, float rangeBlendLow, float rangeBlendHigh, Dimensions dmns = null)
+        {
+            int channelLength = array.GetLength(2);
+            int arrayLength = array.GetLength(0);
+            if (dmns != null)
+            {
+                for (int i = dmns.x0; i < dmns.x1; i++)
+                {
+                    Parallel.For(dmns.z0, dmns.z1, j =>
+                    {
+                        float[] normalised = new float[channelLength];
+                        if (range[i, j] >= rangeLow && range[i, j] <= rangeHigh)
+                        {
+                            for (int k = 0; k < channelLength; k++)
+                            {
+                                array[i, j, k] = 0;
+                            }
+                            array[i, j, channel] = 1;
+                        }
+                        else if (range[i, j] > rangeBlendLow && range[i, j] < rangeLow)
+                        {
+                            float normalisedRange = range[i, j] - rangeBlendLow;
+                            float newRange = rangeLow - rangeBlendLow;
+                            float rangeBlend = normalisedRange / newRange; // Holds data about the texture weight between the blend ranges.
+                            for (int k = 0; k < channelLength; k++) // Gets the weights of the textures in the pos. 
+                            {
+                                if (k == channel)
+                                {
+                                    array[i, j, channel] = rangeBlend;
+                                }
+                                else
+                                {
+                                    array[i, j, k] = array[i, j, k] * Mathf.Clamp01(1f - rangeBlend);
+                                }
+                                normalised[k] = array[i, j, k];
+                            }
+                            float normalisedWeights = normalised.Sum();
+                            for (int k = 0; k < channelLength; k++)
+                            {
+                                normalised[k] /= normalisedWeights;
+                                array[i, j, k] = normalised[k];
+                            }
+                        }
+                        else if (range[i, j] > rangeHigh && range[i, j] < rangeBlendHigh)
+                        {
+                            float normalisedRange = range[i, j] - rangeHigh;
+                            float newRange = rangeBlendHigh - rangeHigh;
+                            float rangeBlendInverted = normalisedRange / newRange; // Holds data about the texture weight between the blend ranges.
+                            float rangeBlend = 1 - rangeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
+                            for (int k = 0; k < channel; k++)
+                            {
+                                if (k == channel)
+                                {
+                                    array[i, j, channel] = rangeBlend;
+                                }
+                                else
+                                {
+                                    array[i, j, k] = array[i, j, k] * Mathf.Clamp01(1f - rangeBlend);
+                                }
+                                normalised[k] = array[i, j, k];
+                            }
+                            float normalisedWeights = normalised.Sum();
+                            for (int k = 0; k < channel; k++)
+                            {
+                                normalised[k] /= normalisedWeights;
+                                array[i, j, k] = normalised[k];
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                for (int i = 0; i < arrayLength; i++)
+                {
+                    Parallel.For(0, arrayLength, j =>
+                    {
+                        float[] normalised = new float[channelLength];
+                        if (range[i, j] >= rangeLow && range[i, j] <= rangeHigh)
+                        {
+                            for (int k = 0; k < channelLength; k++)
+                            {
+                                array[i, j, k] = 0;
+                            }
+                            array[i, j, channel] = 1;
+                        }
+                        else if (range[i, j] > rangeBlendLow && range[i, j] < rangeLow)
+                        {
+                            float normalisedRange = range[i, j] - rangeBlendLow;
+                            float newRange = rangeLow - rangeBlendLow;
+                            float rangeBlend = normalisedRange / newRange; // Holds data about the texture weight between the blend ranges.
+                            for (int k = 0; k < channelLength; k++) // Gets the weights of the textures in the pos. 
+                            {
+                                if (k == channel)
+                                {
+                                    array[i, j, channel] = rangeBlend;
+                                }
+                                else
+                                {
+                                    array[i, j, k] = array[i, j, k] * Mathf.Clamp01(1f - rangeBlend);
+                                }
+                                normalised[k] = array[i, j, k];
+                            }
+                            float normalisedWeights = normalised.Sum();
+                            for (int k = 0; k < channelLength; k++)
+                            {
+                                normalised[k] /= normalisedWeights;
+                                array[i, j, k] = normalised[k];
+                            }
+                        }
+                        else if (range[i, j] > rangeHigh && range[i, j] < rangeBlendHigh)
+                        {
+                            float normalisedRange = range[i, j] - rangeHigh;
+                            float newRange = rangeBlendHigh - rangeHigh;
+                            float rangeBlendInverted = normalisedRange / newRange; // Holds data about the texture weight between the blend ranges.
+                            float rangeBlend = 1 - rangeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
+                            for (int k = 0; k < channelLength; k++) // Gets the weights of the textures in the pos. 
+                            {
+                                if (k == channel)
+                                {
+                                    array[i, j, channel] = rangeBlend;
+                                }
+                                else
+                                {
+                                    array[i, j, k] = array[i, j, k] * Mathf.Clamp01(1f - rangeBlend);
+                                }
+                                normalised[k] = array[i, j, k];
+                            }
+                            float normalisedWeights = normalised.Sum();
+                            for (int k = 0; k < channelLength; k++)
+                            {
+                                normalised[k] /= normalisedWeights;
+                                array[i, j, k] = normalised[k];
+                            }
+                        }
+                    });
+                }
+            }
+            return array;
+        }
         public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             int arrayLength = array.GetLength(0);
