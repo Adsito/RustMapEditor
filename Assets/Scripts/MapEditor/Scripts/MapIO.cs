@@ -368,19 +368,6 @@ public static class MapIO
         float slope = land.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
     }
-    /// <summary>Returns a 2D array of the slope values.</summary>
-    public static float[,] GetSlopes()
-    {
-        float[,] slopes = new float[land.terrainData.alphamapHeight, land.terrainData.alphamapHeight];
-        for (int i = 0; i < land.terrainData.alphamapHeight; i++)
-        {
-            for (int j = 0; j < land.terrainData.alphamapHeight; j++)
-            {
-                slopes[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
-            }
-        }
-        return slopes;
-    }
     #region SplatMap Methods
     /// <summary>Texture count in layer chosen, used for determining the size of the splatmap array.</summary>
     /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
@@ -557,79 +544,16 @@ public static class MapIO
     /// <param name="heightBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
     /// <param name="heightBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
-    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t, int topology = 0)
+    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t)
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint);
-        int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        switch (landLayerToPaint)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float iNorm = (float)i / (float)splatMap.GetLength(0);
-                float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float[] normalised = new float[textureCount];
-                float height = land.terrainData.GetInterpolatedHeight(jNorm, iNorm); // Normalises the interpolated height to the splatmap size.
-                if (height >= heightLow && height <= heightHigh)
-                {
-                    for (int k = 0; k < textureCount; k++) // Erases the textures on all the layers.
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1; // Paints the texture t.
-                }
-                else if (height > heightBlendLow && height < heightLow)
-                {
-                    float normalisedHeight = height - heightBlendLow;
-                    float heightRange = heightLow - heightBlendLow;
-                    float heightBlend = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        if (k == t)
-                        {
-                            splatMap[i, j, t] = heightBlend;
-                        }
-                        else
-                        {
-                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - heightBlend);
-                        }
-                        normalised[k] = splatMap[i, j, k];
-                    }
-                    float normalisedWeights = normalised.Sum();
-                    for (int k = 0; k < normalised.GetLength(0); k++)
-                    {
-                        normalised[k] /= normalisedWeights;
-                        splatMap[i, j, k] = normalised[k];
-                    }
-                }
-                else if (height > heightHigh && height < heightBlendHigh)
-                {
-                    float normalisedHeight = height - heightHigh;
-                    float heightRange = heightBlendHigh - heightHigh;
-                    float heightBlendInverted = normalisedHeight / heightRange; // Holds data about the texture weight between the blend ranges.
-                    float heightBlend = 1 - heightBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        if (k == t)
-                        {
-                            splatMap[i, j, t] = heightBlend;
-                        }
-                        else
-                        {
-                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - heightBlend);
-                        }
-                        normalised[k] = splatMap[i, j, k];
-                    }
-                    float normalisedWeights = normalised.Sum();
-                    for (int k = 0; k < normalised.GetLength(0); k++)
-                    {
-                        normalised[k] /= normalisedWeights;
-                        splatMap[i, j, k] = normalised[k];
-                    }
-                }
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+                SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, heightBlendLow, heightBlendHigh), landLayerToPaint);
+                SetLayer(landLayer);
+                break;
         }
-        SetData(splatMap, landLayerToPaint);
-        SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
     }
     /// <summary>Sets whole layer to the active texture.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
@@ -756,77 +680,14 @@ public static class MapIO
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintSlopeBlend(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
-        float[,,] splatMap = RustMapEditor.Data.LandData.GetSplatMap(landLayerToPaint);
-        int textureCount = TextureCount(landLayerToPaint);
-        for (int i = 0; i < splatMap.GetLength(0); i++)
+        switch (landLayerToPaint)
         {
-            for (int j = 0; j < splatMap.GetLength(1); j++)
-            {
-                float iNorm = (float)i / (float)splatMap.GetLength(0);
-                float jNorm = (float)j / (float)splatMap.GetLength(1);
-                float[] normalised = new float[textureCount];
-                float slope = land.terrainData.GetSteepness(jNorm, iNorm); // Normalises the steepness coords to match the splatmap array size.
-                if (slope >= slopeLow && slope <= slopeHigh)
-                {
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        splatMap[i, j, k] = 0;
-                    }
-                    splatMap[i, j, t] = 1;
-                }
-                else if (slope > minBlendLow && slope < slopeLow)
-                {
-                    float normalisedSlope = slope - minBlendLow;
-                    float slopeRange = slopeLow - minBlendLow;
-                    float slopeBlend = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
-                    for (int k = 0; k < textureCount; k++) // Gets the weights of the textures in the pos. 
-                    {
-                        if (k == t)
-                        {
-                            splatMap[i, j, t] = slopeBlend;
-                        }
-                        else
-                        {
-                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
-                        }
-                        normalised[k] = splatMap[i, j, k];
-                    }
-                    float normalisedWeights = normalised.Sum();
-                    for (int k = 0; k < normalised.GetLength(0); k++)
-                    {
-                        normalised[k] /= normalisedWeights;
-                        splatMap[i, j, k] = normalised[k];
-                    }
-                }
-                else if (slope > slopeHigh && slope < maxBlendHigh)
-                {
-                    float normalisedSlope = slope - slopeHigh;
-                    float slopeRange = maxBlendHigh - slopeHigh;
-                    float slopeBlendInverted = normalisedSlope / slopeRange; // Holds data about the texture weight between the blend ranges.
-                    float slopeBlend = 1 - slopeBlendInverted; // We flip this because we want to find out how close the slope is to the max blend.
-                    for (int k = 0; k < textureCount; k++)
-                    {
-                        if (k == t)
-                        {
-                            splatMap[i, j, t] = slopeBlend;
-                        }
-                        else
-                        {
-                            splatMap[i, j, k] = splatMap[i, j, k] * Mathf.Clamp01(1f - slopeBlend);
-                        }
-                        normalised[k] = splatMap[i, j, k];
-                    }
-                    float normalisedWeights = normalised.Sum();
-                    for (int k = 0; k < normalised.GetLength(0); k++)
-                    {
-                        normalised[k] /= normalisedWeights;
-                        splatMap[i, j, k] = normalised[k];
-                    }
-                }
-            }
+            case LandLayers.Ground:
+            case LandLayers.Biome:
+                SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetSlopes(), t, slopeLow, slopeHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
+                SetLayer(landLayer);
+                break;
         }
-        RustMapEditor.Data.LandData.SetData(splatMap, landLayerToPaint);
-        RustMapEditor.Data.LandData.SetLayer(RustMapEditor.Data.LandData.landLayer, TerrainTopology.TypeToIndex((int)RustMapEditor.Data.LandData.topologyLayer));
     }
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
