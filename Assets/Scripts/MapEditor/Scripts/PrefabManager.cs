@@ -20,7 +20,6 @@ public static class PrefabManager
         if (!prefabsLoaded)
         {
             backend = new AssetBundleBackend(bundlename);
-            AssetDump();
             manifest = backend.Load<GameManifest>(manifestPath);
             if (manifest == null)
             {
@@ -29,6 +28,7 @@ public static class PrefabManager
                 prefabsLoaded = false;
                 return;
             }
+            AssetDump();
             prefabsLoaded = true;
         }
         else
@@ -81,7 +81,7 @@ public static class PrefabManager
         {
             foreach (var item in assetsList)
             {
-                streamWriter.WriteLine(item);
+                streamWriter.WriteLine(item +  " : " + StringPool.Get(item));
             }
         }
     }
