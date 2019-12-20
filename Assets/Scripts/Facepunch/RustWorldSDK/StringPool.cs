@@ -45,7 +45,7 @@ public class StringPool
         uint num;
         if (StringPool.toNumber.TryGetValue(str, out num))
             return num;
-        Debug.LogWarning((object)("StringPool.GetNumber - no number for string " + str));
+        //Debug.LogWarning((object)("StringPool.GetNumber - no number for string " + str));
         return 0;
     }
 
