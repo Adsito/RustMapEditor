@@ -80,7 +80,6 @@ namespace RustMapEditor
 			// We still need to setup the child parent information for the rows since this 
 			// information is used by the TreeView internal logic (navigation, dragging etc)
 			SetupParentsAndChildrenFromDepths (root, m_Rows);
-
 			return m_Rows;
 		}
         
@@ -132,7 +131,6 @@ namespace RustMapEditor
 					}
 				}
 			}
-			SortSearchResult(result);
 		}
 
 		protected virtual void SortSearchResult (List<TreeViewItem> rows)
