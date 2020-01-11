@@ -16,6 +16,7 @@ namespace RustMapEditor.UI
         enum Columns
         {
             Name,
+            Width,
             InnerPadding,
             OuterPadding,
             InnerFade,
@@ -25,6 +26,7 @@ namespace RustMapEditor.UI
         public enum SortOption
         {
             Name,
+            Width,
             InnerPadding,
             OuterPadding,
             InnerFade,
@@ -34,6 +36,7 @@ namespace RustMapEditor.UI
         SortOption[] m_SortOptions =
         {
             SortOption.Name,
+            SortOption.Width,
             SortOption.InnerPadding,
             SortOption.OuterPadding,
             SortOption.InnerFade,
@@ -91,7 +94,7 @@ namespace RustMapEditor.UI
             var paths = GameObject.FindObjectsOfType<PathDataHolder>();
             for (int i = 0; i < paths.Length; i++)
             {
-                string name = String.Format("{0}:{1}:{2}:{3}:{4}", paths[i].pathData.name, paths[i].pathData.innerPadding, paths[i].pathData.outerPadding, paths[i].pathData.innerFade, paths[i].pathData.outerFade);
+                string name = String.Format("{0}:{1}:{2}:{3}:{4}:{5}", paths[i].pathData.name, paths[i].pathData.width, paths[i].pathData.innerPadding, paths[i].pathData.outerPadding, paths[i].pathData.innerFade, paths[i].pathData.outerFade);
                 pathHierachyElements.Add(new PathHierachyElement(name, 0, i));
             }
             return pathHierachyElements;
@@ -146,6 +149,9 @@ namespace RustMapEditor.UI
                     case SortOption.Name:
                         orderedQuery = orderedQuery.ThenBy(l => l.data.pathName, ascending);
                         break;
+                    case SortOption.Width:
+                        orderedQuery = orderedQuery.ThenBy(l => l.data.width, ascending);
+                        break;
                     case SortOption.InnerPadding:
                         orderedQuery = orderedQuery.ThenBy(l => l.data.innerPadding, ascending);
                         break;
@@ -172,6 +178,8 @@ namespace RustMapEditor.UI
             {
                 case SortOption.Name:
                     return myTypes.Order(l => l.data.pathName, ascending);
+                case SortOption.Width:
+                    return myTypes.Order(l => l.data.width, ascending);
                 case SortOption.InnerPadding:
                     return myTypes.Order(l => l.data.innerPadding, ascending);
                 case SortOption.OuterPadding:
@@ -205,6 +213,9 @@ namespace RustMapEditor.UI
                     textRect.x += GetContentIndent(item);
                     textRect.xMax = cellRect.xMax - textRect.x;
                     GUI.Label(textRect, item.data.pathName);
+                    break;
+                case Columns.Width:
+                    item.data.width = EditorGUI.FloatField(cellRect, item.data.width);
                     break;
                 case Columns.InnerPadding:
                     item.data.innerPadding = EditorGUI.FloatField(cellRect, item.data.innerPadding);

@@ -41,7 +41,15 @@ namespace RustMapEditor.UI
                     autoResize = true,
                     allowToggleVisibility = true
                 },
-                new MultiColumnHeaderState.Column
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = ToolTips.pathHierachyWidth,
+					width = 45,
+					minWidth = 40,
+					autoResize = true,
+					allowToggleVisibility = true
+				},
+				new MultiColumnHeaderState.Column
                 {
                     headerContent = ToolTips.pathHierachyInnerPadding,
                     width = 45,
