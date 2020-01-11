@@ -6,13 +6,14 @@ namespace RustMapEditor.UI
     internal class PrefabsListElement : TreeElement
     {
         public string prefabName;
-        public uint RustID;
+        public uint rustID;
 
         public PrefabsListElement(string name, int depth, int id) : base(name, depth, id)
         {
             if (!String.IsNullOrEmpty(name))
             {
                 prefabName = name;
+                rustID = 0;
             }
         }
     }

@@ -13,7 +13,6 @@ namespace RustMapEditor.UI
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
 		PrefabsListTreeView m_TreeView;
-		Texture2D previewImage;
 
 		Rect multiColumnTreeViewRect
 		{
@@ -77,6 +76,8 @@ namespace RustMapEditor.UI
 				m_SearchField = new SearchField();
 				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
 
+				treeView.previewImage = new Texture2D(60, 60);
+
 				m_Initialized = true;
 			}
 		}
@@ -108,7 +109,7 @@ namespace RustMapEditor.UI
 
 		void DrawPreviewImage(Rect rect)
 		{
-			GUI.DrawTexture(rect, new Texture2D(60, 60));
+			GUI.DrawTexture(rect, treeView.previewImage);
 		}
 	}
 }
