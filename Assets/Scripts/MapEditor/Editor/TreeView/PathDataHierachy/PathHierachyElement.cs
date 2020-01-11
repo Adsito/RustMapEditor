@@ -17,8 +17,8 @@ namespace RustMapEditor.UI
                 width = float.Parse(values[1]);
                 innerPadding = float.Parse(values[2]);
                 outerPadding = float.Parse(values[3]);
-                innerFade = float.Parse(values[3]);
-                outerFade = float.Parse(values[3]);
+                innerFade = float.Parse(values[4]);
+                outerFade = float.Parse(values[5]);
             }
         }
     }
