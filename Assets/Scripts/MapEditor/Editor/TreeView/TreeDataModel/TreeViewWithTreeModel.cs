@@ -120,7 +120,10 @@ namespace RustMapEditor
 				// Matches search?
 				if (current.name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
 				{
-					result.Add(new TreeViewItem<T>(current.id, kItemDepth, current.name, current));
+					if (!current.hasChildren) // Filters out including parent objects in the search.
+					{
+						result.Add(new TreeViewItem<T>(current.id, kItemDepth, current.name, current));
+					}
 				}
 
 				if (current.children != null && current.children.Count > 0)

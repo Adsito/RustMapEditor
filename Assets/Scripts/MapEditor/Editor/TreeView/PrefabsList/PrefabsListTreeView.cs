@@ -13,6 +13,8 @@ namespace RustMapEditor.UI
         const float kRowHeights = 20f;
         const float kToggleWidth = 18f;
 
+        public Texture2D previewImage;
+
         enum Columns
         {
             Name,
@@ -78,6 +80,8 @@ namespace RustMapEditor.UI
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
             var manifestStrings = PrefabManager.GetManifestStrings();
+            if (manifestStrings == null)
+                return prefabsListElements;
             var prefabID = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
             var parentID = -2000;
             foreach (var manifestString in manifestStrings)
@@ -105,7 +109,9 @@ namespace RustMapEditor.UI
                             else
                             {
                                 var treeviewItem = new PrefabsListElement(prefabName, i, prefabID);
-                                treeviewItem.RustID = StringPool.Get(manifestString);
+                                treeviewItem.rustID = StringPool.Get(manifestString);
+                                if (treeviewItem.rustID == 0)
+                                    continue;
                                 prefabsListElements.Add(treeviewItem);
                                 treeviewParents.Add(treePath, treeviewItem);
                                 prefabID++;
@@ -215,7 +221,18 @@ namespace RustMapEditor.UI
 
         protected override void SingleClickedItem(int id)
         {
-            Debug.Log(treeModel.Find(id).RustID);
+            var itemClicked = treeModel.Find(id);
+            if (itemClicked.rustID == 0)
+                return;
+            previewImage = AssetPreview.GetAssetPreview(PrefabManager.LoadPrefab(itemClicked.rustID));
+            if (previewImage == null)
+                previewImage = new Texture2D(60, 60);
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            var expand = !IsExpanded(id);
+            SetExpanded(id, expand);
         }
     }
 }
