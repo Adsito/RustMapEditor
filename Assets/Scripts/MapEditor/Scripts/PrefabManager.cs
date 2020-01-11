@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public static class PrefabManager
 {
 	private static AssetBundleBackend backend;
-    public static GameManifest manifest;
+    private static GameManifest manifest;
 
-    public static List<string> assetsList = new List<string>();
-    public static List<string> prefabsPrepared = new List<string>();
+    static List<string> assetsList = new List<string>();
+    static List<string> prefabsPrepared = new List<string>();
+    static List<string> LODs = new List<string>();
 
     private const string manifestPath = "assets/manifest.asset";
     public static bool prefabsLoaded = false;
@@ -46,6 +48,23 @@ public static class PrefabManager
             backend.Dispose();
         }
     }
+    public static GameManifest GetManifest()
+    {
+        return manifest;
+    }
+    public static List<string> GetManifestStrings()
+    {
+        if (!prefabsLoaded)
+        {
+            return null;
+        }
+        List<string> manifestStrings = new List<string>();
+        foreach (var item in manifest.pooledStrings)
+        {
+            manifestStrings.Add(item.str);
+        }
+        return manifestStrings;
+    }
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
     /// <param name="path">The Prefab path in the bundle file.</param>
     /// <returns>The prefab loaded, or the default prefab if unable to load.</returns>
@@ -82,6 +101,68 @@ public static class PrefabManager
             foreach (var item in assetsList)
             {
                 streamWriter.WriteLine(item +  " : " + StringPool.Get(item));
+            }
+        }
+    }
+    public static void AssetLODDump()
+    {
+        using (StreamWriter streamWriter = new StreamWriter("RendererLODs.txt", false))
+        {
+            try
+            {
+                var manifestStrings = GetManifestStrings();
+                Debug.Log(manifestStrings.Count);
+                for (int i = 0; i < manifestStrings.Count; i++)
+                {
+                    GameObject tempObject = backend.Load<GameObject>(manifestStrings[i]);
+                    if (tempObject == null)
+                    {
+                        continue;
+                    }
+                    tempObject.SetActive(true);
+                    foreach (var item in tempObject.GetComponentsInChildren<RendererLOD>())
+                    {
+                        if (LODs.Contains(item.States[0].renderer.name))
+                        {
+                            continue;
+                        }
+                        LODs.Add(item.States[0].renderer.name);
+                        for (int j = 0; j < item.States.Length; j++)
+                        {
+                            if (item.States[j].renderer != null)
+                            {
+                                streamWriter.WriteLine(item.States[j].renderer.name + " : " + item.States[j].distance);
+                            }
+                            else
+                            {
+                                streamWriter.WriteLine("Culling Distance : " + item.States[j].distance);
+                            }
+                        }
+                    }
+                    foreach (var item in tempObject.GetComponentsInChildren<MeshLOD>())
+                    {
+                        if (LODs.Contains(item.States[0].mesh.name))
+                        {
+                            continue;
+                        }
+                        LODs.Add(item.States[0].mesh.name);
+                        for (int j = 0; j < item.States.Length; j++)
+                        {
+                            if (item.States[j].mesh != null)
+                            {
+                                streamWriter.WriteLine(item.States[j].mesh.name + " : " + item.States[j].distance);
+                            }
+                            else
+                            {
+                                streamWriter.WriteLine("Culling Distance : " + item.States[j].distance);
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.Log(ex.StackTrace);
             }
         }
     }
