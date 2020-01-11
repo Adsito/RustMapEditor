@@ -33,6 +33,11 @@ namespace RustMapEditor
 			set { m_Children = value; }
 		}
 
+		public void AddChildren(TreeElement child)
+		{
+			m_Children.Add(child);
+		}
+
 		public bool hasChildren
 		{
 			get { return children != null && children.Count > 0; }
