@@ -15,7 +15,8 @@ public class StringPool
             return;
         StringPool.toString = new Dictionary<uint, string>();
         StringPool.toNumber = new Dictionary<string, uint>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-        GameManifest gameManifest = PrefabManager.manifest;
+        GameManifest gameManifest = PrefabManager.GetManifest();
+        if (gameManifest == null) return;
         for (uint index = 0; (long)index < (long)gameManifest.pooledStrings.Length; ++index)
         {
             StringPool.toString.Add(gameManifest.pooledStrings[index].hash, gameManifest.pooledStrings[index].str);
