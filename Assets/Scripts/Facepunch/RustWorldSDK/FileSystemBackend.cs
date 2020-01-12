@@ -27,12 +27,21 @@ public abstract class FileSystemBackend
 
 	public GameObject LoadPrefab(string filePath)
 	{
-		if (!filePath.StartsWith("assets/", System.StringComparison.CurrentCultureIgnoreCase))
+		if (cache.ContainsKey(filePath))
 		{
-			Debug.LogWarning("LoadPrefab - should start with assets/ - " + filePath);
+			return cache[filePath] as GameObject;
 		}
-
-		return Load<GameObject>(filePath);
+		else
+		{
+			GameObject val = LoadAsset<GameObject>(filePath);
+			if (val != null)
+			{
+				PrefabManager.PreparePrefab(val);
+				cache.Add(filePath, val);
+				return val;
+			}
+			return new GameObject();
+		}
 	}
 
 	public string[] FindAll(string folder, string search = "")

@@ -11,11 +11,11 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.LandData;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
-using static WorldSerialization;
+using static PrefabManager;
 
 public static class MapIO
 {
-    public static float progressBar = 0f, progressValue = 1f;
+    public static float progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
     public static GameObject defaultPrefab;
@@ -83,20 +83,10 @@ public static class MapIO
     /// <summary>Clears the popup progress bar. Needs to be called otherwise it will persist in the editor.</summary>
     public static void ClearProgressBar()
     {
-        progressBar = 0;
+        progressValue = 0;
         EditorUtility.ClearProgressBar();
     }
-    public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
-    {
-        GameObject newObj = GameObject.Instantiate(g);
-        newObj.transform.parent = parent;
-        newObj.transform.position = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z) + RustMapEditor.Data.LandData.GetMapOffset();
-        newObj.transform.rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
-        newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
-        newObj.name = g.name;
-        newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
-        return newObj;
-    }
+    
     public static List<int> GetEnumSelection<T>(T enumGroup)
     {
         List<int> selectedEnums = new List<int>();
@@ -418,11 +408,11 @@ public static class MapIO
     public static void RotateTopologyLayers(TerrainTopology.Enum topologyLayers, bool CW)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        progressValue = 1f / topologyElements.Count;
+        
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            progressValue += 1f / topologyElements.Count;
+            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
             RotateLayer(LandLayers.Topology, CW, i);
         }
         ClearProgressBar();
@@ -582,8 +572,8 @@ public static class MapIO
         progressValue = 1f / topologyElements.Count;
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            progressValue += 1f / topologyElements.Count;
+            ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
             PaintLayer(LandLayers.Topology, 0, i);
         }
         ClearProgressBar();
@@ -612,8 +602,8 @@ public static class MapIO
         progressValue = 1f / topologyElements.Count;
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            progressValue += 1f / topologyElements.Count;
+            ProgressBar("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
             ClearLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
@@ -639,11 +629,10 @@ public static class MapIO
     public static void InvertTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        progressValue = 1f / topologyElements.Count;
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressBar);
+            progressValue += 1f / topologyElements.Count;
+            ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
             InvertLayer(LandLayers.Topology, i);
         }
         ClearProgressBar();
@@ -743,14 +732,13 @@ public static class MapIO
         int prefabsHidden = 0;
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressBar += progressValue;
+            progressValue += 1f / prefabDataHolders.Length;
             if (sw.Elapsed.TotalSeconds > 0.1f)
             {
                 sw.Restart();
-                ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+                ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
             }
             prefabDataHolders[i].prefabData.category = @":\RustEditHiddenPrefab:" + prefabsHidden + ":";
             prefabsHidden++;
@@ -766,14 +754,13 @@ public static class MapIO
         int prefabsBroken = 0;
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressBar += progressValue;
+            progressValue += 1f / prefabDataHolders.Length;
             if (sw.Elapsed.TotalSeconds > 0.1f)
             {
                 sw.Restart();
-                ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+                ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
             }
             if (prefabDataHolders[i].prefabData.category.Contains(':'))
             {
@@ -794,8 +781,8 @@ public static class MapIO
         progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressBar);
+            progressValue += 1f / prefabDataHolders.Length;
+            ProgressBar("Group RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
             if (prefabDataHolders[i].prefabData.category.Contains(':'))
             {
                 var categoryFields = prefabDataHolders[i].prefabData.category.Split(':');
@@ -826,8 +813,8 @@ public static class MapIO
         progressValue = 1f / prefabDataHolders.Length;
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressBar += progressValue;
-            ProgressBar("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length, progressBar);
+            progressValue += 1f / prefabDataHolders.Length;
+            ProgressBar("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length, progressValue);
             mapPrefabExports.Add(new PrefabExport()
             {
                 PrefabNumber = i,
@@ -1039,8 +1026,7 @@ public static class MapIO
         ProgressBar("Loading: ", "Spawning Prefabs ", 0.8f);
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        progressValue = 0f;
-        if (PrefabManager.prefabsLoaded)
+        if (prefabsLoaded)
         {
             for (int i = 0; i < terrains.prefabData.Length; i++)
             {
@@ -1050,7 +1036,7 @@ public static class MapIO
                     sw.Restart();
                     ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
                 }
-                SpawnPrefab(PrefabManager.LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
+                SpawnPrefab(LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
             }
         }
         else
