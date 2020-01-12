@@ -24,6 +24,11 @@ namespace RustMapEditor.UI
 			get { return new Rect(position.width / 3 * 2 + 40, 60, position.width - (position.width / 3 * 2 + 40) - 20, position.width - (position.width / 3 * 2 + 40) - 20); }
 		}
 
+		Rect previewImageDetails
+		{
+			get { return new Rect(position.width / 3 * 2 + 40, position.width - (position.width / 3 * 2 + 40) + 60, position.width - (position.width / 3 * 2 + 40) - 20, position.width - (position.width / 3 * 2 + 40) - 20); }
+		}
+
 		Rect toolbarRect
 		{
 			get { return new Rect(20f, 10f, position.width - 40f, 20f); }
@@ -94,6 +99,7 @@ namespace RustMapEditor.UI
 			SearchBar(toolbarRect);
 			DoTreeView(multiColumnTreeViewRect);
 			DrawPreviewImage(previewImageRect);
+			DrawPreviewDetails(previewImageDetails);
 		}
 
 		void SearchBar(Rect rect)
@@ -110,6 +116,13 @@ namespace RustMapEditor.UI
 		void DrawPreviewImage(Rect rect)
 		{
 			GUI.DrawTexture(rect, treeView.previewImage);
+		}
+
+		void DrawPreviewDetails(Rect rect)
+		{
+			GUILayout.BeginArea(rect);
+			GUILayout.Label(ToolTips.prefabDetailsLabel, EditorStyles.boldLabel);
+			GUILayout.EndArea();
 		}
 	}
 }

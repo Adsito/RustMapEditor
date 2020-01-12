@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class StringPool
 {
@@ -15,7 +14,7 @@ public class StringPool
             return;
         StringPool.toString = new Dictionary<uint, string>();
         StringPool.toNumber = new Dictionary<string, uint>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-        GameManifest gameManifest = PrefabManager.GetManifest();
+        GameManifest gameManifest = BundleManager.GetManifest();
         if (gameManifest == null) return;
         for (uint index = 0; (long)index < (long)gameManifest.pooledStrings.Length; ++index)
         {
@@ -34,7 +33,6 @@ public class StringPool
         string str;
         if (StringPool.toString.TryGetValue(i, out str))
             return str;
-        Debug.LogWarning((object)("StringPool.GetString - no string for ID" + (object)i));
         return string.Empty;
     }
 
@@ -46,7 +44,6 @@ public class StringPool
         uint num;
         if (StringPool.toNumber.TryGetValue(str, out num))
             return num;
-        //Debug.LogWarning((object)("StringPool.GetNumber - no number for string " + str));
         return 0;
     }
 
@@ -55,7 +52,6 @@ public class StringPool
         uint key = 0;
         if (!StringPool.toNumber.TryGetValue(str, out key))
         {
-            //key = str.ManifestHash();
             StringPool.toString.Add(key, str);
             StringPool.toNumber.Add(str, key);
         }

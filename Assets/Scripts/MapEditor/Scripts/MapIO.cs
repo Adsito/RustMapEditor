@@ -18,7 +18,6 @@ public static class MapIO
     public static float progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    public static GameObject defaultPrefab;
     #region Editor Input Manager
     [InitializeOnLoadMethod]
     static void EditorInit()
@@ -39,7 +38,6 @@ public static class MapIO
     public static void Start()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
-        defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         RefreshPresetsList(); // Refreshes the node gen presets.
         EditorApplication.update += OnProjectLoad;
     }
@@ -1026,31 +1024,15 @@ public static class MapIO
         ProgressBar("Loading: ", "Spawning Prefabs ", 0.8f);
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        if (prefabsLoaded)
+        for (int i = 0; i < terrains.prefabData.Length; i++)
         {
-            for (int i = 0; i < terrains.prefabData.Length; i++)
+            progressValue += 1f / terrains.prefabData.Length;
+            if (sw.Elapsed.TotalSeconds > 0.1f)
             {
-                progressValue += 1f / terrains.prefabData.Length;
-                if (sw.Elapsed.TotalSeconds > 0.1f)
-                {
-                    sw.Restart();
-                    ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
-                }
-                SpawnPrefab(LoadPrefab(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
+                sw.Restart();
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
             }
-        }
-        else
-        {
-            for (int i = 0; i < terrains.prefabData.Length; i++)
-            {
-                progressValue += 1f / terrains.prefabData.Length;
-                if (sw.Elapsed.TotalSeconds > 0.1f)
-                {
-                    sw.Restart();
-                    ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
-                }
-                SpawnPrefab(defaultPrefab, terrains.prefabData[i], prefabsParent);
-            }
+            Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
         }
     }
     /// <summary>Loads and sets up the map Paths.</summary>
@@ -1114,7 +1096,7 @@ public static class MapIO
     public static void Load(WorldSerialization world, string loadPath = "")
     {
         ProgressBar("Loading: " + loadPath, "Loading Map", 0.1f);
-        LoadMapInfo(WorldToTerrain(world));
+        LoadMapInfo(WorldToTerrain(world), loadPath);
     }
     /// <summary>Saves the map.</summary>
     /// <param name="path">The path to save to.</param>
@@ -1131,7 +1113,7 @@ public static class MapIO
     /// <param name="size">The size of the terrain.</param>
     public static void CreateNewMap(int size)
     {
-        LoadMapInfo(EmptyMap(size));
+        LoadMapInfo(EmptyMap(size), "New Map");
         PaintLayer(LandLayers.Ground, 4);
         PaintLayer(LandLayers.Biome, 1);
         SetHeightmap(503f, Selections.Terrains.Land);
