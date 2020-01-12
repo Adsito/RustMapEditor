@@ -30,11 +30,6 @@ namespace RustMapEditor.UI
         {
             PrefabsListWindow window = (PrefabsListWindow)EditorWindow.GetWindow(typeof(PrefabsListWindow), false, "Prefabs List");
         }
-        [MenuItem("Rust Map Editor/DumpLODS", false, 1)]
-        static void DumpLODS()
-        {
-            PrefabManager.AssetLODDump();
-        }
         [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
         {
