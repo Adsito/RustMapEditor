@@ -14,7 +14,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 	public AssetBundleBackend(string assetRoot)
 	{
-        
+		MapIO.ProgressBar("Loading Bundle", "Finding Bundle", 0.1f);
 		isError = false;
 		assetPath = Path.GetDirectoryName(assetRoot) + Path.DirectorySeparatorChar.ToString();
 
@@ -35,12 +35,15 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 
 		manifest = manifestList[0];
 
-		foreach (var ab in manifest.GetAllAssetBundles())
+		var bundles = manifest.GetAllAssetBundles();
+		for (int i = 0; i < bundles.Length; i++)
 		{
-			LoadBundle(ab);
+			MapIO.progressValue += 0.9f / bundles.Length;
+			MapIO.ProgressBar("Loading Bundle", "Loading: " + bundles[i], MapIO.progressValue);
+			LoadBundle(bundles[i]);
 			if (isError) return;
 		}
-
+		MapIO.ClearProgressBar();
 		BuildFileIndex();
 	}
 
