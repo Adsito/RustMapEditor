@@ -74,7 +74,7 @@ namespace RustMapEditor.UI
                 }
                 var world = new WorldSerialization();
                 world.Load(loadFile);
-                MapIO.Load(world);
+                MapIO.Load(world, loadFile);
             }
             if (Elements.ToolbarButton(ToolTips.saveMap))
             {
@@ -260,11 +260,11 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.loadBundle))
             {
-                PrefabManager.LoadBundle(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
+                BundleManager.Load(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
             }
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
             {
-                PrefabManager.DisposeBundle();
+                BundleManager.Dispose();
             }
             Elements.EndToolbarHorizontal();
         }

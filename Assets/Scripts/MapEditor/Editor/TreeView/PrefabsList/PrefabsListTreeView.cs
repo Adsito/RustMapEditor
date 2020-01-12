@@ -79,7 +79,7 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = PrefabManager.GetManifestStrings();
+            var manifestStrings = BundleManager.GetManifestStrings();
             if (manifestStrings == null)
                 return prefabsListElements;
             var prefabID = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
@@ -224,7 +224,7 @@ namespace RustMapEditor.UI
             var itemClicked = treeModel.Find(id);
             if (itemClicked.rustID == 0)
                 return;
-            previewImage = AssetPreview.GetAssetPreview(PrefabManager.LoadPrefab(itemClicked.rustID));
+            previewImage = AssetPreview.GetAssetPreview(PrefabManager.Load(itemClicked.rustID));
             if (previewImage == null)
                 previewImage = new Texture2D(60, 60);
         }
