@@ -8,8 +8,6 @@ TagManager:
   - Paths
   - Land
   - Water
-  - LoadedPrefab
-  - DefaultPrefab
   - LoadedPath
   layers:
   - Default

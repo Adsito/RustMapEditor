@@ -15,7 +15,8 @@ namespace RustMapEditor.Variables
         public static GUIContent renamePreset = new GUIContent("Rename Preset", "Rename this preset.");
         public static GUIContent presetWiki = new GUIContent("Wiki", "Opens the wiki at the NodeSystem page.");
 
-        public static GUIContent prefabPreview = new GUIContent("Preview", "Preview of the prefab to spawn.");
+        public static GUIContent prefabPreviewLabel = new GUIContent("Preview", "Preview of the prefab to spawn.");
+        public static GUIContent prefabDetailsLabel = new GUIContent("Prefab Details", "Information about the prefab.");
 
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");
