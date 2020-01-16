@@ -14,6 +14,8 @@ namespace RustMapEditor.UI
         const float kToggleWidth = 18f;
 
         public Texture2D previewImage;
+        public WorldSerialization.PrefabData prefabData;
+        public string prefabName;
 
         enum Columns
         {
@@ -227,6 +229,8 @@ namespace RustMapEditor.UI
             previewImage = AssetPreview.GetAssetPreview(PrefabManager.Load(itemClicked.rustID));
             if (previewImage == null)
                 previewImage = new Texture2D(60, 60);
+            prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
+            prefabName = treeModel.Find(id).name;
         }
 
         protected override void DoubleClickedItem(int id)
