@@ -896,5 +896,28 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
         #endregion
+        #region PrefabsList
+        public static void DisplayPrefabName(string name)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(ToolTips.prefabName);
+            Elements.ToolbarLabel(new GUIContent(name, name));
+            Elements.EndToolbarHorizontal();
+        }
+        public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(ToolTips.prefabID);
+            Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
+            Elements.EndToolbarHorizontal();
+        }
+        public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(ToolTips.prefabPath);
+            Elements.ToolbarLabel(new GUIContent(StringPool.Get(prefab.id), StringPool.Get(prefab.id)));
+            Elements.EndToolbarHorizontal();
+        }
+        #endregion
     }
 }

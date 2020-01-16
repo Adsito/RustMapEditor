@@ -82,6 +82,7 @@ namespace RustMapEditor.UI
 				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
 
 				treeView.previewImage = new Texture2D(60, 60);
+				treeView.prefabData = new WorldSerialization.PrefabData() { id = 0 };
 
 				m_Initialized = true;
 			}
@@ -121,7 +122,10 @@ namespace RustMapEditor.UI
 		void DrawPreviewDetails(Rect rect)
 		{
 			GUILayout.BeginArea(rect);
-			GUILayout.Label(ToolTips.prefabDetailsLabel, EditorStyles.boldLabel);
+			Elements.BoldLabel(ToolTips.prefabDetailsLabel);
+			Functions.DisplayPrefabName(treeView.prefabName);
+			Functions.DisplayPrefabID(treeView.prefabData);
+			Functions.DisplayPrefabPath(treeView.prefabData);
 			GUILayout.EndArea();
 		}
 	}

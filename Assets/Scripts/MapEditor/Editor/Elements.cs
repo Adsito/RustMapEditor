@@ -21,7 +21,7 @@ namespace RustMapEditor.UI
         }
         public static void ToolbarLabelField(GUIContent label, GUIContent label2)
         {
-            EditorGUILayout.LabelField(label, label2, EditorStyles.toolbarButton);
+            EditorGUILayout.LabelField(label, label2);
         }
         public static string ToolbarTextField(string text)
         {

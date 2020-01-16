@@ -32,6 +32,7 @@ namespace RustMapEditor.Variables
 
         public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
         public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
+        public static GUIContent prefabPath = new GUIContent("Path:", "The path of the prefab inside the asset bundle.");
         public static GUIContent prefabName = new GUIContent("Name:", "The Prefab name.");
 
         public static GUIContent assetBundleLabel = new GUIContent("Asset Bundle");
