@@ -8,7 +8,6 @@ TagManager:
   - Paths
   - Land
   - Water
-  - LoadedPath
   layers:
   - Default
   - TransparentFX
