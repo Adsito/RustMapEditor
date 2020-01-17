@@ -40,7 +40,8 @@ public abstract class FileSystemBackend
 				cache.Add(filePath, val);
 				return val;
 			}
-			return new GameObject();
+			Debug.LogWarning("GameObject not loaded from asset: " + filePath);
+			return PrefabManager.defaultPrefab;
 		}
 	}
 

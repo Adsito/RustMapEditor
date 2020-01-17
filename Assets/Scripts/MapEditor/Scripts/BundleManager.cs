@@ -8,8 +8,8 @@ public static class BundleManager
 
     private const string manifestPath = "assets/manifest.asset";
 
-    public static AssetBundleBackend Backend;
-    private static GameManifest manifest;
+    public static AssetBundleBackend Backend { get; private set; }
+    public static GameManifest Manifest { get; private set; }
 
     public static bool IsLoaded()
     {
@@ -22,12 +22,11 @@ public static class BundleManager
         if (!loaded)
         {
             Backend = new AssetBundleBackend(bundlename);
-            manifest = Backend.Load<GameManifest>(manifestPath);
-            if (manifest == null)
+            Manifest = Backend.Load<GameManifest>(manifestPath);
+            if (Manifest == null)
             {
                 Debug.LogError("Manifest is null");
-                Backend.Dispose();
-                loaded = false;
+                Dispose();
                 return;
             }
             AssetDump();
@@ -44,12 +43,9 @@ public static class BundleManager
         if (loaded)
         {
             loaded = false;
+            Backend.cache.Clear();
             Backend.Dispose();
         }
-    }
-    public static GameManifest GetManifest()
-    {
-        return manifest;
     }
     public static List<string> GetManifestStrings()
     {
@@ -58,7 +54,7 @@ public static class BundleManager
             return null;
         }
         List<string> manifestStrings = new List<string>();
-        foreach (var item in manifest.pooledStrings)
+        foreach (var item in Manifest.pooledStrings)
         {
             manifestStrings.Add(item.str);
         }
