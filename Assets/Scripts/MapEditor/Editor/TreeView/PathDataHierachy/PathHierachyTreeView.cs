@@ -231,41 +231,13 @@ namespace RustMapEditor.UI
                     break;
             }
         }
-
-        // Rename
-        //--------
-
-        protected override bool CanRename(TreeViewItem item)
-        {
-            // Only allow rename if we can show the rename overlay with a certain width (label might be clipped by other columns)
-            Rect renameRect = GetRenameRect(treeViewRect, 0, item);
-            return renameRect.width > 30;
-        }
-
-        protected override void RenameEnded(RenameEndedArgs args)
-        {
-            // Set the backend name and reload the tree to reflect the new model
-            if (args.acceptedRename)
-            {
-                var element = treeModel.Find(args.itemID);
-                element.name = args.newName;
-                Reload();
-            }
-        }
-
-        protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
-        {
-            Rect cellRect = GetCellRectForTreeFoldouts(rowRect);
-            CenterRectUsingSingleLineHeight(ref cellRect);
-            return base.GetRenameRect(cellRect, row, item);
-        }
-
-        // Misc
-        //--------
-
         protected override bool CanMultiSelect(TreeViewItem item)
         {
-            return true;
+            return false;
+        }
+        protected override bool CanStartDrag(CanStartDragArgs args)
+        {
+            return false;
         }
     }
 }

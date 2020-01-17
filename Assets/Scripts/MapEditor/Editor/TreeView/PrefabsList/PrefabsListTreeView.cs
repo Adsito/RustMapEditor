@@ -84,8 +84,7 @@ namespace RustMapEditor.UI
             var manifestStrings = BundleManager.GetManifestStrings();
             if (manifestStrings == null)
                 return prefabsListElements;
-            var prefabID = -1000000; // Set this really low so it doesn't ever go into the positives or otherwise run into the risk of being the same id as a prefab.
-            var parentID = -2000;
+            int prefabID = 0, parentID = -1;
             foreach (var manifestString in manifestStrings)
             {
                 if (manifestString.Contains(".prefab"))
@@ -106,7 +105,7 @@ namespace RustMapEditor.UI
                                 var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID);
                                 prefabsListElements.Add(treeviewItem);
                                 treeviewParents.Add(treePath, treeviewItem);
-                                parentID++;
+                                parentID--;
                             }
                             else
                             {
@@ -216,11 +215,14 @@ namespace RustMapEditor.UI
                     break;
             }
         }
-        protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
+        protected override bool CanStartDrag(CanStartDragArgs args)
         {
-            // Disables
+            return false;
         }
-
+        protected override bool CanMultiSelect(TreeViewItem item)
+        {
+            return false;
+        }
         protected override void SingleClickedItem(int id)
         {
             var itemClicked = treeModel.Find(id);
@@ -232,7 +234,11 @@ namespace RustMapEditor.UI
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = treeModel.Find(id).name;
         }
-
+        
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            SingleClickedItem(selectedIds[0]);
+        }
         protected override void DoubleClickedItem(int id)
         {
             var expand = !IsExpanded(id);
