@@ -215,15 +215,7 @@ namespace RustMapEditor.UI
                     break;
             }
         }
-        protected override bool CanStartDrag(CanStartDragArgs args)
-        {
-            return false;
-        }
-        protected override bool CanMultiSelect(TreeViewItem item)
-        {
-            return false;
-        }
-        protected override void SingleClickedItem(int id)
+        void SetItemSelected(int id)
         {
             var itemClicked = treeModel.Find(id);
             if (itemClicked.rustID == 0)
@@ -232,12 +224,19 @@ namespace RustMapEditor.UI
             if (previewImage == null)
                 previewImage = new Texture2D(60, 60);
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
-            prefabName = treeModel.Find(id).name;
+            prefabName = itemClicked.name;
         }
-        
+        protected override bool CanStartDrag(CanStartDragArgs args)
+        {
+            return false;
+        }
+        protected override bool CanMultiSelect(TreeViewItem item)
+        {
+            return false;
+        }
         protected override void SelectionChanged(IList<int> selectedIds)
         {
-            SingleClickedItem(selectedIds[0]);
+            SetItemSelected(selectedIds[0]);
         }
         protected override void DoubleClickedItem(int id)
         {
