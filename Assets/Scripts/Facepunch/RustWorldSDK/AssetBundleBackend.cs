@@ -96,6 +96,7 @@ public class AssetBundleBackend : FileSystemBackend, System.IDisposable
 			Object.DestroyImmediate(rootBundle);
 			rootBundle = null;
 		}
+		Resources.UnloadUnusedAssets();
 	}
 
 	protected override T LoadAsset<T>(string filePath)

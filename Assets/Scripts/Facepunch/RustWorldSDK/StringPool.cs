@@ -14,7 +14,7 @@ public class StringPool
             return;
         StringPool.toString = new Dictionary<uint, string>();
         StringPool.toNumber = new Dictionary<string, uint>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-        GameManifest gameManifest = BundleManager.GetManifest();
+        GameManifest gameManifest = BundleManager.Manifest;
         if (gameManifest == null) return;
         for (uint index = 0; (long)index < (long)gameManifest.pooledStrings.Length; ++index)
         {
