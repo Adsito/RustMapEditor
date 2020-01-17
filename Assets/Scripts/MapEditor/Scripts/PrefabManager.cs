@@ -37,11 +37,15 @@ public static class PrefabManager
         newObj.name = go.name;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
     }
-    public static GameObject Prepare(GameObject go)
+    /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
+    /// <param name="go">GameObject to process, should be from one of the asset bundles.</param>
+    /// <param name="filePath">Asset filepath of the gameobject, used to get and set the PrefabID.</param>
+    public static GameObject Process(GameObject go, string filePath)
     {
+        go.SetActive(true);
         go.SetLayerRecursively(8);
-        //go.SetActive(true);
-        go.AddComponent<PrefabDataHolder>();
+        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
+        prefabDataHolder.prefabData = new PrefabData() { id = StringPool.Get(filePath) };
         return go;
     }
 }

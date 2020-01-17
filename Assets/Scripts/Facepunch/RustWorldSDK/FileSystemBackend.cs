@@ -36,7 +36,7 @@ public abstract class FileSystemBackend
 			GameObject val = LoadAsset<GameObject>(filePath);
 			if (val != null)
 			{
-				PrefabManager.Prepare(val);
+				PrefabManager.Process(val, filePath);
 				cache.Add(filePath, val);
 				return val;
 			}
