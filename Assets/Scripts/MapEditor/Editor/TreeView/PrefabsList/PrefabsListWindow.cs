@@ -47,6 +47,14 @@ namespace RustMapEditor.UI
 				{
 					headerContent = ToolTips.prefabHierachyName,
 					width = 120,
+					minWidth = 90,
+					autoResize = true,
+					allowToggleVisibility = true
+				},
+				new MultiColumnHeaderState.Column
+				{
+					headerContent = ToolTips.prefabHierachyRustID,
+					width = 60,
 					minWidth = 60,
 					autoResize = true,
 					allowToggleVisibility = true

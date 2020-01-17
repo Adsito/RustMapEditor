@@ -20,16 +20,19 @@ namespace RustMapEditor.UI
         enum Columns
         {
             Name,
+            ID
         }
 
         public enum SortOption
         {
             Name,
+            ID
         }
 
         SortOption[] m_SortOptions =
         {
             SortOption.Name,
+            SortOption.ID
         };
 
         public static void TreeToList(TreeViewItem root, IList<TreeViewItem> result)
@@ -109,8 +112,7 @@ namespace RustMapEditor.UI
                             }
                             else
                             {
-                                var treeviewItem = new PrefabsListElement(prefabName, i, prefabID);
-                                treeviewItem.rustID = StringPool.Get(manifestString);
+                                var treeviewItem = new PrefabsListElement(prefabName, i, prefabID, manifestString);
                                 if (treeviewItem.rustID == 0)
                                     continue;
                                 prefabsListElements.Add(treeviewItem);
@@ -173,6 +175,9 @@ namespace RustMapEditor.UI
                     case SortOption.Name:
                         orderedQuery = orderedQuery.ThenBy(l => l.data.prefabName, ascending);
                         break;
+                    case SortOption.ID:
+                        orderedQuery = orderedQuery.ThenBy(l => l.data.rustID, ascending);
+                        break;
                 }
             }
 
@@ -187,6 +192,8 @@ namespace RustMapEditor.UI
             {
                 case SortOption.Name:
                     return myTypes.Order(l => l.data.prefabName, ascending);
+                case SortOption.ID:
+                    return myTypes.Order(l => l.data.rustID, ascending);
             }
             return myTypes.Order(l => l.data.name, ascending);
         }
@@ -205,13 +212,17 @@ namespace RustMapEditor.UI
         {
             CenterRectUsingSingleLineHeight(ref cellRect);
 
+            Rect textRect = cellRect;
+            textRect.x += GetContentIndent(item);
+            textRect.xMax = cellRect.xMax - textRect.x;
             switch (column)
             {
                 case Columns.Name:
-                    Rect textRect = cellRect;
-                    textRect.x += GetContentIndent(item);
-                    textRect.xMax = cellRect.xMax - textRect.x;
                     GUI.Label(textRect, item.data.prefabName);
+                    break;
+                case Columns.ID:
+                    if (item.data.rustID != 0)
+                    GUI.Label(cellRect, item.data.rustID.ToString());
                     break;
             }
         }
@@ -224,7 +235,7 @@ namespace RustMapEditor.UI
             if (previewImage == null)
                 previewImage = new Texture2D(60, 60);
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
-            prefabName = itemClicked.name;
+            prefabName = itemClicked.prefabName;
         }
         protected override bool CanStartDrag(CanStartDragArgs args)
         {
