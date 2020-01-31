@@ -137,5 +137,11 @@ namespace RustMapEditor.UI
 		{
 			m_TreeView.OnGUI(rect);
 		}
+
+		public static void ReloadTree()
+		{
+			PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PathHierachyWindow), false, "Path Hierachy");
+			window.m_Initialized = false;
+		}
 	}
 }

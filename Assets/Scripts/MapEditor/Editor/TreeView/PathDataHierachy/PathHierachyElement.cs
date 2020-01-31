@@ -7,6 +7,7 @@ namespace RustMapEditor.UI
     {
         public string pathName;
         public float width, innerPadding, outerPadding, innerFade, outerFade;
+        public PathDataHolder pathData;
 
         public PathHierachyElement(string name, int depth, int id) : base(name, depth, id)
         {
