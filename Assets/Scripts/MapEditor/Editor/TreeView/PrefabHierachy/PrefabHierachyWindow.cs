@@ -79,7 +79,6 @@ namespace RustMapEditor.UI
 		{
 			if (!m_Initialized)
 			{
-				// Check if it already exists (deserialized from window layout file or scriptable object)
 				if (treeViewState == null)
 					treeViewState = new TreeViewState();
 
@@ -115,7 +114,6 @@ namespace RustMapEditor.UI
 			InitIfNeeded();
 			SearchBar (toolbarRect);
 			DoTreeView (multiColumnTreeViewRect);
-			//BottomToolBar (bottomToolbarRect);
 		}
 
 		void SearchBar (Rect rect)
@@ -128,58 +126,12 @@ namespace RustMapEditor.UI
 			m_TreeView.OnGUI(rect);
 		}
 
-		void BottomToolBar (Rect rect)
+		public static void ReloadTree()
 		{
-			GUILayout.BeginArea (rect);
-
-			using (new EditorGUILayout.HorizontalScope ())
-			{
-
-				var style = "miniButton";
-				if (GUILayout.Button("Expand All", style))
-				{
-					treeView.ExpandAll ();
-				}
-
-				if (GUILayout.Button("Collapse All", style))
-				{
-					treeView.CollapseAll ();
-				}
-
-				GUILayout.FlexibleSpace();
-
-				GUILayout.FlexibleSpace ();
-
-				if (GUILayout.Button("Set sorting", style))
-				{
-					var myColumnHeader = (MyMultiColumnHeader)treeView.multiColumnHeader;
-					myColumnHeader.SetSortingColumns (new int[] {4, 3, 2}, new[] {true, false, true});
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.LargeHeader;
-				}
-
-
-				GUILayout.Label ("Header: ", "minilabel");
-				if (GUILayout.Button("Large", style))
-				{
-					var myColumnHeader = (MyMultiColumnHeader) treeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.LargeHeader;
-				}
-				if (GUILayout.Button("Default", style))
-				{
-					var myColumnHeader = (MyMultiColumnHeader)treeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.DefaultHeader;
-				}
-				if (GUILayout.Button("No sort", style))
-				{
-					var myColumnHeader = (MyMultiColumnHeader)treeView.multiColumnHeader;
-					myColumnHeader.mode = MyMultiColumnHeader.Mode.MinimumHeaderWithoutSorting;
-				}
-			}
-
-			GUILayout.EndArea();
+			PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
+			window.m_Initialized = false;
 		}
 	}
-
 
 	internal class MyMultiColumnHeader : MultiColumnHeader
 	{
