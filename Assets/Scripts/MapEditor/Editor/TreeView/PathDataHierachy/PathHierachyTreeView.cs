@@ -95,13 +95,14 @@ namespace RustMapEditor.UI
             for (int i = 0; i < paths.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}:{4}:{5}", paths[i].pathData.name, paths[i].pathData.width, paths[i].pathData.innerPadding, paths[i].pathData.outerPadding, paths[i].pathData.innerFade, paths[i].pathData.outerFade);
-                pathHierachyElements.Add(new PathHierachyElement(name, 0, i));
+                pathHierachyElements.Add(new PathHierachyElement(name, 0, i) 
+                { 
+                    pathData = paths[i]
+                });
             }
             return pathHierachyElements;
         }
 
-        // Note we only build the visible rows, only the backend has the full tree information. 
-        // The treeview only creates info for the row list.
         protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
         {
             var rows = base.BuildRows(root);
@@ -121,10 +122,8 @@ namespace RustMapEditor.UI
 
             if (multiColumnHeader.sortedColumnIndex == -1)
             {
-                return; // No column to sort for (just use the order the data are in)
+                return;
             }
-
-            // Sort the roots of the existing tree items
             SortByMultipleColumns();
             TreeToList(root, rows);
             Repaint();
@@ -231,13 +230,25 @@ namespace RustMapEditor.UI
                     break;
             }
         }
+
         protected override bool CanMultiSelect(TreeViewItem item)
         {
             return false;
         }
+
         protected override bool CanStartDrag(CanStartDragArgs args)
         {
             return false;
+        }
+
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            Selection.activeObject = treeModel.Find(selectedIds[0]).pathData.gameObject;
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).pathData.gameObject.transform.position);
         }
     }
 }

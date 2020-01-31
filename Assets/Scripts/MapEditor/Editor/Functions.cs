@@ -75,6 +75,7 @@ namespace RustMapEditor.UI
                 var world = new WorldSerialization();
                 world.Load(loadFile);
                 MapIO.Load(world, loadFile);
+                ReloadTreeViews();
             }
             if (Elements.ToolbarButton(ToolTips.saveMap))
             {
@@ -103,6 +104,7 @@ namespace RustMapEditor.UI
                         }
                         MapIO.Save(saveFile);
                         MapIO.CreateNewMap(mapSize);
+                        ReloadTreeViews();
                         break;
                 }
             }
@@ -196,9 +198,8 @@ namespace RustMapEditor.UI
             MapEditorSettings.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, MapEditorSettings.pathRenderDistance, 0, 5000f);
             if (EditorGUI.EndChangeCheck())
             {
-                MapIO.SetCullingDistances(MapIO.GetLastSceneView().camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
+                MapIO.SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
             }
-
             //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
         }
         #endregion
@@ -866,6 +867,11 @@ namespace RustMapEditor.UI
             info.HeightBlendLow = Mathf.Clamp(info.HeightBlendLow, 0f, info.HeightLow);
             info.HeightBlendHigh = Mathf.Clamp(info.HeightBlendHigh, info.HeightHigh, 1000f);
             return info;
+        }
+        public static void ReloadTreeViews()
+        {
+            PrefabHierachyWindow.ReloadTree();
+            PathHierachyWindow.ReloadTree();
         }
         #endregion
         #region NodeGraph

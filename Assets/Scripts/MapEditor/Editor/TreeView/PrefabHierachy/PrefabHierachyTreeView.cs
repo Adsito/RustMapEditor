@@ -89,13 +89,14 @@ namespace RustMapEditor.UI
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}", prefabs[i].name.Replace(':', ' '), "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id);
-                prefabHierachyElements.Add(new PrefabHierachyElement(name, 0, i));
+                prefabHierachyElements.Add(new PrefabHierachyElement(name, 0, i) 
+				{ 
+					prefabData = prefabs[i],
+				});
             }
             return prefabHierachyElements;
         }
 
-		// Note we only build the visible rows, only the backend has the full tree information. 
-		// The treeview only creates info for the row list.
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
 		{
 			var rows = base.BuildRows (root);
@@ -115,10 +116,8 @@ namespace RustMapEditor.UI
 			
 			if (multiColumnHeader.sortedColumnIndex == -1)
 			{
-				return; // No column to sort for (just use the order the data are in)
+				return;
 			}
-			
-			// Sort the roots of the existing tree items
 			SortByMultipleColumns ();
 			TreeToList(root, rows);
 			Repaint();
@@ -219,32 +218,15 @@ namespace RustMapEditor.UI
 		{
 			return false;
 		}
-	}
 
-	static class ExtensionMethods
-	{
-		public static IOrderedEnumerable<T> Order<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector, bool ascending)
+		protected override void SelectionChanged(IList<int> selectedIds)
 		{
-			if (ascending)
-			{
-				return source.OrderBy(selector);
-			}
-			else
-			{
-				return source.OrderByDescending(selector);
-			}
+			Selection.activeObject = treeModel.Find(selectedIds[0]).prefabData.gameObject;
 		}
 
-		public static IOrderedEnumerable<T> ThenBy<T, TKey>(this IOrderedEnumerable<T> source, Func<T, TKey> selector, bool ascending)
+		protected override void DoubleClickedItem(int id)
 		{
-			if (ascending)
-			{
-				return source.ThenBy(selector);
-			}
-			else
-			{
-				return source.ThenByDescending(selector);
-			}
+			SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabData.gameObject.transform.position);
 		}
 	}
 }

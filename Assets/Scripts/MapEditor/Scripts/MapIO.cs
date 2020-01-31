@@ -50,10 +50,6 @@ public static class MapIO
             CreateNewMap(1000);
         }
     }
-    public static SceneView GetLastSceneView()
-    {
-        return SceneView.lastActiveSceneView;
-    }
     public static void CentreSceneView(SceneView sceneView)
     {
         if (sceneView != null)
@@ -1079,8 +1075,8 @@ public static class MapIO
     {
         ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
         RemoveMapObjects();
-        CentreSceneView(GetLastSceneView());
-        SetCullingDistances(GetLastSceneView().camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
+        CentreSceneView(SceneView.lastActiveSceneView);
+        SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
         LoadSplatMaps(terrains);
