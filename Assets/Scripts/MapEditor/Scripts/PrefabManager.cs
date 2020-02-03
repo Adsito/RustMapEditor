@@ -5,12 +5,19 @@ using static WorldSerialization;
 
 public static class PrefabManager
 {
-    public static GameObject defaultPrefab;
+    public static GameObject defaultPrefab { get; private set; }
+    public static Transform prefabParent { get; private set; }
 
     [InitializeOnLoadMethod]
     public static void Init()
     {
+        EditorApplication.update += OnProjectLoad;
+    }
+    static void OnProjectLoad()
+    {
         defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
+        prefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+        EditorApplication.update -= OnProjectLoad;
     }
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
     /// <param name="path">The Prefab path in the bundle file.</param>
