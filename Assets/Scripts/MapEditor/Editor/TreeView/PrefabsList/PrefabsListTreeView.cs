@@ -126,8 +126,6 @@ namespace RustMapEditor.UI
             return prefabsListElements;
         }
 
-        // Note we only build the visible rows, only the backend has the full tree information. 
-        // The treeview only creates info for the row list.
         protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
         {
             var rows = base.BuildRows(root);
@@ -147,10 +145,8 @@ namespace RustMapEditor.UI
 
             if (multiColumnHeader.sortedColumnIndex == -1)
             {
-                return; // No column to sort for (just use the order the data are in)
+                return;
             }
-
-            // Sort the roots of the existing tree items
             SortByMultipleColumns();
             TreeToList(root, rows);
             Repaint();
@@ -237,22 +233,69 @@ namespace RustMapEditor.UI
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
         }
+
         protected override bool CanStartDrag(CanStartDragArgs args)
         {
             return false;
         }
+
         protected override bool CanMultiSelect(TreeViewItem item)
         {
             return false;
         }
+
         protected override void SelectionChanged(IList<int> selectedIds)
         {
             SetItemSelected(selectedIds[0]);
         }
+
         protected override void DoubleClickedItem(int id)
         {
-            var expand = !IsExpanded(id);
-            SetExpanded(id, expand);
+            PrefabsListElement itemClicked = treeModel.Find(id);
+            if (!itemClicked.hasChildren)
+            {
+                PrefabSpawn.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
+            }
+            else
+            {
+                var expand = !IsExpanded(id);
+                SetExpanded(id, expand);
+            }
         }
+    }
+}
+
+public static class PrefabSpawn
+{
+    public static GameObject PrefabToSpawn;
+
+    public static void Spawn(Vector3 spawnPos)
+    {
+        if (PrefabToSpawn != null)
+        {
+            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabManager.prefabParent);
+            PrefabToSpawn = null;
+        }
+    }
+}
+
+[InitializeOnLoad]
+public class OnSceneView : Editor
+{
+    static OnSceneView()
+    {
+        SceneView.beforeSceneGui += OnUpdate;
+    }
+
+    private static void OnUpdate(SceneView sceneView)
+    {
+        if (Event.current.type == EventType.MouseUp)
+            if (Event.current.button == 0)
+            {
+                Ray ray = sceneView.camera.ScreenPointToRay(Event.current.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                    PrefabSpawn.Spawn(hit.point);
+            }
     }
 }
