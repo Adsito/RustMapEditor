@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -18,21 +17,6 @@ public static class MapIO
     public static float progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
-    #region Editor Input Manager
-    [InitializeOnLoadMethod]
-    static void EditorInit()
-    {
-        FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", BindingFlags.Static | BindingFlags.NonPublic);
-        EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
-
-        value += EditorGlobalKeyPress;
-        info.SetValue(null, value);
-    }
-    static void EditorGlobalKeyPress()
-    {
-        
-    }
-    #endregion
 
     [InitializeOnLoadMethod]
     public static void Start()
