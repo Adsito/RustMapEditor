@@ -9,4 +9,12 @@ public static class GameObjectExt
             transform.gameObject.layer = layer;
         }
     }
+
+    public static void SetTagRecursively(this GameObject go, string tag)
+    {
+        foreach (var transform in go.GetComponentsInChildren<Transform>())
+        {
+            transform.gameObject.tag = tag;
+        }
+    }
 }
