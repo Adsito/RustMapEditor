@@ -254,7 +254,7 @@ namespace RustMapEditor.UI
             PrefabsListElement itemClicked = treeModel.Find(id);
             if (!itemClicked.hasChildren)
             {
-                PrefabSpawn.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
+                PrefabManager.prefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
             else
             {
@@ -262,40 +262,5 @@ namespace RustMapEditor.UI
                 SetExpanded(id, expand);
             }
         }
-    }
-}
-
-public static class PrefabSpawn
-{
-    public static GameObject PrefabToSpawn;
-
-    public static void Spawn(Vector3 spawnPos)
-    {
-        if (PrefabToSpawn != null)
-        {
-            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabManager.prefabParent);
-            PrefabToSpawn = null;
-        }
-    }
-}
-
-[InitializeOnLoad]
-public class OnSceneView : Editor
-{
-    static OnSceneView()
-    {
-        SceneView.beforeSceneGui += OnUpdate;
-    }
-
-    private static void OnUpdate(SceneView sceneView)
-    {
-        if (Event.current.type == EventType.MouseUp)
-            if (Event.current.button == 0)
-            {
-                Ray ray = sceneView.camera.ScreenPointToRay(Event.current.mousePosition);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
-                    PrefabSpawn.Spawn(hit.point);
-            }
     }
 }
