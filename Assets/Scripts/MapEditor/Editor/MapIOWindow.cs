@@ -3,11 +3,11 @@ using UnityEngine;
 using RustMapEditor.UI;
 using RustMapEditor.Variables;
 
-public class MapIOEditor : EditorWindow
+public class MapIOWindow : EditorWindow
 {
     #region Values
-    string loadFile = "", saveFile = "", prefabSaveFile = "", mapPrefabSaveFile = "";
-    int mapSize = 1000, mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
+    string prefabSaveFile = "", mapPrefabSaveFile = "";
+    int mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, prefabOptions = 0, advancedOptions = 0, layerIndex = 0;
     float offset = 0f, heightSet = 500f, heightLow = 450f, heightHigh = 750f;
     bool clampOffset = true, aboveTerrain = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
@@ -47,7 +47,7 @@ public class MapIOEditor : EditorWindow
         {
             #region File
             case 0:
-                Functions.EditorIO(ref loadFile, ref saveFile, ref mapSize);
+                Functions.EditorIO();
                 Functions.EditorInfo();
                 Functions.MapInfo();
                 Functions.EditorLinks();
@@ -200,9 +200,6 @@ public class MapIOEditor : EditorWindow
                 break;
             #endregion
         }
-        #endregion
-        #region InspectorGUIInput
-        Event e = Event.current;
         #endregion
         EditorGUILayout.EndScrollView();
     }

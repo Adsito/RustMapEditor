@@ -31,9 +31,10 @@ public static class MapIO
         if (land != null)
         {
             EditorApplication.update -= OnProjectLoad;
-            CreateNewMap(1000);
+            CreateMap(1000);
         }
     }
+
     public static void CentreSceneView(SceneView sceneView)
     {
         if (sceneView != null)
@@ -43,6 +44,7 @@ public static class MapIO
             sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
         }
     }
+
     public static void SetCullingDistances(Camera camera, float prefabDist, float pathDist)
     {
         float[] distances = new float[32];
@@ -50,6 +52,7 @@ public static class MapIO
         distances[9] = pathDist;
         camera.layerCullDistances = distances;
     }
+
     /// <summary>Displays a popup progress bar, the progress is also visible in the taskbar.</summary>
     /// <param name="title">The Progress Bar title.</param>
     /// <param name="info">The info to be displayed next to the loading bar.</param>
@@ -58,6 +61,7 @@ public static class MapIO
     {
         EditorUtility.DisplayProgressBar(title, info, progress);
     }
+
     /// <summary>Clears the popup progress bar. Needs to be called otherwise it will persist in the editor.</summary>
     public static void ClearProgressBar()
     {
@@ -1091,7 +1095,7 @@ public static class MapIO
     }
     /// <summary>Creates a new flat terrain.</summary>
     /// <param name="size">The size of the terrain.</param>
-    public static void CreateNewMap(int size)
+    public static void CreateMap(int size)
     {
         LoadMapInfo(EmptyMap(size), "New Map");
         PaintLayer(LandLayers.Ground, 4);
