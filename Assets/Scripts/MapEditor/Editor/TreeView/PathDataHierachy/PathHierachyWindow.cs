@@ -90,7 +90,6 @@ namespace RustMapEditor.UI
 		{
 			if (!m_Initialized)
 			{
-				// Check if it already exists (deserialized from window layout file or scriptable object)
 				if (treeViewState == null)
 					treeViewState = new TreeViewState();
 
