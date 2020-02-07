@@ -182,13 +182,10 @@ namespace RustMapEditor.UI
 
 		protected override void ColumnHeaderGUI (MultiColumnHeaderState.Column column, Rect headerRect, int columnIndex)
 		{
-			// Default column header gui
 			base.ColumnHeaderGUI(column, headerRect, columnIndex);
 
-			// Add additional info for large header
 			if (mode == Mode.LargeHeader)
 			{
-				// Show example overlay stuff on some of the columns
 				if (columnIndex > 2)
 				{
 					headerRect.xMax -= 3f;
@@ -200,5 +197,4 @@ namespace RustMapEditor.UI
 			}
 		}
 	}
-
 }

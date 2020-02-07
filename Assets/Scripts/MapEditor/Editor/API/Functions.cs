@@ -13,7 +13,7 @@ namespace RustMapEditor.UI
         [MenuItem("Rust Map Editor/Main Menu", false, 0)]
         public static void OpenMainMenu()
         {
-            MapIOEditor window = (MapIOEditor)EditorWindow.GetWindow(typeof(MapIOEditor), false, "Rust Map Editor");
+            MapIOWindow window = (MapIOWindow)EditorWindow.GetWindow(typeof(MapIOWindow), false, "Rust Map Editor");
         }
         [MenuItem("Rust Map Editor/Hierachy/Prefabs", false, 1)]
         static void OpenPrefabHierachy()
@@ -62,56 +62,60 @@ namespace RustMapEditor.UI
         }
         #endregion
         #region MainMenu
-        public static void EditorIO(ref string loadFile, ref string saveFile, ref int mapSize, string mapName = "custommap")
+        public static void EditorIO(string mapName = "custommap")
         {
             Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.loadMap))
-            {
-                loadFile = EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
-                if (String.IsNullOrEmpty(loadFile))
-                {
-                    return;
-                }
-                var world = new WorldSerialization();
-                world.Load(loadFile);
-                MapIO.Load(world, loadFile);
-                ReloadTreeViews();
-            }
-            if (Elements.ToolbarButton(ToolTips.saveMap))
-            {
-                saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
-                if (String.IsNullOrEmpty(saveFile))
-                {
-                    return;
-                }
-                MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
-                MapIO.Save(saveFile);
-            }
-            if (Elements.ToolbarButton(ToolTips.newMap))
-            {
-                int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Close", "Save and Create New Map");
-                switch (newMap)
-                {
-                    case 0:
-                        MapIO.CreateNewMap(mapSize);
-                        break;
-                    case 2:
-                        saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
-                        if (String.IsNullOrEmpty(saveFile))
-                        {
-                            EditorUtility.DisplayDialog("Error", "Save Path is Empty", "Ok");
-                            return;
-                        }
-                        MapIO.Save(saveFile);
-                        MapIO.CreateNewMap(mapSize);
-                        ReloadTreeViews();
-                        break;
-                }
-            }
-            Elements.ToolbarLabel(ToolTips.mapSize);
-            mapSize = Mathf.Clamp(Elements.ToolbarIntField(mapSize), 1000, 6000);
+            LoadMap();
+            SaveMap(mapName);
+            NewMap();
             Elements.EndToolbarHorizontal();
         }
+
+        public static void LoadMap()
+        {
+            if (Elements.ToolbarButton(ToolTips.loadMap))
+                LoadMapPanel();
+        }
+
+        public static void LoadMapPanel()
+        {
+            string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Import Map File", loadFile, "map");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+            var world = new WorldSerialization();
+            world.Load(loadFile);
+            MapIO.Load(world, loadFile);
+            ReloadTreeViews();
+        }
+
+        public static void SaveMap(string mapName = "custommap")
+        {
+            if (Elements.ToolbarButton(ToolTips.saveMap))
+                SaveMapPanel(mapName);
+        }
+
+        public static void SaveMapPanel(string mapName = "custommap")
+        {
+            string saveFile = "";
+            saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
+            if (string.IsNullOrEmpty(saveFile))
+                return;
+            MapIO.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
+            MapIO.Save(saveFile);
+        }
+
+        public static void NewMap()
+        {
+            if (Elements.ToolbarButton(ToolTips.newMap))
+                NewMapPanel();
+        }
+
+        public static void NewMapPanel()
+        {
+            CreateMapWindow.Init();
+        }
+
         public static void MapInfo()
         {
             if (land != null)
