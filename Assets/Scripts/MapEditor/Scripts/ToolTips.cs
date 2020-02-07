@@ -4,6 +4,8 @@ namespace RustMapEditor.Variables
 {
     public static class ToolTips
     {
+        public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
+
         public static GUIContent editorInfoLabel = new GUIContent("Editor Info", "Info about the current editor, when reporting bugs make sure to include a copy of these values.");
         public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
         public static GUIContent systemRAM = new GUIContent("RAM: " + SystemInfo.systemMemorySize / 1000 + "GB");
@@ -67,8 +69,10 @@ namespace RustMapEditor.Variables
         public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
         public static GUIContent loadMap = new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file.");
         public static GUIContent saveMap = new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file.");
+        public static GUIContent createMapLabel = new GUIContent("Create New Map");
         public static GUIContent newMap = new GUIContent("New", "Creates a new map with the selected size.");
         public static GUIContent mapSize = new GUIContent("Size", "The size to create any new maps. Must be between (1000-6000)");
+        public static GUIContent createMap = new GUIContent("Create", "Creates a new map with the selected size.");
 
         public static GUIContent exportMapPrefabs = new GUIContent("Export Map Prefabs", "Exports all map prefabs to a .JSON file.");
         public static GUIContent exportMapLootCrates = new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin.");
