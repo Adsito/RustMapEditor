@@ -74,7 +74,7 @@ namespace RustMapEditor.UI
             columnIndexForTreeFoldouts = 0;
             showAlternatingRowBackgrounds = true;
             showBorder = true;
-            customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f; // center foldout in the row since we also center content. See RowGUI
+            customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f;
             extraSpaceBeforeIconAndLabel = kToggleWidth;
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();

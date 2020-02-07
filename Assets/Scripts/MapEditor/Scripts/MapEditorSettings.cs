@@ -26,6 +26,7 @@ public static class MapEditorSettings
         }
         LoadSettings();
     }
+
     /// <summary>Returns a new EditorSettings struct set with the default settings.</summary>
     static EditorSettings DefaultSettings()
     {
@@ -40,6 +41,7 @@ public static class MapEditorSettings
         };
         return editorSettings;
     }
+
     /// <summary>Saves the current EditorSettings to a JSON file.</summary>
     public static void SaveSettings()
     {
@@ -56,6 +58,7 @@ public static class MapEditorSettings
             write.Write(JsonUtility.ToJson(editorSettings));
         }
     }
+
     /// <summary>Loads and sets the current EditorSettings from a JSON file.</summary>
     public static void LoadSettings()
     {
@@ -69,6 +72,7 @@ public static class MapEditorSettings
             prefabPaths = editorSettings.PrefabPaths;
         }
     }
+
     /// <summary> Sets the EditorSettings back to default values.</summary>
     public static void SetDefaultSettings()
     {
@@ -79,6 +83,7 @@ public static class MapEditorSettings
         pathRenderDistance = 250f;
         SetDefaultPrefabPaths();
     }
+
     /// <summary>Sets the spawnable prefab paths to default paths.</summary>
     public static void SetDefaultPrefabPaths()
     {
@@ -104,6 +109,7 @@ public static class MapEditorSettings
         };
     }
 }
+
 [Serializable]
 public struct EditorSettings
 {
