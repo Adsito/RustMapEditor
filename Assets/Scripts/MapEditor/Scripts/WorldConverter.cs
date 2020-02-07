@@ -149,19 +149,20 @@ public static class WorldConverter
 
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
-        for (int i = 0; i < 8; i++)
+        Parallel.For(0, 8, i =>
         {
-            for(int j = 0; j < textureResolution; j++)
+            for (int j = 0; j < textureResolution; j++)
             {
-                for(int k = 0; k < textureResolution; k++)
+                for (int k = 0; k < textureResolution; k++)
                 {
                     splatMap[i, j, k] = BitUtility.Float2Byte(groundArray[j, k, i]);
                 }
             }
-        }
+        });
+
         byte[] biomeBytes = new byte[textureResolution * textureResolution * 4];
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
-        for (int i = 0; i < 4; i++)
+        Parallel.For(0, 4, i =>
         {
             for (int j = 0; j < textureResolution; j++)
             {
@@ -170,17 +171,19 @@ public static class WorldConverter
                     biomeMap[i, j, k] = BitUtility.Float2Byte(biomeArray[j, k, i]);
                 }
             }
-        }
+        });
+
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
         bool[,] terrainHoles = GetAlphaMap();
-        for (int j = 0; j < textureResolution; j++)
+        Parallel.For(0, textureResolution, i =>
         {
-            for (int k = 0; k < textureResolution; k++)
+            for (int j = 0; j < textureResolution; j++)
             {
-                 alphaMap[0, j, k] = BitUtility.Bool2Byte(terrainHoles[j, k]);
+                alphaMap[0, i, j] = BitUtility.Bool2Byte(terrainHoles[i, j]);
             }
-        }
+        });
+
         TopologyData.SaveTopologyLayers();
 
         world.AddMap("terrain", landHeightBytes);
