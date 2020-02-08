@@ -929,5 +929,41 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
         #endregion
+        #region CreateNewMap
+        public static void NewMapOptions(ref int mapSize, ref float landHeight, ref Layers layers, CreateMapWindow window) 
+        {
+            mapSize = Elements.ToolbarIntSlider(ToolTips.mapSize, mapSize, 1000, 6000);
+            landHeight = Elements.ToolbarSlider(ToolTips.newMapHeight, landHeight, 0, 1000);
+
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(ToolTips.newMapGround);
+            layers.Ground = (TerrainSplat.Enum)Elements.ToolbarEnumPopup(layers.Ground);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(ToolTips.newMapBiome);
+            layers.Biome = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(layers.Biome);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.createMap))
+            {
+                window.Close();
+                int newMap = EditorUtility.DisplayDialogComplex("Warning", "Creating a new map will remove any unsaved changes to your map.", "Create New Map", "Close", "Save and Create New Map");
+                switch (newMap)
+                {
+                    case 1:
+                        return;
+                    case 2:
+                        Functions.SaveMapPanel();
+                        break;
+                }
+                MapIO.CreateMap(mapSize, TerrainSplat.TypeToIndex((int)layers.Ground), TerrainBiome.TypeToIndex((int)layers.Biome), landHeight);
+            }
+            if (Elements.ToolbarButton(ToolTips.cancel))
+                window.Close();
+            Elements.EndToolbarHorizontal();
+        }
+        #endregion
     }
 }

@@ -72,6 +72,9 @@ namespace RustMapEditor.Variables
         public static GUIContent createMapLabel = new GUIContent("Create New Map");
         public static GUIContent newMap = new GUIContent("New", "Creates a new map with the selected size.");
         public static GUIContent mapSize = new GUIContent("Size", "The size to create any new maps. Must be between (1000-6000)");
+        public static GUIContent newMapHeight = new GUIContent("Land Height", "The height to set the land to.");
+        public static GUIContent newMapGround = new GUIContent("Ground Texture", "The ground texture to set the land to.");
+        public static GUIContent newMapBiome = new GUIContent("Biome Texture", "The biome texture to set the land to.");
         public static GUIContent createMap = new GUIContent("Create", "Creates a new map with the selected size.");
 
         public static GUIContent exportMapPrefabs = new GUIContent("Export Map Prefabs", "Exports all map prefabs to a .JSON file.");
