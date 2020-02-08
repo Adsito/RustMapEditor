@@ -1103,12 +1103,12 @@ public static class MapIO
     }
     /// <summary>Creates a new flat terrain.</summary>
     /// <param name="size">The size of the terrain.</param>
-    public static void CreateMap(int size)
+    public static void CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
     {
         LoadMapInfo(EmptyMap(size), "New Map");
-        PaintLayer(LandLayers.Ground, 4);
-        PaintLayer(LandLayers.Biome, 1);
-        SetHeightmap(503f, Selections.Terrains.Land);
+        PaintLayer(LandLayers.Ground, ground);
+        PaintLayer(LandLayers.Biome, biome);
+        SetHeightmap(landHeight, Selections.Terrains.Land);
         SetHeightmap(500f, Selections.Terrains.Water);
     }
     public static List<string> generationPresetList = new List<string>();
