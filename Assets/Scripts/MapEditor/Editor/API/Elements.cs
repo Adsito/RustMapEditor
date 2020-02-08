@@ -83,7 +83,7 @@ namespace RustMapEditor.UI
         {
             BeginToolbarHorizontal();
             ToolbarLabel(guiContent);
-            value = EditorGUILayout.IntSlider(value, leftValue, rightValue);
+            value = (int)EditorGUILayout.Slider(value, leftValue, rightValue);
             EndToolbarHorizontal();
             return value;
         }
