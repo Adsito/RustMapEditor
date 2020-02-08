@@ -1047,32 +1047,40 @@ public static class MapIO
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
     }
+
     static void LoadSplatMaps(MapInfo terrains)
     {
         TopologyData.InitMesh(terrains.topology);
         SetData(terrains.splatMap, LandLayers.Ground);
         SetData(terrains.biomeMap, LandLayers.Biome);
-        SetData(terrains.alphaMap, LandLayers.Alpha);
         Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
         });
     }
+
+    static void LoadAlphaMaps(MapInfo terrains)
+    {
+        SetData(terrains.alphaMap, LandLayers.Alpha);
+    }
+
     /// <summary>Loads and sets up the map.</summary>
     static void LoadMapInfo(MapInfo terrains, string loadPath = "")
     {
         ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
+        var splatMapTask = Task.Run(() => LoadSplatMaps(terrains));
         RemoveMapObjects();
         CentreSceneView(SceneView.lastActiveSceneView);
         SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
-        LoadSplatMaps(terrains);
+        LoadAlphaMaps(terrains);
         LoadPrefabs(terrains, loadPath);
         LoadPaths(terrains, loadPath);
         ProgressBar("Loading: " + loadPath, "Setting Layers", 0.75f);
         SetLayer(LandLayers.Alpha); // Sets the terrain holes.
         SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the alphamaps to Ground.
+        splatMapTask.Wait();
         ClearProgressBar();
     }
     /// <summary>Loads a WorldSerialization and calls LoadMapInfo.</summary>
@@ -1088,7 +1096,7 @@ public static class MapIO
     {
         SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
         ProgressBar("Saving Map: " + path, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = WorldConverter.TerrainToWorld(land, water);
+        WorldSerialization world = TerrainToWorld(land, water);
         ProgressBar("Saving Map: " + path, "Saving to disk ", 0.8f);
         world.Save(path);
         ClearProgressBar();
