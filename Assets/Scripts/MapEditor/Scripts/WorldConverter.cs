@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using RustMapEditor.Variables;
 using static RustMapEditor.Data.LandData;
 using static RustMapEditor.Maths.Array;
 using static WorldSerialization;
@@ -60,6 +59,7 @@ public static class WorldConverter
         terrains.topology = new TerrainMap<int>(new byte[(int)Mathf.Pow(splatRes, 2) * 4 * 1], 1);
         return terrains;
     }
+
     /// <summary>Converts the MapInfo and TerrainMaps into a Unity map format.</summary>
     public static MapInfo ConvertMaps(MapInfo terrains, TerrainMap<byte> splatMap, TerrainMap<byte> biomeMap, TerrainMap<byte> alphaMap)
     {
@@ -67,44 +67,57 @@ public static class WorldConverter
         terrains.biomeMap = new float[biomeMap.res, biomeMap.res, 4];
         terrains.alphaMap = new bool[alphaMap.res, alphaMap.res];
 
-        Parallel.For(0, terrains.splatRes, i =>
+        var groundTask = Task.Run(() =>
         {
-            for (int j = 0; j < terrains.splatRes; j++)
+            Parallel.For(0, terrains.splatRes, i =>
             {
-                for (int k = 0; k < 8; k++)
+                for (int j = 0; j < terrains.splatRes; j++)
                 {
-                    terrains.splatMap[i, j, k] = BitUtility.Byte2Float(splatMap[k, i, j]);
+                    for (int k = 0; k < 8; k++)
+                    {
+                        terrains.splatMap[i, j, k] = BitUtility.Byte2Float(splatMap[k, i, j]);
+                    }
                 }
-            }
+            });
+            terrains.splatMap = NormaliseMulti(terrains.splatMap, 8);
         });
-        terrains.splatMap = NormaliseMulti(terrains.splatMap, 8);
-        Parallel.For(0, terrains.splatRes, i => 
+
+        var biomeTask = Task.Run(() =>
         {
-            for (int j = 0; j < terrains.splatRes; j++)
+            Parallel.For(0, terrains.splatRes, i =>
             {
-                for (int k = 0; k < 4; k++)
+                for (int j = 0; j < terrains.splatRes; j++)
                 {
-                    terrains.biomeMap[i, j, k] = BitUtility.Byte2Float(biomeMap[k, i, j]);
+                    for (int k = 0; k < 4; k++)
+                    {
+                        terrains.biomeMap[i, j, k] = BitUtility.Byte2Float(biomeMap[k, i, j]);
+                    }
                 }
-            }
+            });
+            terrains.biomeMap = NormaliseMulti(terrains.biomeMap, 4);
         });
-        terrains.biomeMap = NormaliseMulti(terrains.biomeMap, 4);
-        Parallel.For(0, terrains.splatRes, i =>
+
+        var alphaTask = Task.Run(() =>
         {
-            for (int j = 0; j < terrains.splatRes; j++)
+            Parallel.For(0, terrains.splatRes, i =>
             {
-                if (alphaMap[0, i, j] > 0)
+                for (int j = 0; j < terrains.splatRes; j++)
                 {
-                    terrains.alphaMap[i, j] = true;
+                    if (alphaMap[0, i, j] > 0)
+                    {
+                        terrains.alphaMap[i, j] = true;
+                    }
+                    else
+                    {
+                        terrains.alphaMap[i, j] = false;
+                    }
                 }
-                else
-                {
-                    terrains.alphaMap[i, j] = false;
-                }
-            }
+            });
         });
+        Task.WaitAll(groundTask, biomeTask, alphaTask);
         return terrains;
     }
+
     /// <summary>Parses World Serialization and converts into MapInfo struct.</summary>
     /// <param name="world">Serialization of the map file to parse.</param>
     public static MapInfo WorldToTerrain(WorldSerialization world)
@@ -119,7 +132,7 @@ public static class WorldConverter
         var topologyMap = new TerrainMap<int>(world.GetMap("topology").data, 1);
         var biomeMap = new TerrainMap<byte>(world.GetMap("biome").data, 4);
         var alphaMap = new TerrainMap<byte>(world.GetMap("alpha").data, 1);
-        
+
         terrains.topology = topologyMap;
 
         terrains.pathData = world.world.paths.ToArray();
@@ -129,73 +142,76 @@ public static class WorldConverter
         terrains.splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.5f)), 16, 2048);
         terrains.size = terrainSize;
 
-        terrains.land.heights = ShortMapToFloatArray(terrainMap);
-        terrains.water.heights = ShortMapToFloatArray(waterMap);
-
+        var heightTask = Task.Run(() => ShortMapToFloatArray(heightMap));
+        var waterTask = Task.Run(() => ShortMapToFloatArray(waterMap));
         terrains = ConvertMaps(terrains, splatMap, biomeMap, alphaMap);
+
+        Task.WaitAll(heightTask, waterTask);
+        terrains.land.heights = heightTask.Result;
+        terrains.water.heights = waterTask.Result;
         return terrains;
     }
+
     /// <summary>Converts Unity terrains to WorldSerialization.</summary>
     public static WorldSerialization TerrainToWorld(Terrain land, Terrain water) 
     {
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
 
-        byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
-
-        byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapResolution, water.terrainData.heightmapResolution));
-    
         var textureResolution = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.50f)), 16, 2048);
 
         byte[] splatBytes = new byte[textureResolution * textureResolution * 8];
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
-        Parallel.For(0, 8, i =>
+        var splatTask = Task.Run(() =>
         {
-            for (int j = 0; j < textureResolution; j++)
+            Parallel.For(0, 8, i =>
             {
-                for (int k = 0; k < textureResolution; k++)
+                for (int j = 0; j < textureResolution; j++)
                 {
-                    splatMap[i, j, k] = BitUtility.Float2Byte(groundArray[j, k, i]);
+                    for (int k = 0; k < textureResolution; k++)
+                    {
+                        splatMap[i, j, k] = BitUtility.Float2Byte(groundArray[j, k, i]);
+                    }
                 }
-            }
+            });
+            splatBytes = splatMap.ToByteArray();
         });
 
         byte[] biomeBytes = new byte[textureResolution * textureResolution * 4];
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
-        Parallel.For(0, 4, i =>
+        var biomeTask = Task.Run(() =>
         {
-            for (int j = 0; j < textureResolution; j++)
+            Parallel.For(0, 4, i =>
             {
-                for (int k = 0; k < textureResolution; k++)
+                for (int j = 0; j < textureResolution; j++)
                 {
-                    biomeMap[i, j, k] = BitUtility.Float2Byte(biomeArray[j, k, i]);
+                    for (int k = 0; k < textureResolution; k++)
+                    {
+                        biomeMap[i, j, k] = BitUtility.Float2Byte(biomeArray[j, k, i]);
+                    }
                 }
-            }
+            });
+            biomeBytes = biomeMap.ToByteArray();
         });
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
         bool[,] terrainHoles = GetAlphaMap();
-        Parallel.For(0, textureResolution, i =>
+        var alphaTask = Task.Run(() =>
         {
-            for (int j = 0; j < textureResolution; j++)
+            Parallel.For(0, textureResolution, i =>
             {
-                alphaMap[0, i, j] = BitUtility.Bool2Byte(terrainHoles[i, j]);
-            }
+                for (int j = 0; j < textureResolution; j++)
+                {
+                    alphaMap[0, i, j] = BitUtility.Bool2Byte(terrainHoles[i, j]);
+                }
+            });
+            alphaBytes = alphaMap.ToByteArray();
         });
 
-        TopologyData.SaveTopologyLayers();
-
-        world.AddMap("terrain", landHeightBytes);
-        world.AddMap("height", landHeightBytes);
-        world.AddMap("splat", splatMap.ToByteArray());
-        world.AddMap("biome", biomeMap.ToByteArray());
-        world.AddMap("topology", TopologyData.GetTerrainMap().ToByteArray());
-        world.AddMap("alpha", alphaMap.ToByteArray());
-        world.AddMap("water", waterHeightBytes);
+        var topologyTask = Task.Run(() => TopologyData.SaveTopologyLayers());
 
         PrefabDataHolder[] prefabs = GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<PrefabDataHolder>(false);
-
         foreach (PrefabDataHolder p in prefabs)
         {
             if (p.prefabData != null)
@@ -206,13 +222,12 @@ public static class WorldConverter
         }
 
         PathDataHolder[] paths = GameObject.FindObjectsOfType<PathDataHolder>();
-
         foreach (PathDataHolder p in paths)
         {
             if (p.pathData != null)
             {
                 p.pathData.nodes = new VectorData[p.transform.childCount];
-                for(int i = 0; i < p.transform.childCount; i++)
+                for (int i = 0; i < p.transform.childCount; i++)
                 {
                     Transform g = p.transform.GetChild(i);
                     p.pathData.nodes[i] = g.position - (0.5f * land.terrainData.size);
@@ -220,6 +235,19 @@ public static class WorldConverter
                 world.world.paths.Insert(0, p.pathData);
             }
         }
+
+        byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
+        byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapResolution, water.terrainData.heightmapResolution));
+
+        Task.WaitAll(splatTask, biomeTask, alphaTask, topologyTask);
+
+        world.AddMap("terrain", landHeightBytes);
+        world.AddMap("height", landHeightBytes);
+        world.AddMap("water", waterHeightBytes);
+        world.AddMap("splat", splatBytes);
+        world.AddMap("biome", biomeBytes);
+        world.AddMap("alpha", alphaBytes);
+        world.AddMap("topology", TopologyData.GetTerrainMap().ToByteArray());
         return world;
     }
 }
