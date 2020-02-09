@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using RustMapEditor.UI;
+using RustMapEditor.Data;
 
 public static class ShortcutManager
 {
@@ -24,4 +25,15 @@ public static class ShortcutManager
         Functions.NewMapPanel();
     }
 
+    [Shortcut("RustMapEditor/Clear Progress Bar")]
+    public static void ClearProgressBar()
+    {
+        MapIO.ClearProgressBar();
+    }
+
+    [Shortcut("RustMapEditor/Clear Layer")]
+    public static void ClearLayer()
+    {
+        MapIO.ClearLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+    }
 }
