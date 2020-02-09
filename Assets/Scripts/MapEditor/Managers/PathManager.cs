@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using static WorldSerialization;
@@ -9,6 +8,13 @@ public static class PathManager
     public static GameObject defaultPath { get; private set; }
     public static GameObject defaultNode { get; private set; }
     public static Transform pathParent { get; private set; }
+
+    public enum PathType
+    {
+        River = 0,
+        Road = 1,
+        Powerline = 2,
+    }
 
     [InitializeOnLoadMethod]
     public static void Init()
