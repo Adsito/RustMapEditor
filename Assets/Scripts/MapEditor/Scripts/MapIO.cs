@@ -18,7 +18,7 @@ public static class MapIO
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
 
     [InitializeOnLoadMethod]
-    public static void Start()
+    static void Init()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         RefreshPresetsList(); // Refreshes the node gen presets.
@@ -379,7 +379,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 SetData(Rotate(GetAlphaMap(), CW), landLayerToPaint);
@@ -503,7 +503,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -525,7 +525,7 @@ public static class MapIO
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, heightBlendLow, heightBlendHigh), landLayerToPaint);
-                SetLayer(landLayer);
+                SetLayer(LandLayer);
                 break;
         }
     }
@@ -541,7 +541,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 SetData(SetValues(GetAlphaMap(), true), landLayerToPaint);
@@ -571,7 +571,7 @@ public static class MapIO
         {
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 SetData(SetValues(GetAlphaMap(), false), landLayerToPaint);
@@ -601,7 +601,7 @@ public static class MapIO
         {
             case LandLayers.Topology:
                 SetData(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 SetData(Invert(GetAlphaMap()), landLayerToPaint);
@@ -635,7 +635,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -658,7 +658,7 @@ public static class MapIO
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetSlopes(), t, slopeLow, slopeHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
-                SetLayer(landLayer);
+                SetLayer(LandLayer);
                 break;
         }
     }
@@ -677,7 +677,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint, topology), t, dmns), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -698,7 +698,7 @@ public static class MapIO
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, t), landLayerToPaint, topology);
-                SetLayer(landLayer, TerrainTopology.TypeToIndex((int)topologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -1069,7 +1069,7 @@ public static class MapIO
         LoadPaths(terrains, loadPath);
         ProgressBar("Loading: " + loadPath, "Setting Layers", 0.75f);
         SetLayer(LandLayers.Alpha); // Sets the terrain holes.
-        SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)topologyLayer)); // Sets the alphamaps to Ground.
+        SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
         ClearProgressBar();
     }
@@ -1086,7 +1086,7 @@ public static class MapIO
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        SaveLayer(TerrainTopology.TypeToIndex((int)topologyLayer));
+        SaveLayer(TerrainTopology.TypeToIndex((int)TopologyLayer));
         ProgressBar("Saving Map: " + path, "Saving Prefabs ", 0.4f);
         WorldSerialization world = TerrainToWorld(land, water);
         ProgressBar("Saving Map: " + path, "Saving to disk ", 0.8f);
