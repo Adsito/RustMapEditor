@@ -170,7 +170,7 @@ public static class WorldConverter
                 {
                     for (int k = 0; k < textureResolution; k++)
                     {
-                        splatMap[i, j, k] = BitUtility.Float2Byte(groundArray[j, k, i]);
+                        splatMap[i, j, k] = BitUtility.Float2Byte(GroundArray[j, k, i]);
                     }
                 }
             });
@@ -187,7 +187,7 @@ public static class WorldConverter
                 {
                     for (int k = 0; k < textureResolution; k++)
                     {
-                        biomeMap[i, j, k] = BitUtility.Float2Byte(biomeArray[j, k, i]);
+                        biomeMap[i, j, k] = BitUtility.Float2Byte(BiomeArray[j, k, i]);
                     }
                 }
             });

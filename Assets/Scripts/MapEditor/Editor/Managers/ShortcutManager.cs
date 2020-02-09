@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using RustMapEditor.UI;
 using RustMapEditor.Data;
+using RustMapEditor.Variables;
 
 public static class ShortcutManager
 {
@@ -25,15 +24,45 @@ public static class ShortcutManager
         Functions.NewMapPanel();
     }
 
+    [Shortcut("RustMapEditor/Centre Scene View")]
+    public static void CentreSceneView()
+    {
+        MapIO.CentreSceneView(SceneView.lastActiveSceneView);
+    }
+
     [Shortcut("RustMapEditor/Clear Progress Bar")]
     public static void ClearProgressBar()
     {
         MapIO.ClearProgressBar();
     }
 
+    [Shortcut("RustMapEditor/Clear Map Prefabs")]
+    public static void ClearMapPrefabs()
+    {
+        MapIO.RemoveMapObjects(true);
+    }
+
+    [Shortcut("RustMapEditor/Clear Map Paths")]
+    public static void ClearMapPaths()
+    {
+        MapIO.RemoveMapObjects(false, true);
+    }
+
     [Shortcut("RustMapEditor/Clear Layer")]
     public static void ClearLayer()
     {
-        MapIO.ClearLayer(LandData.landLayer, TerrainTopology.TypeToIndex((int)LandData.topologyLayer));
+        MapIO.ClearLayer(LandData.LandLayer, TerrainTopology.TypeToIndex((int)LandData.TopologyLayer));
+    }
+
+    [Shortcut("RustMapEditor/Invert Layer")]
+    public static void InvertLayer()
+    {
+        MapIO.InvertLayer(LandData.LandLayer, TerrainTopology.TypeToIndex((int)LandData.TopologyLayer));
+    }
+
+    [Shortcut("RustMapEditor/Invert Land")]
+    public static void InvertLand()
+    {
+        MapIO.InvertHeightmap(Selections.Terrains.Land);
     }
 }

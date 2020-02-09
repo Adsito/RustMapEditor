@@ -8,22 +8,26 @@ namespace RustMapEditor.Data
     public static class LandData
     {
         /// <summary>The Ground textures of the map. [Res, Res, Textures(8)].</summary>
-        public static float[,,] groundArray;
+        public static float[,,] GroundArray { get; private set; }
+
         /// <summary>The Biome textures of the map. [Res, Res, Textures(4)</summary>
-        public static float[,,] biomeArray;
+        public static float[,,] BiomeArray { get; private set; }
+
         /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
-        public static float[][,,] topologyArray = new float[TerrainTopology.COUNT][,,];
+        public static float[][,,] TopologyArray { get; private set; }
 
         /// <summary>The Terrain layers used by the terrain for paint operations</summary>
         private static TerrainLayer[] groundTextures = null, biomeTextures = null, miscTextures = null;
 
         /// <summary>The current slopearray of the terrain.</summary>
-        private static float[,] slopeArray;
+        private static float[,] SlopeArray;
 
         /// <summary>The LandLayer currently being displayed on the terrain.</summary>
-        public static LandLayers landLayer;
+        public static LandLayers LandLayer { get; private set; }
+
         /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
-        public static TerrainTopology.Enum topologyLayer;
+        public static TerrainTopology.Enum TopologyLayer { get; private set; }
+
         /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
         private static int lastTopologyLayer = 0;
 
@@ -31,73 +35,84 @@ namespace RustMapEditor.Data
         public static Terrain land, water;
 
         [InitializeOnLoadMethod]
-        static void OnLoad()
+        static void Init()
         {
             TerrainCallbacks.textureChanged += TextureChanged;
             TerrainCallbacks.heightmapChanged += HeightmapChanged;
             EditorApplication.update += ProjectLoaded;
         }
+
+        private static void ProjectLoaded()
+        {
+            EditorApplication.update -= ProjectLoaded;
+            SetTerrainReferences();
+            TopologyArray = new float[TerrainTopology.COUNT][,,];
+        }
+
         public static Vector3 GetTerrainSize()
         {
             return land.terrainData.size;
         }
+
         public static Vector3 GetMapOffset()
         {
             return 0.5f * GetTerrainSize();
         }
+
         public static int GetHeightMapResolution()
         {
             return land.terrainData.heightmapResolution;
         }
+
         public static int GetSplatMapResolution()
         {
             return land.terrainData.alphamapResolution;
         }
+
         public static float[,] GetSlopes()
         {
-            if (slopeArray != null)
+            if (SlopeArray != null)
             {
-                return slopeArray;
+                return SlopeArray;
             }
-            slopeArray = new float[GetHeightMapResolution(), GetHeightMapResolution()];
+            SlopeArray = new float[GetHeightMapResolution(), GetHeightMapResolution()];
             for (int i = 0; i < land.terrainData.alphamapHeight; i++)
             {
                 for (int j = 0; j < land.terrainData.alphamapHeight; j++)
                 {
-                    slopeArray[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
+                    SlopeArray[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
                 }
             }
-            return slopeArray;
+            return SlopeArray;
         }
+
         public static void SetTerrainReferences()
         {
             water = GameObject.FindGameObjectWithTag("Water").GetComponent<Terrain>();
             land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
         }
-        private static void ProjectLoaded()
-        {
-            EditorApplication.update -= ProjectLoaded;
-            SetTerrainReferences();
-        }
+
         /// <summary>Callback for whenever the heightmap is updated.</summary>
         private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
         {
             if (terrain == land)
             {
-                slopeArray = null;
+                SlopeArray = null;
             }
         }
+
         /// <summary>Callback for whenever the alphamap is updated.</summary>
         private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
         {
 
         }
+
         /// <summary>Changes the active Land and Topology Layers.</summary>
         /// <param name="layer">The LandLayer to change to.</param>
         /// <param name="topology">The Topology layer to change to.</param>
         public static void ChangeLandLayer(LandLayers layer, int topology = 0)
         {
-            if (layer != LandLayers.Alpha && layer != landLayer)
+            if (layer != LandLayers.Alpha && layer != LandLayer)
             {
                 SetLayer(layer, topology);
             }
@@ -107,6 +122,7 @@ namespace RustMapEditor.Data
                 SetLayer(layer, topology);
             }
         }
+
         /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
         /// <param name="landLayer">The LandLayer to return. (Ground, Biome, Topology)</param>
         /// <param name="topology">The Topology layer, if selected.</param>
@@ -115,19 +131,21 @@ namespace RustMapEditor.Data
             switch (landLayer)
             {
                 case LandLayers.Ground:
-                    return groundArray;
+                    return GroundArray;
                 case LandLayers.Biome:
-                    return biomeArray;
+                    return BiomeArray;
                 case LandLayers.Topology:
-                    return topologyArray[topology];
+                    return TopologyArray[topology];
             }
             return null;
         }
+
         /// <summary>Returns the current maps alphaArray.</summary>
         public static bool[,] GetAlphaMap()
         {
             return land.terrainData.GetHoles(0, 0, GetSplatMapResolution(), GetSplatMapResolution());
         }
+
         /// <summary>Sets the array data of LandLayer.</summary>
         /// <param name="layer">The layer to set the data to.</param>
         /// <param name="topology">The topology layer if the landlayer is topology.</param>
@@ -136,16 +154,17 @@ namespace RustMapEditor.Data
             switch (layer)
             {
                 case LandLayers.Ground:
-                    groundArray = array;
+                    GroundArray = array;
                     break;
                 case LandLayers.Biome:
-                    biomeArray = array;
+                    BiomeArray = array;
                     break;
                 case LandLayers.Topology:
-                    topologyArray[topology] = array;
+                    TopologyArray[topology] = array;
                     break;
             }
         }
+
         /// <summary>Sets the array data of LandLayer.</summary>
         /// <param name="layer">The layer to set the data to.</param>
         public static void SetData(bool[,] array, LandLayers layer)
@@ -157,6 +176,7 @@ namespace RustMapEditor.Data
                     break;
             }
         }
+
         /// <summary>Sets the terrain alphamaps to the LandLayer.</summary>
         /// <param name="layer">The LandLayer to set.</param>
         /// <param name="topology">The Topology layer to set.</param>
@@ -170,40 +190,42 @@ namespace RustMapEditor.Data
             {
                 case LandLayers.Ground:
                     land.terrainData.terrainLayers = groundTextures;
-                    land.terrainData.SetAlphamaps(0, 0, groundArray);
-                    landLayer = layer;
+                    land.terrainData.SetAlphamaps(0, 0, GroundArray);
+                    LandLayer = layer;
                     break;
                 case LandLayers.Biome:
                     land.terrainData.terrainLayers = biomeTextures;
-                    land.terrainData.SetAlphamaps(0, 0, biomeArray);
-                    landLayer = layer;
+                    land.terrainData.SetAlphamaps(0, 0, BiomeArray);
+                    LandLayer = layer;
                     break;
                 case LandLayers.Topology:
                     lastTopologyLayer = topology;
                     land.terrainData.terrainLayers = miscTextures;
-                    land.terrainData.SetAlphamaps(0, 0, topologyArray[topology]);
-                    landLayer = layer;
+                    land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
+                    LandLayer = layer;
                     break;
             }
-            topologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+            TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
         }
+
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
         /// <param name="topologyLayer">The Topology layer, if active.</param>
         public static void SaveLayer(int topologyLayer = 0)
         {
-            switch (landLayer)
+            switch (LandLayer)
             {
                 case LandLayers.Ground:
-                    groundArray = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
+                    GroundArray = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
                     break;
                 case LandLayers.Biome:
-                    biomeArray = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
+                    BiomeArray = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
                     break;
                 case LandLayers.Topology:
-                    topologyArray[topologyLayer] = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
+                    TopologyArray[topologyLayer] = land.terrainData.GetAlphamaps(0, 0, land.terrainData.alphamapWidth, land.terrainData.alphamapHeight);
                     break;
             }
         }
+
         private static void GetTextures()
         {
             groundTextures = GetGroundTextures();
@@ -211,6 +233,7 @@ namespace RustMapEditor.Data
             miscTextures = GetMiscTextures();
             AssetDatabase.SaveAssets();
         }
+
         private static TerrainLayer[] GetMiscTextures()
         {
             TerrainLayer[] textures = new TerrainLayer[2];
@@ -220,6 +243,7 @@ namespace RustMapEditor.Data
             textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
             return textures;
         }
+
         private static TerrainLayer[] GetBiomeTextures()
         {
             TerrainLayer[] textures = new TerrainLayer[4];
@@ -233,6 +257,7 @@ namespace RustMapEditor.Data
             textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
             return textures;
         }
+
         private static TerrainLayer[] GetGroundTextures()
         {
             TerrainLayer[] textures = new TerrainLayer[8];

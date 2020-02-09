@@ -45,11 +45,11 @@ public static class TopologyData
             {
                 for (int k = 0; k < topologyMap.res; k++)
                 {
-                    if (topologyArray[i][j, k, 0] > 0)
+                    if (TopologyArray[i][j, k, 0] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
                     }
-                    if (topologyArray[i][j, k, 1] > 0)
+                    if (TopologyArray[i][j, k, 1] > 0)
                     {
                         topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
                     }
