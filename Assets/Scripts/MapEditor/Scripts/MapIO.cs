@@ -10,7 +10,6 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.LandData;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
-using static PrefabManager;
 
 public static class MapIO
 {
@@ -32,6 +31,8 @@ public static class MapIO
         {
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
+            CentreSceneView(SceneView.lastActiveSceneView);
+            SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
         }
     }
 
@@ -52,6 +53,7 @@ public static class MapIO
         distances[9] = pathDist;
         camera.layerCullDistances = distances;
     }
+
 
     /// <summary>Displays a popup progress bar, the progress is also visible in the taskbar.</summary>
     /// <param name="title">The Progress Bar title.</param>
@@ -978,12 +980,14 @@ public static class MapIO
         prefabExports.Clear();
         Debug.Log("Exported " + lootCrateCount + " lootcrates.");
     }
+
     /// <summary>Centres the Prefab and Path parent objects.</summary>
     static void CentreSceneObjects(MapInfo terrains)
     {
         GameObject.FindGameObjectWithTag("Prefabs").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
         GameObject.FindGameObjectWithTag("Paths").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
     }
+
     /// <summary>Loads and sets the Land and Water terrains.</summary>
     public static void LoadTerrains(MapInfo terrains)
     {
@@ -1001,11 +1005,10 @@ public static class MapIO
         water.terrainData.alphamapResolution = terrains.splatRes;
         water.terrainData.baseMapResolution = terrains.splatRes;
     }
+
     /// <summary>Loads and sets up the map Prefabs.</summary>
     static void LoadPrefabs(MapInfo terrains, string loadPath = "")
     {
-        Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        ProgressBar("Loading: ", "Spawning Prefabs ", 0.8f);
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
         for (int i = 0; i < terrains.prefabData.Length; i++)
@@ -1016,35 +1019,24 @@ public static class MapIO
                 sw.Restart();
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
             }
-            Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], prefabsParent);
+            PrefabManager.Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], PrefabManager.prefabParent);
         }
     }
+
     /// <summary>Loads and sets up the map Paths.</summary>
     static void LoadPaths(MapInfo terrains, string loadPath = "")
     {
-        var terrainPosition = 0.5f * terrains.size;
-        Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
-        GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
-        GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
-        ProgressBar("Loading:" + loadPath, "Spawning Paths ", 0.99f);
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
-            Vector3 averageLocation = Vector3.zero;
-            for (int j = 0; j < terrains.pathData[i].nodes.Length; j++)
+            progressValue += 1f / terrains.pathData.Length;
+            if (sw.Elapsed.TotalSeconds > 0.1f)
             {
-                averageLocation += terrains.pathData[i].nodes[j];
+                sw.Restart();
+                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
             }
-            averageLocation /= terrains.pathData[i].nodes.Length;
-            GameObject newObject = GameObject.Instantiate(pathObj, averageLocation + terrainPosition, Quaternion.identity, pathsParent);
-
-            List<GameObject> pathNodes = new List<GameObject>();
-            for (int j = 0; j < terrains.pathData[i].nodes.Length; j++)
-            {
-                GameObject newNode = GameObject.Instantiate(pathNodeObj, newObject.transform);
-                newNode.transform.position = terrains.pathData[i].nodes[j] + terrainPosition;
-                pathNodes.Add(newNode);
-            }
-            newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
+            PathManager.Spawn(terrains.pathData[i]);
         }
     }
 
@@ -1070,8 +1062,6 @@ public static class MapIO
         ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
         var splatMapTask = Task.Run(() => LoadSplatMaps(terrains));
         RemoveMapObjects();
-        CentreSceneView(SceneView.lastActiveSceneView);
-        SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
         LoadAlphaMaps(terrains);
@@ -1083,6 +1073,7 @@ public static class MapIO
         splatMapTask.Wait();
         ClearProgressBar();
     }
+
     /// <summary>Loads a WorldSerialization and calls LoadMapInfo.</summary>
     /// <param name="loadPath">The path of the map, used by the progress bars.</param>
     public static void Load(WorldSerialization world, string loadPath = "")
@@ -1090,6 +1081,7 @@ public static class MapIO
         ProgressBar("Loading: " + loadPath, "Loading Map", 0.1f);
         LoadMapInfo(WorldToTerrain(world), loadPath);
     }
+
     /// <summary>Saves the map.</summary>
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
@@ -1101,6 +1093,7 @@ public static class MapIO
         world.Save(path);
         ClearProgressBar();
     }
+
     /// <summary>Creates a new flat terrain.</summary>
     /// <param name="size">The size of the terrain.</param>
     public static void CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
