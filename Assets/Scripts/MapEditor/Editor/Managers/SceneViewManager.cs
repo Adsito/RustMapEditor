@@ -14,18 +14,17 @@ public class SceneViewManager : Editor
         switch (Event.current.type)
         {
             case EventType.MouseDown:
-                OnMouseDown(sceneView);
+                OnMouseDown();
                 break;
         }
     }
 
-    private static void OnMouseDown(SceneView sceneView)
+    private static void OnMouseDown()
     {
         if (Event.current.button == 0)
         {
-            Vector2 screenPixelPos = HandleUtility.GUIPointToScreenPixelCoordinate(Event.current.mousePosition);
-            Ray ray = sceneView.camera.ScreenPointToRay(screenPixelPos);
-            if (Physics.Raycast(ray, out RaycastHit hit, 10000f, LayerMask.GetMask("Water", "UI", "Paths")))
+            Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, 10000f))
             {
                 PrefabManager.Spawn(hit.point);
             }
