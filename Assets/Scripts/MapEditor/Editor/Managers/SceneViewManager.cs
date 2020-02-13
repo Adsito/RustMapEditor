@@ -19,12 +19,19 @@ public class SceneViewManager : Editor
         }
     }
 
+    public static bool GetMouseScenePos(out RaycastHit hit)
+    {
+        Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+        bool castHit = Physics.Raycast(ray, out RaycastHit hitInfo, 10000f);
+        hit = hitInfo;
+        return castHit;
+    }
+
     private static void OnMouseDown()
     {
         if (Event.current.button == 0)
         {
-            Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 10000f))
+            if (GetMouseScenePos(out RaycastHit hit))
             {
                 PrefabManager.Spawn(hit.point);
             }
