@@ -236,7 +236,23 @@ namespace RustMapEditor.UI
 
         protected override bool CanStartDrag(CanStartDragArgs args)
         {
-            return false;
+            return true;
+        }
+
+        protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
+        {
+            PrefabsListElement itemClicked = treeModel.Find(args.draggedItemIDs[0]);
+            if (itemClicked.rustID != 0)
+            {
+                DragAndDrop.PrepareStartDrag();
+                DragAndDrop.StartDrag("Spawn Prefab");
+                PrefabManager.prefabToSpawn = PrefabManager.Load(itemClicked.rustID);
+            }
+        }
+
+        protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
+        {
+            return DragAndDropVisualMode.None;
         }
 
         protected override bool CanMultiSelect(TreeViewItem item)

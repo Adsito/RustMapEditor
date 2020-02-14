@@ -16,6 +16,9 @@ public class SceneViewManager : Editor
             case EventType.MouseDown:
                 OnMouseDown();
                 break;
+            case EventType.DragExited:
+                OnDragExited();
+                break;
         }
     }
 
@@ -27,14 +30,24 @@ public class SceneViewManager : Editor
         return castHit;
     }
 
+    private static void SpawnPrefab()
+    {
+        if (GetMouseScenePos(out RaycastHit hit))
+        {
+            PrefabManager.Spawn(hit.point);
+        }
+    }
+
     private static void OnMouseDown()
     {
         if (Event.current.button == 0)
         {
-            if (GetMouseScenePos(out RaycastHit hit))
-            {
-                PrefabManager.Spawn(hit.point);
-            }
+            SpawnPrefab();
         }
+    }
+
+    private static void OnDragExited()
+    {
+        SpawnPrefab();
     }
 }
