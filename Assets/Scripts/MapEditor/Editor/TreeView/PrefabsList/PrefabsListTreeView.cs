@@ -222,6 +222,7 @@ namespace RustMapEditor.UI
                     break;
             }
         }
+
         void SetItemSelected(int id)
         {
             var itemClicked = treeModel.Find(id);
@@ -268,7 +269,7 @@ namespace RustMapEditor.UI
         protected override void DoubleClickedItem(int id)
         {
             PrefabsListElement itemClicked = treeModel.Find(id);
-            if (!itemClicked.hasChildren)
+            if (itemClicked.rustID != 0)
             {
                 PrefabManager.prefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
