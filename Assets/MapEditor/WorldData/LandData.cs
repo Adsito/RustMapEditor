@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
+using System.Collections;
+using Unity.EditorCoroutines.Editor;
 
 namespace RustMapEditor.Data
 {
@@ -34,6 +36,10 @@ namespace RustMapEditor.Data
         /// <summary>The terrain pieces in the scene.</summary>
         public static Terrain land, water;
 
+        public static bool LayerSet { get; private set; }
+
+        private static LandDataCoroutines Coroutines;
+
         [InitializeOnLoadMethod]
         static void Init()
         {
@@ -47,6 +53,7 @@ namespace RustMapEditor.Data
             EditorApplication.update -= ProjectLoaded;
             SetTerrainReferences();
             TopologyArray = new float[TerrainTopology.COUNT][,,];
+            Coroutines = new LandDataCoroutines();
         }
 
         public static Vector3 GetTerrainSize()
@@ -182,36 +189,20 @@ namespace RustMapEditor.Data
         /// <param name="topology">The Topology layer to set.</param>
         public static void SetLayer(LandLayers layer, int topology = 0)
         {
-            if (groundTextures == null || biomeTextures == null || miscTextures == null)
-            {
-                GetTextures();
-            }
-            switch (layer)
-            {
-                case LandLayers.Ground:
-                    land.terrainData.terrainLayers = groundTextures;
-                    land.terrainData.SetAlphamaps(0, 0, GroundArray);
-                    LandLayer = layer;
-                    break;
-                case LandLayers.Biome:
-                    land.terrainData.terrainLayers = biomeTextures;
-                    land.terrainData.SetAlphamaps(0, 0, BiomeArray);
-                    LandLayer = layer;
-                    break;
-                case LandLayers.Topology:
-                    lastTopologyLayer = topology;
-                    land.terrainData.terrainLayers = miscTextures;
-                    land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
-                    LandLayer = layer;
-                    break;
-            }
-            TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+            LayerSet = false;
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SetLayer(layer, topology));
         }
 
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
         /// <param name="topologyLayer">The Topology layer, if active.</param>
         public static void SaveLayer(int topologyLayer = 0)
         {
+            if (LayerSet == false)
+            {
+                Debug.LogError("Saving Layer before layer is set");
+                return;
+            }
+
             switch (LandLayer)
             {
                 case LandLayers.Ground:
@@ -278,6 +269,43 @@ namespace RustMapEditor.Data
             textures[7] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Gravel.terrainlayer");
             textures[7].diffuseTexture = Resources.Load<Texture2D>("Textures/Ground/gravel");
             return textures;
+        }
+
+        private class LandDataCoroutines
+        {
+            public IEnumerator SetLayer(LandLayers layer, int topology = 0)
+            {
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
+                LayerSet = true;
+            }
+
+            private IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
+            {
+                if (groundTextures == null || biomeTextures == null || miscTextures == null)
+                    GetTextures();
+                
+                switch (layer)
+                {
+                    case LandLayers.Ground:
+                        land.terrainData.terrainLayers = groundTextures;
+                        land.terrainData.SetAlphamaps(0, 0, GroundArray);
+                        LandLayer = layer;
+                        break;
+                    case LandLayers.Biome:
+                        land.terrainData.terrainLayers = biomeTextures;
+                        land.terrainData.SetAlphamaps(0, 0, BiomeArray);
+                        LandLayer = layer;
+                        break;
+                    case LandLayers.Topology:
+                        lastTopologyLayer = topology;
+                        land.terrainData.terrainLayers = miscTextures;
+                        land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
+                        LandLayer = layer;
+                        break;
+                }
+                TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+                yield return null;
+            }
         }
     }
 }
