@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.unity.render-pipelines.high-definition": "7.1.8",
-    "com.unity.terrain-tools": "2.0.2-preview",
+    "com.unity.terrain-tools": "3.0.1-preview",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.assetbundle": "1.0.0",
     "com.unity.modules.imageconversion": "1.0.0",

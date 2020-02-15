@@ -8,9 +8,7 @@ public class PrefabDataHolderEditor : Editor
     { 
         PrefabDataHolder script = (PrefabDataHolder)target;
         if (script.prefabData == null)
-        {
             return;
-        }
 
         Functions.PrefabCategory(script);
         Functions.PrefabID(script);
