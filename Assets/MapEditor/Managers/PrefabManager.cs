@@ -26,7 +26,7 @@ public static class PrefabManager
     /// <param name="path">The Prefab path in the bundle file.</param>
     public static GameObject Load(string path)
     {
-        if (BundleManager.IsLoaded())
+        if (BundleManager.IsLoaded)
         {
             return BundleManager.Backend.LoadPrefab(path);
         }
