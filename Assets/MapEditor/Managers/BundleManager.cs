@@ -4,22 +4,18 @@ using UnityEngine;
 
 public static class BundleManager
 {
-    private static bool loaded = false;
-
     private const string manifestPath = "assets/manifest.asset";
 
     public static AssetBundleBackend Backend { get; private set; }
     public static GameManifest Manifest { get; private set; }
 
-    public static bool IsLoaded()
-    {
-        return loaded;
-    }
+    public static bool IsLoaded { get; private set; }
+
     /// <summary>Loads the prefabs from the Rust prefab bundle.</summary>
     /// <param name="bundlename">The file path to the bundle.</param>
     public static void Load(string bundlename)
     {
-        if (!loaded)
+        if (!IsLoaded)
         {
             Backend = new AssetBundleBackend(bundlename);
             Manifest = Backend.Load<GameManifest>(manifestPath);
@@ -30,7 +26,7 @@ public static class BundleManager
                 return;
             }
             AssetDump();
-            loaded = true;
+            IsLoaded = true;
         }
         else
         {
@@ -40,16 +36,16 @@ public static class BundleManager
     /// <summary>Disposes the loaded bundle and prefabs.</summary>
     public static void Dispose()
     {
-        if (loaded)
+        if (IsLoaded)
         {
-            loaded = false;
+            IsLoaded = false;
             Backend.cache.Clear();
             Backend.Dispose();
         }
     }
     public static List<string> GetManifestStrings()
     {
-        if (!loaded)
+        if (!IsLoaded)
         {
             return null;
         }
