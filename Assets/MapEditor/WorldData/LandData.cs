@@ -38,7 +38,7 @@ namespace RustMapEditor.Data
 
         public static bool LayerSet { get; private set; }
 
-        private static LandDataCoroutines Coroutines;
+        private static Coroutines Coroutine;
 
         [InitializeOnLoadMethod]
         static void Init()
@@ -53,7 +53,7 @@ namespace RustMapEditor.Data
             EditorApplication.update -= ProjectLoaded;
             SetTerrainReferences();
             TopologyArray = new float[TerrainTopology.COUNT][,,];
-            Coroutines = new LandDataCoroutines();
+            Coroutine = new Coroutines();
         }
 
         public static Vector3 GetTerrainSize()
@@ -190,7 +190,7 @@ namespace RustMapEditor.Data
         public static void SetLayer(LandLayers layer, int topology = 0)
         {
             LayerSet = false;
-            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SetLayer(layer, topology));
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.SetLayer(layer, topology));
         }
 
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
@@ -271,7 +271,7 @@ namespace RustMapEditor.Data
             return textures;
         }
 
-        private class LandDataCoroutines
+        private class Coroutines
         {
             public IEnumerator SetLayer(LandLayers layer, int topology = 0)
             {
