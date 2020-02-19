@@ -84,41 +84,36 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = BundleManager.GetManifestStrings();
+            var manifestStrings = AssetManager.GetManifestStrings();
             if (manifestStrings == null)
                 return prefabsListElements;
-            int prefabID = 0, parentID = -1;
-            foreach (var manifestString in manifestStrings)
+            int prefabID = 1, parentID = -1;
+            //manifestStrings.Where(x => SettingsManager.prefabPaths.Any(y => x.Contains(y)));
+            foreach (var manifestString in manifestStrings.Where(x => x.Contains(".prefab")))
             {
-                if (manifestString.Contains(".prefab"))
+                var assetNameSplit = manifestString.Split('/');
+                for (int i = 0; i < assetNameSplit.Length; i++)
                 {
-                    var assetNameSplit = manifestString.Split('/');
-                    for (int i = 0; i < assetNameSplit.Length; i++)
+                    var treePath = "";
+                    for (int j = 0; j <= i; j++)
+                        treePath += assetNameSplit[j];
+
+                    if (!treeviewParents.ContainsKey(treePath))
                     {
-                        var treePath = "";
-                        for (int j = 0; j <= i; j++)
+                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
+                        if (i != assetNameSplit.Length - 1)
                         {
-                            treePath += assetNameSplit[j];
+                            var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID--);
+                            prefabsListElements.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
                         }
-                        if (!treeviewParents.ContainsKey(treePath))
+                        else
                         {
-                            var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
-                            if (i != assetNameSplit.Length - 1)
-                            {
-                                var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID);
-                                prefabsListElements.Add(treeviewItem);
-                                treeviewParents.Add(treePath, treeviewItem);
-                                parentID--;
-                            }
-                            else
-                            {
-                                var treeviewItem = new PrefabsListElement(prefabName, i, prefabID, manifestString);
-                                if (treeviewItem.rustID == 0)
-                                    continue;
-                                prefabsListElements.Add(treeviewItem);
-                                treeviewParents.Add(treePath, treeviewItem);
-                                prefabID++;
-                            }
+                            var treeviewItem = new PrefabsListElement(prefabName, i, prefabID++, manifestString);
+                            if (treeviewItem.rustID == 0)
+                                continue;
+                            prefabsListElements.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
                         }
                     }
                 }
@@ -247,7 +242,7 @@ namespace RustMapEditor.UI
             {
                 DragAndDrop.PrepareStartDrag();
                 DragAndDrop.StartDrag("Spawn Prefab");
-                PrefabManager.prefabToSpawn = PrefabManager.Load(itemClicked.rustID);
+                PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
         }
 
@@ -271,7 +266,7 @@ namespace RustMapEditor.UI
             PrefabsListElement itemClicked = treeModel.Find(id);
             if (itemClicked.rustID != 0)
             {
-                PrefabManager.prefabToSpawn = PrefabManager.Load(itemClicked.rustID);
+                PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
             else
             {

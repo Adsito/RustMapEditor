@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using RustMapEditor.Variables;
 
-public static class MapEditorSettings
+public static class SettingsManager
 {
     public const string settingsPath = "EditorSettings.json";
     public const string bundlePathExt = @"\Bundles\Bundles";
