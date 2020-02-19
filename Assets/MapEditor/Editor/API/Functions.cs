@@ -171,16 +171,16 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.saveSettings))
             {
-                MapEditorSettings.SaveSettings();
+                SettingsManager.SaveSettings();
             }
             if (Elements.ToolbarButton(ToolTips.discardSettings))
             {
-                MapEditorSettings.LoadSettings();
-                ToolTips.rustDirectoryPath.text = MapEditorSettings.rustDirectory;
+                SettingsManager.LoadSettings();
+                ToolTips.rustDirectoryPath.text = SettingsManager.rustDirectory;
             }
             if (Elements.ToolbarButton(ToolTips.defaultSettings))
             {
-                MapEditorSettings.SetDefaultSettings();
+                SettingsManager.SetDefaultSettings();
             }
             Elements.EndToolbarHorizontal();
 
@@ -189,20 +189,20 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.browseRustDirectory))
             {
-                var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", MapEditorSettings.rustDirectory, "Rust");
-                MapEditorSettings.rustDirectory = String.IsNullOrEmpty(returnDirectory) ? MapEditorSettings.rustDirectory : returnDirectory;
-                ToolTips.rustDirectoryPath.text = MapEditorSettings.rustDirectory;
+                var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", SettingsManager.rustDirectory, "Rust");
+                SettingsManager.rustDirectory = String.IsNullOrEmpty(returnDirectory) ? SettingsManager.rustDirectory : returnDirectory;
+                ToolTips.rustDirectoryPath.text = SettingsManager.rustDirectory;
             }
             Elements.ToolbarLabel(ToolTips.rustDirectoryPath);
             Elements.EndToolbarHorizontal();
 
             Elements.MiniBoldLabel(ToolTips.renderDistanceLabel);
             EditorGUI.BeginChangeCheck();
-            MapEditorSettings.prefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, MapEditorSettings.prefabRenderDistance, 0, 5000f);
-            MapEditorSettings.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, MapEditorSettings.pathRenderDistance, 0, 5000f);
+            SettingsManager.prefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, SettingsManager.prefabRenderDistance, 0, 5000f);
+            SettingsManager.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.pathRenderDistance, 0, 5000f);
             if (EditorGUI.EndChangeCheck())
             {
-                MapManager.SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
+                MapManager.SetCullingDistances(SceneView.lastActiveSceneView.camera, SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
             }
             //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
         }
@@ -265,11 +265,11 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.loadBundle))
             {
-                BundleManager.Load(MapEditorSettings.rustDirectory + MapEditorSettings.bundlePathExt);
+                AssetManager.Initialise(SettingsManager.rustDirectory + SettingsManager.bundlePathExt);
             }
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
             {
-                BundleManager.Dispose();
+                AssetManager.Dispose();
             }
             Elements.EndToolbarHorizontal();
         }
@@ -925,7 +925,7 @@ namespace RustMapEditor.UI
         {
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(ToolTips.prefabPath);
-            Elements.ToolbarLabel(new GUIContent(StringPool.Get(prefab.id), StringPool.Get(prefab.id)));
+            Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
             Elements.EndToolbarHorizontal();
         }
         #endregion

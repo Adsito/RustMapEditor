@@ -2,12 +2,13 @@
 using UnityEditor;
 using RustMapEditor.Data;
 using static WorldSerialization;
+using System.Collections.Generic;
 
 public static class PrefabManager
 {
-    public static GameObject defaultPrefab { get; private set; }
-    public static GameObject prefabToSpawn;
-    public static Transform prefabParent { get; private set; }
+    public static GameObject DefaultPrefab { get; private set; }
+    public static Transform PrefabParent { get; private set; }
+    public static GameObject PrefabToSpawn;
 
     [InitializeOnLoadMethod]
     public static void Init()
@@ -17,8 +18,8 @@ public static class PrefabManager
 
     static void OnProjectLoad()
     {
-        defaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        prefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+        DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
+        PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         EditorApplication.update -= OnProjectLoad;
     }
 
@@ -26,18 +27,18 @@ public static class PrefabManager
     /// <param name="path">The Prefab path in the bundle file.</param>
     public static GameObject Load(string path)
     {
-        if (BundleManager.IsLoaded)
+        if (AssetManager.IsInitialised)
         {
-            return BundleManager.Backend.LoadPrefab(path);
+            return AssetManager.LoadPrefab(path);
         }
-        return defaultPrefab;
+        return DefaultPrefab;
     }
 
     /// <summary>Loads, sets up and returns the prefab at the prefab id.</summary>
     /// <param name="id">The prefab manifest id.</param>
     public static GameObject Load(uint id)
     {
-        return Load(StringPool.Get(id));
+        return Load(AssetManager.ToPath(id));
     }
 
     public static void Spawn(GameObject go, PrefabData prefabData, Transform parent)
@@ -52,10 +53,10 @@ public static class PrefabManager
 
     public static void Spawn(Vector3 spawnPos)
     {
-        if (prefabToSpawn != null)
+        if (PrefabToSpawn != null)
         {
-            GameObject.Instantiate(prefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), prefabParent);
-            prefabToSpawn = null;
+            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent);
+            PrefabToSpawn = null;
         }
     }
 
@@ -68,7 +69,7 @@ public static class PrefabManager
         go.SetLayerRecursively(8);
         go.SetTagRecursively("Untagged");
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-        prefabDataHolder.prefabData = new PrefabData() { id = StringPool.Get(filePath) };
+        prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
         return go;
     }
 }

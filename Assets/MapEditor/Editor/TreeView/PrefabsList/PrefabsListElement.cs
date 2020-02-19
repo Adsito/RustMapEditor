@@ -13,7 +13,7 @@ namespace RustMapEditor.UI
             if (!String.IsNullOrEmpty(name))
             {
                 prefabName = name;
-                rustID = StringPool.Get(path);
+                rustID = AssetManager.ToID(path);
                 base.name = prefabName + rustID.ToString();
             }
         }
