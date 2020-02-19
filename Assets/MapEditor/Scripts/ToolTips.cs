@@ -5,6 +5,7 @@ namespace RustMapEditor.Variables
     public static class ToolTips
     {
         public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
+        public static GUIContent optionsLabel = new GUIContent("Options");
 
         public static GUIContent editorInfoLabel = new GUIContent("Editor Info", "Info about the current editor, when reporting bugs make sure to include a copy of these values.");
         public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
@@ -19,6 +20,9 @@ namespace RustMapEditor.Variables
 
         public static GUIContent prefabPreviewLabel = new GUIContent("Preview", "Preview of the prefab to spawn.");
         public static GUIContent prefabDetailsLabel = new GUIContent("Prefab Details", "Information about the prefab.");
+        public static GUIContent selectPrefabPaths = new GUIContent("Prefab Paths", "Select the prefab paths to display in the Prefab List to be spawnable.");
+        public static GUIContent showAllPrefabs = new GUIContent("Show All", "Display all the prefabs with a prefab ID. Prefabs from this list are not guaranteed to work.");
+        public static GUIContent treeViewRefresh = new GUIContent("Refresh", "Refreshes the current treeview model and data.");
 
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");
