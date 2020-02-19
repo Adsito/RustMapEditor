@@ -63,7 +63,7 @@ namespace RustMapEditor.Variables
         public static GUIContent rustDirectoryPath = new GUIContent(SettingsManager.rustDirectory, "The install directory of Rust on the local PC.");
         public static GUIContent renderDistanceLabel = new GUIContent("Render Distance");
         public static GUIContent prefabRenderDistance = new GUIContent("Prefabs", "Changes the distance prefabs can be seen from.");
-        public static GUIContent pathRenderDistance = new GUIContent("Paths", "Changes the paths can be seen from.");
+        public static GUIContent pathRenderDistance = new GUIContent("Paths", "Changes the distance paths can be seen from.");
         public static GUIContent objectQuality = new GUIContent("Object Quality", "Controls the LODs shown and the distances they render from. Provides 1:1 clarity with ingame.");
 
         public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
