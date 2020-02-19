@@ -36,6 +36,7 @@ public static class AssetManager
 			}
 
 			var manifestList = rootBundle.LoadAllAssets<AssetBundleManifest>();
+			
 			if (manifestList.Length != 1)
 			{
 				Debug.LogError("Couldn't find AssetBundleManifest - " + manifestList.Length);
@@ -55,7 +56,7 @@ public static class AssetManager
 					Debug.LogError("Couldn't load AssetBundle - " + bundlePath);
 					return;
 				}
-
+				Bundles.Add(bundles[i], asset);
 				foreach (var filename in asset.GetAllAssetNames())
 					AssetPaths.Add(filename, asset);
 			}
@@ -76,6 +77,7 @@ public static class AssetManager
 
 			AssetDump();
 			IsInitialised = true;
+			rootBundle.Unload(true);
 			MapManager.ClearProgressBar();
 		}
 		else
@@ -130,9 +132,14 @@ public static class AssetManager
 
 	public static void Dispose()
 	{
+		foreach (var item in Bundles)
+			item.Value.Unload(true);
 		AssetPaths.Clear();
 		Bundles.Clear();
 		Cache.Clear();
+		IDLookup.Clear();
+		PathLookup.Clear();
+		IsInitialised = false;
 	}
 
 	public static List<string> GetManifestStrings()
