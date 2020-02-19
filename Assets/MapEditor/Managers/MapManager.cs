@@ -32,7 +32,7 @@ public static class MapManager
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
             CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.lastActiveSceneView.camera, MapEditorSettings.prefabRenderDistance, MapEditorSettings.pathRenderDistance);
+            SetCullingDistances(SceneView.lastActiveSceneView.camera, SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
         }
     }
 
@@ -1019,7 +1019,7 @@ public static class MapManager
                 sw.Restart();
                 ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
             }
-            PrefabManager.Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], PrefabManager.prefabParent);
+            PrefabManager.Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], PrefabManager.PrefabParent);
         }
     }
 
