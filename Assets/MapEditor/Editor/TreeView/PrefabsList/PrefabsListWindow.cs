@@ -8,15 +8,22 @@ namespace RustMapEditor.UI
 {
 	class PrefabsListWindow : EditorWindow
 	{
-		[NonSerialized] bool m_Initialized;
+		[NonSerialized] public bool m_Initialized;
 		[SerializeField] TreeViewState treeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
 		PrefabsListTreeView m_TreeView;
 
+		private bool showAllPrefabs = false;
+
 		Rect multiColumnTreeViewRect
 		{
 			get { return new Rect(20, 30, position.width - position.width / 3, position.height - 45); }
+		}
+
+		Rect prefabPathsRect
+		{
+			get { return new Rect(position.width / 3 * 2 + 40, 10, position.width - (position.width / 3 * 2 + 40) - 20, 50); }
 		}
 
 		Rect previewImageRect
@@ -29,9 +36,9 @@ namespace RustMapEditor.UI
 			get { return new Rect(position.width / 3 * 2 + 40, position.width - (position.width / 3 * 2 + 40) + 60, position.width - (position.width / 3 * 2 + 40) - 20, position.width - (position.width / 3 * 2 + 40) - 20); }
 		}
 
-		Rect toolbarRect
+		Rect searchBarRect
 		{
-			get { return new Rect(20f, 10f, position.width - 40f, 20f); }
+			get { return new Rect(20, 10, position.width - position.width / 3, 20); }
 		}
 
 		public PrefabsListTreeView treeView
@@ -68,7 +75,6 @@ namespace RustMapEditor.UI
 		{
 			if (!m_Initialized)
 			{
-				// Check if it already exists (deserialized from window layout file or scriptable object)
 				if (treeViewState == null)
 					treeViewState = new TreeViewState();
 
@@ -105,8 +111,9 @@ namespace RustMapEditor.UI
 		void OnGUI()
 		{
 			InitIfNeeded();
-			SearchBar(toolbarRect);
+			SearchBar(searchBarRect);
 			DoTreeView(multiColumnTreeViewRect);
+			DrawPrefabPaths(prefabPathsRect, treeView, ref showAllPrefabs);
 			DrawPreviewImage(previewImageRect);
 			DrawPreviewDetails(previewImageDetails);
 		}
@@ -120,6 +127,13 @@ namespace RustMapEditor.UI
 		void DoTreeView(Rect rect)
 		{
 			m_TreeView.OnGUI(rect);
+		}
+
+		void DrawPrefabPaths(Rect rect, PrefabsListTreeView treeView, ref bool showAllPrefabs)
+		{
+			GUILayout.BeginArea(rect);
+			Functions.SelectPrefabPaths(treeView, ref showAllPrefabs);
+			GUILayout.EndArea();
 		}
 
 		void DrawPreviewImage(Rect rect)
