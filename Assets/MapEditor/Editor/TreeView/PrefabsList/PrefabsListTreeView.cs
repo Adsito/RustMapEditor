@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace RustMapEditor.UI
 {
-    internal class PrefabsListTreeView : TreeViewWithTreeModel<PrefabsListElement>
+    public class PrefabsListTreeView : TreeViewWithTreeModel<PrefabsListElement>
     {
         const float kRowHeights = 20f;
         const float kToggleWidth = 18f;
@@ -16,6 +16,8 @@ namespace RustMapEditor.UI
         public Texture2D previewImage;
         public WorldSerialization.PrefabData prefabData;
         public string prefabName;
+
+        public bool showAll = false;
 
         enum Columns
         {
@@ -79,7 +81,7 @@ namespace RustMapEditor.UI
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
-        public static List<PrefabsListElement> GetPrefabsListElements()
+        public static List<PrefabsListElement> GetPrefabsListElements(bool showAll = false)
         {
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
@@ -87,9 +89,10 @@ namespace RustMapEditor.UI
             var manifestStrings = AssetManager.GetManifestStrings();
             if (manifestStrings == null)
                 return prefabsListElements;
+
+            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.prefabPaths.Any(y => x.Contains(y)));
             int prefabID = 1, parentID = -1;
-            //manifestStrings.Where(x => SettingsManager.prefabPaths.Any(y => x.Contains(y)));
-            foreach (var manifestString in manifestStrings.Where(x => x.Contains(".prefab")))
+            foreach (var manifestString in prefabStrings)
             {
                 var assetNameSplit = manifestString.Split('/');
                 for (int i = 0; i < assetNameSplit.Length; i++)
@@ -216,6 +219,12 @@ namespace RustMapEditor.UI
                     GUI.Label(cellRect, item.data.rustID.ToString());
                     break;
             }
+        }
+
+        public void RefreshTreeView(bool showAllPrefabs = false)
+        {
+            treeModel.SetData(GetPrefabsListElements(showAllPrefabs));
+            Reload();
         }
 
         void SetItemSelected(int id)

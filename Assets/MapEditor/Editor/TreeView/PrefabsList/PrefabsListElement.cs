@@ -3,7 +3,7 @@
 namespace RustMapEditor.UI
 {
     [Serializable]
-    internal class PrefabsListElement : TreeElement
+    public class PrefabsListElement : TreeElement
     {
         public string prefabName;
         public uint rustID;

@@ -914,6 +914,7 @@ namespace RustMapEditor.UI
             Elements.ToolbarLabel(new GUIContent(name, name));
             Elements.EndToolbarHorizontal();
         }
+
         public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
@@ -921,11 +922,23 @@ namespace RustMapEditor.UI
             Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
             Elements.EndToolbarHorizontal();
         }
+
         public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(ToolTips.prefabPath);
             Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
+            Elements.EndToolbarHorizontal();
+        }
+
+        public static void SelectPrefabPaths(PrefabsListTreeView treeView, ref bool showAllPrefabs)
+        {
+            Elements.MiniBoldLabel(ToolTips.optionsLabel);
+
+            Elements.BeginToolbarHorizontal();
+            showAllPrefabs = Elements.ToolbarToggle(ToolTips.showAllPrefabs, showAllPrefabs);
+            if (Elements.ToolbarButton(ToolTips.treeViewRefresh))
+                treeView.RefreshTreeView(showAllPrefabs);
             Elements.EndToolbarHorizontal();
         }
         #endregion
