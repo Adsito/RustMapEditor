@@ -11,12 +11,12 @@ public static class PrefabManager
     public static GameObject PrefabToSpawn;
 
     [InitializeOnLoadMethod]
-    public static void Init()
+    private static void Init()
     {
         EditorApplication.update += OnProjectLoad;
     }
 
-    static void OnProjectLoad()
+    private static void OnProjectLoad()
     {
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
@@ -51,6 +51,7 @@ public static class PrefabManager
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
     }
 
+    /// <summary>Spawns the prefab set in PrefabToSpawn at the spawnPos</summary>
     public static void Spawn(Vector3 spawnPos)
     {
         if (PrefabToSpawn != null)
@@ -71,5 +72,44 @@ public static class PrefabManager
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
         return go;
+    }
+
+    /// <summary>Replaces the selected prefabs with ones from the Rust bundles.</summary>
+    public static void ReplaceWithLoaded(PrefabDataHolder[] prefabs)
+    {
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+        MapManager.ClearProgressBar();
+        for (int i = 0; i < prefabs.Length; i++)
+        {
+            MapManager.progressValue += 1f / prefabs.Length;
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+            }
+            Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
+            GameObject.DestroyImmediate(prefabs[i].gameObject);
+        }
+        MapManager.ClearProgressBar();
+    }
+
+    /// <summary>Replaces the selected prefabs with the default prefabs.</summary>
+    public static void ReplaceWithDefault(PrefabDataHolder[] prefabs)
+    {
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+        for (int i = 0; i < prefabs.Length; i++)
+        {
+            MapManager.progressValue += 1f / prefabs.Length;
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+            }
+            Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
+            GameObject.DestroyImmediate(prefabs[i].gameObject);
+        }
+        MapManager.ClearProgressBar();
     }
 }
