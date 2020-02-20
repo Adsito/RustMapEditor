@@ -76,9 +76,9 @@ public static class AssetManager
 			}
 
 			AssetDump();
-			IsInitialised = true;
 			rootBundle.Unload(true);
-			MapManager.ClearProgressBar();
+			IsInitialised = true;
+			PrefabManager.ReplaceWithLoaded(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		}
 		else
 		{
@@ -132,6 +132,7 @@ public static class AssetManager
 
 	public static void Dispose()
 	{
+		PrefabManager.ReplaceWithDefault(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		foreach (var item in Bundles)
 			item.Value.Unload(true);
 		AssetPaths.Clear();
