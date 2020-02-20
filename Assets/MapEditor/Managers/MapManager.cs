@@ -1067,7 +1067,6 @@ public static class MapManager
         LoadAlphaMaps(terrains);
         LoadPrefabs(terrains, loadPath);
         LoadPaths(terrains, loadPath);
-        SetLayer(LandLayers.Alpha); // Sets the terrain holes.
         SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
         ClearProgressBar();
