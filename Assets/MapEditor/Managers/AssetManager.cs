@@ -78,6 +78,8 @@ public static class AssetManager
 			AssetDump();
 			rootBundle.Unload(true);
 			IsInitialised = true;
+			MapManager.ClearProgressBar();
+
 			PrefabManager.ReplaceWithLoaded(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		}
 		else
@@ -135,6 +137,7 @@ public static class AssetManager
 		PrefabManager.ReplaceWithDefault(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		foreach (var item in Bundles)
 			item.Value.Unload(true);
+
 		AssetPaths.Clear();
 		Bundles.Clear();
 		Cache.Clear();
@@ -166,11 +169,11 @@ public static class AssetManager
 	public static string ToPath(uint i)
 	{
 		if ((int)i == 0)
-			return string.Empty;
+			return i.ToString();
 		string str;
 		if (IDLookup.TryGetValue(i, out str))
 			return str;
-		return string.Empty;
+		return i.ToString();
 	}
 
 	public static uint ToID(string str)
