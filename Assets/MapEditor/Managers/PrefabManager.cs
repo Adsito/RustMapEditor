@@ -2,7 +2,8 @@
 using UnityEditor;
 using RustMapEditor.Data;
 using static WorldSerialization;
-using System.Collections.Generic;
+using Unity.EditorCoroutines.Editor;
+using System.Collections;
 
 public static class PrefabManager
 {
@@ -77,39 +78,86 @@ public static class PrefabManager
     /// <summary>Replaces the selected prefabs with ones from the Rust bundles.</summary>
     public static void ReplaceWithLoaded(PrefabDataHolder[] prefabs)
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-        MapManager.ClearProgressBar();
-        for (int i = 0; i < prefabs.Length; i++)
-        {
-            MapManager.progressValue += 1f / prefabs.Length;
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
-            }
-            Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
-            GameObject.DestroyImmediate(prefabs[i].gameObject);
-        }
-        MapManager.ClearProgressBar();
+        if (AssetManager.IsInitialised && !Coroutines.IsBusy)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ReplaceWithLoaded(prefabs));
     }
 
     /// <summary>Replaces the selected prefabs with the default prefabs.</summary>
     public static void ReplaceWithDefault(PrefabDataHolder[] prefabs)
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-        for (int i = 0; i < prefabs.Length; i++)
+        if (!Coroutines.IsBusy)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ReplaceWithDefault(prefabs));
+    }
+
+    public static class Coroutines
+    {
+        public static bool IsBusy { get; private set; }
+
+        public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
         {
-            MapManager.progressValue += 1f / prefabs.Length;
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
-            }
-            Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
-            GameObject.DestroyImmediate(prefabs[i].gameObject);
+            IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithLoadedCoroutine(prefabs));
+            IsBusy = false;
         }
-        MapManager.ClearProgressBar();
+
+        private static IEnumerator ReplaceWithLoadedCoroutine(PrefabDataHolder[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                MapManager.progressValue += 1f / prefabs.Length;
+                if (sw.Elapsed.TotalSeconds > 0.05f)
+                {
+                    sw.Restart();
+                    MapManager.ProgressBar("Preparing Prefabs", "Processing Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                }
+                PrefabManager.Load(prefabs[i].prefabData.id);
+            }
+            MapManager.ClearProgressBar();
+
+            sw.Restart();
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                MapManager.progressValue += 1f / prefabs.Length;
+                if (sw.Elapsed.TotalSeconds > 0.05f)
+                {
+                    sw.Restart();
+                    MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    yield return null;
+                }
+                PrefabManager.Spawn(PrefabManager.Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabManager.PrefabParent);
+                GameObject.DestroyImmediate(prefabs[i].gameObject);
+            }
+            MapManager.ClearProgressBar();
+            yield return null;
+        }
+
+        public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs)
+        {
+            IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithDefaultCoroutine(prefabs));
+            IsBusy = false;
+        }
+
+        private static IEnumerator ReplaceWithDefaultCoroutine(PrefabDataHolder[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                MapManager.progressValue += 1f / prefabs.Length;
+                if (sw.Elapsed.TotalSeconds > 0.05f)
+                {
+                    sw.Restart();
+                    MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    yield return null;
+                }
+                Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
+                GameObject.DestroyImmediate(prefabs[i].gameObject);
+            }
+            MapManager.ClearProgressBar();
+        }
     }
 }
