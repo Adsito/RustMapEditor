@@ -515,16 +515,16 @@ public static class MapManager
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
-    /// <param name="heightBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
-    /// <param name="heightBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
+    /// <param name="minBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
+    /// <param name="maxBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
-    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float heightBlendLow, float heightBlendHigh, int t)
+    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t)
     {
         switch (landLayerToPaint)
         {
             case LandLayers.Ground:
             case LandLayers.Biome:
-                SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, heightBlendLow, heightBlendHigh), landLayerToPaint);
+                SetData(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
                 SetLayer(LandLayer);
                 break;
         }
