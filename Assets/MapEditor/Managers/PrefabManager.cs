@@ -67,11 +67,16 @@ public static class PrefabManager
     /// <param name="filePath">Asset filepath of the gameobject, used to get and set the PrefabID.</param>
     public static GameObject Process(GameObject go, string filePath)
     {
-        go.SetActive(true);
         go.SetLayerRecursively(8);
         go.SetTagRecursively("Untagged");
+        foreach (var item in go.GetComponentsInChildren<MeshCollider>())
+        {
+            item.convex = false;
+            item.cookingOptions = MeshColliderCookingOptions.None;
+        }
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
+        go.SetActive(true);
         return go;
     }
 
