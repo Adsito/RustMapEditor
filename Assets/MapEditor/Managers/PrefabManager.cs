@@ -71,8 +71,9 @@ public static class PrefabManager
         go.SetTagRecursively("Untagged");
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
-            item.convex = false;
             item.cookingOptions = MeshColliderCookingOptions.None;
+            item.isTrigger = false;
+            item.convex = false;
         }
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
@@ -126,11 +127,11 @@ public static class PrefabManager
             for (int i = 0; i < prefabs.Length; i++)
             {
                 MapManager.progressValue += 1f / prefabs.Length;
-                if (sw.Elapsed.TotalSeconds > 0.05f)
+                if (sw.Elapsed.TotalSeconds > 0.1f)
                 {
-                    sw.Restart();
                     MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
                     yield return null;
+                    sw.Restart();
                 }
                 PrefabManager.Spawn(PrefabManager.Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabManager.PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
