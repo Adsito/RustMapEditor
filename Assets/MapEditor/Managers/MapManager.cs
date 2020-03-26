@@ -1007,20 +1007,9 @@ public static class MapManager
     }
 
     /// <summary>Loads and sets up the map Prefabs.</summary>
-    static void LoadPrefabs(MapInfo terrains, string loadPath = "")
+    static void LoadPrefabs(MapInfo terrains)
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-        for (int i = 0; i < terrains.prefabData.Length; i++)
-        {
-            progressValue += 1f / terrains.prefabData.Length;
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
-            }
-            PrefabManager.Spawn(PrefabManager.Load(terrains.prefabData[i].id), terrains.prefabData[i], PrefabManager.PrefabParent);
-        }
+        PrefabManager.Spawn(terrains.prefabData);
     }
 
     /// <summary>Loads and sets up the map Paths.</summary>
@@ -1065,7 +1054,7 @@ public static class MapManager
         CentreSceneObjects(terrains);
         LoadTerrains(terrains);
         LoadAlphaMaps(terrains);
-        LoadPrefabs(terrains, loadPath);
+        LoadPrefabs(terrains);
         LoadPaths(terrains, loadPath);
         SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();

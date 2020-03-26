@@ -42,6 +42,25 @@ public static class PrefabManager
         return Load(AssetManager.ToPath(id));
     }
 
+    /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
+    /// <param name="go">GameObject to process, should be from one of the asset bundles.</param>
+    /// <param name="filePath">Asset filepath of the gameobject, used to get and set the PrefabID.</param>
+    public static GameObject Process(GameObject go, string filePath)
+    {
+        go.SetLayerRecursively(8);
+        go.SetTagRecursively("Untagged");
+        foreach (var item in go.GetComponentsInChildren<MeshCollider>())
+        {
+            item.cookingOptions = MeshColliderCookingOptions.None;
+            item.isTrigger = false;
+            item.convex = false;
+        }
+        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
+        prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
+        go.SetActive(true);
+        return go;
+    }
+
     public static void Spawn(GameObject go, PrefabData prefabData, Transform parent)
     {
         GameObject newObj = GameObject.Instantiate(go, parent);
@@ -62,23 +81,11 @@ public static class PrefabManager
         }
     }
 
-    /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
-    /// <param name="go">GameObject to process, should be from one of the asset bundles.</param>
-    /// <param name="filePath">Asset filepath of the gameobject, used to get and set the PrefabID.</param>
-    public static GameObject Process(GameObject go, string filePath)
+    /// <summary>Spawns prefabs for map load.</summary>
+    public static void Spawn(PrefabData[] prefabs)
     {
-        go.SetLayerRecursively(8);
-        go.SetTagRecursively("Untagged");
-        foreach (var item in go.GetComponentsInChildren<MeshCollider>())
-        {
-            item.cookingOptions = MeshColliderCookingOptions.None;
-            item.isTrigger = false;
-            item.convex = false;
-        }
-        PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
-        prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
-        go.SetActive(true);
-        return go;
+        if (!Coroutines.IsBusy)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPrefabs(prefabs));
     }
 
     /// <summary>Replaces the selected prefabs with ones from the Rust bundles.</summary>
@@ -98,6 +105,50 @@ public static class PrefabManager
     public static class Coroutines
     {
         public static bool IsBusy { get; private set; }
+
+        public static IEnumerator SpawnPrefabs(PrefabData[] prefabs)
+        {
+            IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(PreparePrefabsCoroutine(prefabs));
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(SpawnPrefabsCoroutine(prefabs));
+            IsBusy = false;
+        }
+
+        private static IEnumerator PreparePrefabsCoroutine(PrefabData[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                MapManager.progressValue += 1f / prefabs.Length;
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    sw.Restart();
+                    MapManager.ProgressBar("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    yield return null;
+                }
+                Load(prefabs[i].id);
+            }
+            MapManager.ClearProgressBar();
+        }
+
+        private static IEnumerator SpawnPrefabsCoroutine(PrefabData[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                MapManager.progressValue += 1f / prefabs.Length;
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    sw.Restart();
+                    MapManager.ProgressBar("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    yield return null;
+                }
+                Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
+            }
+            MapManager.ClearProgressBar();
+        }
 
         public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
         {
@@ -119,7 +170,7 @@ public static class PrefabManager
                     sw.Restart();
                     MapManager.ProgressBar("Preparing Prefabs", "Processing Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
                 }
-                PrefabManager.Load(prefabs[i].prefabData.id);
+                Load(prefabs[i].prefabData.id);
             }
             MapManager.ClearProgressBar();
 
@@ -133,7 +184,7 @@ public static class PrefabManager
                     yield return null;
                     sw.Restart();
                 }
-                PrefabManager.Spawn(PrefabManager.Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabManager.PrefabParent);
+                Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
             MapManager.ClearProgressBar();
