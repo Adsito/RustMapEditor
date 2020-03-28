@@ -118,41 +118,72 @@ public static class PrefabManager
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+
+            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                MapManager.progressValue += 1f / prefabs.Length;
                 if (sw.Elapsed.TotalSeconds > 0.1f)
                 {
                     sw.Restart();
-                    MapManager.ProgressBar("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    ProgressBarManager.DisplayIncremental("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
                 }
+                else
+                    ProgressBarManager.AddIncrement();
+
                 Load(prefabs[i].id);
             }
-            MapManager.ClearProgressBar();
+            ProgressBarManager.Clear();
+        }
+
+        private static IEnumerator PreparePrefabsCoroutine(PrefabDataHolder[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    sw.Restart();
+                    ProgressBarManager.DisplayIncremental("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length);
+                    yield return null;
+                }
+                else
+                    ProgressBarManager.AddIncrement();
+
+                Load(prefabs[i].prefabData.id);
+            }
+            ProgressBarManager.Clear();
         }
 
         private static IEnumerator SpawnPrefabsCoroutine(PrefabData[] prefabs)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+
+            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                MapManager.progressValue += 1f / prefabs.Length;
                 if (sw.Elapsed.TotalSeconds > 0.1f)
                 {
                     sw.Restart();
-                    MapManager.ProgressBar("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    ProgressBarManager.DisplayIncremental("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
                 }
+                else
+                    ProgressBarManager.AddIncrement();
+
                 Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
             }
-            MapManager.ClearProgressBar();
+            ProgressBarManager.Clear();
         }
 
         public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
         {
             IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(PreparePrefabsCoroutine(prefabs));
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithLoadedCoroutine(prefabs));
             IsBusy = false;
         }
@@ -161,34 +192,23 @@ public static class PrefabManager
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-
+            
+            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                MapManager.progressValue += 1f / prefabs.Length;
-                if (sw.Elapsed.TotalSeconds > 0.05f)
-                {
-                    sw.Restart();
-                    MapManager.ProgressBar("Preparing Prefabs", "Processing Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
-                }
-                Load(prefabs[i].prefabData.id);
-            }
-            MapManager.ClearProgressBar();
-
-            sw.Restart();
-            for (int i = 0; i < prefabs.Length; i++)
-            {
-                MapManager.progressValue += 1f / prefabs.Length;
                 if (sw.Elapsed.TotalSeconds > 0.1f)
                 {
-                    MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
                     sw.Restart();
                 }
+                else
+                    ProgressBarManager.AddIncrement();
+
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
-            MapManager.ClearProgressBar();
-            yield return null;
+            ProgressBarManager.Clear();
         }
 
         public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs)
@@ -202,19 +222,23 @@ public static class PrefabManager
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+
+            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                MapManager.progressValue += 1f / prefabs.Length;
                 if (sw.Elapsed.TotalSeconds > 0.05f)
                 {
                     sw.Restart();
-                    MapManager.ProgressBar("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, MapManager.progressValue);
+                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
                 }
+                else
+                    ProgressBarManager.AddIncrement();
+
                 Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
-            MapManager.ClearProgressBar();
+            ProgressBarManager.Clear();
         }
     }
 }

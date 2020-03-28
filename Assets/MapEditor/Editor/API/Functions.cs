@@ -101,7 +101,7 @@ namespace RustMapEditor.UI
             saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
             if (string.IsNullOrEmpty(saveFile))
                 return;
-            MapManager.ProgressBar("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
+            ProgressBarManager.Display("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
             MapManager.Save(saveFile);
         }
 
