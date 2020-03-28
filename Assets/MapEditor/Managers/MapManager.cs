@@ -13,7 +13,6 @@ using static WorldConverter;
 
 public static class MapManager
 {
-    public static float progressValue = 1f;
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
 
@@ -53,23 +52,6 @@ public static class MapManager
         distances[9] = pathDist;
         camera.layerCullDistances = distances;
     }
-
-
-    /// <summary>Displays a popup progress bar, the progress is also visible in the taskbar.</summary>
-    /// <param name="title">The Progress Bar title.</param>
-    /// <param name="info">The info to be displayed next to the loading bar.</param>
-    /// <param name="progress">The progress amount. Between 0f - 1f.</param>
-    public static void ProgressBar(string title, string info, float progress)
-    {
-        EditorUtility.DisplayProgressBar(title, info, progress);
-    }
-
-    /// <summary>Clears the popup progress bar. Needs to be called otherwise it will persist in the editor.</summary>
-    public static void ClearProgressBar()
-    {
-        progressValue = 0;
-        EditorUtility.ClearProgressBar();
-    }
     
     public static List<int> GetEnumSelection<T>(T enumGroup)
     {
@@ -84,6 +66,7 @@ public static class MapManager
         }
         return selectedEnums;
     }
+
     public static void RotateMap(Selections.Objects objectSelection, bool CW)
     {
         foreach (var item in GetEnumSelection(objectSelection))
@@ -117,6 +100,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Removes all the map objects from the scene.</summary>
     /// <param name="prefabs">Delete Prefab objects.</param>
     /// <param name="paths">Delete Path objects.</param>
@@ -144,6 +128,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Rotates prefabs 90°.</summary>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotatePrefabs(bool CW)
@@ -160,6 +145,7 @@ public static class MapManager
             prefabRotate.GetComponent<LockObject>().UpdateTransform();
         }
     }
+
     /// <summary>Rotates paths 90°.</summary>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotatePaths(bool CW)
@@ -176,6 +162,7 @@ public static class MapManager
             pathRotate.GetComponent<LockObject>().UpdateTransform();
         }
     }
+
     /// <summary>Rotates the selected terrains.</summary>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateTerrains(bool CW, Selections.Terrains terrains, Dimensions dmns = null)
@@ -193,6 +180,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Sets the selected terrains to the height set.</summary>
     /// <param name="height">The height to set.</param>
     public static void SetHeightmap(float height, Selections.Terrains terrains, Dimensions dmns = null)
@@ -211,6 +199,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Inverts the selected terrains.</summary>
     public static void InvertHeightmap(Selections.Terrains terrains, Dimensions dmns = null)
     {
@@ -227,6 +216,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary> Normalises the terrain between two heights.</summary>
     /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
@@ -246,6 +236,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Terraces the HeightMap.</summary>
     /// <param name="featureSize">The height of each terrace.</param>
     /// <param name="interiorCornerWeight">The weight of the terrace effect.</param>
@@ -261,6 +252,7 @@ public static class MapManager
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
         TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - TerraceErosion");
     }
+
     /// <summary>Smooths the terrain.</summary>
     /// <param name="filterStrength">The strength of the smoothing.</param>
     /// <param name="blurDirection">The direction the smoothing should preference. Between -1f - 1f.</param>
@@ -278,6 +270,7 @@ public static class MapManager
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
         TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
     }
+
     /// <summary>Increases or decreases the terrain by the offset.</summary>
     /// <param name="offset">The amount to offset by. Negative values offset down.</param>
     /// <param name="clampOffset">Check if offsetting the heightmap would exceed the min-max values.</param>
@@ -297,6 +290,7 @@ public static class MapManager
             }
         }
     }
+
     /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
     /// <param name="minimumHeight">The minimum height to set.</param>
     /// <param name="maximumHeight">The maximum height to set.</param>
@@ -313,6 +307,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Returns the height of the HeightMap at the selected coords.</summary>
     /// <param name="x">The X coordinate.</param>
     /// <param name="z">The Z coordinate.</param>
@@ -323,15 +318,18 @@ public static class MapManager
         float height = land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
         return height;
     }
+
     /// <summary>Returns a 2D array of the height values.</summary>
     public static float[,] GetHeights()
     {
         return land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight);
     }
+
     public static float[,] GetWaterHeights()
     {
         return water.terrainData.GetInterpolatedHeights(0, 0, water.terrainData.alphamapHeight, water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight);
     }
+
     /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
     /// <param name="x">The X coordinate.</param>
     /// <param name="z">The Z coordinate.</param>
@@ -342,6 +340,7 @@ public static class MapManager
         float slope = land.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
     }
+
     #region SplatMap Methods
     /// <summary>Texture count in layer chosen, used for determining the size of the splatmap array.</summary>
     /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
@@ -357,6 +356,7 @@ public static class MapManager
                 return 2;
         }
     }
+
     /// <summary>Returns the value of a texture at the selected coords.</summary>
     /// <param name="landLayer">The LandLayer of the texture. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="texture">The texture to get.</param>
@@ -367,6 +367,7 @@ public static class MapManager
     {
         return GetSplatMap(landLayer, topology)[x, z, texture];
     }
+
     /// <summary>Rotates the selected layer.</summary>
     /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
@@ -386,21 +387,23 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Rotates the selected topologies.</summary>
     /// <param name="topologyLayers">The Topology layers to rotate.</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateTopologyLayers(TerrainTopology.Enum topologyLayers, bool CW)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        
+
+        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressValue += 1f / topologyElements.Count;
-            ProgressBar("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
+            ProgressBarManager.DisplayIncremental("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             RotateLayer(LandLayers.Topology, CW, i);
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Paints if all the conditions passed in are true.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="texture">The texture to paint.</param>
@@ -411,7 +414,7 @@ public static class MapManager
         int splatRes = GetSplatMapResolution();
         bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
 
-        ProgressBar("Paint Conditional", "Checking Ground", 0f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Ground", 0f);
         for(int i = 0; i < TerrainSplat.COUNT; i++)
         {
             if (conditions.GroundConditions.CheckLayer[i])
@@ -419,7 +422,7 @@ public static class MapManager
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Ground), conditionsMet, i, conditions.GroundConditions.Weight[i]);
             }
         };
-        ProgressBar("Paint Conditional", "Checking Biome", 0.2f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Biome", 0.2f);
         for (int i = 0; i < TerrainBiome.COUNT; i++)
         {
             if (conditions.BiomeConditions.CheckLayer[i])
@@ -427,12 +430,12 @@ public static class MapManager
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Biome), conditionsMet, i, conditions.BiomeConditions.Weight[i]);
             }
         }
-        ProgressBar("Paint Conditional", "Checking Alpha", 0.3f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Alpha", 0.3f);
         if (conditions.AlphaConditions.CheckAlpha)
         {
             conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
         }
-        ProgressBar("Paint Conditional", "Checking Topology", 0.5f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Topology", 0.5f);
         for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             if (conditions.TopologyConditions.CheckLayer[i])
@@ -440,17 +443,17 @@ public static class MapManager
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Topology, i), conditionsMet, (int)conditions.TopologyConditions.Texture[i], 0.5f);
             }
         }
-        ProgressBar("Paint Conditional", "Checking Heights", 0.7f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Heights", 0.7f);
         if (conditions.TerrainConditions.CheckHeights)
         {
             conditionsMet = CheckConditions(GetHeights(), conditionsMet, conditions.TerrainConditions.Heights.HeightLow, conditions.TerrainConditions.Heights.HeightHigh);
         }
-        ProgressBar("Paint Conditional", "Checking Slopes", 0.8f);
+        ProgressBarManager.Display("Paint Conditional", "Checking Slopes", 0.8f);
         if (conditions.TerrainConditions.CheckSlopes)
         {
             conditionsMet = CheckConditions(GetSlopes(), conditionsMet, conditions.TerrainConditions.Slopes.SlopeLow, conditions.TerrainConditions.Slopes.SlopeHigh);
         }
-        ProgressBar("Paint Conditional", "Painting", 0.9f);
+        ProgressBarManager.Display("Paint Conditional", "Painting", 0.9f);
         switch (landLayerToPaint)
         {
             case LandLayers.Ground:
@@ -487,8 +490,9 @@ public static class MapManager
                 SetData(alphaMapToPaint, landLayerToPaint);
                 break;
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Paints the layer wherever the height conditions are met.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
@@ -511,6 +515,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Paints the layer wherever the height conditions are met with a weighting determined by the range the height falls in.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
@@ -529,6 +534,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Sets whole layer to the active texture.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
@@ -548,20 +554,21 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Paints the selected Topology layers.</summary>
     /// <param name="topologyLayers">The Topology layers to clear.</param>
     public static void PaintTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        progressValue = 1f / topologyElements.Count;
+        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressValue += 1f / topologyElements.Count;
-            ProgressBar("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
+            ProgressBarManager.DisplayIncremental("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             PaintLayer(LandLayers.Topology, 0, i);
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Sets whole layer to the inactive texture. Alpha and Topology only.</summary>
     /// <param name="landLayerToPaint">The LandLayer to clear. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
@@ -578,20 +585,22 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Clears the selected Topology layers.</summary>
     /// <param name="topologyLayers">The Topology layers to clear.</param>
     public static void ClearTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        progressValue = 1f / topologyElements.Count;
+
+        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressValue += 1f / topologyElements.Count;
-            ProgressBar("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
+            ProgressBarManager.DisplayIncremental("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             ClearLayer(LandLayers.Topology, i);
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Inverts the active and inactive textures. Alpha and Topology only.</summary>
     /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
@@ -608,19 +617,22 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Inverts the selected Topology layers.</summary>
     /// <param name="topologyLayers">The Topology layers to invert.</param>
     public static void InvertTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
+
+        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            progressValue += 1f / topologyElements.Count;
-            ProgressBar("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString(), progressValue);
+            ProgressBarManager.DisplayIncremental("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             InvertLayer(LandLayers.Topology, i);
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
@@ -643,6 +655,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary> Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
@@ -662,6 +675,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>
     /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
     /// Paints from bottom left to top right corner of map if world rotation is 0° in the editor.
@@ -685,6 +699,7 @@ public static class MapManager
                 break;
         }
     }
+
     /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
@@ -708,65 +723,78 @@ public static class MapManager
         }
     }
     #endregion
+
     /// <summary>Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.</summary>
     public static void HidePrefabsInRustEdit()
     {
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: ", 0f);
         int prefabsHidden = 0;
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
+
+        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressValue += 1f / prefabDataHolders.Length;
             if (sw.Elapsed.TotalSeconds > 0.1f)
             {
                 sw.Restart();
-                ProgressBar("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
+                ProgressBarManager.DisplayIncremental("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length);
             }
             prefabDataHolders[i].prefabData.category = @":\RustEditHiddenPrefab:" + prefabsHidden + ":";
             prefabsHidden++;
         }
         Debug.Log("Hid " + prefabsHidden + " prefabs.");
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Breaks down RustEdit custom prefabs back into the individual prefabs.</summary>
     public static void BreakRustEditCustomPrefabs()
     {
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs", 0f);
         int prefabsBroken = 0;
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
+
+        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressValue += 1f / prefabDataHolders.Length;
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBar("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
-            }
             if (prefabDataHolders[i].prefabData.category.Contains(':'))
             {
                 prefabDataHolders[i].prefabData.category = "Decor";
                 prefabsBroken++;
             }
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                ProgressBarManager.DisplayIncremental("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length);
+            }
+            else
+                ProgressBarManager.AddIncrement();
         }
         Debug.Log("Broke down " + prefabsBroken + " prefabs.");
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Parents all the RustEdit custom prefabs in the map to parent gameobjects.</summary>
     public static void GroupRustEditCustomPrefabs()
     {
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
         Transform prefabHierachy = GameObject.FindGameObjectWithTag("Prefabs").transform;
         Dictionary<string, GameObject> prefabParents = new Dictionary<string, GameObject>();
-        ProgressBar("Group RustEdit Custom Prefabs", "Scanning prefabs", 0f);
-        progressValue = 1f / prefabDataHolders.Length;
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
+        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressValue += 1f / prefabDataHolders.Length;
-            ProgressBar("Group RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length, progressValue);
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                ProgressBarManager.DisplayIncremental("Group RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length);
+            }
+            else
+                ProgressBarManager.AddIncrement();
+
             if (prefabDataHolders[i].prefabData.category.Contains(':'))
             {
                 var categoryFields = prefabDataHolders[i].prefabData.category.Split(':');
@@ -784,8 +812,9 @@ public static class MapManager
                 }
             }
         }
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
+
     /// <summary>Exports information about all the map prefabs to a JSON file.</summary>
     /// <param name="mapPrefabFilePath">The JSON file path and name.</param>
     /// <param name="deletePrefabs">Deletes the prefab after the data is exported.</param>
@@ -793,12 +822,20 @@ public static class MapManager
     {
         List<PrefabExport> mapPrefabExports = new List<PrefabExport>();
         PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        ProgressBar("Export Map Prefabs", "Exporting...", 0f);
-        progressValue = 1f / prefabDataHolders.Length;
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
+        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
         for (int i = 0; i < prefabDataHolders.Length; i++)
         {
-            progressValue += 1f / prefabDataHolders.Length;
-            ProgressBar("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length, progressValue);
+            if (sw.Elapsed.TotalSeconds > 0.1f)
+            {
+                sw.Restart();
+                ProgressBarManager.DisplayIncremental("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length);
+            }
+            else
+                ProgressBarManager.AddIncrement();
+            
             mapPrefabExports.Add(new PrefabExport()
             {
                 PrefabNumber = i,
@@ -808,10 +845,9 @@ public static class MapManager
                 PrefabRotation = prefabDataHolders[i].transform.rotation.ToString()
             });
             if (deletePrefabs)
-            {
                 GameObject.DestroyImmediate(prefabDataHolders[i].gameObject);
-            }
         }
+
         using (StreamWriter streamWriter = new StreamWriter(mapPrefabFilePath, false))
         {
             streamWriter.WriteLine("{");
@@ -823,9 +859,10 @@ public static class MapManager
             streamWriter.WriteLine("}");
         }
         mapPrefabExports.Clear();
-        ClearProgressBar();
+        ProgressBarManager.Clear();
         Debug.Log("Exported " + prefabDataHolders.Length + " prefabs.");
     }
+
     /// <summary>Exports lootcrates to a JSON for use with Oxide.</summary>
     /// <param name="prefabFilePath">The path to save the JSON.</param>
     /// <param name="deletePrefabs">Delete the lootcrates after exporting.</param>
@@ -1017,16 +1054,21 @@ public static class MapManager
     {
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
+
+        ProgressBarManager.SetProgressIncrement(1f / terrains.pathData.Length);
         for (int i = 0; i < terrains.pathData.Length; i++)
         {
-            progressValue += 1f / terrains.pathData.Length;
             if (sw.Elapsed.TotalSeconds > 0.1f)
             {
                 sw.Restart();
-                ProgressBar("Loading: " + loadPath, "Spawning Prefabs: " + i + " / " + terrains.prefabData.Length, progressValue);
+                ProgressBarManager.DisplayIncremental("Loading: " + loadPath, "Spawning Paths: " + i + " / " + terrains.prefabData.Length);
             }
+            else
+                ProgressBarManager.AddIncrement();
+
             PathManager.Spawn(terrains.pathData[i]);
         }
+        ProgressBarManager.Clear();
     }
 
     static void LoadSplatMaps(MapInfo terrains)
@@ -1048,7 +1090,7 @@ public static class MapManager
     /// <summary>Loads and sets up the map.</summary>
     static void LoadMapInfo(MapInfo terrains, string loadPath = "")
     {
-        ProgressBar("Loading: " + loadPath, "Preparing Map", 0.25f);
+        ProgressBarManager.Display("Loading: " + loadPath, "Preparing Map", 0.25f);
         var splatMapTask = Task.Run(() => LoadSplatMaps(terrains));
         RemoveMapObjects();
         CentreSceneObjects(terrains);
@@ -1058,14 +1100,14 @@ public static class MapManager
         LoadPaths(terrains, loadPath);
         SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
 
     /// <summary>Loads a WorldSerialization and calls LoadMapInfo.</summary>
     /// <param name="loadPath">The path of the map, used by the progress bars.</param>
     public static void Load(WorldSerialization world, string loadPath = "")
     {
-        ProgressBar("Loading: " + loadPath, "Loading Map", 0.1f);
+        ProgressBarManager.Display("Loading: " + loadPath, "Loading Map", 0.1f);
         LoadMapInfo(WorldToTerrain(world), loadPath);
     }
 
@@ -1074,11 +1116,11 @@ public static class MapManager
     public static void Save(string path)
     {
         SaveLayer(TerrainTopology.TypeToIndex((int)TopologyLayer));
-        ProgressBar("Saving Map: " + path, "Saving Prefabs ", 0.4f);
+        ProgressBarManager.Display("Saving Map: " + path, "Saving Prefabs ", 0.4f);
         WorldSerialization world = TerrainToWorld(land, water);
-        ProgressBar("Saving Map: " + path, "Saving to disk ", 0.8f);
+        ProgressBarManager.Display("Saving Map: " + path, "Saving to disk ", 0.8f);
         world.Save(path);
-        ClearProgressBar();
+        ProgressBarManager.Clear();
     }
 
     /// <summary>Creates a new flat terrain.</summary>
@@ -1091,8 +1133,10 @@ public static class MapManager
         SetHeightmap(landHeight, Selections.Terrains.Land);
         SetHeightmap(500f, Selections.Terrains.Water);
     }
+
     public static List<string> generationPresetList = new List<string>();
     public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
+
     /// <summary>Refreshes and adds the new NodePresets in the generationPresetList.</summary>
     public static void RefreshPresetsList()
     {
