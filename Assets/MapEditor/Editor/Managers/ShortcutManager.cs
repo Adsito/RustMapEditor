@@ -33,7 +33,7 @@ public static class ShortcutManager
     [Shortcut("RustMapEditor/Clear Progress Bar")]
     public static void ClearProgressBar()
     {
-        MapManager.ClearProgressBar();
+        ProgressBarManager.Clear();
     }
 
     [Shortcut("RustMapEditor/Clear Map Prefabs")]

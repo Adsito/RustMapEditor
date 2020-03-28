@@ -26,7 +26,7 @@ public static class AssetManager
 	{
 		if (!IsInitialised)
 		{
-			MapManager.ProgressBar("Loading Bundles", "Loading Root Bundle", 0.1f);
+			ProgressBarManager.Display("Loading Bundles", "Loading Root Bundle", 0.1f);
 			BundlePath = bundlesRoot;
 			var rootBundle = AssetBundle.LoadFromFile(bundlesRoot);
 			if (rootBundle == null)
@@ -45,10 +45,10 @@ public static class AssetManager
 			AssetManifest = manifestList[0];
 
 			var bundles = AssetManifest.GetAllAssetBundles();
+			ProgressBarManager.SetProgressIncrement(0.9f / bundles.Length);
 			for (int i = 0; i < bundles.Length; i++)
 			{
-				MapManager.progressValue += 0.9f / bundles.Length;
-				MapManager.ProgressBar("Loading Bundles", "Loading: " + bundles[i], MapManager.progressValue);
+				ProgressBarManager.DisplayIncremental("Loading Bundles", "Loading: " + bundles[i]);
 				var bundlePath = Path.GetDirectoryName(BundlePath) + Path.DirectorySeparatorChar + bundles[i];
 				var asset = AssetBundle.LoadFromFile(bundlePath);
 				if (asset == null)
@@ -78,14 +78,12 @@ public static class AssetManager
 			AssetDump();
 			rootBundle.Unload(true);
 			IsInitialised = true;
-			MapManager.ClearProgressBar();
+			ProgressBarManager.Clear();
 
 			PrefabManager.ReplaceWithLoaded(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		}
 		else
-		{
 			Debug.Log("Bundle already loaded.");
-		}
 	}
 
 	public static T GetAsset<T>(string filePath) where T : Object
