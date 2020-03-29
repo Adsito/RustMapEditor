@@ -15,52 +15,62 @@ namespace RustMapEditor.UI
         {
             MapManagerWindow window = (MapManagerWindow)EditorWindow.GetWindow(typeof(MapManagerWindow), false, "Rust Map Editor");
         }
+
         [MenuItem("Rust Map Editor/Hierachy/Prefabs", false, 1)]
         static void OpenPrefabHierachy()
         {
             PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
         }
+
         [MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
         static void OpenPathHierachy()
         {
             PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PathHierachyWindow), false, "Path Hierachy");
         }
+
         [MenuItem("Rust Map Editor/Prefabs", false, 1)]
         static void OpenPrefabsList()
         {
             PrefabsListWindow window = (PrefabsListWindow)EditorWindow.GetWindow(typeof(PrefabsListWindow), false, "Prefabs List");
         }
+
         [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
         {
             Selection.activeGameObject = land.gameObject;
         }
+
         [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
         public static void OpenWiki()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
         }
+
         [MenuItem("Rust Map Editor/Links/Discord", false, 10)]
         public static void OpenDiscord()
         {
             Application.OpenURL("https://discord.gg/HPmTWVa");
         }
+
         [MenuItem("Rust Map Editor/Links/RoadMap", false, 10)]
         public static void OpenRoadMap()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
         }
+
         [MenuItem("Rust Map Editor/Links/Report Bug", false, 10)]
         public static void OpenReportBug()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
         }
+
         [MenuItem("Rust Map Editor/Links/Request Feature", false, 10)]
         public static void OpenRequestFeature()
         {
             Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
         }
         #endregion
+
         #region MainMenu
         public static void EditorIO(string mapName = "custommap")
         {
@@ -126,6 +136,7 @@ namespace RustMapEditor.UI
                 GUILayout.Label("SplatMap: " + land.terrainData.alphamapResolution + "x" + land.terrainData.alphamapResolution);
             }
         }
+
         public static void EditorInfo()
         {
             Elements.BoldLabel(ToolTips.editorInfoLabel);
@@ -134,34 +145,25 @@ namespace RustMapEditor.UI
             Elements.Label(ToolTips.unityVersion);
             Elements.Label(ToolTips.editorVersion);
         }
+
         public static void EditorLinks()
         {
             Elements.BoldLabel(ToolTips.editorLinksLabel);
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.reportBug))
-            {
                 OpenReportBug();
-            }
             if (Elements.ToolbarButton(ToolTips.requestFeature))
-            {
                 OpenRequestFeature();
-            }
             if (Elements.ToolbarButton(ToolTips.roadMap))
-            {
                 OpenRoadMap();
-            }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.wiki))
-            {
                 OpenWiki();
-            }
             if (Elements.ToolbarButton(ToolTips.discord))
-            {
                 OpenDiscord();
-            }
             Elements.EndToolbarHorizontal();
         }
         public static void EditorSettings()
@@ -170,18 +172,14 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.saveSettings))
-            {
                 SettingsManager.SaveSettings();
-            }
             if (Elements.ToolbarButton(ToolTips.discardSettings))
             {
                 SettingsManager.LoadSettings();
                 ToolTips.rustDirectoryPath.text = SettingsManager.rustDirectory;
             }
             if (Elements.ToolbarButton(ToolTips.defaultSettings))
-            {
                 SettingsManager.SetDefaultSettings();
-            }
             Elements.EndToolbarHorizontal();
 
             Elements.MiniBoldLabel(ToolTips.rustDirectory);
@@ -200,13 +198,13 @@ namespace RustMapEditor.UI
             EditorGUI.BeginChangeCheck();
             SettingsManager.prefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, SettingsManager.prefabRenderDistance, 0, 5000f);
             SettingsManager.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.pathRenderDistance, 0, 5000f);
+
             if (EditorGUI.EndChangeCheck())
-            {
                 MapManager.SetCullingDistances(SceneView.lastActiveSceneView.camera, SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
-            }
             //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
         }
         #endregion
+
         #region Prefabs
         public static void PrefabTools(ref bool deleteOnExport, string lootCrateSaveFile = "", string mapPrefabSaveFile = "")
         {
@@ -218,44 +216,30 @@ namespace RustMapEditor.UI
             {
                 lootCrateSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", lootCrateSaveFile, "LootCrateData", "json");
                 if (!String.IsNullOrEmpty(lootCrateSaveFile))
-                {
                     MapManager.ExportLootCrates(lootCrateSaveFile, deleteOnExport);
-                }
             }
             if (Elements.ToolbarButton(ToolTips.exportMapPrefabs))
             {
                 mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", mapPrefabSaveFile, "MapData", "json");
                 if (!String.IsNullOrEmpty(mapPrefabSaveFile))
-                {
                     MapManager.ExportMapPrefabs(mapPrefabSaveFile, deleteOnExport);
-                }
             }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hidePrefabsInRustEdit))
-            {
                 MapManager.HidePrefabsInRustEdit();
-            }
             if (Elements.ToolbarButton(ToolTips.breakRustEditPrefabs))
-            {
                 MapManager.BreakRustEditCustomPrefabs();
-            }
             if (Elements.ToolbarButton(ToolTips.groupRustEditPrefabs))
-            {
                 MapManager.GroupRustEditCustomPrefabs();
-            }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.deleteMapPrefabs))
-            {
                 MapManager.RemoveMapObjects(true, false);
-            }
             if (Elements.ToolbarButton(ToolTips.deleteMapPaths))
-            {
                 MapManager.RemoveMapObjects(false, true);
-            }
             Elements.EndToolbarHorizontal();
         }
         public static void AssetBundle()
@@ -264,16 +248,13 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.loadBundle))
-            {
                 AssetManager.Initialise(SettingsManager.rustDirectory + SettingsManager.bundlePathExt);
-            }
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
-            {
                 AssetManager.Dispose();
-            }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region Generation Tools
         public static void NodePresets(Vector2 presetScrollPos)
         {
@@ -281,9 +262,7 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.refreshPresets))
-            {
                 MapManager.RefreshPresetsList();
-            }
             Elements.EndToolbarHorizontal();
 
             presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
@@ -296,6 +275,7 @@ namespace RustMapEditor.UI
             Elements.MiniLabel(ToolTips.noPresets);
         }
         #endregion
+
         #region MapTools
         #region HeightMap
         public static void TerraceMap(ref float terraceErodeFeatureSize, ref float terraceErodeInteriorCornerWeight)
@@ -307,11 +287,10 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.terraceMap))
-            {
                 MapManager.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void SmoothMap(ref float filterStrength, ref float blurDirection, ref int smoothPasses)
         {
             Elements.MiniBoldLabel(ToolTips.smoothLabel);
@@ -321,15 +300,12 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.smoothMap))
-            {
                 for (int i = 0; i < smoothPasses; i++)
-                {
                     MapManager.SmoothHeightmap(filterStrength, blurDirection);
-                }
-            }
             smoothPasses = EditorGUILayout.IntSlider(smoothPasses, 1, 100);
             Elements.EndToolbarHorizontal();
         }
+
         public static void NormaliseMap(ref float normaliseLow, ref float normaliseHigh, ref bool autoUpdate)
         {
             Elements.MiniBoldLabel(ToolTips.normaliseLabel);
@@ -338,18 +314,15 @@ namespace RustMapEditor.UI
             normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, normaliseHigh);
             normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
             if (EditorGUI.EndChangeCheck() && autoUpdate == true)
-            {
                 MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
-            }
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.normaliseMap))
-            {
                 MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
-            }
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
         }
+
         public static void SetHeight(ref float height)
         {
             Elements.MiniBoldLabel(ToolTips.setHeightLabel);
@@ -357,15 +330,12 @@ namespace RustMapEditor.UI
             height = Elements.ToolbarSlider(ToolTips.heightToSet, height, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setLandHeight))
-            {
                 MapManager.SetHeightmap(height, Selections.Terrains.Land);
-            }
             if (Elements.ToolbarButton(ToolTips.setWaterHeight))
-            {
                 MapManager.SetHeightmap(height, Selections.Terrains.Water);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void ClampHeight(ref float heightLow, ref float heightHigh)
         {
             Elements.MiniBoldLabel(ToolTips.clampHeightLabel);
@@ -373,15 +343,12 @@ namespace RustMapEditor.UI
             Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
-            {
                 MapManager.ClampHeightmap(heightLow, 1000f, Selections.Terrains.Land);
-            }
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
-            {
                 MapManager.ClampHeightmap(0f, heightHigh, Selections.Terrains.Land);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void OffsetMap(ref float offset, ref bool clampOffset)
         {
             Elements.MiniBoldLabel(ToolTips.offsetLabel);
@@ -390,31 +357,25 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             clampOffset = Elements.ToolbarToggle(ToolTips.clampOffset, clampOffset);
             if (Elements.ToolbarButton(ToolTips.offsetLand))
-            {
                 MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Land);
-            }
             if (Elements.ToolbarButton(ToolTips.offsetWater))
-            {
                 MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Water);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void InvertMap()
         {
             Elements.MiniBoldLabel(ToolTips.invertLabel);
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.invertLand))
-            {
                 MapManager.InvertHeightmap(Selections.Terrains.Land);
-            }
             if (Elements.ToolbarButton(ToolTips.invertWater))
-            {
                 MapManager.InvertHeightmap(Selections.Terrains.Water);
-            }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         public static void ConditionalPaintConditions(ref Conditions cnds, ref int cndsOptions)
         {
             Elements.BoldLabel(ToolTips.conditionalPaintLabel);
@@ -479,6 +440,7 @@ namespace RustMapEditor.UI
                     break;
             }
         }
+
         public static void ConditionalPaintLayerSelect(ref Conditions cnds, ref Layers layers, ref int texture)
         {
             Elements.MiniBoldLabel(ToolTips.textureToPaintLabel);
@@ -527,16 +489,16 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.paintConditional))
-            {
                 MapManager.PaintConditional(layers.LandLayer, texture, cnds, TerrainTopology.TypeToIndex((int)layers.Topologies));
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void ConditionalPaint(ref int cndsOptions, ref int texture, ref Conditions cnds, ref Layers layers)
         {
             ConditionalPaintConditions(ref cnds, ref cndsOptions);
             ConditionalPaintLayerSelect(ref cnds, ref layers, ref texture);
         }
+
         public static void RotateMap(ref Selections.Objects selection)
         {
             Elements.MiniBoldLabel(ToolTips.rotateMapLabel);
@@ -548,16 +510,13 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.rotate90))
-            {
                 MapManager.RotateMap(selection, true);
-            }
             if (Elements.ToolbarButton(ToolTips.rotate270))
-            {
                 MapManager.RotateMap(selection, false);
-            }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region LayerTools
         public static void TextureSelect(LandLayers landLayer, ref Layers layers)
         {
@@ -579,6 +538,7 @@ namespace RustMapEditor.UI
                     break;
             }
         }
+
         public static void TopologyLayerSelect(ref Layers layers)
         {
             Elements.MiniBoldLabel(ToolTips.layerSelect);
@@ -590,10 +550,9 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
 
             if (EditorGUI.EndChangeCheck())
-            {
                 ChangeLandLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
-            }
         }
+
         public static void SlopeTools(LandLayers landLayer, int texture, ref SlopesInfo slopeInfo, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.slopeToolsLabel);
@@ -614,13 +573,9 @@ namespace RustMapEditor.UI
 
                 Elements.BeginToolbarHorizontal();
                 if (Elements.ToolbarButton(ToolTips.paintSlopes))
-                {
                     MapManager.PaintSlope(landLayer, slopeInfo.SlopeLow, slopeInfo.SlopeHigh, texture);
-                }
                 if (Elements.ToolbarButton(ToolTips.paintSlopesBlend))
-                {
                     MapManager.PaintSlopeBlend(landLayer, slopeInfo.SlopeLow, slopeInfo.SlopeHigh, slopeInfo.SlopeBlendLow, slopeInfo.SlopeBlendHigh, texture);
-                }
                 Elements.EndToolbarHorizontal();
             }
             else
@@ -630,16 +585,13 @@ namespace RustMapEditor.UI
 
                 Elements.BeginToolbarHorizontal();
                 if (Elements.ToolbarButton(ToolTips.paintSlopes))
-                {
                     MapManager.PaintSlope(landLayer, slopeInfo.SlopeLow, slopeInfo.SlopeHigh, texture, topology);
-                }
                 if (Elements.ToolbarButton(ToolTips.eraseSlopes))
-                {
                     MapManager.PaintSlope(landLayer, slopeInfo.SlopeLow, slopeInfo.SlopeHigh, erase, topology);
-                }
                 Elements.EndToolbarHorizontal();
             }
         }
+
         public static void HeightTools(LandLayers landLayer, int texture, ref HeightsInfo heightInfo, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.heightToolsLabel);
@@ -660,13 +612,9 @@ namespace RustMapEditor.UI
 
                 Elements.BeginToolbarHorizontal();
                 if (Elements.ToolbarButton(ToolTips.paintHeights))
-                {
                     MapManager.PaintHeight(landLayer, heightInfo.HeightLow, heightInfo.HeightHigh, texture);
-                }
                 if (Elements.ToolbarButton(ToolTips.paintHeightsBlend))
-                {
                     MapManager.PaintHeightBlend(landLayer, heightInfo.HeightLow, heightInfo.HeightHigh, heightInfo.HeightBlendLow, heightInfo.HeightBlendHigh, texture);
-                }
                 Elements.EndToolbarHorizontal();
             }
             else
@@ -676,44 +624,32 @@ namespace RustMapEditor.UI
 
                 Elements.BeginToolbarHorizontal();
                 if (Elements.ToolbarButton(ToolTips.paintHeights))
-                {
                     MapManager.PaintHeight(landLayer, heightInfo.HeightLow, heightInfo.HeightHigh, texture, topology);
-                }
                 if (Elements.ToolbarButton(ToolTips.eraseHeights))
-                {
                     MapManager.PaintHeight(landLayer, heightInfo.HeightLow, heightInfo.HeightHigh, erase, topology);
-                }
                 Elements.EndToolbarHorizontal();
             }
         }
+
         public static void TopologyTools()
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.rotateAll90))
-            {
                 MapManager.RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, true);
-            }
             if (Elements.ToolbarButton(ToolTips.rotateAll270))
-            {
                 MapManager.RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, false);
-            }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.paintAll))
-            {
                 MapManager.PaintTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
-            }
             if (Elements.ToolbarButton(ToolTips.clearAll))
-            {
                 MapManager.ClearTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
-            }
             if (Elements.ToolbarButton(ToolTips.invertAll))
-            {
                 MapManager.InvertTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void AreaTools(LandLayers landLayer, int texture, Dimensions dmns, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.areaToolsLabel);
@@ -725,18 +661,14 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.paintArea))
-            {
                 MapManager.PaintArea(landLayer, dmns, texture, topology);
-            }
+
             if ((int)landLayer > 1)
-            {
                 if (Elements.ToolbarButton(ToolTips.eraseArea))
-                {
                     MapManager.PaintArea(landLayer, dmns, erase, topology);
-                }
-            }
             EditorGUILayout.EndHorizontal();
         }
+
         public static void RiverTools(LandLayers landLayer, int texture, ref bool aboveTerrain, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.riverToolsLabel);
@@ -746,13 +678,9 @@ namespace RustMapEditor.UI
                 Elements.BeginToolbarHorizontal();
                 aboveTerrain = Elements.ToolbarToggle(ToolTips.aboveTerrain, aboveTerrain);
                 if (Elements.ToolbarButton(ToolTips.paintRivers))
-                {
                     MapManager.PaintRiver(landLayer, aboveTerrain, texture, topology);
-                }
                 if (Elements.ToolbarButton(ToolTips.eraseRivers))
-                {
                     MapManager.PaintRiver(landLayer, aboveTerrain, erase, topology);
-                }
                 Elements.EndToolbarHorizontal();
             }
             else
@@ -760,48 +688,39 @@ namespace RustMapEditor.UI
                 Elements.BeginToolbarHorizontal();
                 aboveTerrain = Elements.ToolbarToggle(ToolTips.aboveTerrain, aboveTerrain);
                 if (Elements.ToolbarButton(ToolTips.paintRivers))
-                {
                     MapManager.PaintRiver(landLayer, aboveTerrain, texture);
-                }
                 Elements.EndToolbarHorizontal();
             }
         }
+
         public static void RotateTools(LandLayers landLayer, int topology = 0)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.rotate90))
-            {
                 MapManager.RotateLayer(landLayer, true, topology);
-            }
             if (Elements.ToolbarButton(ToolTips.rotate270))
-            {
                 MapManager.RotateLayer(landLayer, false, topology);
-            }
             Elements.EndToolbarHorizontal();
         }
+
         public static void LayerTools(LandLayers landLayer, int texture, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.layerToolsLabel);
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.paintLayer))
-            {
                 MapManager.PaintLayer(landLayer, texture, topology);
-            }
             if ((int)landLayer > 1)
             {
                 if (Elements.ToolbarButton(ToolTips.clearLayer))
-                {
                     MapManager.ClearLayer(landLayer, topology);
-                }
                 if (Elements.ToolbarButton(ToolTips.invertLayer))
-                {
                     MapManager.InvertLayer(landLayer, topology);
-                }
             }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region PrefabData
         public static void PrefabCategory(PrefabDataHolder target)
         {
@@ -810,6 +729,7 @@ namespace RustMapEditor.UI
             target.prefabData.category = Elements.ToolbarTextField(target.prefabData.category);
             Elements.EndToolbarHorizontal();
         }
+
         public static void PrefabID(PrefabDataHolder target)
         {
             Elements.BeginToolbarHorizontal();
@@ -817,16 +737,16 @@ namespace RustMapEditor.UI
             target.prefabData.id = uint.Parse(Elements.ToolbarDelayedTextField(target.prefabData.id.ToString()));
             Elements.EndToolbarHorizontal();
         }
+
         public static void SnapToGround(PrefabDataHolder target)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.snapToGround))
-            {
                 target.SnapToGround();
-            }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region Functions
         public static string NodePresetDrawer(Rect position, string itemValue)
         {
@@ -839,16 +759,13 @@ namespace RustMapEditor.UI
                 MapManager.RefreshPresetsList();
                 MapManager.nodePresetLookup.TryGetValue(itemValue, out UnityEngine.Object preset);
                 if (preset != null)
-                {
                     AssetDatabase.OpenAsset(preset.GetInstanceID());
-                }
                 else
-                {
                     Debug.LogError("The preset you are trying to open is null.");
-                }
             }
             return itemValue;
         }
+
         /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>
         /// <param name="topology">The Topology layer to set.</param>
@@ -856,6 +773,7 @@ namespace RustMapEditor.UI
         {
             ChangeLandLayer(landIndex, topology);
         }
+
         public static SlopesInfo ClampValues(SlopesInfo info)
         {
             info.SlopeLow = Mathf.Clamp(info.SlopeLow, 0f, info.SlopeHigh);
@@ -864,6 +782,7 @@ namespace RustMapEditor.UI
             info.SlopeBlendHigh = Mathf.Clamp(info.SlopeBlendHigh, info.SlopeHigh, 90f);
             return info;
         }
+
         public static HeightsInfo ClampValues(HeightsInfo info)
         {
             info.HeightLow = Mathf.Clamp(info.HeightLow, 0f, info.HeightHigh);
@@ -872,20 +791,20 @@ namespace RustMapEditor.UI
             info.HeightBlendHigh = Mathf.Clamp(info.HeightBlendHigh, info.HeightHigh, 1000f);
             return info;
         }
+
         public static void ReloadTreeViews()
         {
             PrefabHierachyWindow.ReloadTree();
             PathHierachyWindow.ReloadTree();
         }
         #endregion
+
         #region NodeGraph
         public static void NodeGraphToolbar(XNode.NodeGraph nodeGraph)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.runPreset))
-            {
                 NodeAsset.Parse(nodeGraph);
-            }
             if (Elements.ToolbarButton(ToolTips.deletePreset))
             {
                 if (EditorUtility.DisplayDialog("Delete Preset", "Are you sure you wish to delete this preset? Once deleted it can't be undone.", "Ok", "Cancel"))
@@ -896,16 +815,13 @@ namespace RustMapEditor.UI
                 }
             }
             if (Elements.ToolbarButton(ToolTips.renamePreset))
-            {
                 XNodeEditor.RenamePreset.Show(nodeGraph);
-            }
             if (Elements.ToolbarButton(ToolTips.presetWiki))
-            {
                 Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Node-System");
-            }
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region PrefabsList
         public static void DisplayPrefabName(string name)
         {
