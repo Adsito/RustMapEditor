@@ -7,7 +7,7 @@ using Unity.EditorCoroutines.Editor;
 
 namespace RustMapEditor.Data
 {
-    public static class LandData
+    public static class TerrainManager
     {
         /// <summary>The Ground textures of the map. [Res, Res, Textures(8)].</summary>
         public static float[,,] GroundArray { get; private set; }
@@ -41,7 +41,7 @@ namespace RustMapEditor.Data
         private static Coroutines Coroutine;
 
         [InitializeOnLoadMethod]
-        static void Init()
+        private static void Init()
         {
             TerrainCallbacks.textureChanged += TextureChanged;
             TerrainCallbacks.heightmapChanged += HeightmapChanged;
@@ -74,6 +74,12 @@ namespace RustMapEditor.Data
         public static int GetSplatMapResolution()
         {
             return land.terrainData.alphamapResolution;
+        }
+
+        /// <summary>Gets the size of each splat relative to the terrain size it covers.</summary>
+        public static float GetSplatSize()
+        {
+            return land.terrainData.size.x / GetSplatMapResolution();
         }
 
         public static float[,] GetSlopes()

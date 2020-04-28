@@ -3,7 +3,7 @@ using Rotorz.ReorderableList;
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.LandData;
+using static RustMapEditor.Data.TerrainManager;
 
 namespace RustMapEditor.UI
 {
