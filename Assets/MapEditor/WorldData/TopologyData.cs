@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using static RustMapEditor.Data.LandData;
+using static RustMapEditor.Data.TerrainManager;
 
 [Serializable]
 public static class TopologyData

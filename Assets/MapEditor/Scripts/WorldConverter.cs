@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using static RustMapEditor.Data.LandData;
+using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldSerialization;
 

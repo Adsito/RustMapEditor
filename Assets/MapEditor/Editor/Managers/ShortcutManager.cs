@@ -51,13 +51,13 @@ public static class ShortcutManager
     [Shortcut("RustMapEditor/Clear Layer")]
     public static void ClearLayer()
     {
-        MapManager.ClearLayer(LandData.LandLayer, TerrainTopology.TypeToIndex((int)LandData.TopologyLayer));
+        MapManager.ClearLayer(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)TerrainManager.TopologyLayer));
     }
 
     [Shortcut("RustMapEditor/Invert Layer")]
     public static void InvertLayer()
     {
-        MapManager.InvertLayer(LandData.LandLayer, TerrainTopology.TypeToIndex((int)LandData.TopologyLayer));
+        MapManager.InvertLayer(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)TerrainManager.TopologyLayer));
     }
 
     [Shortcut("RustMapEditor/Invert Land")]

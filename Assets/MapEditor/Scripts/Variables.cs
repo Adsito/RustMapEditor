@@ -76,10 +76,10 @@
     }
     public class Dimensions
     {
-        public int x0 { get; set; }
-        public int x1 { get; set; }
-        public int z0 { get; set; }
-        public int z1 { get; set; }
+        public int x0;
+        public int x1;
+        public int z0;
+        public int z1;
 
         public Dimensions(int x0, int x1, int z0, int z1)
         {

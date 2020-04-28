@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.LandData;
+using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
 
@@ -23,6 +23,7 @@ public static class MapManager
         RefreshPresetsList(); // Refreshes the node gen presets.
         EditorApplication.update += OnProjectLoad;
     }
+
     /// <summary>Executes once when the project finished loading.</summary>
     static void OnProjectLoad()
     {
@@ -109,23 +110,16 @@ public static class MapManager
         if (prefabs)
         {
             foreach (PrefabDataHolder g in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<PrefabDataHolder>())
-            {
                 if (g != null)
-                {
                     GameObject.DestroyImmediate(g.gameObject);
-                }
-            }
+
             foreach (CustomPrefabData p in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<CustomPrefabData>())
-            {
                 GameObject.DestroyImmediate(p.gameObject);
-            }
         }
         if (paths)
         {
             foreach (PathDataHolder g in GameObject.FindGameObjectWithTag("Paths").GetComponentsInChildren<PathDataHolder>())
-            {
                 GameObject.DestroyImmediate(g.gameObject);
-            }
         }
     }
 

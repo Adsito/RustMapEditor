@@ -109,13 +109,8 @@ public class PathDataHolder : MonoBehaviour {
                 continue;
             }
             else
-            {
-                //Gizmos.DrawSphere(pos, 2f);
                 Gizmos.DrawLine(lastNode, pos);
-            }
             lastNode = pos;
         }
-
-        
     }
 }
