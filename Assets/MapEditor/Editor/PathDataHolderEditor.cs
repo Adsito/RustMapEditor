@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(PathDataHolder))]
 public class PathDataHolderEditor : Editor
 {
-
     public override void OnInspectorGUI()
     {
         PathDataHolder script = (PathDataHolder)target;
@@ -32,26 +29,18 @@ public class PathDataHolderEditor : Editor
         GUILayout.Label("Path Tools", EditorStyles.boldLabel);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Add path node to start"))
-        {
             script.addNodeToStart();
-        }
         if (GUILayout.Button("Add path node to end"))
-        {
             script.addNodeToEnd();
-        }
         GUILayout.EndHorizontal();
         GUILayout.Label("Node Resolution Factor");
         script.resolutionFactor = float.Parse(GUILayout.TextField(script.resolutionFactor + ""));
         script.resolutionFactor = GUILayout.HorizontalSlider(script.resolutionFactor, 0, 1);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Increase Nodes Resolution"))
-        {
             script.increaseNodesRes();
-        }
         if (GUILayout.Button("Decrease Nodes Resolution"))
-        {
             script.decreaseNodesRes();
-        }
         GUILayout.EndHorizontal();
     }
 }
