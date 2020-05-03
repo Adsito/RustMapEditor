@@ -14,7 +14,7 @@ namespace RustMapEditor.Maths
         public static float[,] SetValues(float[,] array, float value, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -29,7 +29,7 @@ namespace RustMapEditor.Maths
         public static float[,,] SetValues(float[,,] array, int channel, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -49,7 +49,7 @@ namespace RustMapEditor.Maths
         public static bool[,] SetValues(bool[,] array, bool value, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -68,7 +68,7 @@ namespace RustMapEditor.Maths
         public static float[,,] SetRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelCount = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -91,7 +91,7 @@ namespace RustMapEditor.Maths
         public static float[,,] SetRangeBlend(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, float rangeBlendLow, float rangeBlendHigh, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
             for (int i = dmns.x0; i < dmns.x1; i++)
@@ -158,7 +158,7 @@ namespace RustMapEditor.Maths
         public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
            
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -176,7 +176,7 @@ namespace RustMapEditor.Maths
         public static float[,,] SetRiver(float[,,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, int channel, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
             if (aboveTerrain)
@@ -219,7 +219,7 @@ namespace RustMapEditor.Maths
         public static bool[,] SetRiver(bool[,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, bool value, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             if (aboveTerrain)
             {
@@ -308,7 +308,7 @@ namespace RustMapEditor.Maths
         public static float[,] ClampValues(float[,] array, float minValue, float maxValue, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -326,7 +326,7 @@ namespace RustMapEditor.Maths
         public static float[,] Rotate(float[,] array, bool CW, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             float[,] newArray = new float[array.GetLength(0), array.GetLength(1)];
             if (CW)
@@ -355,10 +355,10 @@ namespace RustMapEditor.Maths
         public static float[,,] Rotate(float[,,] array, bool CW, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
-            float[,,] newArray = new float[array.GetLength(0), array.GetLength(1), array.GetLength(2)];
+            float[,,] newArray = array;
             if (CW)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
@@ -391,7 +391,7 @@ namespace RustMapEditor.Maths
         public static bool[,] Rotate(bool[,] array, bool CW, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             bool[,] newArray = new bool[array.GetLength(0), array.GetLength(1)];
             if (CW)
@@ -422,7 +422,7 @@ namespace RustMapEditor.Maths
         public static float[,] Invert(float[,] array, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -437,7 +437,7 @@ namespace RustMapEditor.Maths
         public static float[,,] Invert(float[,,] array, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -456,7 +456,7 @@ namespace RustMapEditor.Maths
         public static bool[,] Invert(bool[,] array, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -475,7 +475,7 @@ namespace RustMapEditor.Maths
         public static float[,] Normalise(float[,] array, float normaliseLow, float normaliseHigh, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                dmns = AreaManager.Area;
 
             float highestPoint = 0f, lowestPoint = 1f, heightRange = 0f, normalisedHeightRange = 0f;
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -515,7 +515,7 @@ namespace RustMapEditor.Maths
             try
             {
                 if (dmns == null)
-                    dmns = new Dimensions(0, array.GetLength(0), 0, array.GetLength(1));
+                    dmns = AreaManager.Area;
 
                 Parallel.For(dmns.x0, dmns.x1, options, i =>
                 {
