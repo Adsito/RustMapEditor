@@ -16,7 +16,6 @@ public class MapManagerWindow : EditorWindow
         GroundConditions = new GroundConditions(TerrainSplat.Enum.Grass), BiomeConditions = new BiomeConditions(TerrainBiome.Enum.Temperate), TopologyConditions = new TopologyConditions(TerrainTopology.Enum.Beach)
     };
     Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field};
-    Dimensions dimensions = new Dimensions(0, 256, 0, 256);
     SlopesInfo slopesInfo = new SlopesInfo() { SlopeLow = 40f, SlopeHigh = 60f, SlopeBlendLow = 25f, SlopeBlendHigh = 75f, BlendSlopes = false };
     HeightsInfo heightsInfo = new HeightsInfo() { HeightLow = 400f, HeightHigh = 600f, HeightBlendLow = 300f, HeightBlendHigh = 700f, BlendHeights = false };
     int texture = 0, smoothPasses = 0;
@@ -91,39 +90,39 @@ public class MapManagerWindow : EditorWindow
                 {
                     case 0:
                         Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                        Functions.AreaSelect();
                         Functions.LayerTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground));
                         Functions.RotateTools((LandLayers)layerIndex);
                         Functions.RiverTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref aboveTerrain);
                         Functions.SlopeTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref slopesInfo);
                         Functions.HeightTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
-                        Functions.AreaTools((LandLayers)layerIndex, TerrainSplat.TypeToIndex((int)layers.Ground), dimensions);
                         break;
                     case 1:
                         Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                        Functions.AreaSelect();
                         Functions.LayerTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome));
                         Functions.RotateTools((LandLayers)layerIndex);
                         Functions.RiverTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref aboveTerrain);
                         Functions.SlopeTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref slopesInfo);
                         Functions.HeightTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), ref heightsInfo);
-                        Functions.AreaTools((LandLayers)layerIndex, TerrainBiome.TypeToIndex((int)layers.Biome), dimensions);
                         break;
                     case 2:
                         Functions.LayerTools((LandLayers)layerIndex, 0, 1);
+                        Functions.AreaSelect();
                         Functions.RotateTools((LandLayers)layerIndex);
                         Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1);
                         Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1);
                         Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1);
-                        Functions.AreaTools((LandLayers)layerIndex, 0, dimensions, 1);
                         break;
                     case 3:
                         Functions.TopologyLayerSelect(ref layers);
+                        Functions.AreaSelect();
                         Functions.LayerTools((LandLayers)layerIndex, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         Functions.RotateTools((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         Functions.TopologyTools();
                         Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                        Functions.AreaTools((LandLayers)layerIndex, 0, dimensions, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                         break;
                 }
                 break;

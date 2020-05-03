@@ -10,6 +10,7 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
+using RustMapEditor.Data;
 
 public static class MapManager
 {
@@ -670,30 +671,6 @@ public static class MapManager
         }
     }
 
-    /// <summary>
-    /// Paints area within these splatmap coords, Maps will always have a splatmap resolution between 512 - 2048 resolution, to the nearest Power of Two (512, 1024, 2048).
-    /// Paints from bottom left to top right corner of map if world rotation is 0° in the editor.
-    /// </summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
-    /// <param name="t">The texture to paint.</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintArea(LandLayers landLayerToPaint, Dimensions dmns, int t, int topology = 0)
-    {
-        switch (landLayerToPaint)
-        {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
-                SetData(SetValues(GetSplatMap(landLayerToPaint, topology), t, dmns), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
-                break;
-            case LandLayers.Alpha:
-                bool value = (t == 0) ? true : false;
-                SetData(SetValues(GetAlphaMap(), value, dmns), landLayerToPaint);
-                break;
-        }
-    }
-
     /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
@@ -1035,6 +1012,8 @@ public static class MapManager
         land.terrainData.baseMapResolution = terrains.splatRes;
         water.terrainData.alphamapResolution = terrains.splatRes;
         water.terrainData.baseMapResolution = terrains.splatRes;
+
+        AreaManager.Reset();
     }
 
     /// <summary>Loads and sets up the map Prefabs.</summary>
@@ -1092,7 +1071,7 @@ public static class MapManager
         LoadAlphaMaps(terrains);
         LoadPrefabs(terrains);
         LoadPaths(terrains, loadPath);
-        SetLayer(LandLayers.Ground, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
+        SetLayer(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
         ProgressBarManager.Clear();
     }
@@ -1124,8 +1103,8 @@ public static class MapManager
         LoadMapInfo(EmptyMap(size), "New Map");
         PaintLayer(LandLayers.Ground, ground);
         PaintLayer(LandLayers.Biome, biome);
-        SetHeightmap(landHeight, Selections.Terrains.Land);
-        SetHeightmap(500f, Selections.Terrains.Water);
+        SetHeightmap(landHeight, Selections.Terrains.Land, new Dimensions(0, GetHeightMapResolution(), 0, GetHeightMapResolution()));
+        SetHeightmap(500f, Selections.Terrains.Water, new Dimensions(0, GetHeightMapResolution(), 0, GetHeightMapResolution()));
     }
 
     public static List<string> generationPresetList = new List<string>();
