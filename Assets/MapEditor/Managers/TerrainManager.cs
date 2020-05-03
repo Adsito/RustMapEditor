@@ -127,10 +127,6 @@ namespace RustMapEditor.Data
         {
             if (layer != LandLayers.Alpha && layer != LandLayer)
             {
-                SetLayer(layer, topology);
-            }
-            else if (layer != LandLayers.Alpha && layer == LandLayers.Topology)
-            {
                 SaveLayer(lastTopologyLayer);
                 SetLayer(layer, topology);
             }

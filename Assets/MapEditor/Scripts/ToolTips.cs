@@ -99,11 +99,12 @@ namespace RustMapEditor.Variables
         public static GUIContent blendLow = new GUIContent("Blend Low:", "The lowest value to blend out to.");
         public static GUIContent blendHigh = new GUIContent("Blend High:", "The highest value to blend out to.");
 
-        public static GUIContent areaToolsLabel = new GUIContent("Area Tools");
+        public static GUIContent areaSelectLabel = new GUIContent("Area Select", "The area of the splatmap the operations will take place within.");
         public static GUIContent fromZ = new GUIContent("From Z", "The starting point of the area.");
         public static GUIContent toZ = new GUIContent("To Z", "The ending point of the area.");
         public static GUIContent fromX = new GUIContent("From X", "The starting point of the area.");
         public static GUIContent toX = new GUIContent("To X", "The ending point of the area.");
+        public static GUIContent resetArea = new GUIContent("Reset", "Reset the area selection to the entire splat range.");
         public static GUIContent paintArea = new GUIContent("Paint Area", "Paints the selected area with the active texture.");
         public static GUIContent eraseArea = new GUIContent("Erase Area", "Paints the selected area with the inactive texture.");
 

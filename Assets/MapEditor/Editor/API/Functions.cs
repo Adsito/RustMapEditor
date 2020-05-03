@@ -650,23 +650,15 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void AreaTools(LandLayers landLayer, int texture, Dimensions dmns, int erase = 0, int topology = 0)
+        public static void AreaSelect()
         {
-            Elements.MiniBoldLabel(ToolTips.areaToolsLabel);
+            Elements.MiniBoldLabel(ToolTips.areaSelectLabel);
 
-            float tmpz0 = dmns.z0; float tmpz1 = dmns.z1; float tmpx0 = dmns.x0; float tmpx1 = dmns.x1;
-            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref tmpz0, ref tmpz1, 0f, land.terrainData.alphamapResolution);
-            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref tmpx0, ref tmpx1, 0f, land.terrainData.alphamapResolution);
-            dmns.z0 = (int)tmpz0; dmns.z1 = (int)tmpz1; dmns.x0 = (int)tmpx0; dmns.x1 = (int)tmpx1;
+            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, land.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, land.terrainData.alphamapResolution);
 
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.paintArea))
-                MapManager.PaintArea(landLayer, dmns, texture, topology);
-
-            if ((int)landLayer > 1)
-                if (Elements.ToolbarButton(ToolTips.eraseArea))
-                    MapManager.PaintArea(landLayer, dmns, erase, topology);
-            EditorGUILayout.EndHorizontal();
+            if (Elements.ToolbarButton(ToolTips.resetArea))
+                AreaManager.Reset();
         }
 
         public static void RiverTools(LandLayers landLayer, int texture, ref bool aboveTerrain, int erase = 0, int topology = 0)
