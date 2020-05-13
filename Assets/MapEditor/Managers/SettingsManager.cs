@@ -21,7 +21,7 @@ public static class SettingsManager
         {
             using (StreamWriter write = new StreamWriter(settingsPath, false))
             {
-                write.Write(JsonUtility.ToJson(DefaultSettings()));
+                write.Write(JsonUtility.ToJson(DefaultSettings(), true));
             }
         }
         LoadSettings();
@@ -55,7 +55,7 @@ public static class SettingsManager
                 PathRenderDistance = pathRenderDistance,
                 PrefabPaths = prefabPaths
             };
-            write.Write(JsonUtility.ToJson(editorSettings));
+            write.Write(JsonUtility.ToJson(editorSettings, true));
         }
     }
 
