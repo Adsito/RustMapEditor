@@ -269,7 +269,7 @@ public static class MapManager
     /// <summary>Increases or decreases the terrain by the offset.</summary>
     /// <param name="offset">The amount to offset by. Negative values offset down.</param>
     /// <param name="clampOffset">Check if offsetting the heightmap would exceed the min-max values.</param>
-    public static void OffsetHeightmap(float offset, bool clampOffset, Selections.Terrains terrains)
+    public static void OffsetHeightmap(float offset, bool clampOffset, Selections.Terrains terrains, Dimensions dmns = null)
     {
         offset /= 1000f;
         foreach (var item in GetEnumSelection(terrains))
@@ -277,10 +277,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, Offset(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset));
+                    land.terrainData.SetHeights(0, 0, Offset(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, Offset(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset));
+                    water.terrainData.SetHeights(0, 0, Offset(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset, dmns));
                     break;
             }
         }
@@ -289,16 +289,16 @@ public static class MapManager
     /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
     /// <param name="minimumHeight">The minimum height to set.</param>
     /// <param name="maximumHeight">The maximum height to set.</param>
-    public static void ClampHeightmap(float minimumHeight, float maximumHeight, Selections.Terrains terrains)
+    public static void ClampHeightmap(float minimumHeight, float maximumHeight, Selections.Terrains terrains, Dimensions dmns = null)
     {
         minimumHeight /= 1000f; maximumHeight /= 1000f;
         switch (terrains)
         {
             case Selections.Terrains.Land:
-                land.terrainData.SetHeights(0, 0, ClampValues(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight));
+                land.terrainData.SetHeights(0, 0, ClampValues(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight, dmns));
                 break;
             case Selections.Terrains.Water:
-                water.terrainData.SetHeights(0, 0, ClampValues(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight));
+                water.terrainData.SetHeights(0, 0, ClampValues(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight, dmns));
                 break;
         }
     }

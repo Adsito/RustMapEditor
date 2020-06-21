@@ -314,11 +314,11 @@ namespace RustMapEditor.UI
             normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, normaliseHigh);
             normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
             if (EditorGUI.EndChangeCheck() && autoUpdate == true)
-                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
+                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.normaliseMap))
-                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land);
+                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
         }
@@ -330,9 +330,9 @@ namespace RustMapEditor.UI
             height = Elements.ToolbarSlider(ToolTips.heightToSet, height, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setLandHeight))
-                MapManager.SetHeightmap(height, Selections.Terrains.Land);
+                MapManager.SetHeightmap(height, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setWaterHeight))
-                MapManager.SetHeightmap(height, Selections.Terrains.Water);
+                MapManager.SetHeightmap(height, Selections.Terrains.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -343,9 +343,9 @@ namespace RustMapEditor.UI
             Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
-                MapManager.ClampHeightmap(heightLow, 1000f, Selections.Terrains.Land);
+                MapManager.ClampHeightmap(heightLow, 1000f, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
-                MapManager.ClampHeightmap(0f, heightHigh, Selections.Terrains.Land);
+                MapManager.ClampHeightmap(0f, heightHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -357,9 +357,9 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             clampOffset = Elements.ToolbarToggle(ToolTips.clampOffset, clampOffset);
             if (Elements.ToolbarButton(ToolTips.offsetLand))
-                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Land);
+                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.offsetWater))
-                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Water);
+                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -369,9 +369,9 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.invertLand))
-                MapManager.InvertHeightmap(Selections.Terrains.Land);
+                MapManager.InvertHeightmap(Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.invertWater))
-                MapManager.InvertHeightmap(Selections.Terrains.Water);
+                MapManager.InvertHeightmap(Selections.Terrains.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
         #endregion
