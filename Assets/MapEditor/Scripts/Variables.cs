@@ -1,4 +1,6 @@
-﻿namespace RustMapEditor.Variables
+﻿using RustMapEditor.Data;
+
+namespace RustMapEditor.Variables
 {
     public struct Conditions
     {
@@ -87,6 +89,11 @@
             this.x1 = x1;
             this.z0 = z0;
             this.z1 = z1;
+        }
+
+        public static Dimensions HeightMapDimensions()
+        {
+            return new Dimensions(0, TerrainManager.GetHeightMapResolution(), 0, TerrainManager.GetHeightMapResolution());
         }
     }
     public enum LandLayers
