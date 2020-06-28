@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
+[ExecuteInEditMode]
 public class SceneObjectHideFlags : MonoBehaviour
 {
     public HideFlags Flags;
 
-    void Start()
+    private void Start()
     {
         gameObject.hideFlags = Flags;
     }
