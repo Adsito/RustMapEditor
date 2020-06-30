@@ -200,7 +200,8 @@ namespace RustMapEditor.UI
             SettingsManager.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.pathRenderDistance, 0, 5000f);
 
             if (EditorGUI.EndChangeCheck())
-                MapManager.SetCullingDistances(SceneView.lastActiveSceneView.camera, SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
+                MapManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
+
             //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
         }
         #endregion
