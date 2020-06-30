@@ -37,9 +37,7 @@ public class MapManagerWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         mainMenuOptions = GUILayout.Toolbar(mainMenuOptions, mainMenu, EditorStyles.toolbarButton);
         if (EditorGUI.EndChangeCheck() && mainMenuOptions == 2)
-        {
             Functions.SetLandLayer((LandLayers)layerIndex);
-        }
 
         #region Menu
         switch (mainMenuOptions)
