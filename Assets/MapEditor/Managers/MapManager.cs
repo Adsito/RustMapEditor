@@ -33,7 +33,7 @@ public static class MapManager
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
             CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.lastActiveSceneView.camera, SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
+            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
         }
     }
 
@@ -47,12 +47,16 @@ public static class MapManager
         }
     }
 
-    public static void SetCullingDistances(Camera camera, float prefabDist, float pathDist)
+    public static void SetCullingDistances(Camera[] camera, float prefabDist, float pathDist)
     {
         float[] distances = new float[32];
         distances[8] = prefabDist;
         distances[9] = pathDist;
-        camera.layerCullDistances = distances;
+        foreach (var item in camera)
+        {
+            item.layerCullDistances = distances;
+            SceneView.RepaintAll();
+        }
     }
     
     public static List<int> GetEnumSelection<T>(T enumGroup)
@@ -62,9 +66,7 @@ public static class MapManager
         {
             int layer = 1 << i;
             if ((Convert.ToInt32(enumGroup) & layer) != 0)
-            {
                 selectedEnums.Add(i);
-            }
         }
         return selectedEnums;
     }
