@@ -18,12 +18,9 @@ public static class SettingsManager
     static void Init()
     {
         if (!File.Exists(settingsPath))
-        {
             using (StreamWriter write = new StreamWriter(settingsPath, false))
-            {
                 write.Write(JsonUtility.ToJson(DefaultSettings(), true));
-            }
-        }
+
         LoadSettings();
     }
 
