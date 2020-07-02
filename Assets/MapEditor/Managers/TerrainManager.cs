@@ -16,13 +16,15 @@ namespace RustMapEditor.Data
         public static float[,,] BiomeArray { get; private set; }
 
         /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
-        public static float[][,,] TopologyArray { get; private set; }
+        public static float[][,,] TopologyArray { get; private set; } = new float[TerrainTopology.COUNT][,,];
 
         /// <summary>The Terrain layers used by the terrain for paint operations</summary>
-        private static TerrainLayer[] groundTextures = null, biomeTextures = null, miscTextures = null;
+        public static TerrainLayer[] GroundTextures { get; private set; } = null;
+        public static TerrainLayer[] BiomeTextures { get; private set; } = null;
+        public static TerrainLayer[] MiscTextures { get; private set; } = null;
 
         /// <summary>The current slopearray of the terrain.</summary>
-        private static float[,] SlopeArray;
+        public static float[,] SlopeArray { get; private set; }
 
         /// <summary>The LandLayer currently being displayed on the terrain.</summary>
         public static LandLayers LandLayer { get; private set; }
@@ -31,14 +33,14 @@ namespace RustMapEditor.Data
         public static TerrainTopology.Enum TopologyLayer { get; private set; }
 
         /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
-        private static int lastTopologyLayer = 0;
+        public static int lastTopologyLayer { get; private set; } = 0;
 
         /// <summary>The terrain pieces in the scene.</summary>
         public static Terrain land, water;
 
         public static bool LayerSet { get; private set; }
 
-        private static Coroutines Coroutine;
+        private static Coroutines Coroutine  = new Coroutines();
 
         [InitializeOnLoadMethod]
         private static void Init()
@@ -52,8 +54,6 @@ namespace RustMapEditor.Data
         {
             EditorApplication.update -= ProjectLoaded;
             SetTerrainReferences();
-            TopologyArray = new float[TerrainTopology.COUNT][,,];
-            Coroutine = new Coroutines();
         }
 
         public static Vector3 GetTerrainSize()
@@ -85,17 +85,13 @@ namespace RustMapEditor.Data
         public static float[,] GetSlopes()
         {
             if (SlopeArray != null)
-            {
                 return SlopeArray;
-            }
+
             SlopeArray = new float[GetHeightMapResolution(), GetHeightMapResolution()];
             for (int i = 0; i < land.terrainData.alphamapHeight; i++)
-            {
                 for (int j = 0; j < land.terrainData.alphamapHeight; j++)
-                {
                     SlopeArray[j, i] = land.terrainData.GetSteepness((float)i / (float)land.terrainData.alphamapHeight, (float)j / (float)land.terrainData.alphamapHeight);
-                }
-            }
+
             return SlopeArray;
         }
 
@@ -109,9 +105,7 @@ namespace RustMapEditor.Data
         private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
         {
             if (terrain == land)
-            {
                 SlopeArray = null;
-            }
         }
 
         /// <summary>Callback for whenever the alphamap is updated.</summary>
@@ -221,9 +215,9 @@ namespace RustMapEditor.Data
 
         private static void GetTextures()
         {
-            groundTextures = GetGroundTextures();
-            biomeTextures = GetBiomeTextures();
-            miscTextures = GetMiscTextures();
+            GroundTextures = GetGroundTextures();
+            BiomeTextures = GetBiomeTextures();
+            MiscTextures = GetMiscTextures();
             AssetDatabase.SaveAssets();
         }
 
@@ -283,24 +277,24 @@ namespace RustMapEditor.Data
 
             private IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
             {
-                if (groundTextures == null || biomeTextures == null || miscTextures == null)
+                if (GroundTextures == null || BiomeTextures == null || MiscTextures == null)
                     GetTextures();
                 
                 switch (layer)
                 {
                     case LandLayers.Ground:
-                        land.terrainData.terrainLayers = groundTextures;
+                        land.terrainData.terrainLayers = GroundTextures;
                         land.terrainData.SetAlphamaps(0, 0, GroundArray);
                         LandLayer = layer;
                         break;
                     case LandLayers.Biome:
-                        land.terrainData.terrainLayers = biomeTextures;
+                        land.terrainData.terrainLayers = BiomeTextures;
                         land.terrainData.SetAlphamaps(0, 0, BiomeArray);
                         LandLayer = layer;
                         break;
                     case LandLayers.Topology:
                         lastTopologyLayer = topology;
-                        land.terrainData.terrainLayers = miscTextures;
+                        land.terrainData.terrainLayers = MiscTextures;
                         land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
                         LandLayer = layer;
                         break;
