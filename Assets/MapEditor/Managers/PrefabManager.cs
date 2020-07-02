@@ -29,9 +29,7 @@ public static class PrefabManager
     public static GameObject Load(string path)
     {
         if (AssetManager.IsInitialised)
-        {
             return AssetManager.LoadPrefab(path);
-        }
         return DefaultPrefab;
     }
 
