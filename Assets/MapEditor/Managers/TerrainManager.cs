@@ -125,11 +125,11 @@ namespace RustMapEditor.Data
         /// <param name="topology">The Topology layer to change to.</param>
         public static void ChangeLandLayer(LandLayers layer, int topology = 0)
         {
-            if (layer != LandLayers.Alpha && layer != LandLayer)
-            {
+            if (layer == LandLayers.Alpha)
+                return;
+            if (layer == LandLayer)
                 SaveLayer(lastTopologyLayer);
-                SetLayer(layer, topology);
-            }
+            SetLayer(layer, topology);
         }
 
         /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
