@@ -232,9 +232,12 @@ namespace RustMapEditor.UI
             var itemClicked = treeModel.Find(id);
             if (itemClicked.rustID == 0)
                 return;
+
+            PrefabManager.Load(itemClicked.rustID).SetActive(true);
             previewImage = AssetPreview.GetAssetPreview(PrefabManager.Load(itemClicked.rustID));
             if (previewImage == null)
                 previewImage = new Texture2D(60, 60);
+
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
         }
