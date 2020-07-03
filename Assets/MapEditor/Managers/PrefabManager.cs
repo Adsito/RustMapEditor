@@ -55,7 +55,6 @@ public static class PrefabManager
         }
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
-        go.SetActive(true);
         return go;
     }
 
@@ -67,6 +66,7 @@ public static class PrefabManager
         newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
         newObj.name = go.name;
         newObj.GetComponent<PrefabDataHolder>().prefabData = prefabData;
+        newObj.SetActive(true);
     }
 
     /// <summary>Spawns the prefab set in PrefabToSpawn at the spawnPos</summary>
@@ -74,7 +74,7 @@ public static class PrefabManager
     {
         if (PrefabToSpawn != null)
         {
-            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent);
+            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent).SetActive(true);
             PrefabToSpawn = null;
         }
     }
