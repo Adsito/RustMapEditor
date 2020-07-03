@@ -33,17 +33,13 @@ public class SceneViewManager : Editor
     private static void SpawnPrefab()
     {
         if (GetMouseScenePos(out RaycastHit hit))
-        {
             PrefabManager.Spawn(hit.point);
-        }
     }
 
     private static void OnMouseDown()
     {
         if (Event.current.button == 0)
-        {
             SpawnPrefab();
-        }
     }
 
     private static void OnDragExited()
