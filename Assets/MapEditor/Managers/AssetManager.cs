@@ -11,12 +11,12 @@ public static class AssetManager
 
 	public static AssetBundleManifest AssetManifest { get; private set; }
 
-	private static Dictionary<uint, string> IDLookup = new Dictionary<uint, string>();
-	private static Dictionary<string, uint> PathLookup = new Dictionary<string, uint>();
+	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
+	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
 
-	public static Dictionary<string, AssetBundle> Bundles = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, AssetBundle> AssetPaths = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, Object> Cache = new Dictionary<string, Object>();
+	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
+	public static Dictionary<string, AssetBundle> AssetPaths { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
+	public static Dictionary<string, Object> Cache { get; private set; } = new Dictionary<string, Object>();
 
 	public static bool IsInitialised { get; private set; }
 
@@ -69,7 +69,7 @@ public static class AssetManager
 				return;
 			}
 
-			for (uint index = 0; (long)index < (long)Manifest.pooledStrings.Length; ++index)
+			for (uint index = 0; index < Manifest.pooledStrings.Length; ++index)
 			{
 				IDLookup.Add(Manifest.pooledStrings[index].hash, Manifest.pooledStrings[index].str);
 				PathLookup.Add(Manifest.pooledStrings[index].str, Manifest.pooledStrings[index].hash);
@@ -86,7 +86,7 @@ public static class AssetManager
 			Debug.Log("Bundle already loaded.");
 	}
 
-	public static T GetAsset<T>(string filePath) where T : Object
+	private static T GetAsset<T>(string filePath) where T : Object
 	{
 		AssetBundle bundle = null;
 
