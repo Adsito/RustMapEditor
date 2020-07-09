@@ -55,6 +55,7 @@ public static class PrefabManager
         }
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
+        prefabDataHolder.Setup();
         return go;
     }
 
@@ -107,53 +108,22 @@ public static class PrefabManager
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs)
         {
             IsBusy = true;
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(PreparePrefabsCoroutine(prefabs));
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SpawnPrefabsCoroutine(prefabs));
             IsBusy = false;
         }
 
-        private static IEnumerator PreparePrefabsCoroutine(PrefabData[] prefabs)
+        public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
-            for (int i = 0; i < prefabs.Length; i++)
-            {
-                if (sw.Elapsed.TotalSeconds > 0.1f)
-                {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length);
-                    yield return null;
-                }
-                else
-                    ProgressBarManager.AddIncrement();
-
-                Load(prefabs[i].id);
-            }
-            ProgressBarManager.Clear();
+            IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithLoadedCoroutine(prefabs));
+            IsBusy = false;
         }
 
-        private static IEnumerator PreparePrefabsCoroutine(PrefabDataHolder[] prefabs)
+        public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
-            for (int i = 0; i < prefabs.Length; i++)
-            {
-                if (sw.Elapsed.TotalSeconds > 0.1f)
-                {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Processing Prefabs", "Loading Prefabs: " + i + " / " + prefabs.Length);
-                    yield return null;
-                }
-                else
-                    ProgressBarManager.AddIncrement();
-
-                Load(prefabs[i].prefabData.id);
-            }
-            ProgressBarManager.Clear();
+            IsBusy = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithDefaultCoroutine(prefabs));
+            IsBusy = false;
         }
 
         private static IEnumerator SpawnPrefabsCoroutine(PrefabData[] prefabs)
@@ -164,7 +134,7 @@ public static class PrefabManager
             ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 0.1f)
+                if (sw.Elapsed.TotalSeconds > 2f)
                 {
                     sw.Restart();
                     ProgressBarManager.DisplayIncremental("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
@@ -178,14 +148,6 @@ public static class PrefabManager
             ProgressBarManager.Clear();
         }
 
-        public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
-        {
-            IsBusy = true;
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(PreparePrefabsCoroutine(prefabs));
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithLoadedCoroutine(prefabs));
-            IsBusy = false;
-        }
-
         private static IEnumerator ReplaceWithLoadedCoroutine(PrefabDataHolder[] prefabs)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -194,7 +156,7 @@ public static class PrefabManager
             ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 0.1f)
+                if (sw.Elapsed.TotalSeconds > 2f)
                 {
                     ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
@@ -207,13 +169,6 @@ public static class PrefabManager
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
             ProgressBarManager.Clear();
-        }
-
-        public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs)
-        {
-            IsBusy = true;
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithDefaultCoroutine(prefabs));
-            IsBusy = false;
         }
 
         private static IEnumerator ReplaceWithDefaultCoroutine(PrefabDataHolder[] prefabs)
