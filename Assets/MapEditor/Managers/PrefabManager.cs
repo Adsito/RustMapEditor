@@ -55,6 +55,7 @@ public static class PrefabManager
         }
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
+        prefabDataHolder.Setup();
         return go;
     }
 
