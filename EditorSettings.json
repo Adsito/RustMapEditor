@@ -1,9 +1,9 @@
 {
-    "RustDirectory": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Rust",
-    "ObjectQuality": 200,
-    "PrefabRenderDistance": 750.0,
-    "PathRenderDistance": 250.0,
-    "PrefabPaths": [
+    "rustDirectory": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Rust",
+    "prefabRenderDistance": 750.0,
+    "pathRenderDistance": 250.0,
+    "waterTransparency": 0.2,
+    "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
         "assets/bundled/prefabs/bunker_rooms/",
         "assets/bundled/prefabs/caves/",
