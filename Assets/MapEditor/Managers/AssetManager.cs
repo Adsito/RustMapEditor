@@ -26,6 +26,18 @@ public static class AssetManager
 	{
 		if (!IsInitialised)
 		{
+			if (!Directory.Exists(SettingsManager.RustDirectory))
+            {
+				Debug.LogError("Directory does not exist: " + bundlesRoot);
+				return;
+			}
+
+			if (!SettingsManager.RustDirectory.EndsWith("Rust"))
+            {
+				Debug.LogError("Not a valid Rust install directory: " + SettingsManager.RustDirectory);
+				return;
+            }
+
 			ProgressBarManager.Display("Loading Bundles", "Loading Root Bundle", 0.1f);
 			BundlePath = bundlesRoot;
 			var rootBundle = AssetBundle.LoadFromFile(bundlesRoot);
@@ -36,7 +48,6 @@ public static class AssetManager
 			}
 
 			var manifestList = rootBundle.LoadAllAssets<AssetBundleManifest>();
-			
 			if (manifestList.Length != 1)
 			{
 				Debug.LogError("Couldn't find AssetBundleManifest - " + manifestList.Length);
