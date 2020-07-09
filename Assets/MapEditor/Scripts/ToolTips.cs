@@ -64,11 +64,11 @@ namespace RustMapEditor.Variables
         public static GUIContent defaultSettings = new GUIContent("Default", "Sets the settings back to the default.");
         public static GUIContent rustDirectory = new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust");
         public static GUIContent browseRustDirectory = new GUIContent("Browse", "Browse and select the base directory of Rust.");
-        public static GUIContent rustDirectoryPath = new GUIContent(SettingsManager.rustDirectory, "The install directory of Rust on the local PC.");
+        public static GUIContent rustDirectoryPath = new GUIContent(SettingsManager.RustDirectory, "The install directory of Rust on the local PC.");
         public static GUIContent renderDistanceLabel = new GUIContent("Render Distance");
         public static GUIContent prefabRenderDistance = new GUIContent("Prefabs", "Changes the distance prefabs can be seen from.");
         public static GUIContent pathRenderDistance = new GUIContent("Paths", "Changes the distance paths can be seen from.");
-        public static GUIContent objectQuality = new GUIContent("Object Quality", "Controls the LODs shown and the distances they render from. Provides 1:1 clarity with ingame.");
+        public static GUIContent waterTransparency = new GUIContent("Water Transparency", "Controls the transparency of the water terrain.");
 
         public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
         public static GUIContent loadMap = new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file.");

@@ -28,12 +28,12 @@ public static class MapManager
     /// <summary>Executes once when the project finished loading.</summary>
     static void OnProjectLoad()
     {
-        if (land != null)
+        if (Land != null)
         {
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
             CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
+            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
         }
     }
 
@@ -169,10 +169,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, Rotate(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), CW, dmns));
+                    Land.terrainData.SetHeights(0, 0, Rotate(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, Rotate(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), CW, dmns));
+                    Water.terrainData.SetHeights(0, 0, Rotate(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
                     break;
             }
         }
@@ -188,10 +188,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, SetValues(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), height, dmns));
+                    Land.terrainData.SetHeights(0, 0, SetValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, SetValues(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), height, dmns));
+                    Water.terrainData.SetHeights(0, 0, SetValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
                     break;
             }
         }
@@ -205,10 +205,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, Invert(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), dmns));
+                    Land.terrainData.SetHeights(0, 0, Invert(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, Invert(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), dmns));
+                    Water.terrainData.SetHeights(0, 0, Invert(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), dmns));
                     break;
             }
         }
@@ -225,10 +225,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, Normalise(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), normaliseLow, normaliseHigh, dmns));
+                    Land.terrainData.SetHeights(0, 0, Normalise(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), normaliseLow, normaliseHigh, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, Normalise(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), normaliseLow, normaliseHigh, dmns));
+                    Water.terrainData.SetHeights(0, 0, Normalise(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), normaliseLow, normaliseHigh, dmns));
                     break;
             }
         }
@@ -240,8 +240,8 @@ public static class MapManager
     public static void TerraceErodeHeightmap(float featureSize, float interiorCornerWeight)
     {
         Material mat = new Material((Shader)AssetDatabase.LoadAssetAtPath("Packages/com.unity.terrain-tools/Shaders/TerraceErosion.shader", typeof(Shader)));
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(land, heightmapCentre, land.terrainData.size.x, 0.0f);
-        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(land, brushXform.GetBrushXYBounds());
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, heightmapCentre, Land.terrainData.size.x, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
         mat.SetTexture("_BrushTex", terrainFilterTexture);
         mat.SetVector("_BrushParams", brushParams);
@@ -256,8 +256,8 @@ public static class MapManager
     public static void SmoothHeightmap(float filterStrength, float blurDirection)
     {
         Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(land, heightmapCentre, land.terrainData.size.x, 0.0f);
-        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(land, brushXform.GetBrushXYBounds());
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, heightmapCentre, Land.terrainData.size.x, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
         mat.SetTexture("_BrushTex", terrainFilterTexture);
         mat.SetVector("_BrushParams", brushParams);
@@ -279,10 +279,10 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    land.terrainData.SetHeights(0, 0, Offset(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset, dmns));
+                    Land.terrainData.SetHeights(0, 0, Offset(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), offset, clampOffset, dmns));
                     break;
                 case 1:
-                    water.terrainData.SetHeights(0, 0, Offset(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), offset, clampOffset, dmns));
+                    Water.terrainData.SetHeights(0, 0, Offset(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), offset, clampOffset, dmns));
                     break;
             }
         }
@@ -297,10 +297,10 @@ public static class MapManager
         switch (terrains)
         {
             case Selections.Terrains.Land:
-                land.terrainData.SetHeights(0, 0, ClampValues(land.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight, dmns));
+                Land.terrainData.SetHeights(0, 0, ClampValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), minimumHeight, maximumHeight, dmns));
                 break;
             case Selections.Terrains.Water:
-                water.terrainData.SetHeights(0, 0, ClampValues(water.terrainData.GetHeights(0, 0, GetHeightMapResolution(), GetHeightMapResolution()), minimumHeight, maximumHeight, dmns));
+                Water.terrainData.SetHeights(0, 0, ClampValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), minimumHeight, maximumHeight, dmns));
                 break;
         }
     }
@@ -310,21 +310,21 @@ public static class MapManager
     /// <param name="z">The Z coordinate.</param>
     public static float GetHeight(int x, int z)
     {
-        float xNorm = (float)x / (float)land.terrainData.alphamapHeight;
-        float yNorm = (float)z / (float)land.terrainData.alphamapHeight;
-        float height = land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
+        float xNorm = (float)x / (float)Land.terrainData.alphamapHeight;
+        float yNorm = (float)z / (float)Land.terrainData.alphamapHeight;
+        float height = Land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
         return height;
     }
 
     /// <summary>Returns a 2D array of the height values.</summary>
     public static float[,] GetHeights()
     {
-        return land.terrainData.GetInterpolatedHeights(0, 0, land.terrainData.alphamapHeight, land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight, 1f / (float)land.terrainData.alphamapHeight);
+        return Land.terrainData.GetInterpolatedHeights(0, 0, Land.terrainData.alphamapHeight, Land.terrainData.alphamapHeight, 1f / (float)Land.terrainData.alphamapHeight, 1f / (float)Land.terrainData.alphamapHeight);
     }
 
     public static float[,] GetWaterHeights()
     {
-        return water.terrainData.GetInterpolatedHeights(0, 0, water.terrainData.alphamapHeight, water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight, 1f / (float)water.terrainData.alphamapHeight);
+        return Water.terrainData.GetInterpolatedHeights(0, 0, Water.terrainData.alphamapHeight, Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight);
     }
 
     /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
@@ -332,9 +332,9 @@ public static class MapManager
     /// <param name="z">The Z coordinate.</param>
     public static float GetSlope(int x, int z)
     {
-        float xNorm = (float)x / land.terrainData.alphamapHeight;
-        float yNorm = (float)z / land.terrainData.alphamapHeight;
-        float slope = land.terrainData.GetSteepness(xNorm, yNorm);
+        float xNorm = (float)x / Land.terrainData.alphamapHeight;
+        float yNorm = (float)z / Land.terrainData.alphamapHeight;
+        float slope = Land.terrainData.GetSteepness(xNorm, yNorm);
         return slope;
     }
 
@@ -408,7 +408,7 @@ public static class MapManager
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintConditional(LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
-        int splatRes = GetSplatMapResolution();
+        int splatRes = SplatMapRes;
         bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
 
         ProgressBarManager.Display("Paint Conditional", "Checking Ground", 0f);
@@ -1001,19 +1001,19 @@ public static class MapManager
     /// <summary>Loads and sets the Land and Water terrains.</summary>
     public static void LoadTerrains(MapInfo terrains)
     {
-        land.terrainData.heightmapResolution = terrains.terrainRes;
-        land.terrainData.size = terrains.size;
+        Land.terrainData.heightmapResolution = terrains.terrainRes;
+        Land.terrainData.size = terrains.size;
 
-        water.terrainData.heightmapResolution = terrains.terrainRes;
-        water.terrainData.size = terrains.size;
+        Water.terrainData.heightmapResolution = terrains.terrainRes;
+        Water.terrainData.size = terrains.size;
 
-        land.terrainData.SetHeights(0, 0, terrains.land.heights);
-        water.terrainData.SetHeights(0, 0, terrains.water.heights);
+        Land.terrainData.SetHeights(0, 0, terrains.land.heights);
+        Water.terrainData.SetHeights(0, 0, terrains.water.heights);
 
-        land.terrainData.alphamapResolution = terrains.splatRes;
-        land.terrainData.baseMapResolution = terrains.splatRes;
-        water.terrainData.alphamapResolution = terrains.splatRes;
-        water.terrainData.baseMapResolution = terrains.splatRes;
+        Land.terrainData.alphamapResolution = terrains.splatRes;
+        Land.terrainData.baseMapResolution = terrains.splatRes;
+        Water.terrainData.alphamapResolution = terrains.splatRes;
+        Water.terrainData.baseMapResolution = terrains.splatRes;
 
         AreaManager.Reset();
     }
@@ -1092,7 +1092,7 @@ public static class MapManager
     {
         SaveLayer(TerrainTopology.TypeToIndex((int)TopologyLayer));
         ProgressBarManager.Display("Saving Map: " + path, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = TerrainToWorld(land, water);
+        WorldSerialization world = TerrainToWorld(Land, Water);
         ProgressBarManager.Display("Saving Map: " + path, "Saving to disk ", 0.8f);
         world.Save(path);
         ProgressBarManager.Clear();
@@ -1105,8 +1105,8 @@ public static class MapManager
         LoadMapInfo(EmptyMap(size), "New Map");
         PaintLayer(LandLayers.Ground, ground);
         PaintLayer(LandLayers.Biome, biome);
-        SetHeightmap(landHeight, Selections.Terrains.Land, new Dimensions(0, GetHeightMapResolution(), 0, GetHeightMapResolution()));
-        SetHeightmap(500f, Selections.Terrains.Water, new Dimensions(0, GetHeightMapResolution(), 0, GetHeightMapResolution()));
+        SetHeightmap(landHeight, Selections.Terrains.Land, new Dimensions(0, HeightMapRes, 0, HeightMapRes));
+        SetHeightmap(500f, Selections.Terrains.Water, new Dimensions(0, HeightMapRes, 0, HeightMapRes));
     }
 
     public static List<string> generationPresetList = new List<string>();

@@ -6,19 +6,20 @@ using RustMapEditor.Variables;
 
 public static class SettingsManager
 {
-    public const string settingsPath = "EditorSettings.json";
-    public const string bundlePathExt = @"\Bundles\Bundles";
+    public const string SettingsPath = "EditorSettings.json";
+    public const string BundlePathExt = @"\Bundles\Bundles";
 
-    public static string rustDirectory;
-    public static int objectQuality;
-    public static float prefabRenderDistance, pathRenderDistance;
-    public static string[] prefabPaths;
+    public static string RustDirectory { get; set; }
+    public static float PrefabRenderDistance { get; set; }
+    public static float PathRenderDistance { get; set; }
+    public static float WaterTransparency { get; set; }
+    public static string[] PrefabPaths { get; private set; }
 
     [InitializeOnLoadMethod]
-    static void Init()
+    private static void Init()
     {
-        if (!File.Exists(settingsPath))
-            using (StreamWriter write = new StreamWriter(settingsPath, false))
+        if (!File.Exists(SettingsPath))
+            using (StreamWriter write = new StreamWriter(SettingsPath, false))
                 write.Write(JsonUtility.ToJson(DefaultSettings(), true));
 
         LoadSettings();
@@ -30,11 +31,10 @@ public static class SettingsManager
         SetDefaultSettings();
         EditorSettings editorSettings = new EditorSettings
         {
-            ObjectQuality = objectQuality,
-            RustDirectory = rustDirectory,
-            PrefabRenderDistance = prefabRenderDistance,
-            PathRenderDistance = pathRenderDistance,
-            PrefabPaths = prefabPaths
+            rustDirectory = RustDirectory,
+            prefabRenderDistance = PrefabRenderDistance,
+            pathRenderDistance = PathRenderDistance,
+            prefabPaths = PrefabPaths
         };
         return editorSettings;
     }
@@ -42,15 +42,15 @@ public static class SettingsManager
     /// <summary>Saves the current EditorSettings to a JSON file.</summary>
     public static void SaveSettings()
     {
-        using (StreamWriter write = new StreamWriter(settingsPath, false))
+        using (StreamWriter write = new StreamWriter(SettingsPath, false))
         {
             EditorSettings editorSettings = new EditorSettings()
             {
-                ObjectQuality = objectQuality,
-                RustDirectory = rustDirectory,
-                PrefabRenderDistance = prefabRenderDistance,
-                PathRenderDistance = pathRenderDistance,
-                PrefabPaths = prefabPaths
+                rustDirectory = RustDirectory,
+                prefabRenderDistance = PrefabRenderDistance,
+                pathRenderDistance = PathRenderDistance,
+                waterTransparency = WaterTransparency,
+                prefabPaths = PrefabPaths
             };
             write.Write(JsonUtility.ToJson(editorSettings, true));
         }
@@ -59,32 +59,32 @@ public static class SettingsManager
     /// <summary>Loads and sets the current EditorSettings from a JSON file.</summary>
     public static void LoadSettings()
     {
-        using (StreamReader reader = new StreamReader(settingsPath))
+        using (StreamReader reader = new StreamReader(SettingsPath))
         {
             EditorSettings editorSettings = JsonUtility.FromJson<EditorSettings>(reader.ReadToEnd());
-            rustDirectory = editorSettings.RustDirectory;
-            objectQuality = editorSettings.ObjectQuality;
-            prefabRenderDistance = editorSettings.PrefabRenderDistance;
-            pathRenderDistance = editorSettings.PathRenderDistance;
-            prefabPaths = editorSettings.PrefabPaths;
+            RustDirectory = editorSettings.rustDirectory;
+            PrefabRenderDistance = editorSettings.prefabRenderDistance;
+            PathRenderDistance = editorSettings.pathRenderDistance;
+            WaterTransparency = editorSettings.waterTransparency;
+            PrefabPaths = editorSettings.prefabPaths;
         }
     }
 
     /// <summary> Sets the EditorSettings back to default values.</summary>
     public static void SetDefaultSettings()
     {
-        rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust";
-        ToolTips.rustDirectoryPath.text = rustDirectory;
-        objectQuality = 200;
-        prefabRenderDistance = 750f;
-        pathRenderDistance = 250f;
+        RustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust";
+        ToolTips.rustDirectoryPath.text = RustDirectory;
+        PrefabRenderDistance = 750f;
+        PathRenderDistance = 250f;
+        WaterTransparency = 0.2f;
         SetDefaultPrefabPaths();
     }
 
     /// <summary>Sets the spawnable prefab paths to default paths.</summary>
     public static void SetDefaultPrefabPaths()
     {
-        prefabPaths = new string[]
+        PrefabPaths = new string[]
         {
             @"assets/bundled/prefabs/autospawn/",
             @"assets/bundled/prefabs/bunker_rooms/",
@@ -110,9 +110,9 @@ public static class SettingsManager
 [Serializable]
 public struct EditorSettings
 {
-    public string RustDirectory;
-    public int ObjectQuality;
-    public float PrefabRenderDistance;
-    public float PathRenderDistance;
-    public string[] PrefabPaths;
+    public string rustDirectory;
+    public float prefabRenderDistance;
+    public float pathRenderDistance;
+    public float waterTransparency;
+    public string[] prefabPaths;
 }
