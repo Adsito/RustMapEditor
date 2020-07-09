@@ -93,7 +93,7 @@ namespace RustMapEditor.Variables
 
         public static Dimensions HeightMapDimensions()
         {
-            return new Dimensions(0, TerrainManager.GetHeightMapResolution(), 0, TerrainManager.GetHeightMapResolution());
+            return new Dimensions(0, TerrainManager.HeightMapRes, 0, TerrainManager.HeightMapRes);
         }
     }
     public enum LandLayers

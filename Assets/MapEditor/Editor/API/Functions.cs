@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
+using RustMapEditor.Data;
 
 namespace RustMapEditor.UI
 {
@@ -37,7 +38,7 @@ namespace RustMapEditor.UI
         [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
         public static void OpenTerrainTools()
         {
-            Selection.activeGameObject = land.gameObject;
+            Selection.activeGameObject = Land.gameObject;
         }
 
         [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
@@ -128,12 +129,12 @@ namespace RustMapEditor.UI
 
         public static void MapInfo()
         {
-            if (land != null)
+            if (Land != null)
             {
                 Elements.BoldLabel(ToolTips.mapInfoLabel);
-                GUILayout.Label("Size: " + land.terrainData.size.x);
-                GUILayout.Label("HeightMap: " + land.terrainData.heightmapResolution + "x" + land.terrainData.heightmapResolution);
-                GUILayout.Label("SplatMap: " + land.terrainData.alphamapResolution + "x" + land.terrainData.alphamapResolution);
+                GUILayout.Label("Size: " + Land.terrainData.size.x);
+                GUILayout.Label("HeightMap: " + Land.terrainData.heightmapResolution + "x" + Land.terrainData.heightmapResolution);
+                GUILayout.Label("SplatMap: " + Land.terrainData.alphamapResolution + "x" + Land.terrainData.alphamapResolution);
             }
         }
 
@@ -176,7 +177,7 @@ namespace RustMapEditor.UI
             if (Elements.ToolbarButton(ToolTips.discardSettings))
             {
                 SettingsManager.LoadSettings();
-                ToolTips.rustDirectoryPath.text = SettingsManager.rustDirectory;
+                ToolTips.rustDirectoryPath.text = SettingsManager.RustDirectory;
             }
             if (Elements.ToolbarButton(ToolTips.defaultSettings))
                 SettingsManager.SetDefaultSettings();
@@ -187,22 +188,26 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.browseRustDirectory))
             {
-                var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", SettingsManager.rustDirectory, "Rust");
-                SettingsManager.rustDirectory = String.IsNullOrEmpty(returnDirectory) ? SettingsManager.rustDirectory : returnDirectory;
-                ToolTips.rustDirectoryPath.text = SettingsManager.rustDirectory;
+                var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", SettingsManager.RustDirectory, "Rust");
+                SettingsManager.RustDirectory = String.IsNullOrEmpty(returnDirectory) ? SettingsManager.RustDirectory : returnDirectory;
+                ToolTips.rustDirectoryPath.text = SettingsManager.RustDirectory;
             }
             Elements.ToolbarLabel(ToolTips.rustDirectoryPath);
             Elements.EndToolbarHorizontal();
 
             Elements.MiniBoldLabel(ToolTips.renderDistanceLabel);
             EditorGUI.BeginChangeCheck();
-            SettingsManager.prefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, SettingsManager.prefabRenderDistance, 0, 5000f);
-            SettingsManager.pathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.pathRenderDistance, 0, 5000f);
+            SettingsManager.PrefabRenderDistance = Elements.ToolbarSlider(ToolTips.prefabRenderDistance, SettingsManager.PrefabRenderDistance, 0, 5000f);
+            SettingsManager.PathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.PathRenderDistance, 0, 5000f);
 
             if (EditorGUI.EndChangeCheck())
-                MapManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.prefabRenderDistance, SettingsManager.pathRenderDistance);
+                MapManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
 
-            //MapEditorSettings.objectQuality = Elements.ToolbarIntSlider(ToolTips.objectQuality, MapEditorSettings.objectQuality, 0, 200);
+            EditorGUI.BeginChangeCheck();
+            SettingsManager.WaterTransparency = Elements.ToolbarSlider(ToolTips.waterTransparency, SettingsManager.WaterTransparency, 0f, 0.5f);
+            if (EditorGUI.EndChangeCheck())
+                SetWaterTransparency(SettingsManager.WaterTransparency);
+
         }
         #endregion
 
@@ -249,7 +254,7 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.loadBundle))
-                AssetManager.Initialise(SettingsManager.rustDirectory + SettingsManager.bundlePathExt);
+                AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
                 AssetManager.Dispose();
             Elements.EndToolbarHorizontal();
@@ -655,8 +660,8 @@ namespace RustMapEditor.UI
         {
             Elements.MiniBoldLabel(ToolTips.areaSelectLabel);
 
-            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, land.terrainData.alphamapResolution);
-            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, land.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, Land.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, Land.terrainData.alphamapResolution);
 
             if (Elements.ToolbarButton(ToolTips.resetArea))
                 AreaManager.Reset();
@@ -851,6 +856,7 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
         #endregion
+
         #region CreateNewMap
         public static void NewMapOptions(ref int mapSize, ref float landHeight, ref Layers layers, CreateMapWindow window) 
         {

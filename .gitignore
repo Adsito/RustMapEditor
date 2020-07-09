@@ -2,7 +2,6 @@
 *.ide-shm
 *.ide-wal
 Library/*
-!Library/LastSceneManagerSetup.txt
 *.bin
 *.info
 *.info
@@ -17,5 +16,3 @@ Library/*
 /obj/
 *.sln
 AssetDump.txt
-PrefabsManifest.txt
-ProjectSettings/ProBuilderSettings.json

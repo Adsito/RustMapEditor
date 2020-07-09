@@ -9,6 +9,6 @@ public static class AreaManager
 
     public static void Reset()
     {
-        Area = new Dimensions(0, TerrainManager.GetSplatMapResolution(), 0, TerrainManager.GetSplatMapResolution());
+        Area = new Dimensions(0, TerrainManager.SplatMapRes, 0, TerrainManager.SplatMapRes);
     }
 }
