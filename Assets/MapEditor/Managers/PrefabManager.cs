@@ -50,6 +50,7 @@ public static class PrefabManager
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
             item.cookingOptions = MeshColliderCookingOptions.None;
+            item.enabled = false;
             item.isTrigger = false;
             item.convex = false;
         }
