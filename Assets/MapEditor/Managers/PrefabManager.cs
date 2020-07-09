@@ -134,7 +134,7 @@ public static class PrefabManager
             ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 1f)
+                if (sw.Elapsed.TotalSeconds > 2f)
                 {
                     sw.Restart();
                     ProgressBarManager.DisplayIncremental("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
@@ -156,7 +156,7 @@ public static class PrefabManager
             ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 1f)
+                if (sw.Elapsed.TotalSeconds > 2f)
                 {
                     ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
