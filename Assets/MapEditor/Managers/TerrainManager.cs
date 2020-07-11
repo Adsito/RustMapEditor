@@ -124,11 +124,7 @@ namespace RustMapEditor.Data
         /// <param name="topology">The Topology layer to change to.</param>
         public static void ChangeLandLayer(LandLayers layer, int topology = 0)
         {
-            if (layer == LandLayers.Alpha)
-                return;
-            if (layer == LandLayer)
-                SaveLayer(LastTopologyLayer);
-            SetLayer(layer, topology);
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.ChangeLayer(layer, topology));
         }
 
         /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
@@ -195,27 +191,10 @@ namespace RustMapEditor.Data
         }
 
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
-        /// <param name="topologyLayer">The Topology layer, if active.</param>
-        public static void SaveLayer(int topologyLayer = 0)
+        /// <param name="topology">The Topology layer, if active.</param>
+        public static void SaveLayer()
         {
-            if (LayerSet == false)
-            {
-                Debug.LogError("Saving Layer before layer is set");
-                return;
-            }
-
-            switch (LandLayer)
-            {
-                case LandLayers.Ground:
-                    GroundArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
-                    break;
-                case LandLayers.Biome:
-                    BiomeArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
-                    break;
-                case LandLayers.Topology:
-                    TopologyArray[topologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
-                    break;
-            }
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.SaveLayer());
         }
 
         private static void GetTextures()
@@ -274,10 +253,22 @@ namespace RustMapEditor.Data
 
         private class Coroutines
         {
+            public IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
+            {
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
+                LayerSet = true;
+            }
+
             public IEnumerator SetLayer(LandLayers layer, int topology = 0)
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
+            }
+
+            public IEnumerator SaveLayer()
+            {
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
             }
 
             private IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
@@ -305,6 +296,28 @@ namespace RustMapEditor.Data
                         break;
                 }
                 TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+                yield return null;
+            }
+
+            private IEnumerator SaveLayerCoroutine()
+            {
+                while (!LayerSet)
+                {
+                    yield return null;
+                }
+
+                switch (LandLayer)
+                {
+                    case LandLayers.Ground:
+                        GroundArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                        break;
+                    case LandLayers.Biome:
+                        BiomeArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                        break;
+                    case LandLayers.Topology:
+                        TopologyArray[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                        break;
+                }
                 yield return null;
             }
         }
