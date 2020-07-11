@@ -1090,7 +1090,7 @@ public static class MapManager
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        SaveLayer(TerrainTopology.TypeToIndex((int)TopologyLayer));
+        SaveLayer();
         ProgressBarManager.Display("Saving Map: " + path, "Saving Prefabs ", 0.4f);
         WorldSerialization world = TerrainToWorld(Land, Water);
         ProgressBarManager.Display("Saving Map: " + path, "Saving to disk ", 0.8f);
