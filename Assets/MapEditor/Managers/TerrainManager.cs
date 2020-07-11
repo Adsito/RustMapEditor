@@ -264,6 +264,8 @@ namespace RustMapEditor.Data
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
+                foreach (var item in Land.terrainData.alphamapTextures)
+                    Undo.ClearUndo(item);
             }
 
             public IEnumerator SaveLayer()
