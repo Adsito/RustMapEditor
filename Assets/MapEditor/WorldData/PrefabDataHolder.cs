@@ -29,4 +29,10 @@ public class PrefabDataHolder : MonoBehaviour
         newPos.y = Land.SampleHeight(transform.position);
         transform.position = newPos;
     }
+
+    public void ToggleLights()
+    {
+        foreach (var item in gameObject.GetComponentsInChildren<Light>(true))
+            item.enabled = !item.enabled;
+    }
 }
