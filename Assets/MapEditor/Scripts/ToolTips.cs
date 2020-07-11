@@ -92,6 +92,7 @@ namespace RustMapEditor.Variables
         public static GUIContent deleteMapPaths = new GUIContent("Delete All Map Paths", "Removes all the paths from the map.");
 
         public static GUIContent snapToGround = new GUIContent("Snap To Ground", "Snap the selected prefab to the terrain height.");
+        public static GUIContent toggleLights = new GUIContent("Toggle Lights", "Toggles all the lights in the selected prefab on/off.");
 
         public static GUIContent toggleBlend = new GUIContent("Blend", "Blends out the active texture to create a smooth transition the surrounding textures.");
         public static GUIContent rangeLow = new GUIContent("From:", "The lowest value to paint the active texture.");
