@@ -54,6 +54,12 @@ public static class PrefabManager
             item.isTrigger = false;
             item.convex = false;
         }
+
+        foreach (var item in go.GetComponentsInChildren<Animator>()) 
+            item.enabled = false;
+        foreach (var item in go.GetComponentsInChildren<Light>())
+            item.enabled = false;
+
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
         prefabDataHolder.Setup();
