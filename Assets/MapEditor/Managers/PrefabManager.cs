@@ -54,9 +54,11 @@ public static class PrefabManager
             item.isTrigger = false;
             item.convex = false;
         }
-
-        foreach (var item in go.GetComponentsInChildren<Animator>()) 
+        foreach (var item in go.GetComponentsInChildren<Animator>())
+        {
             item.enabled = false;
+            item.runtimeAnimatorController = null;
+        }
         foreach (var item in go.GetComponentsInChildren<Light>())
             item.enabled = false;
 
