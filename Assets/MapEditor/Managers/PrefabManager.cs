@@ -21,7 +21,8 @@ public static class PrefabManager
     {
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        EditorApplication.update -= OnProjectLoad;
+        if (DefaultPrefab != null && PrefabParent != null)
+            EditorApplication.update -= OnProjectLoad;
     }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
