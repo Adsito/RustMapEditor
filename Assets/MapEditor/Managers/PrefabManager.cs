@@ -145,13 +145,10 @@ public static class PrefabManager
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    ProgressBarManager.Display("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     sw.Restart();
                 }
-                else
-                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
-
                 Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
             }
             ProgressBarManager.Clear();
@@ -166,13 +163,10 @@ public static class PrefabManager
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     sw.Restart();
                 }
-                else
-                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
-
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
@@ -188,13 +182,10 @@ public static class PrefabManager
             {
                 if (sw.Elapsed.TotalSeconds > 0.05f)
                 {
-                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     sw.Restart();
                 }
-                else
-                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
-
                 Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
