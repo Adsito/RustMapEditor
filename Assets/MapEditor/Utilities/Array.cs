@@ -358,7 +358,7 @@ namespace RustMapEditor.Maths
                 dmns = AreaManager.Area;
 
             int channelLength = array.GetLength(2);
-            float[,,] newArray = array;
+            float[,,] newArray = new float[array.GetLength(0), array.GetLength(1), array.GetLength(2)];
             if (CW)
             {
                 Parallel.For(dmns.x0, dmns.x1, i =>
