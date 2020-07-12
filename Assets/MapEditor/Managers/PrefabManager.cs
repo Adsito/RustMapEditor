@@ -140,17 +140,16 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
+                    ProgressBarManager.Display("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
+                    sw.Restart();
                 }
                 else
-                    ProgressBarManager.AddIncrement();
+                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
 
                 Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
             }
@@ -162,17 +161,16 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
                     sw.Restart();
                 }
                 else
-                    ProgressBarManager.AddIncrement();
+                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
 
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
@@ -185,17 +183,16 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 0.05f)
                 {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     yield return null;
+                    sw.Restart();
                 }
                 else
-                    ProgressBarManager.AddIncrement();
+                    // Leaving the else block saves 7 seconds on a 4k procgen map. No fkn idea why.
 
                 Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
