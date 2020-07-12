@@ -1073,7 +1073,7 @@ public static class MapManager
         LoadAlphaMaps(terrains);
         LoadPrefabs(terrains);
         LoadPaths(terrains, loadPath);
-        SetLayer(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
+        SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
         ProgressBarManager.Clear();
     }
