@@ -10,7 +10,6 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
-using RustMapEditor.Data;
 
 public static class MapManager
 {
