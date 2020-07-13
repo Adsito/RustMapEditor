@@ -88,9 +88,10 @@ public static class AssetManager
 
 			AssetDump();
 			rootBundle.Unload(true);
+			FixMaterials();
 			IsInitialised = true;
+			
 			ProgressBarManager.Clear();
-
 			PrefabManager.ReplaceWithLoaded(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
 		}
 		else
@@ -193,5 +194,10 @@ public static class AssetManager
 		if (PathLookup.TryGetValue(str, out num))
 			return num;
 		return 0;
+	}
+
+	public static void FixMaterials()
+	{
+		LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON");
 	}
 }
