@@ -112,7 +112,7 @@ namespace RustMapEditor.UI
                         }
                         else
                         {
-                            var treeviewItem = new PrefabsListElement(prefabName, i, prefabID++, manifestString);
+                            var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, manifestString);
                             if (treeviewItem.rustID == 0)
                                 continue;
                             prefabsListElements.Add(treeviewItem);
