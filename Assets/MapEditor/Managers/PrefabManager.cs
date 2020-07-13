@@ -48,6 +48,7 @@ public static class PrefabManager
     {
         go.SetLayerRecursively(8);
         go.SetTagRecursively("Untagged");
+        go.RemoveNameUnderscore();
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
             item.cookingOptions = MeshColliderCookingOptions.None;
