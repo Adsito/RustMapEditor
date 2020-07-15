@@ -1020,7 +1020,7 @@ public static class MapManager
     /// <summary>Loads and sets up the map Prefabs.</summary>
     static void LoadPrefabs(MapInfo terrains)
     {
-        PrefabManager.Spawn(terrains.prefabData);
+        PrefabManager.SpawnPrefabs(terrains.prefabData);
     }
 
     /// <summary>Loads and sets up the map Paths.</summary>
