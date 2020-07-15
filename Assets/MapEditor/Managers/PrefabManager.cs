@@ -26,7 +26,7 @@ public static class PrefabManager
     }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
-    /// <param name="path">The Prefab path in the bundle file.</param>
+    /// <param name="path">The prefab path in the bundle file.</param>
     public static GameObject Load(string path)
     {
         if (AssetManager.IsInitialised)
@@ -70,6 +70,7 @@ public static class PrefabManager
         return go;
     }
 
+    /// <summary>Spawns a prefab, updates the PrefabData and parents to the selected transform.</summary>
     public static void Spawn(GameObject go, PrefabData prefabData, Transform parent)
     {
         GameObject newObj = GameObject.Instantiate(go, parent);
@@ -86,13 +87,15 @@ public static class PrefabManager
     {
         if (PrefabToSpawn != null)
         {
-            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent).SetActive(true);
+            GameObject newObj = GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent);
+            newObj.name = PrefabToSpawn.name;
+            newObj.SetActive(true);
             PrefabToSpawn = null;
         }
     }
 
     /// <summary>Spawns prefabs for map load.</summary>
-    public static void Spawn(PrefabData[] prefabs)
+    public static void SpawnPrefabs(PrefabData[] prefabs)
     {
         if (!Coroutines.IsBusy)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPrefabs(prefabs));
