@@ -73,6 +73,8 @@ public static class AssetManager
 				Bundles.Add(bundles[i], asset);
 				foreach (var filename in asset.GetAllAssetNames())
 					AssetPaths.Add(filename, asset);
+                foreach (var filename in asset.GetAllScenePaths())
+					AssetPaths.Add(filename, asset);
 			}
 
 			Manifest = GetAsset<GameManifest>(ManifestPath);
