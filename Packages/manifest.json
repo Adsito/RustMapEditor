@@ -1,15 +1,15 @@
 {
   "dependencies": {
     "com.unity.editorcoroutines": "1.0.0",
+    "com.unity.inputsystem": "1.0.0",
     "com.unity.terrain-tools": "3.0.1-preview",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.assetbundle": "1.0.0",
-    "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.imgui": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.physics": "1.0.0",
     "com.unity.modules.terrain": "1.0.0",
     "com.unity.modules.terrainphysics": "1.0.0",
-    "com.unity.modules.ui": "1.0.0"
+    "com.unity.modules.uielements": "1.0.0"
   }
 }
