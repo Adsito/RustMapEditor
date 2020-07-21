@@ -10,7 +10,7 @@ public static class AssetManager
 
 	public const string ManifestPath = "assets/manifest.asset";
 	public const string AssetDumpPath = "AssetDump.txt";
-	public const string MaterialsList = "MaterialsList.txt";
+	public const string MaterialsListPath = "MaterialsList.txt";
 
 	public static AssetBundleManifest AssetManifest { get; private set; }
 
@@ -20,6 +20,8 @@ public static class AssetManager
 	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	public static Dictionary<string, AssetBundle> AssetPaths { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	public static Dictionary<string, Object> Cache { get; private set; } = new Dictionary<string, Object>();
+
+	public static List<string> ManifestStrings { get => IsInitialised ? GetManifestStrings() : new List<string>(); private set => ManifestStrings = value; }
 
 	public static bool IsInitialised { get; private set; }
 
@@ -105,9 +107,7 @@ public static class AssetManager
 
 	private static T GetAsset<T>(string filePath) where T : Object
 	{
-		AssetBundle bundle = null;
-
-		if (!AssetPaths.TryGetValue(filePath, out bundle))
+		if (!AssetPaths.TryGetValue(filePath, out AssetBundle bundle))
 			return null;
 
 		return bundle.LoadAsset<T>(filePath);
@@ -185,8 +185,7 @@ public static class AssetManager
 	{
 		if ((int)i == 0)
 			return i.ToString();
-		string str;
-		if (IDLookup.TryGetValue(i, out str))
+		if (IDLookup.TryGetValue(i, out string str))
 			return str;
 		return i.ToString();
 	}
@@ -195,8 +194,7 @@ public static class AssetManager
 	{
 		if (string.IsNullOrEmpty(str))
 			return 0;
-		uint num;
-		if (PathLookup.TryGetValue(str, out num))
+		if (PathLookup.TryGetValue(str, out uint num))
 			return num;
 		return 0;
 	}
@@ -208,13 +206,13 @@ public static class AssetManager
 		Shader std = Shader.Find("Standard");
 		Shader spc = Shader.Find("Standard (Specular setup)");
 
-		if (File.Exists(MaterialsList))
+		if (File.Exists(MaterialsListPath))
         {
-            foreach (var item in File.ReadAllLines(MaterialsList))
+            foreach (var item in File.ReadAllLines(MaterialsListPath))
             {
 				var lineSplit = item.Split(':');
-				lineSplit[0] = lineSplit[0].Trim(' ');
-				lineSplit[1] = lineSplit[1].Trim(' ');
+				lineSplit[0] = lineSplit[0].Trim(' '); // Shader Name
+				lineSplit[1] = lineSplit[1].Trim(' '); // Material Path
 				switch (lineSplit[0])
 				{
 					case "Standard":
