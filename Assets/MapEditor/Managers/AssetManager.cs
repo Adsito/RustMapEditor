@@ -35,7 +35,7 @@ public static class AssetManager
 				return;
 			}
 
-			if (!SettingsManager.RustDirectory.EndsWith("Rust"))
+			if (!SettingsManager.RustDirectory.EndsWith("Rust") && !SettingsManager.RustDirectory.EndsWith("RustStaging"))
             {
 				Debug.LogError("Not a valid Rust install directory: " + SettingsManager.RustDirectory);
 				return;
