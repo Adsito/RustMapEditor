@@ -11,7 +11,7 @@ namespace RustMapEditor.Variables
         public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
         public static GUIContent systemRAM = new GUIContent("RAM: " + SystemInfo.systemMemorySize / 1000 + "GB");
         public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
-        public static GUIContent editorVersion = new GUIContent("Editor Version: v0.1.3");
+        public static GUIContent editorVersion = new GUIContent("Editor Version: v0.1.4");
 
         public static GUIContent runPreset = new GUIContent("Run Preset", "Run this preset with all it's current nodes.");
         public static GUIContent deletePreset = new GUIContent("Delete Preset", "Delete this preset from Unity.");
