@@ -13,5 +13,6 @@ public class PrefabDataHolderEditor : Editor
         Functions.PrefabCategory(script);
         Functions.PrefabID(script);
         Functions.SnapToGround(script);
+        Functions.ToggleLights(script);
     }
 }

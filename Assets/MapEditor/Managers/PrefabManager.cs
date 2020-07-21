@@ -21,11 +21,12 @@ public static class PrefabManager
     {
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        EditorApplication.update -= OnProjectLoad;
+        if (DefaultPrefab != null && PrefabParent != null)
+            EditorApplication.update -= OnProjectLoad;
     }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
-    /// <param name="path">The Prefab path in the bundle file.</param>
+    /// <param name="path">The prefab path in the bundle file.</param>
     public static GameObject Load(string path)
     {
         if (AssetManager.IsInitialised)
@@ -47,6 +48,7 @@ public static class PrefabManager
     {
         go.SetLayerRecursively(8);
         go.SetTagRecursively("Untagged");
+        go.RemoveNameUnderscore();
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
             item.cookingOptions = MeshColliderCookingOptions.None;
@@ -54,12 +56,21 @@ public static class PrefabManager
             item.isTrigger = false;
             item.convex = false;
         }
+        foreach (var item in go.GetComponentsInChildren<Animator>())
+        {
+            item.enabled = false;
+            item.runtimeAnimatorController = null;
+        }
+        foreach (var item in go.GetComponentsInChildren<Light>())
+            item.enabled = false;
+
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
         prefabDataHolder.Setup();
         return go;
     }
 
+    /// <summary>Spawns a prefab, updates the PrefabData and parents to the selected transform.</summary>
     public static void Spawn(GameObject go, PrefabData prefabData, Transform parent)
     {
         GameObject newObj = GameObject.Instantiate(go, parent);
@@ -76,13 +87,15 @@ public static class PrefabManager
     {
         if (PrefabToSpawn != null)
         {
-            GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent).SetActive(true);
+            GameObject newObj = GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent);
+            newObj.name = PrefabToSpawn.name;
+            newObj.SetActive(true);
             PrefabToSpawn = null;
         }
     }
 
     /// <summary>Spawns prefabs for map load.</summary>
-    public static void Spawn(PrefabData[] prefabs)
+    public static void SpawnPrefabs(PrefabData[] prefabs)
     {
         if (!Coroutines.IsBusy)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPrefabs(prefabs));
@@ -132,18 +145,14 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Spawning Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
+                    sw.Restart();
                 }
-                else
-                    ProgressBarManager.AddIncrement();
-
                 Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
             }
             ProgressBarManager.Clear();
@@ -154,18 +163,14 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 1.5f)
                 {
-                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
                     sw.Restart();
                 }
-                else
-                    ProgressBarManager.AddIncrement();
-
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
@@ -177,18 +182,14 @@ public static class PrefabManager
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            ProgressBarManager.SetProgressIncrement(1f / prefabs.Length);
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 0.05f)
                 {
-                    sw.Restart();
-                    ProgressBarManager.DisplayIncremental("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     yield return null;
+                    ProgressBarManager.Display("Replacing Prefabs", "Spawning Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
+                    sw.Restart();
                 }
-                else
-                    ProgressBarManager.AddIncrement();
-
                 Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }

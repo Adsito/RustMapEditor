@@ -10,7 +10,6 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
-using RustMapEditor.Data;
 
 public static class MapManager
 {
@@ -1021,7 +1020,7 @@ public static class MapManager
     /// <summary>Loads and sets up the map Prefabs.</summary>
     static void LoadPrefabs(MapInfo terrains)
     {
-        PrefabManager.Spawn(terrains.prefabData);
+        PrefabManager.SpawnPrefabs(terrains.prefabData);
     }
 
     /// <summary>Loads and sets up the map Paths.</summary>
@@ -1073,7 +1072,7 @@ public static class MapManager
         LoadAlphaMaps(terrains);
         LoadPrefabs(terrains);
         LoadPaths(terrains, loadPath);
-        SetLayer(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
+        SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
         splatMapTask.Wait();
         ProgressBarManager.Clear();
     }
