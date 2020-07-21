@@ -17,7 +17,7 @@ public class PrefabDataHolder : MonoBehaviour
 
     public void UpdatePrefabData()
     {
-        prefabData.position = gameObject.transform.position - (0.5f * Land.terrainData.size);
+        prefabData.position = gameObject.transform.position - MapOffset;
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }

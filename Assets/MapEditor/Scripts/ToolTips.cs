@@ -24,6 +24,9 @@ namespace RustMapEditor.Variables
         public static GUIContent showAllPrefabs = new GUIContent("Show All", "Display all the prefabs with a prefab ID. Prefabs from this list are not guaranteed to work.");
         public static GUIContent treeViewRefresh = new GUIContent("Refresh", "Refreshes the current treeview model and data.");
 
+        public static GUIContent hierachyOptionsLabel = new GUIContent("Hierachy Options", "Options which will affect all selected elements in the hierachy.");
+        public static GUIContent hierachyDelete = new GUIContent("Delete", "Deletes the selected objects from the map.");
+
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");
         public static GUIContent prefabHierachyCategory = new GUIContent("Category", "The prefab category if from Rust.");

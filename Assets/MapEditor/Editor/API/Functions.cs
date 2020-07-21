@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
-using RustMapEditor.Data;
 
 namespace RustMapEditor.UI
 {
@@ -828,7 +827,7 @@ namespace RustMapEditor.UI
         }
         #endregion
 
-        #region PrefabsList
+        #region TreeViews
         public static void DisplayPrefabName(string name)
         {
             Elements.BeginToolbarHorizontal();
@@ -863,6 +862,17 @@ namespace RustMapEditor.UI
                 treeView.RefreshTreeView(showAllPrefabs);
             Elements.EndToolbarHorizontal();
         }
+
+        public static void HierachyOptions(PrefabDataHolder[] prefabs)
+        {
+            Elements.MiniBoldLabel(ToolTips.hierachyOptionsLabel);
+
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.hierachyDelete))
+                PrefabManager.DeletePrefabs(prefabs);
+
+            Elements.EndToolbarHorizontal();
+        }
         #endregion
 
         #region CreateNewMap
@@ -892,6 +902,7 @@ namespace RustMapEditor.UI
                         return;
                     case 2:
                         Functions.SaveMapPanel();
+                        SaveMapPanel();
                         break;
                 }
                 MapManager.CreateMap(mapSize, TerrainSplat.TypeToIndex((int)layers.Ground), TerrainBiome.TypeToIndex((int)layers.Biome), landHeight);

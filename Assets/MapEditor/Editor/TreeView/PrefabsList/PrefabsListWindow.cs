@@ -21,7 +21,7 @@ namespace RustMapEditor.UI
 			get { return new Rect(20, 30, position.width - position.width / 3, position.height - 45); }
 		}
 
-		Rect prefabPathsRect
+		Rect optionsRect
 		{
 			get { return new Rect(position.width / 3 * 2 + 40, 10, position.width - (position.width / 3 * 2 + 40) - 20, 50); }
 		}
@@ -111,25 +111,24 @@ namespace RustMapEditor.UI
 		void OnGUI()
 		{
 			InitIfNeeded();
-			SearchBar(searchBarRect);
-			DoTreeView(multiColumnTreeViewRect);
-			DrawPrefabPaths(prefabPathsRect, treeView, ref showAllPrefabs);
+			DrawSearchBar(searchBarRect);
+			DrawTreeView(multiColumnTreeViewRect);
+			DrawOptions(optionsRect, treeView, ref showAllPrefabs);
 			DrawPreviewImage(previewImageRect);
 			DrawPreviewDetails(previewImageDetails);
 		}
 
-		void SearchBar(Rect rect)
+		void DrawSearchBar(Rect rect)
 		{
 			treeView.searchString = m_SearchField.OnGUI(rect, treeView.searchString);
 		}
 
-
-		void DoTreeView(Rect rect)
+		void DrawTreeView(Rect rect)
 		{
 			m_TreeView.OnGUI(rect);
 		}
 
-		void DrawPrefabPaths(Rect rect, PrefabsListTreeView treeView, ref bool showAllPrefabs)
+		void DrawOptions(Rect rect, PrefabsListTreeView treeView, ref bool showAllPrefabs)
 		{
 			GUILayout.BeginArea(rect);
 			Functions.SelectPrefabPaths(treeView, ref showAllPrefabs);
