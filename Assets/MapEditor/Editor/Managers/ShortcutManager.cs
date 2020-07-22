@@ -3,6 +3,8 @@ using UnityEditor.ShortcutManagement;
 using RustMapEditor.UI;
 using RustMapEditor.Data;
 using RustMapEditor.Variables;
+using UnityEngine;
+using UnityEditor.EditorTools;
 
 public static class ShortcutManager
 {
@@ -64,5 +66,23 @@ public static class ShortcutManager
     public static void InvertLand()
     {
         MapManager.InvertHeightmap(Selections.Terrains.Land);
+    }
+
+    [Shortcut("RustMapEditor/Move Tool", KeyCode.W, ShortcutModifiers.Shift)]
+    public static void SelectMoveTool()
+    {
+        EditorTools.SetActiveTool(typeof(MoveToolCentred));
+    }
+
+    [Shortcut("RustMapEditor/Rotate Tool", KeyCode.E, ShortcutModifiers.Shift)]
+    public static void SelectRotateTool()
+    {
+        EditorTools.SetActiveTool(typeof(RotateToolCentred));
+    }
+
+    [Shortcut("RustMapEditor/Scale Tool", KeyCode.R, ShortcutModifiers.Shift)]
+    public static void SelectScaleTool()
+    {
+        EditorTools.SetActiveTool(typeof(ScaleToolCentred));
     }
 }
