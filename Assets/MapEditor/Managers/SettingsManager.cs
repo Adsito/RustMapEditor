@@ -13,6 +13,7 @@ public static class SettingsManager
     public static float PrefabRenderDistance { get; set; }
     public static float PathRenderDistance { get; set; }
     public static float WaterTransparency { get; set; }
+    public static bool LoadBundleOnProjectLoad { get; set; }
     public static string[] PrefabPaths { get; private set; }
 
     [InitializeOnLoadMethod]
@@ -34,6 +35,8 @@ public static class SettingsManager
             rustDirectory = RustDirectory,
             prefabRenderDistance = PrefabRenderDistance,
             pathRenderDistance = PathRenderDistance,
+            waterTransparency = WaterTransparency,
+            loadbundleonprojectload = LoadBundleOnProjectLoad,
             prefabPaths = PrefabPaths
         };
         return editorSettings;
@@ -50,6 +53,7 @@ public static class SettingsManager
                 prefabRenderDistance = PrefabRenderDistance,
                 pathRenderDistance = PathRenderDistance,
                 waterTransparency = WaterTransparency,
+                loadbundleonprojectload = LoadBundleOnProjectLoad,
                 prefabPaths = PrefabPaths
             };
             write.Write(JsonUtility.ToJson(editorSettings, true));
@@ -66,6 +70,7 @@ public static class SettingsManager
             PrefabRenderDistance = editorSettings.prefabRenderDistance;
             PathRenderDistance = editorSettings.pathRenderDistance;
             WaterTransparency = editorSettings.waterTransparency;
+            LoadBundleOnProjectLoad = editorSettings.loadbundleonprojectload;
             PrefabPaths = editorSettings.prefabPaths;
         }
     }
@@ -78,6 +83,7 @@ public static class SettingsManager
         PrefabRenderDistance = 700f;
         PathRenderDistance = 250f;
         WaterTransparency = 0.2f;
+        LoadBundleOnProjectLoad = false;
         SetDefaultPrefabPaths();
     }
 
@@ -114,5 +120,6 @@ public struct EditorSettings
     public float prefabRenderDistance;
     public float pathRenderDistance;
     public float waterTransparency;
+    public bool loadbundleonprojectload;
     public string[] prefabPaths;
 }

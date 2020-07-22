@@ -207,6 +207,10 @@ namespace RustMapEditor.UI
             if (EditorGUI.EndChangeCheck())
                 SetWaterTransparency(SettingsManager.WaterTransparency);
 
+            Elements.BeginToolbarHorizontal();
+            SettingsManager.LoadBundleOnProjectLoad = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnProjectLoad);
+            Elements.EndToolbarHorizontal();
+
         }
         #endregion
 

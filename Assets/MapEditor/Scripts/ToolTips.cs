@@ -72,6 +72,7 @@ namespace RustMapEditor.Variables
         public static GUIContent prefabRenderDistance = new GUIContent("Prefabs", "Changes the distance prefabs can be seen from.");
         public static GUIContent pathRenderDistance = new GUIContent("Paths", "Changes the distance paths can be seen from.");
         public static GUIContent waterTransparency = new GUIContent("Water Transparency", "Controls the transparency of the water terrain.");
+        public static GUIContent loadBundleOnProjectLoad = new GUIContent("Load Bundle on Project Load", "Loads the Rust bundles automatically on project load.");
 
         public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
         public static GUIContent loadMap = new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file.");
