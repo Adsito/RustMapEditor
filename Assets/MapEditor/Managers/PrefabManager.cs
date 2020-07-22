@@ -4,6 +4,7 @@ using RustMapEditor.Data;
 using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
+using System.Linq;
 
 public static class PrefabManager
 {
@@ -22,7 +23,12 @@ public static class PrefabManager
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         if (DefaultPrefab != null && PrefabParent != null)
+        {
             EditorApplication.update -= OnProjectLoad;
+            if (!AssetManager.IsInitialised && SettingsManager.LoadBundleOnProjectLoad)
+                AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
+        }
+            
     }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
@@ -97,47 +103,63 @@ public static class PrefabManager
     /// <summary>Spawns prefabs for map load.</summary>
     public static void SpawnPrefabs(PrefabData[] prefabs)
     {
-        if (!Coroutines.IsBusy)
+        if (!Coroutines.IsChangingPrefabs)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPrefabs(prefabs));
+    }
+
+    /// <summary>Deletes prefabs from scene.</summary>
+    public static void DeletePrefabs(PrefabDataHolder[] prefabs)
+    {
+        if (!Coroutines.IsChangingPrefabs)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.DeletePrefabs(prefabs));
     }
 
     /// <summary>Replaces the selected prefabs with ones from the Rust bundles.</summary>
     public static void ReplaceWithLoaded(PrefabDataHolder[] prefabs)
     {
-        if (AssetManager.IsInitialised && !Coroutines.IsBusy)
+        if (AssetManager.IsInitialised && !Coroutines.IsChangingPrefabs)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ReplaceWithLoaded(prefabs));
     }
 
     /// <summary>Replaces the selected prefabs with the default prefabs.</summary>
     public static void ReplaceWithDefault(PrefabDataHolder[] prefabs)
     {
-        if (!Coroutines.IsBusy)
+        if (!Coroutines.IsChangingPrefabs)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ReplaceWithDefault(prefabs));
     }
 
     private static class Coroutines
     {
-        public static bool IsBusy { get; private set; }
+        public static bool IsChangingPrefabs { get; private set; }
 
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs)
         {
-            IsBusy = true;
+            IsChangingPrefabs = true;
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SpawnPrefabsCoroutine(prefabs));
-            IsBusy = false;
+            IsChangingPrefabs = false;
+        }
+
+        public static IEnumerator DeletePrefabs(PrefabDataHolder[] prefabs)
+        {
+            IsChangingPrefabs = true;
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(DeletePrefabsCoroutine(prefabs));
+            IsChangingPrefabs = false;
         }
 
         public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs)
         {
-            IsBusy = true;
+            IsChangingPrefabs = true;
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithLoadedCoroutine(prefabs));
-            IsBusy = false;
+            IsChangingPrefabs = false;
         }
 
         public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs)
         {
-            IsBusy = true;
+            IsChangingPrefabs = true;
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(ReplaceWithDefaultCoroutine(prefabs));
-            IsBusy = false;
+            IsChangingPrefabs = false;
+        }
+
         }
 
         private static IEnumerator SpawnPrefabsCoroutine(PrefabData[] prefabs)
@@ -154,6 +176,24 @@ public static class PrefabManager
                     sw.Restart();
                 }
                 Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
+            }
+            ProgressBarManager.Clear();
+        }
+
+        private static IEnumerator DeletePrefabsCoroutine(PrefabDataHolder[] prefabs)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.5f)
+                {
+                    yield return null;
+                    ProgressBarManager.Display("Deleting Prefabs", "Deleting Prefabs: " + i + " / " + prefabs.Length, (float)i / prefabs.Length);
+                    sw.Restart();
+                }
+                GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
             ProgressBarManager.Clear();
         }

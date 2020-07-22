@@ -22,6 +22,11 @@ namespace RustMapEditor.UI
             GUILayout.Label(guiContent, EditorStyles.toolbarButton);
         }
 
+        public static bool ToolbarCheckBox(GUIContent guiContent, bool toggle)
+        {
+            return EditorGUILayout.ToggleLeft(guiContent, toggle, "ToolbarButton");
+        }
+
         public static void ToolbarLabelField(GUIContent label, GUIContent label2)
         {
             EditorGUILayout.LabelField(label, label2);
