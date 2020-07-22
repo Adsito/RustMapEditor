@@ -905,7 +905,6 @@ namespace RustMapEditor.UI
                     case 1:
                         return;
                     case 2:
-                        Functions.SaveMapPanel();
                         SaveMapPanel();
                         break;
                 }
