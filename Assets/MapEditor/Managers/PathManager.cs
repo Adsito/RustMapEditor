@@ -27,7 +27,8 @@ public static class PathManager
         DefaultPath = Resources.Load<GameObject>("Paths/Path");
         DefaultNode = Resources.Load<GameObject>("Paths/PathNode");
         PathParent = GameObject.FindGameObjectWithTag("Paths").transform;
-        EditorApplication.update -= OnProjectLoad;
+        if (DefaultPath != null && DefaultNode != null && PathParent != null)
+            EditorApplication.update -= OnProjectLoad;
     }
 
     public static void Spawn(PathData pathData)
