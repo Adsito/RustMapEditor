@@ -993,8 +993,8 @@ public static class MapManager
     /// <summary>Centres the Prefab and Path parent objects.</summary>
     static void CentreSceneObjects(MapInfo terrains)
     {
-        GameObject.FindGameObjectWithTag("Prefabs").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
-        GameObject.FindGameObjectWithTag("Paths").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
+        PrefabManager.PrefabParent.GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
+        PathManager.PathParent.GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
     }
 
     /// <summary>Loads and sets the Land and Water terrains.</summary>
@@ -1062,7 +1062,7 @@ public static class MapManager
     }
 
     /// <summary>Loads and sets up the map.</summary>
-    static void LoadMapInfo(MapInfo terrains, string loadPath = "")
+    public static void Load(MapInfo terrains, string loadPath = "")
     {
         ProgressBarManager.Display("Loading: " + loadPath, "Preparing Map", 0.25f);
         var splatMapTask = Task.Run(() => LoadSplatMaps(terrains));
@@ -1090,18 +1090,14 @@ public static class MapManager
     public static void Save(string path)
     {
         SaveLayer();
-        ProgressBarManager.Display("Saving Map: " + path, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = TerrainToWorld(Land, Water);
-        ProgressBarManager.Display("Saving Map: " + path, "Saving to disk ", 0.8f);
-        world.Save(path);
-        ProgressBarManager.Clear();
+        TerrainToWorld(Land, Water).Save(path);
     }
 
     /// <summary>Creates a new flat terrain.</summary>
     /// <param name="size">The size of the terrain.</param>
     public static void CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
     {
-        LoadMapInfo(EmptyMap(size), "New Map");
+        Load(EmptyMap(size), "New Map");
         PaintLayer(LandLayers.Ground, ground);
         PaintLayer(LandLayers.Biome, biome);
         SetHeightmap(landHeight, Selections.Terrains.Land, new Dimensions(0, HeightMapRes, 0, HeightMapRes));
