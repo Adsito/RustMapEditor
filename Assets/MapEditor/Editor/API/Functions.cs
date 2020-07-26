@@ -95,7 +95,7 @@ namespace RustMapEditor.UI
                 return;
             var world = new WorldSerialization();
             world.Load(loadFile);
-            MapManager.Load(world, loadFile);
+            MapManager.Load(WorldConverter.WorldToTerrain(world), loadFile);
             ReloadTreeViews();
         }
 
