@@ -253,6 +253,7 @@ namespace RustMapEditor.UI
             if (itemClicked.rustID != 0)
             {
                 DragAndDrop.PrepareStartDrag();
+                DragAndDrop.SetGenericData(prefabName, itemClicked);
                 DragAndDrop.StartDrag("Spawn Prefab");
                 PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
@@ -277,9 +278,7 @@ namespace RustMapEditor.UI
         {
             PrefabsListElement itemClicked = treeModel.Find(id);
             if (itemClicked.rustID != 0)
-            {
                 PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
-            }
             else
             {
                 var expand = !IsExpanded(id);
