@@ -50,4 +50,10 @@ public static class PathManager
         }
         newObject.GetComponent<PathDataHolder>().pathData = pathData;
     }
+
+    public static void SpawnPaths(PathData[] paths)
+    {
+        for (int i = 0; i < paths.Length; i++)
+            Spawn(paths[i]);
+    }
 }
