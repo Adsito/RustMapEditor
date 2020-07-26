@@ -53,11 +53,8 @@ namespace RustMapEditor.Data
         public static int HeightMapRes { get => Land.terrainData.heightmapResolution; }
         public static int SplatMapRes { get => Land.terrainData.alphamapResolution; }
 
-        
         /// <summary>The state of the layer being applied to the terrain.</summary>
         public static bool LayerSet { get; private set; }
-
-        private static Coroutines Coroutine  = new Coroutines();
 
         [InitializeOnLoadMethod]
         private static void Init()
@@ -124,7 +121,7 @@ namespace RustMapEditor.Data
         /// <param name="topology">The Topology layer to change to.</param>
         public static void ChangeLandLayer(LandLayers layer, int topology = 0)
         {
-            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.ChangeLayer(layer, topology));
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ChangeLayer(layer, topology));
         }
 
         /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
@@ -187,14 +184,14 @@ namespace RustMapEditor.Data
         public static void SetLayer(LandLayers layer, int topology = 0)
         {
             LayerSet = false;
-            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.SetLayer(layer, topology));
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SetLayer(layer, topology));
         }
 
         /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
         /// <param name="topology">The Topology layer, if active.</param>
         public static void SaveLayer()
         {
-            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutine.SaveLayer());
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
         }
 
         private static void GetTextures()
@@ -251,29 +248,27 @@ namespace RustMapEditor.Data
             return textures;
         }
 
-        private class Coroutines
+        private static class Coroutines
         {
-            public IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
+            public static IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
             }
 
-            public IEnumerator SetLayer(LandLayers layer, int topology = 0)
+            public static IEnumerator SetLayer(LandLayers layer, int topology = 0)
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
-                foreach (var item in Land.terrainData.alphamapTextures)
-                    Undo.ClearUndo(item);
             }
 
-            public IEnumerator SaveLayer()
+            public static IEnumerator SaveLayer()
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
             }
 
-            private IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
+            private static IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
             {
                 if (GroundTextures == null || BiomeTextures == null || MiscTextures == null)
                     GetTextures();
@@ -301,7 +296,7 @@ namespace RustMapEditor.Data
                 yield return null;
             }
 
-            private IEnumerator SaveLayerCoroutine()
+            private static IEnumerator SaveLayerCoroutine()
             {
                 while (!LayerSet)
                 {
@@ -320,6 +315,9 @@ namespace RustMapEditor.Data
                         TopologyArray[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
                         break;
                 }
+
+                foreach (var item in Land.terrainData.alphamapTextures)
+                    Undo.ClearUndo(item);
                 yield return null;
             }
         }
