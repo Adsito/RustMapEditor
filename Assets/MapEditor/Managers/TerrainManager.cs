@@ -252,7 +252,7 @@ namespace RustMapEditor.Data
         {
             public static IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
             {
-                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
             }
@@ -261,11 +261,6 @@ namespace RustMapEditor.Data
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
                 LayerSet = true;
-            }
-
-            public static IEnumerator SaveLayer()
-            {
-                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayerCoroutine());
             }
 
             private static IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
@@ -296,7 +291,7 @@ namespace RustMapEditor.Data
                 yield return null;
             }
 
-            private static IEnumerator SaveLayerCoroutine()
+            public static IEnumerator SaveLayer()
             {
                 while (!LayerSet)
                 {
