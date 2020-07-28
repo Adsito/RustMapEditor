@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 using static WorldSerialization;
@@ -8,6 +10,8 @@ public static class PathManager
     public static GameObject DefaultPath { get; private set; }
     public static GameObject DefaultNode { get; private set; }
     public static Transform PathParent { get; private set; }
+
+    public static PathDataHolder[] CurrentMapPaths { get => PathParent.GetComponentsInChildren<PathDataHolder>(); }
 
     public enum PathType
     {
@@ -31,7 +35,7 @@ public static class PathManager
             EditorApplication.update -= OnProjectLoad;
     }
 
-    public static void Spawn(PathData pathData)
+    public static void SpawnPath(PathData pathData)
     {
         Vector3 averageLocation = Vector3.zero;
         for (int j = 0; j < pathData.nodes.Length; j++)
@@ -51,9 +55,57 @@ public static class PathManager
         newObject.GetComponent<PathDataHolder>().pathData = pathData;
     }
 
-    public static void SpawnPaths(PathData[] paths)
+    public static void SpawnPaths(PathData[] paths, int progressID)
     {
-        for (int i = 0; i < paths.Length; i++)
-            Spawn(paths[i]);
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPaths(paths, progressID));
+    }
+
+    public static void DeletePaths(PathDataHolder[] paths, int progressID = 0)
+    {
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.DeletePaths(paths, progressID));
+    }
+
+    private static class Coroutines
+    {
+        public static IEnumerator SpawnPaths(PathData[] paths, int progressID)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    yield return null;
+                    Progress.Report(progressID, (float)i / paths.Length, "Spawning Paths: " + i + " / " + paths.Length);
+                    sw.Restart();
+                }
+                SpawnPath(paths[i]);
+            }
+            Progress.Report(progressID, 0.99f, "Spawned " + paths.Length + " paths.");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+
+        public static IEnumerator DeletePaths(PathDataHolder[] paths, int progressID = 0)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            if (progressID == 0)
+                progressID = Progress.Start("Delete Paths", null, Progress.Options.Sticky);
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.1f)
+                {
+                    yield return null;
+                    Progress.Report(progressID, (float)i / paths.Length, "Deleting Paths: " + i + " / " + paths.Length);
+                    sw.Restart();
+                }
+                GameObject.DestroyImmediate(paths[i].gameObject);
+            }
+            Progress.Report(progressID, 0.99f, "Deleted " + paths.Length + " paths.");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
     }
 }
