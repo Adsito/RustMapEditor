@@ -220,9 +220,9 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.deleteMapPrefabs))
-                MapManager.RemoveMapObjects(true, false);
+                PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
             if (Elements.ToolbarButton(ToolTips.deleteMapPaths))
-                MapManager.RemoveMapObjects(false, true);
+                PathManager.DeletePaths(PathManager.CurrentMapPaths);
             Elements.EndToolbarHorizontal();
         }
         public static void AssetBundle()
