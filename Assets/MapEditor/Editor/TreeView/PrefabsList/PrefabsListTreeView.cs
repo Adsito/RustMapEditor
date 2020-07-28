@@ -86,7 +86,7 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = AssetManager.GetManifestStrings();
+            var manifestStrings = AssetManager.ManifestStrings;
             if (manifestStrings == null)
                 return prefabsListElements;
 
