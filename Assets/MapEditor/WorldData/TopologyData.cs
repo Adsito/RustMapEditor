@@ -24,13 +24,9 @@ public static class TopologyData
             for (int j = 0; j < topology.res; j++)
             {
                 if ((topology[i, j] & layer) != 0)
-                {
-                    splatMap[i, j, 0] = float.MaxValue;
-                }
+                    splatMap[i, j, 0] = 0f;
                 else
-                {
-                    splatMap[i, j, 1] = float.MaxValue;
-                }
+                    splatMap[i, j, 1] = 1f;
             }
         });
         return splatMap;
@@ -46,18 +42,16 @@ public static class TopologyData
                 for (int k = 0; k < topologyMap.res; k++)
                 {
                     if (TopologyArray[i][j, k, 0] > 0)
-                    {
                         topologyMap[j, k] = topologyMap[j, k] | TerrainTopology.IndexToType(i);
-                    }
+
                     if (TopologyArray[i][j, k, 1] > 0)
-                    {
                         topologyMap[j, k] = topologyMap[j, k] & ~TerrainTopology.IndexToType(i);
-                    }
                 }
             });
         });
         top = topologyMap.ToByteArray();
     }
+
     public static void InitMesh(TerrainMap<int> topology)
     {
         top = topology.ToByteArray();

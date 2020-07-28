@@ -35,13 +35,13 @@ public static class ShortcutManager
     [Shortcut("RustMapEditor/Clear Map Prefabs")]
     public static void ClearMapPrefabs()
     {
-        MapManager.RemoveMapObjects(true);
+        PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
     }
 
     [Shortcut("RustMapEditor/Clear Map Paths")]
     public static void ClearMapPaths()
     {
-        MapManager.RemoveMapObjects(false, true);
+        PathManager.DeletePaths(PathManager.CurrentMapPaths);
     }
 
     [Shortcut("RustMapEditor/Clear Layer")]
