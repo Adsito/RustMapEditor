@@ -32,12 +32,6 @@ public static class ShortcutManager
         MapManager.CentreSceneView(SceneView.lastActiveSceneView);
     }
 
-    [Shortcut("RustMapEditor/Clear Progress Bar")]
-    public static void ClearProgressBar()
-    {
-        ProgressBarManager.Clear();
-    }
-
     [Shortcut("RustMapEditor/Clear Map Prefabs")]
     public static void ClearMapPrefabs()
     {

@@ -111,7 +111,6 @@ namespace RustMapEditor.UI
             saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
             if (string.IsNullOrEmpty(saveFile))
                 return;
-            ProgressBarManager.Display("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
             MapManager.Save(saveFile);
         }
 
@@ -218,31 +217,6 @@ namespace RustMapEditor.UI
         public static void PrefabTools(ref bool deleteOnExport, string lootCrateSaveFile = "", string mapPrefabSaveFile = "")
         {
             Elements.MiniBoldLabel(ToolTips.toolsLabel);
-
-            Elements.BeginToolbarHorizontal();
-            deleteOnExport = Elements.ToolbarToggle(ToolTips.deleteOnExport, deleteOnExport);
-            if (Elements.ToolbarButton(ToolTips.exportMapLootCrates))
-            {
-                lootCrateSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", lootCrateSaveFile, "LootCrateData", "json");
-                if (!String.IsNullOrEmpty(lootCrateSaveFile))
-                    MapManager.ExportLootCrates(lootCrateSaveFile, deleteOnExport);
-            }
-            if (Elements.ToolbarButton(ToolTips.exportMapPrefabs))
-            {
-                mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", mapPrefabSaveFile, "MapData", "json");
-                if (!String.IsNullOrEmpty(mapPrefabSaveFile))
-                    MapManager.ExportMapPrefabs(mapPrefabSaveFile, deleteOnExport);
-            }
-            Elements.EndToolbarHorizontal();
-
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.hidePrefabsInRustEdit))
-                MapManager.HidePrefabsInRustEdit();
-            if (Elements.ToolbarButton(ToolTips.breakRustEditPrefabs))
-                MapManager.BreakRustEditCustomPrefabs();
-            if (Elements.ToolbarButton(ToolTips.groupRustEditPrefabs))
-                MapManager.GroupRustEditCustomPrefabs();
-            Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.deleteMapPrefabs))

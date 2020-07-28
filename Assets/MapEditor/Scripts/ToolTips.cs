@@ -85,18 +85,12 @@ namespace RustMapEditor.Variables
         public static GUIContent newMapBiome = new GUIContent("Biome Texture", "The biome texture to set the land to.");
         public static GUIContent createMap = new GUIContent("Create", "Creates a new map with the selected size.");
 
-        public static GUIContent exportMapPrefabs = new GUIContent("Export Map Prefabs", "Exports all map prefabs to a .JSON file.");
-        public static GUIContent exportMapLootCrates = new GUIContent("Export LootCrates", "Exports all lootcrates that don't yet respawn in Rust to a JSON for use with the LootCrateRespawn plugin.");
-        public static GUIContent deleteOnExport = new GUIContent("Delete on Export.", "Deletes prefabs/lootcrates after exporting.");
-        public static GUIContent groupRustEditPrefabs = new GUIContent("Group RustEdit Custom Prefabs", "Groups all custom prefabs saved in the map file.");
-        public static GUIContent breakRustEditPrefabs = new GUIContent("Break RustEdit Custom Prefabs", "Breaks down all custom prefabs saved in the map file.");
-        public static GUIContent hidePrefabsInRustEdit = new GUIContent("Hide Prefabs in RustEdit", "Changes all the prefab categories to a semi-colon. Hides all of the prefabs from appearing in RustEdit.");
-
         public static GUIContent deleteMapPrefabs = new GUIContent("Delete All Map Prefabs", "Removes all the prefabs from the map.");
         public static GUIContent deleteMapPaths = new GUIContent("Delete All Map Paths", "Removes all the paths from the map.");
 
         public static GUIContent snapToGround = new GUIContent("Snap To Ground", "Snap the selected prefab to the terrain height.");
         public static GUIContent toggleLights = new GUIContent("Toggle Lights", "Toggles all the lights in the selected prefab on/off.");
+        public static GUIContent breakPrefab = new GUIContent("Break Prefab", "Breaks down a prefab into the individual prefabs, where possible.");
 
         public static GUIContent toggleBlend = new GUIContent("Blend", "Blends out the active texture to create a smooth transition the surrounding textures.");
         public static GUIContent rangeLow = new GUIContent("From:", "The lowest value to paint the active texture.");
