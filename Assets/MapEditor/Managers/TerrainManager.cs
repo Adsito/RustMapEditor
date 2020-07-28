@@ -4,6 +4,8 @@ using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
 using System.Collections;
 using Unity.EditorCoroutines.Editor;
+using static WorldConverter;
+using System.Threading.Tasks;
 
 namespace RustMapEditor.Data
 {
@@ -170,12 +172,8 @@ namespace RustMapEditor.Data
         /// <param name="layer">The layer to set the data to.</param>
         public static void SetData(bool[,] array, LandLayers layer)
         {
-            switch (layer)
-            {
-                case LandLayers.Alpha:
-                    Land.terrainData.SetHoles(0, 0, array);
-                    break;
-            }
+            if (layer == LandLayers.Alpha)
+                Land.terrainData.SetHoles(0, 0, array);
         }
 
         /// <summary>Sets the terrain alphamaps to the LandLayer.</summary>
@@ -192,6 +190,41 @@ namespace RustMapEditor.Data
         public static void SaveLayer()
         {
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
+        }
+
+        /// <summary>Loads and sets the Land and Water terrain objects.</summary>
+        public static void SetTerrain(MapInfo mapInfo, int progressID)
+        {
+            Land.terrainData.heightmapResolution = mapInfo.terrainRes;
+            Land.terrainData.size = mapInfo.size;
+            Land.terrainData.alphamapResolution = mapInfo.splatRes;
+            Land.terrainData.baseMapResolution = mapInfo.splatRes;
+            Land.terrainData.SetHeights(0, 0, mapInfo.land.heights);
+            Progress.Report(progressID, .5f, "Loaded: Land");
+
+            Water.terrainData.heightmapResolution = mapInfo.terrainRes;
+            Water.terrainData.size = mapInfo.size;
+            Water.terrainData.alphamapResolution = mapInfo.splatRes;
+            Water.terrainData.baseMapResolution = mapInfo.splatRes;
+            Water.terrainData.SetHeights(0, 0, mapInfo.water.heights);
+            Progress.Report(progressID, .9f, "Loaded: Water");
+
+            SetData(mapInfo.alphaMap, LandLayers.Alpha);
+            AreaManager.Reset();
+
+            Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+
+        public static void SetSplatMaps(MapInfo mapInfo)
+        {
+            TopologyData.InitMesh(mapInfo.topology);
+            SetData(mapInfo.splatMap, LandLayers.Ground);
+            SetData(mapInfo.biomeMap, LandLayers.Biome);
+            Parallel.For(0, TerrainTopology.COUNT, i =>
+            {
+                SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
+            });
         }
 
         private static void GetTextures()
@@ -253,17 +286,11 @@ namespace RustMapEditor.Data
             public static IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
             {
                 yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
-                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
+                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayer(layer, topology));
                 LayerSet = true;
             }
 
             public static IEnumerator SetLayer(LandLayers layer, int topology = 0)
-            {
-                yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayerCoroutine(layer, topology));
-                LayerSet = true;
-            }
-
-            private static IEnumerator SetLayerCoroutine(LandLayers layer, int topology = 0)
             {
                 if (GroundTextures == null || BiomeTextures == null || MiscTextures == null)
                     GetTextures();
@@ -288,15 +315,14 @@ namespace RustMapEditor.Data
                         break;
                 }
                 TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+                LayerSet = true;
                 yield return null;
             }
 
             public static IEnumerator SaveLayer()
             {
                 while (!LayerSet)
-                {
                     yield return null;
-                }
 
                 switch (LandLayer)
                 {
@@ -310,9 +336,9 @@ namespace RustMapEditor.Data
                         TopologyArray[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
                         break;
                 }
-
                 foreach (var item in Land.terrainData.alphamapTextures)
                     Undo.ClearUndo(item);
+
                 yield return null;
             }
         }
