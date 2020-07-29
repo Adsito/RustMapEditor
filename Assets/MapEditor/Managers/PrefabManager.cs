@@ -141,6 +141,9 @@ public static class PrefabManager
         }
     }
 
+    public static void BreakPrefab(GameObject prefab)
+    {
+    }
 
     private static class Coroutines
     {

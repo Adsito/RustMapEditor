@@ -35,4 +35,6 @@ public class PrefabDataHolder : MonoBehaviour
         foreach (var item in gameObject.GetComponentsInChildren<Light>(true))
             item.enabled = !item.enabled;
     }
+
+    public void BreakPrefab() => PrefabManager.BreakPrefab(gameObject);
 }
