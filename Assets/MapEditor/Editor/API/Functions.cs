@@ -728,6 +728,14 @@ namespace RustMapEditor.UI
                 target.ToggleLights();
             Elements.EndToolbarHorizontal();
         }
+
+        public static void BreakPrefab(PrefabDataHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.breakPrefab))
+                target.BreakPrefab();
+            Elements.EndToolbarHorizontal();
+        }
         #endregion
 
         #region Functions
