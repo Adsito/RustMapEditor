@@ -86,7 +86,7 @@ namespace RustMapEditor.UI
         {
             List<PrefabHierachyElement> prefabHierachyElements = new List<PrefabHierachyElement>();
             prefabHierachyElements.Add(new PrefabHierachyElement("", -1, -1));
-            var prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
+            var prefabs = PrefabManager.CurrentMapPrefabs;
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}", prefabs[i].name.Replace(':', ' '), "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id);
