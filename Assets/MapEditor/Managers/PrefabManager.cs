@@ -34,7 +34,6 @@ public static class PrefabManager
             if (!AssetManager.IsInitialised && SettingsManager.LoadBundleOnProjectLoad)
                 AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
         }
-            
     }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
@@ -53,6 +52,8 @@ public static class PrefabManager
         return Load(AssetManager.ToPath(id));
     }
 
+
+    /// <summary>Gets the parent prefab category transform from the hierachy.</summary>
     public static Transform GetParent(string category)
     {
         if (PrefabCategories.TryGetValue(category, out Transform transform))
@@ -154,6 +155,12 @@ public static class PrefabManager
             IsChangingPrefabs = true;
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ReplaceWithDefault(prefabs, progressID));
         }
+    }
+
+    public static void RenamePrefabs(PrefabDataHolder[] prefabs, string name)
+    {
+        foreach (var item in prefabs)
+            item.prefabData.category = name;
     }
 
     public static void BreakPrefab(GameObject prefab)
