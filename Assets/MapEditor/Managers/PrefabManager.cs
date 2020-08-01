@@ -87,7 +87,7 @@ public static class PrefabManager
     public static void Spawn(GameObject go, PrefabData prefabData, Transform parent)
     {
         GameObject newObj = GameObject.Instantiate(go, parent);
-        newObj.transform.position = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z) + TerrainManager.MapOffset;
+        newObj.transform.localPosition = new Vector3(prefabData.position.x, prefabData.position.y, prefabData.position.z);
         newObj.transform.rotation = Quaternion.Euler(new Vector3(prefabData.rotation.x, prefabData.rotation.y, prefabData.rotation.z));
         newObj.transform.localScale = new Vector3(prefabData.scale.x, prefabData.scale.y, prefabData.scale.z);
         newObj.name = go.name;
