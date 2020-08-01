@@ -17,11 +17,11 @@ public class PrefabDataHolder : MonoBehaviour
 
     public void UpdatePrefabData()
     {
-        prefabData.position = gameObject.transform.position - MapOffset;
+        prefabData.position = gameObject.transform.localPosition;
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
-
+     
     public void SnapToGround()
     {
         Vector3 newPos = transform.position;
