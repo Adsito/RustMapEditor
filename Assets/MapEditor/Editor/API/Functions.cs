@@ -849,14 +849,20 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void HierachyOptions(PrefabDataHolder[] prefabs)
+
+        public static void HierachyOptions(PrefabDataHolder[] prefabs, ref string name)
         {
             Elements.MiniBoldLabel(ToolTips.hierachyOptionsLabel);
 
             Elements.BeginToolbarHorizontal();
+            name = Elements.ToolbarTextField(name);
+            if (Elements.ToolbarButton(ToolTips.hierachyRename))
+                PrefabManager.RenamePrefabs(prefabs, name);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyDelete))
                 PrefabManager.DeletePrefabs(prefabs);
-
             Elements.EndToolbarHorizontal();
         }
         #endregion

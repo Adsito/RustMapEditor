@@ -15,6 +15,8 @@ namespace RustMapEditor.UI
 		SearchField m_SearchField;
 		PrefabHierachyTreeView m_TreeView;
 
+		[NonSerialized] string category;
+
 		Rect multiColumnTreeViewRect
 		{
 			get { return new Rect(20, 30, position.width - position.width / 3, position.height - 45); }
@@ -132,7 +134,7 @@ namespace RustMapEditor.UI
 		void DrawOptions(Rect rect)
         {
 			GUILayout.BeginArea(rect);
-			Functions.HierachyOptions(PrefabHierachyTreeView.PrefabDataFromSelection(treeView).ToArray());
+			Functions.HierachyOptions(PrefabHierachyTreeView.PrefabDataFromSelection(treeView).ToArray(), ref category);
 			GUILayout.EndArea();
         }
 
