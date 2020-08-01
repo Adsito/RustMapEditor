@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using RustMapEditor.Data;
 using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 public static class PrefabManager
 {
     public static GameObject DefaultPrefab { get; private set; }
     public static Transform PrefabParent { get; private set; }
     public static GameObject PrefabToSpawn;
+
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
+
+    public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
 
     public static bool IsChangingPrefabs { get; private set; }
 
@@ -48,6 +51,18 @@ public static class PrefabManager
     public static GameObject Load(uint id)
     {
         return Load(AssetManager.ToPath(id));
+    }
+
+    public static Transform GetParent(string category)
+    {
+        if (PrefabCategories.TryGetValue(category, out Transform transform))
+            return transform;
+
+        var obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/PrefabCategory"), PrefabParent, false);
+        obj.transform.localPosition = Vector3.zero;
+        obj.name = category;
+        PrefabCategories.Add(category, obj.transform);
+        return obj.transform;
     }
 
     /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
@@ -165,7 +180,7 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
-                Spawn(Load(prefabs[i].id), prefabs[i], PrefabParent);
+                Spawn(Load(prefabs[i].id), prefabs[i], GetParent(prefabs[i].category));
             }
             Progress.Report(progressID, 0.99f, "Spawned " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
@@ -206,7 +221,7 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Replacing Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
-                Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, PrefabParent);
+                Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
@@ -228,7 +243,7 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Replacing Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
-                Spawn(DefaultPrefab, prefabs[i].prefabData, PrefabParent);
+                Spawn(DefaultPrefab, prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
