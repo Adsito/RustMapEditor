@@ -757,11 +757,18 @@ public static class MapManager
             }
 
             int progressID = Progress.Start("Save: " + path.Split('/').Last(), "Saving Map", Progress.Options.Sticky);
+            int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int pathID = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
 
             SaveLayer();
-            TerrainToWorld(Land, Water, progressID).Save(path);
             yield return null;
+            TerrainToWorld(Land, Water, (prefabID, pathID, terrainID)).Save(path);
 
+            Progress.Report(progressID, 0.99f, "Saved");
+            Progress.Finish(prefabID, Progress.Status.Succeeded);
+            Progress.Finish(pathID, Progress.Status.Succeeded);
+            Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
 
