@@ -13,6 +13,7 @@ public static class TopologyData
     {
         return new TerrainMap<int>(top, 1);
     }
+
     /// <summary>Returns the Splatmap of the selected Topology Layer.</summary>
     /// <param name="layer">The Topology layer to return.</param>
     public static float[,,] GetTopologyLayer(int layer)
@@ -24,13 +25,14 @@ public static class TopologyData
             for (int j = 0; j < topology.res; j++)
             {
                 if ((topology[i, j] & layer) != 0)
-                    splatMap[i, j, 0] = 0f;
+                    splatMap[i, j, 0] = float.MinValue;
                 else
-                    splatMap[i, j, 1] = 1f;
+                    splatMap[i, j, 1] = float.MaxValue;
             }
         });
         return splatMap;
     }
+
     /// <summary>Converts all the Topology Layer arrays back into a single byte array.</summary>
     public static void SaveTopologyLayers()
     {
@@ -52,8 +54,5 @@ public static class TopologyData
         top = topologyMap.ToByteArray();
     }
 
-    public static void InitMesh(TerrainMap<int> topology)
-    {
-        top = topology.ToByteArray();
-    }
+    public static void InitMesh(TerrainMap<int> topology) => top = topology.ToByteArray();
 }
