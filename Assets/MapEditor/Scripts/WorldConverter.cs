@@ -55,9 +55,7 @@ public static class WorldConverter
         Parallel.For(0, splatRes, i =>
         {
             for (int j = 0; j < splatRes; j++)
-            {
                 terrains.alphaMap[i, j] = true;
-            }
         });
         terrains.topology = new TerrainMap<int>(new byte[(int)Mathf.Pow(splatRes, 2) * 4 * 1], 1);
         return terrains;
@@ -144,12 +142,8 @@ public static class WorldConverter
     }
 
     /// <summary>Converts Unity terrains to WorldSerialization.</summary>
-    public static WorldSerialization TerrainToWorld(Terrain land, Terrain water, int progressID) 
+    public static WorldSerialization TerrainToWorld(Terrain land, Terrain water, (int prefab, int path, int terrain) ID) 
     {
-        int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
-        int pathID = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
-        int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
-
         WorldSerialization world = new WorldSerialization();
         world.world.size = (uint) land.terrainData.size.x;
 
@@ -208,8 +202,7 @@ public static class WorldConverter
                 world.world.prefabs.Insert(0, p.prefabData);
             }
         }
-        Progress.Report(prefabID, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " prefabs.");
-        Progress.Finish(prefabID, Progress.Status.Succeeded);
+        Progress.Report(ID.prefab, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " prefabs.");
 
         foreach (PathDataHolder p in PathManager.CurrentMapPaths)
         {
@@ -224,15 +217,13 @@ public static class WorldConverter
                 world.world.paths.Insert(0, p.pathData);
             }
         }
-        Progress.Report(pathID, 0.99f, "Saved " + PathManager.CurrentMapPaths.Length + " paths.");
-        Progress.Finish(pathID, Progress.Status.Succeeded);
+        Progress.Report(ID.path, 0.99f, "Saved " + PathManager.CurrentMapPaths.Length + " paths.");
 
         byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
         byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapResolution, water.terrainData.heightmapResolution));
 
         Task.WaitAll(splatTask, biomeTask, alphaTask, topologyTask);
-        Progress.Report(terrainID, 0.99f, "Saved " + TerrainManager.TerrainSize.x + " size map.");
-        Progress.Finish(terrainID, Progress.Status.Succeeded);
+        Progress.Report(ID.terrain, 0.99f, "Saved " + TerrainSize.x + " size map.");
 
         world.AddMap("terrain", landHeightBytes);
         world.AddMap("height", landHeightBytes);
