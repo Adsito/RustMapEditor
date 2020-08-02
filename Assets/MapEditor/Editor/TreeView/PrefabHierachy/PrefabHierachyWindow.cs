@@ -3,6 +3,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
+using System.Collections.Generic;
 
 namespace RustMapEditor.UI
 {
@@ -14,19 +15,21 @@ namespace RustMapEditor.UI
 		SearchField m_SearchField;
 		PrefabHierachyTreeView m_TreeView;
 
+		[NonSerialized] string category;
+
 		Rect multiColumnTreeViewRect
 		{
-			get { return new Rect(20, 30, position.width-40, position.height-60); }
+			get { return new Rect(20, 30, position.width - position.width / 3, position.height - 45); }
 		}
 
-		Rect toolbarRect
+		Rect optionsRect
 		{
-			get { return new Rect (20f, 10f, position.width-40f, 20f); }
+			get { return new Rect(position.width / 3 * 2 + 40, 10, position.width - (position.width / 3 * 2 + 40) - 20, position.height); }
 		}
 
-		Rect bottomToolbarRect
+		Rect searchBarRect
 		{
-			get { return new Rect(20f, position.height - 18f, position.width - 40f, 16f); }
+			get { return new Rect(20, 10, position.width - position.width / 3, 20); }
 		}
 
 		public PrefabHierachyTreeView treeView
@@ -75,6 +78,7 @@ namespace RustMapEditor.UI
             var state = new MultiColumnHeaderState(columns);
             return state;
         }
+
         void InitIfNeeded ()
 		{
 			if (!m_Initialized)
@@ -112,25 +116,39 @@ namespace RustMapEditor.UI
 		void OnGUI ()
 		{
 			InitIfNeeded();
-			SearchBar (toolbarRect);
-			DoTreeView (multiColumnTreeViewRect);
+			DrawSearchBar(searchBarRect);
+			DrawTreeView(multiColumnTreeViewRect);
+			DrawOptions(optionsRect);
 		}
 
-		void SearchBar (Rect rect)
+		void DrawSearchBar (Rect rect)
 		{
 			treeView.searchString = m_SearchField.OnGUI (rect, treeView.searchString);
 		}
 
-		void DoTreeView (Rect rect)
+		void DrawTreeView (Rect rect)
 		{
 			m_TreeView.OnGUI(rect);
 		}
 
-		public static void ReloadTree()
+		void DrawOptions(Rect rect)
+        {
+			GUILayout.BeginArea(rect);
+			Functions.HierachyOptions(PrefabHierachyTreeView.PrefabDataFromSelection(treeView).ToArray(), ref category);
+			GUILayout.EndArea();
+        }
+
+        private void OnHierarchyChange()
+        {
+			ReloadTree();
+			treeView.SetSelection(new List<int>());
+        }
+
+        public static void ReloadTree()
 		{
-			if (EditorWindow.HasOpenInstances<PrefabHierachyWindow>())
+			if (HasOpenInstances<PrefabHierachyWindow>())
 			{
-				PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
+				PrefabHierachyWindow window = (PrefabHierachyWindow)GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
 				window.m_Initialized = false;
 			}
 		}

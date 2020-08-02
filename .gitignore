@@ -16,3 +16,4 @@ Library/*
 /obj/
 *.sln
 AssetDump.txt
+UserSettings/EditorUserSettings.asset

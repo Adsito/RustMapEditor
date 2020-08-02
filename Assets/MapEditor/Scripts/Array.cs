@@ -19,9 +19,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = value;
-                }
             });
             return array;
         }
@@ -561,9 +559,7 @@ namespace RustMapEditor.Maths
             Parallel.For(0, arrayLength, i =>
             {
                 for (int j = 0; j < arrayLength; j++)
-                {
                     shortArray[(i * arrayLength) + j] = BitUtility.Float2Short(array[i, j]);
-                }
             });
 
             byte[] byteArray = new byte[shortArray.Length * 2];
@@ -582,9 +578,7 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < length; j++)
                 {
                     for (int k = 0; k < texturesAmount; k++)
-                    {
                         multiArray[i, j, k] = array[i * length * texturesAmount + (j * texturesAmount + k)];
-                    }
                 }
             });
             return multiArray;
@@ -624,9 +618,7 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < arrayLength; j++)
                 {
                     for (int k = 0; k < 2; k++)
-                    {
                         multiArray[i, j, k] = (array[i, j]) ? 1f : 0f;
-                    }
                 }
             });
             return multiArray;
@@ -639,9 +631,7 @@ namespace RustMapEditor.Maths
             Parallel.For(0, arrayLength, i =>
             {
                 for (int j = 0; j < arrayLength; j++)
-                {
                     boolArray[i, j] = (array[i, j, 0] > 0.5f) ? true : false; 
-                }
             });
             return boolArray;
         }

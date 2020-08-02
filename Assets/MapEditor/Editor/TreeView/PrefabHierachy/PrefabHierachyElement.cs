@@ -7,7 +7,7 @@ namespace RustMapEditor.UI
 	{
 	    public string prefabName, type, category;
         public uint rustID;
-        public PrefabDataHolder prefabData;
+        public PrefabDataHolder prefabDataHolder;
 
 		public PrefabHierachyElement (string name, int depth, int id) : base (name, depth, id)
 		{
