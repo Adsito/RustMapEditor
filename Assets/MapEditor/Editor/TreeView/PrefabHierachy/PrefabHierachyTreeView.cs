@@ -81,21 +81,31 @@ namespace RustMapEditor.UI
 			multicolumnHeader.sortingChanged += OnSortingChanged;
 			Reload();
 		}
+
         public static List<PrefabHierachyElement> GetPrefabHierachyElements()
         {
             List<PrefabHierachyElement> prefabHierachyElements = new List<PrefabHierachyElement>();
             prefabHierachyElements.Add(new PrefabHierachyElement("", -1, -1));
-            var prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
+            var prefabs = PrefabManager.CurrentMapPrefabs;
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}", prefabs[i].name.Replace(':', ' '), "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id);
                 prefabHierachyElements.Add(new PrefabHierachyElement(name, 0, i) 
-				{ 
-					prefabData = prefabs[i],
+				{
+					prefabDataHolder = prefabs[i],
 				});
             }
             return prefabHierachyElements;
         }
+
+		public static List<PrefabDataHolder> PrefabDataFromSelection(PrefabHierachyTreeView treeView)
+        {
+			List<PrefabDataHolder> prefabDataList = new List<PrefabDataHolder>();
+            foreach (var item in treeView.GetSelection())
+				prefabDataList.Add(treeView.treeModel.Find(item).prefabDataHolder);
+
+			return prefabDataList;
+		}
 
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
 		{
@@ -115,9 +125,8 @@ namespace RustMapEditor.UI
 				return;
 			
 			if (multiColumnHeader.sortedColumnIndex == -1)
-			{
 				return;
-			}
+
 			SortByMultipleColumns ();
 			TreeToList(root, rows);
 			Repaint();
@@ -180,9 +189,7 @@ namespace RustMapEditor.UI
 			var item = (TreeViewItem<PrefabHierachyElement>) args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns (); ++i)
-			{
 				CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
-			}
 		}
 
 		void CellGUI (Rect cellRect, TreeViewItem<PrefabHierachyElement> item, Columns column, ref RowGUIArgs args)
@@ -211,7 +218,7 @@ namespace RustMapEditor.UI
 
 		protected override bool CanMultiSelect (TreeViewItem item)
 		{
-			return false;
+			return true;
 		}
 
 		protected override bool CanStartDrag(CanStartDragArgs args)
@@ -219,14 +226,10 @@ namespace RustMapEditor.UI
 			return false;
 		}
 
-		protected override void SelectionChanged(IList<int> selectedIds)
+        protected override void DoubleClickedItem(int id)
 		{
-			Selection.activeObject = treeModel.Find(selectedIds[0]).prefabData.gameObject;
-		}
-
-		protected override void DoubleClickedItem(int id)
-		{
-			SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabData.gameObject.transform.position);
+			SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabDataHolder.gameObject.transform.position);
+			Selection.activeObject = treeModel.Find(id).prefabDataHolder.gameObject;
 		}
 	}
 }

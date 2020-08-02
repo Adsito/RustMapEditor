@@ -21,17 +21,11 @@ public class LockObject : MonoBehaviour
         if (locked)
         {
             if (transform.localPosition != position)
-            {
                 transform.localPosition = position;
-            }
             if (transform.localScale != scale)
-            {
                 transform.localScale = scale;
-            }
             if (transform.localRotation != rotation)
-            {
                 transform.localRotation = rotation;
-            }
         }
         else
         {

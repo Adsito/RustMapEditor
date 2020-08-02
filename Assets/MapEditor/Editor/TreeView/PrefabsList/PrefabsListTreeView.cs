@@ -86,7 +86,7 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = AssetManager.GetManifestStrings();
+            var manifestStrings = AssetManager.ManifestStrings;
             if (manifestStrings == null)
                 return prefabsListElements;
 
@@ -253,6 +253,7 @@ namespace RustMapEditor.UI
             if (itemClicked.rustID != 0)
             {
                 DragAndDrop.PrepareStartDrag();
+                DragAndDrop.SetGenericData(prefabName, itemClicked);
                 DragAndDrop.StartDrag("Spawn Prefab");
                 PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
             }
@@ -277,9 +278,7 @@ namespace RustMapEditor.UI
         {
             PrefabsListElement itemClicked = treeModel.Find(id);
             if (itemClicked.rustID != 0)
-            {
                 PrefabManager.PrefabToSpawn = PrefabManager.Load(itemClicked.rustID);
-            }
             else
             {
                 var expand = !IsExpanded(id);

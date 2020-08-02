@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Unity.EditorCoroutines.Editor;
+using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 public static class AssetManager
@@ -11,8 +17,6 @@ public static class AssetManager
 	public const string ManifestPath = "assets/manifest.asset";
 	public const string AssetDumpPath = "AssetDump.txt";
 	public const string MaterialsListPath = "MaterialsList.txt";
-
-	public static AssetBundleManifest AssetManifest { get; private set; }
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
@@ -29,80 +33,16 @@ public static class AssetManager
 	/// <param name="bundlesRoot">The file path to the Rust bundles file.</param>
 	public static void Initialise(string bundlesRoot)
 	{
-		if (!IsInitialised)
-		{
-			if (!Directory.Exists(SettingsManager.RustDirectory))
-            {
-				Debug.LogError("Directory does not exist: " + bundlesRoot);
-				return;
-			}
+		if (!Coroutines.IsInitialising && !IsInitialised)
+			EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Initialise(bundlesRoot));
+		if (IsInitialised)
+			Debug.Log("Bundles already loaded.");
+	}
 
-			if (!SettingsManager.RustDirectory.EndsWith("Rust") && !SettingsManager.RustDirectory.EndsWith("RustStaging"))
-            {
-				Debug.LogError("Not a valid Rust install directory: " + SettingsManager.RustDirectory);
-				return;
-            }
-
-			ProgressBarManager.Display("Loading Bundles", "Loading Root Bundle", 0.1f);
-			BundlePath = bundlesRoot;
-			var rootBundle = AssetBundle.LoadFromFile(bundlesRoot);
-			if (rootBundle == null)
-			{
-				Debug.LogError("Couldn't load root AssetBundle - " + bundlesRoot);
-				return;
-			}
-
-			var manifestList = rootBundle.LoadAllAssets<AssetBundleManifest>();
-			if (manifestList.Length != 1)
-			{
-				Debug.LogError("Couldn't find AssetBundleManifest - " + manifestList.Length);
-				return;
-			}
-			AssetManifest = manifestList[0];
-
-			var bundles = AssetManifest.GetAllAssetBundles();
-			ProgressBarManager.SetProgressIncrement(0.9f / bundles.Length);
-			for (int i = 0; i < bundles.Length; i++)
-			{
-				ProgressBarManager.DisplayIncremental("Loading Bundles", "Loading: " + bundles[i]);
-				var bundlePath = Path.GetDirectoryName(BundlePath) + Path.DirectorySeparatorChar + bundles[i];
-				var asset = AssetBundle.LoadFromFile(bundlePath);
-				if (asset == null)
-				{
-					Debug.LogError("Couldn't load AssetBundle - " + bundlePath);
-					return;
-				}
-				Bundles.Add(bundles[i], asset);
-				foreach (var filename in asset.GetAllAssetNames())
-					AssetPaths.Add(filename, asset);
-                foreach (var filename in asset.GetAllScenePaths())
-					AssetPaths.Add(filename, asset);
-			}
-
-			Manifest = GetAsset<GameManifest>(ManifestPath);
-			if (Manifest == null)
-			{
-				Debug.LogError("Couldn't load GameManifest.");
-				Dispose();
-				return;
-			}
-
-			for (uint index = 0; index < Manifest.pooledStrings.Length; ++index)
-			{
-				IDLookup.Add(Manifest.pooledStrings[index].hash, Manifest.pooledStrings[index].str);
-				PathLookup.Add(Manifest.pooledStrings[index].str, Manifest.pooledStrings[index].hash);
-			}
-
-			AssetDump();
-			rootBundle.Unload(true);
-			FixMaterials();
-			IsInitialised = true;
-			
-			ProgressBarManager.Clear();
-			PrefabManager.ReplaceWithLoaded(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
-		}
-		else
-			Debug.Log("Bundle already loaded.");
+	public static void Dispose()
+	{
+		if (!Coroutines.IsInitialising && IsInitialised)
+			EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Dispose());
 	}
 
 	private static T GetAsset<T>(string filePath) where T : Object
@@ -113,7 +53,7 @@ public static class AssetManager
 		return bundle.LoadAsset<T>(filePath);
 	}
 
-	public static T LoadAsset<T>(string filePath) where T : Object
+    public static T LoadAsset<T>(string filePath) where T : Object
 	{
 		var asset = default(T);
 
@@ -129,39 +69,25 @@ public static class AssetManager
 	}
 
 	public static GameObject LoadPrefab(string filePath)
-	{
-		if (Cache.ContainsKey(filePath))
-			return Cache[filePath] as GameObject;
+    {
+        if (Cache.ContainsKey(filePath))
+            return Cache[filePath] as GameObject;
 
-		else
-		{
-			GameObject val = GetAsset<GameObject>(filePath);
-			if (val != null)
-			{
-				PrefabManager.Process(val, filePath);
-				Cache.Add(filePath, val);
-				return val;
-			}
-			Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
-			return PrefabManager.DefaultPrefab;
-		}
-	}
+        else
+        {
+            GameObject val = GetAsset<GameObject>(filePath);
+            if (val != null)
+            {
+                PrefabManager.Setup(val, filePath);
+                Cache.Add(filePath, val);
+                return val;
+            }
+            Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
+            return PrefabManager.DefaultPrefab;
+        }
+    }
 
-	public static void Dispose()
-	{
-		PrefabManager.ReplaceWithDefault(PrefabManager.PrefabParent.GetComponentsInChildren<PrefabDataHolder>());
-		foreach (var item in Bundles)
-			item.Value.Unload(true);
-
-		AssetPaths.Clear();
-		Bundles.Clear();
-		Cache.Clear();
-		IDLookup.Clear();
-		PathLookup.Clear();
-		IsInitialised = false;
-	}
-
-	public static List<string> GetManifestStrings()
+	private static List<string> GetManifestStrings()
 	{
 		if (Manifest == null)
 			return null;
@@ -199,80 +125,271 @@ public static class AssetManager
 		return 0;
 	}
 
-	/// <summary>Sets materials set in the MaterialsList.txt to the shader supplied. Used for certain prefabs which appear black due to the Rust shaders not having
-	/// all of the dependencies needed to function properly in the project.</summary>
-	public static void FixMaterials()
-	{
-		Shader std = Shader.Find("Standard");
-		Shader spc = Shader.Find("Standard (Specular setup)");
+	private static class Coroutines
+    {
+		public static bool IsInitialising { get; private set; }
 
-		if (File.Exists(MaterialsListPath))
-        {
-            foreach (var item in File.ReadAllLines(MaterialsListPath))
+		public static IEnumerator Initialise(string bundlesRoot)
+		{
+			IsInitialising = true;
+			for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+			{
+				var progress = Progress.GetProgressById(Progress.GetId(i));
+				if (progress.finished && progress.name.Contains("Asset Bundles"))
+					progress.Remove();
+			}
+
+			int progressID = Progress.Start("Load Asset Bundles", null, Progress.Options.Sticky);
+			int bundleID = Progress.Start("Bundles", null, Progress.Options.Sticky, progressID);
+			int materialID = Progress.Start("Materials", null, Progress.Options.Sticky, progressID);
+			int prefabID = Progress.Start("Replace Prefabs", null, Progress.Options.Sticky, progressID);
+			Progress.Report(bundleID, 0f);
+			Progress.Report(materialID, 0f);
+			Progress.Report(prefabID, 0f);
+
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(LoadBundles(bundlesRoot, (progressID, bundleID, materialID)));
+			if (!IsInitialising)
             {
-				var lineSplit = item.Split(':');
-				lineSplit[0] = lineSplit[0].Trim(' '); // Shader Name
-				lineSplit[1] = lineSplit[1].Trim(' '); // Material Path
-				switch (lineSplit[0])
+				Progress.Finish(bundleID, Progress.Status.Failed);
+				Progress.Finish(materialID, Progress.Status.Failed);
+				Progress.Finish(prefabID, Progress.Status.Failed);
+				yield break;
+			}
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetBundleReferences((progressID, bundleID)));
+			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
+
+			IsInitialised = true; IsInitialising = false;
+			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
+		}
+
+		public static IEnumerator Dispose() 
+		{
+			IsInitialising = true;
+			for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+			{
+				var progress = Progress.GetProgressById(Progress.GetId(i));
+				if (progress.finished && progress.name.Contains("Asset Bundles"))
+					progress.Remove();
+			}
+
+			int progressID = Progress.Start("Unload Asset Bundles", null, Progress.Options.Sticky);
+			int bundleID = Progress.Start("Bundles", null, Progress.Options.Sticky, progressID);
+			int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+			Progress.Report(bundleID, 0f);
+			Progress.Report(prefabID, 0f);
+			PrefabManager.ReplaceWithDefault(PrefabManager.CurrentMapPrefabs, prefabID);
+
+			while (PrefabManager.IsChangingPrefabs)
+				yield return null;
+
+			for (int i = 0; i < Bundles.Count; i++)
+            {
+				Progress.Report(bundleID, (float)i / Bundles.Count, "Unloading: " + Bundles.ElementAt(i).Key);
+				Bundles.ElementAt(i).Value.Unload(true);
+				yield return null;
+            }
+			
+			int bundleCount = Bundles.Count;
+			AssetPaths.Clear();
+			Bundles.Clear();
+			Cache.Clear();
+
+			Progress.Report(bundleID, 0.99f, "Unloaded: " + bundleCount + " bundles.");
+			Progress.Finish(bundleID, Progress.Status.Succeeded);
+			IsInitialised = false; IsInitialising = false;
+		}
+
+		public static IEnumerator LoadBundles(string bundleRoot, (int progress, int bundle, int material) ID)
+        {
+			if (!Directory.Exists(SettingsManager.RustDirectory))
+			{
+				Debug.LogError("Directory does not exist: " + bundleRoot);
+				IsInitialising = false;
+				yield break;
+			}
+
+			if (!SettingsManager.RustDirectory.EndsWith("Rust") && !SettingsManager.RustDirectory.EndsWith("RustStaging"))
+			{
+				Debug.LogError("Not a valid Rust install directory: " + SettingsManager.RustDirectory);
+				IsInitialising = false;
+				yield break;
+			}
+
+			var rootBundle = AssetBundle.LoadFromFile(bundleRoot);
+			if (rootBundle == null)
+			{
+				Debug.LogError("Couldn't load root AssetBundle - " + bundleRoot);
+				IsInitialising = false;
+				yield break;
+			}
+
+			var manifestList = rootBundle.LoadAllAssets<AssetBundleManifest>();
+			if (manifestList.Length != 1)
+			{
+				Debug.LogError("Couldn't find AssetBundleManifest - " + manifestList.Length);
+				IsInitialising = false;
+				yield break;
+			}
+
+			var assetManifest = manifestList[0];
+			var bundles = assetManifest.GetAllAssetBundles();
+
+			for (int i = 0; i < bundles.Length; i++)
+			{
+				Progress.Report(ID.bundle, (float)i / bundles.Length, "Loading: " + bundles[i]);
+				var bundlePath = Path.GetDirectoryName(bundleRoot) + Path.DirectorySeparatorChar + bundles[i];
+
+				var asset = AssetBundle.LoadFromFileAsync(bundlePath);
+				while (!asset.isDone)
+					yield return null;
+
+				if (asset == null)
 				{
-					case "Standard":
-						UpdateShader(LoadAsset<Material>(lineSplit[1]), std);
-						break;
-					case "Specular":
-						UpdateShader(LoadAsset<Material>(lineSplit[1]), spc);
-						break;
+					Debug.LogError("Couldn't load AssetBundle - " + bundlePath);
+					IsInitialising = false;
+					yield break;
+				}
+				Bundles.Add(bundles[i], asset.assetBundle);
+			}
+			rootBundle.Unload(true);
+		}
+
+		public static IEnumerator SetBundleReferences((int parent, int bundle) ID)
+		{
+			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+
+			foreach (var asset in Bundles.Values)
+			{
+				foreach (var filename in asset.GetAllAssetNames())
+				{
+					AssetPaths.Add(filename, asset);
+					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					{
+						sw.Restart();
+						yield return null;
+					}
+				}
+				foreach (var filename in asset.GetAllScenePaths())
+				{
+					AssetPaths.Add(filename, asset);
+					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					{
+						sw.Restart();
+						yield return null;
+					}
+				}
+			}
+
+			Progress.Report(ID.bundle, 0.99f, "Loaded " + Bundles.Count + " bundles.");
+			Progress.Finish(ID.bundle, Progress.Status.Succeeded);
+
+			Manifest = GetAsset<GameManifest>(ManifestPath);
+			if (Manifest == null)
+			{
+				Debug.LogError("Couldn't load GameManifest.");
+				Dispose();
+				Progress.Finish(ID.parent, Progress.Status.Failed);
+				yield break;
+			}
+
+			var setLookups = Task.Run(() =>
+			{
+				for (uint i = 0; i < Manifest.pooledStrings.Length; ++i)
+				{
+					IDLookup.Add(Manifest.pooledStrings[i].hash, Manifest.pooledStrings[i].str);
+					PathLookup.Add(Manifest.pooledStrings[i].str, Manifest.pooledStrings[i].hash);
+				}
+				AssetDump();
+			});
+			while (!setLookups.IsCompleted)
+            {
+				if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+                {
+					sw.Restart();
+					yield return null;
 				}
 			}
 		}
-		LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
-	}
 
-	/// <summary>Updates the material with the new shaders properties.</summary>
-	private static void UpdateShader(Material mat, Shader shader)
-    {
-		mat.shader = shader;
-		switch (mat.GetFloat("_Mode"))
+		public static IEnumerator SetMaterials(int materialID)
 		{
-			case 0f:
-				mat.SetOverrideTag("RenderType", "");
-				mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-				mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-				mat.SetInt("_ZWrite", 1);
-				mat.DisableKeyword("_ALPHATEST_ON");
-				mat.DisableKeyword("_ALPHABLEND_ON");
-				mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-				mat.renderQueue = -1;
-				break;
-			case 1f:
-				mat.SetOverrideTag("RenderType", "TransparentCutout");
-				mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-				mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-				mat.SetInt("_ZWrite", 1);
-				mat.EnableKeyword("_ALPHATEST_ON");
-				mat.DisableKeyword("_ALPHABLEND_ON");
-				mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-				mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-				break;
-			case 2f:
-				mat.SetOverrideTag("RenderType", "Transparent");
-				mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-				mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-				mat.SetInt("_ZWrite", 0);
-				mat.DisableKeyword("_ALPHATEST_ON");
-				mat.EnableKeyword("_ALPHABLEND_ON");
-				mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-				mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-				break;
-			case 3f:
-				mat.SetOverrideTag("RenderType", "Transparent");
-				mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-				mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-				mat.SetInt("_ZWrite", 0);
-				mat.DisableKeyword("_ALPHATEST_ON");
-				mat.DisableKeyword("_ALPHABLEND_ON");
-				mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-				mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-				break;
+			if (File.Exists(MaterialsListPath))
+			{
+				Shader std = Shader.Find("Standard");
+				Shader spc = Shader.Find("Standard (Specular setup)");
+				string[] materials = File.ReadAllLines(MaterialsListPath);
+				for (int i = 0; i < materials.Length; i++)
+				{
+					var lineSplit = materials[i].Split(':');
+					lineSplit[0] = lineSplit[0].Trim(' '); // Shader Name
+					lineSplit[1] = lineSplit[1].Trim(' '); // Material Path
+					Progress.Report(materialID, (float)i / materials.Length, "Setting: " + lineSplit[1]);
+					switch (lineSplit[0])
+					{
+						case "Standard":
+							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), std));
+							break;
+						case "Specular":
+							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), spc));
+							break;
+					}
+					yield return null;
+				}
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_tundra.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
+				Progress.Report(materialID, 0.99f, "Set " + materials.Length + " materials.");
+				Progress.Finish(materialID, Progress.Status.Succeeded);
+			}
 		}
-    }
+
+		public static IEnumerator UpdateShader(Material mat, Shader shader)
+		{
+			mat.shader = shader;
+			yield return null;
+			switch (mat.GetFloat("_Mode"))
+			{
+				case 0f:
+					mat.SetOverrideTag("RenderType", "");
+					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+					mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+					mat.SetInt("_ZWrite", 1);
+					mat.DisableKeyword("_ALPHATEST_ON");
+					mat.DisableKeyword("_ALPHABLEND_ON");
+					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.renderQueue = -1;
+					break;
+				case 1f:
+					mat.SetOverrideTag("RenderType", "TransparentCutout");
+					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+					mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+					mat.SetInt("_ZWrite", 1);
+					mat.EnableKeyword("_ALPHATEST_ON");
+					mat.DisableKeyword("_ALPHABLEND_ON");
+					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+					break;
+				case 2f:
+					mat.SetOverrideTag("RenderType", "Transparent");
+					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+					mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+					mat.SetInt("_ZWrite", 0);
+					mat.DisableKeyword("_ALPHATEST_ON");
+					mat.EnableKeyword("_ALPHABLEND_ON");
+					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+					break;
+				case 3f:
+					mat.SetOverrideTag("RenderType", "Transparent");
+					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+					mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+					mat.SetInt("_ZWrite", 0);
+					mat.DisableKeyword("_ALPHATEST_ON");
+					mat.DisableKeyword("_ALPHABLEND_ON");
+					mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+					break;
+			}
+		}
+	}
 }

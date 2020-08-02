@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
@@ -10,6 +9,8 @@ using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
+using Unity.EditorCoroutines.Editor;
+using System.Collections;
 
 public static class MapManager
 {
@@ -101,27 +102,6 @@ public static class MapManager
                     RotatePaths(CW);
                     break;
             }
-        }
-    }
-
-    /// <summary>Removes all the map objects from the scene.</summary>
-    /// <param name="prefabs">Delete Prefab objects.</param>
-    /// <param name="paths">Delete Path objects.</param>
-    public static void RemoveMapObjects(bool prefabs = true, bool paths = true)
-    {
-        if (prefabs)
-        {
-            foreach (PrefabDataHolder g in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<PrefabDataHolder>())
-                if (g != null)
-                    GameObject.DestroyImmediate(g.gameObject);
-
-            foreach (CustomPrefabData p in GameObject.FindGameObjectWithTag("Prefabs").GetComponentsInChildren<CustomPrefabData>())
-                GameObject.DestroyImmediate(p.gameObject);
-        }
-        if (paths)
-        {
-            foreach (PathDataHolder g in GameObject.FindGameObjectWithTag("Paths").GetComponentsInChildren<PathDataHolder>())
-                GameObject.DestroyImmediate(g.gameObject);
         }
     }
 
@@ -391,13 +371,13 @@ public static class MapManager
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
 
-        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
+        int progressId = Progress.Start("Rotating Topologies", null, Progress.Options.Sticky);
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            ProgressBarManager.DisplayIncremental("Rotating Topologies", "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
+            Progress.Report(progressId, (float)i / topologyElements.Count, "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             RotateLayer(LandLayers.Topology, CW, i);
         }
-        ProgressBarManager.Clear();
+        Progress.Finish(progressId);
     }
 
     /// <summary>Paints if all the conditions passed in are true.</summary>
@@ -410,46 +390,34 @@ public static class MapManager
         int splatRes = SplatMapRes;
         bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
 
-        ProgressBarManager.Display("Paint Conditional", "Checking Ground", 0f);
-        for(int i = 0; i < TerrainSplat.COUNT; i++)
-        {
+        int progressId = Progress.Start("Conditional Paint");
+        for (int i = 0; i < TerrainSplat.COUNT; i++)
             if (conditions.GroundConditions.CheckLayer[i])
-            {
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Ground), conditionsMet, i, conditions.GroundConditions.Weight[i]);
-            }
-        };
-        ProgressBarManager.Display("Paint Conditional", "Checking Biome", 0.2f);
+
+        Progress.Report(progressId, 0.2f, "Checking Biome");
         for (int i = 0; i < TerrainBiome.COUNT; i++)
-        {
             if (conditions.BiomeConditions.CheckLayer[i])
-            {
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Biome), conditionsMet, i, conditions.BiomeConditions.Weight[i]);
-            }
-        }
-        ProgressBarManager.Display("Paint Conditional", "Checking Alpha", 0.3f);
+
+        Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
-        {
             conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
-        }
-        ProgressBarManager.Display("Paint Conditional", "Checking Topology", 0.5f);
+
+        Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
             if (conditions.TopologyConditions.CheckLayer[i])
-            {
                 conditionsMet = CheckConditions(GetSplatMap(LandLayers.Topology, i), conditionsMet, (int)conditions.TopologyConditions.Texture[i], 0.5f);
-            }
-        }
-        ProgressBarManager.Display("Paint Conditional", "Checking Heights", 0.7f);
+
+        Progress.Report(progressId, 0.7f, "Checking Heights");
         if (conditions.TerrainConditions.CheckHeights)
-        {
             conditionsMet = CheckConditions(GetHeights(), conditionsMet, conditions.TerrainConditions.Heights.HeightLow, conditions.TerrainConditions.Heights.HeightHigh);
-        }
-        ProgressBarManager.Display("Paint Conditional", "Checking Slopes", 0.8f);
+
+        Progress.Report(progressId, 0.8f, "Checking Slopes");
         if (conditions.TerrainConditions.CheckSlopes)
-        {
             conditionsMet = CheckConditions(GetSlopes(), conditionsMet, conditions.TerrainConditions.Slopes.SlopeLow, conditions.TerrainConditions.Slopes.SlopeHigh);
-        }
-        ProgressBarManager.Display("Paint Conditional", "Painting", 0.9f);
+
+        Progress.Report(progressId, 0.8f, "Painting");
         switch (landLayerToPaint)
         {
             case LandLayers.Ground:
@@ -460,16 +428,12 @@ public static class MapManager
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
-                    {
                         if (conditionsMet[i, j] == false)
                         {
                             for (int k = 0; k < textureCount; k++)
-                            {
                                 splatMapToPaint[i, j, k] = 0f;
-                            }
                             splatMapToPaint[i, j, texture] = 1f;
                         }
-                    }
                 });
                 SetData(splatMapToPaint, landLayerToPaint, topology);
                 SetLayer(landLayerToPaint, topology);
@@ -479,14 +443,12 @@ public static class MapManager
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
-                    {
                         alphaMapToPaint[i, j] = (conditionsMet[i, j] == false) ? conditionsMet[i, j] : alphaMapToPaint[i, j];
-                    }
                 });
                 SetData(alphaMapToPaint, landLayerToPaint);
                 break;
         }
-        ProgressBarManager.Clear();
+        Progress.Finish(progressId);
     }
 
     /// <summary>Paints the layer wherever the height conditions are met.</summary>
@@ -556,13 +518,14 @@ public static class MapManager
     public static void PaintTopologyLayers(TerrainTopology.Enum topologyLayers)
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
-        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
+
+        int progressId = Progress.Start("Paint Topologies");
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            ProgressBarManager.DisplayIncremental("Painting Topologies", "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
+            Progress.Report(progressId, (float)i / topologyElements.Count, "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             PaintLayer(LandLayers.Topology, 0, i);
         }
-        ProgressBarManager.Clear();
+        Progress.Finish(progressId);
     }
 
     /// <summary>Sets whole layer to the inactive texture. Alpha and Topology only.</summary>
@@ -588,13 +551,13 @@ public static class MapManager
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
 
-        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
+        int progressId = Progress.Start("Clear Topologies");
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            ProgressBarManager.DisplayIncremental("Clearing Topologies", "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
+            Progress.Report(progressId, (float)i / topologyElements.Count, "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             ClearLayer(LandLayers.Topology, i);
         }
-        ProgressBarManager.Clear();
+        Progress.Finish(progressId);
     }
 
     /// <summary>Inverts the active and inactive textures. Alpha and Topology only.</summary>
@@ -620,13 +583,13 @@ public static class MapManager
     {
         List<int> topologyElements = GetEnumSelection(topologyLayers);
 
-        ProgressBarManager.SetProgressIncrement(1f / topologyElements.Count);
+        int progressId = Progress.Start("Invert Topologies");
         for (int i = 0; i < topologyElements.Count; i++)
         {
-            ProgressBarManager.DisplayIncremental("Inverting Topologies", "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
+            Progress.Report(progressId, (float)i / topologyElements.Count, "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
             InvertLayer(LandLayers.Topology, i);
         }
-        ProgressBarManager.Clear();
+        Progress.Finish(progressId);
     }
 
     /// <summary>Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
@@ -696,416 +659,31 @@ public static class MapManager
     }
     #endregion
 
-    /// <summary>Changes all the prefab categories to a the RustEdit custom prefab format. Hide's prefabs from appearing in RustEdit.</summary>
-    public static void HidePrefabsInRustEdit()
-    {
-        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        int prefabsHidden = 0;
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
-        for (int i = 0; i < prefabDataHolders.Length; i++)
-        {
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBarManager.DisplayIncremental("Hide Prefabs in RustEdit", "Hiding prefabs: " + i + " / " + prefabDataHolders.Length);
-            }
-            prefabDataHolders[i].prefabData.category = @":\RustEditHiddenPrefab:" + prefabsHidden + ":";
-            prefabsHidden++;
-        }
-        Debug.Log("Hid " + prefabsHidden + " prefabs.");
-        ProgressBarManager.Clear();
-    }
-
-    /// <summary>Breaks down RustEdit custom prefabs back into the individual prefabs.</summary>
-    public static void BreakRustEditCustomPrefabs()
-    {
-        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        int prefabsBroken = 0;
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
-        for (int i = 0; i < prefabDataHolders.Length; i++)
-        {
-            if (prefabDataHolders[i].prefabData.category.Contains(':'))
-            {
-                prefabDataHolders[i].prefabData.category = "Decor";
-                prefabsBroken++;
-            }
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBarManager.DisplayIncremental("Break RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length);
-            }
-            else
-                ProgressBarManager.AddIncrement();
-        }
-        Debug.Log("Broke down " + prefabsBroken + " prefabs.");
-        ProgressBarManager.Clear();
-    }
-
-    /// <summary>Parents all the RustEdit custom prefabs in the map to parent gameobjects.</summary>
-    public static void GroupRustEditCustomPrefabs()
-    {
-        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        Transform prefabHierachy = GameObject.FindGameObjectWithTag("Prefabs").transform;
-        Dictionary<string, GameObject> prefabParents = new Dictionary<string, GameObject>();
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
-        for (int i = 0; i < prefabDataHolders.Length; i++)
-        {
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBarManager.DisplayIncremental("Group RustEdit Custom Prefabs", "Scanning prefabs: " + i + " / " + prefabDataHolders.Length);
-            }
-            else
-                ProgressBarManager.AddIncrement();
-
-            if (prefabDataHolders[i].prefabData.category.Contains(':'))
-            {
-                var categoryFields = prefabDataHolders[i].prefabData.category.Split(':');
-                if (!prefabParents.ContainsKey(categoryFields[1]))
-                {
-                    GameObject customPrefabParent = new GameObject(categoryFields[1]);
-                    customPrefabParent.transform.SetParent(prefabHierachy);
-                    customPrefabParent.transform.localPosition = prefabDataHolders[i].transform.localPosition;
-                    customPrefabParent.AddComponent<CustomPrefabData>();
-                    prefabParents.Add(categoryFields[1], customPrefabParent);
-                }
-                if (prefabParents.TryGetValue(categoryFields[1], out GameObject prefabParent))
-                {
-                    prefabDataHolders[i].gameObject.transform.SetParent(prefabParent.transform);
-                }
-            }
-        }
-        ProgressBarManager.Clear();
-    }
-
-    /// <summary>Exports information about all the map prefabs to a JSON file.</summary>
-    /// <param name="mapPrefabFilePath">The JSON file path and name.</param>
-    /// <param name="deletePrefabs">Deletes the prefab after the data is exported.</param>
-    public static void ExportMapPrefabs(string mapPrefabFilePath, bool deletePrefabs)
-    {
-        List<PrefabExport> mapPrefabExports = new List<PrefabExport>();
-        PrefabDataHolder[] prefabDataHolders = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        ProgressBarManager.SetProgressIncrement(1f / prefabDataHolders.Length);
-        for (int i = 0; i < prefabDataHolders.Length; i++)
-        {
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBarManager.DisplayIncremental("Export Map Prefabs", "Exporting prefab: " + i + " / " + prefabDataHolders.Length);
-            }
-            else
-                ProgressBarManager.AddIncrement();
-            
-            mapPrefabExports.Add(new PrefabExport()
-            {
-                PrefabNumber = i,
-                PrefabID = prefabDataHolders[i].prefabData.id,
-                PrefabPosition = prefabDataHolders[i].transform.localPosition.ToString(),
-                PrefabScale = prefabDataHolders[i].transform.localScale.ToString(),
-                PrefabRotation = prefabDataHolders[i].transform.rotation.ToString()
-            });
-            if (deletePrefabs)
-                GameObject.DestroyImmediate(prefabDataHolders[i].gameObject);
-        }
-
-        using (StreamWriter streamWriter = new StreamWriter(mapPrefabFilePath, false))
-        {
-            streamWriter.WriteLine("{");
-            foreach (PrefabExport prefabDetail in mapPrefabExports)
-            {
-                streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabID + ":" + prefabDetail.PrefabPosition + ":" + prefabDetail.PrefabScale + ":" + prefabDetail.PrefabRotation + "\",");
-            }
-            streamWriter.WriteLine("   \"Prefab Count\": " + prefabDataHolders.Length);
-            streamWriter.WriteLine("}");
-        }
-        mapPrefabExports.Clear();
-        ProgressBarManager.Clear();
-        Debug.Log("Exported " + prefabDataHolders.Length + " prefabs.");
-    }
-
-    /// <summary>Exports lootcrates to a JSON for use with Oxide.</summary>
-    /// <param name="prefabFilePath">The path to save the JSON.</param>
-    /// <param name="deletePrefabs">Delete the lootcrates after exporting.</param>
-    public static void ExportLootCrates(string prefabFilePath, bool deletePrefabs)
-    {
-        List<PrefabExport> prefabExports = new List<PrefabExport>();
-        PrefabDataHolder[] prefabs = GameObject.FindObjectsOfType<PrefabDataHolder>();
-        int lootCrateCount = 0;
-        foreach (PrefabDataHolder p in prefabs)
-        {
-            switch (p.prefabData.id)
-            {
-                case 1603759333:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_basic.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 3286607235:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_elite.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 1071933290:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_mine.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 2857304752:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 1546200557:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 2066926276:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2_food.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 1791916628:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_normal_2_medical.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 1892026534:
-                    p.transform.Rotate(Vector3.zero, 180f);
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_underwater_advanced.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-                case 3852690109:
-                    prefabExports.Add(new PrefabExport()
-                    {
-                        PrefabNumber = lootCrateCount,
-                        PrefabPath = "assets/bundled/prefabs/radtown/crate_underwater_basic.prefab",
-                        PrefabPosition = "(" + p.transform.localPosition.z + ", " + p.transform.localPosition.y + ", " + p.transform.localPosition.x * -1 + ")",
-                        PrefabRotation = p.transform.rotation.ToString()
-                    });
-                    if (deletePrefabs == true)
-                    {
-                        GameObject.DestroyImmediate(p.gameObject);
-                    }
-                    lootCrateCount++;
-                    break;
-            }
-        }
-        using (StreamWriter streamWriter = new StreamWriter(prefabFilePath, false))
-        {
-            streamWriter.WriteLine("{");
-            foreach (PrefabExport prefabDetail in prefabExports)
-            {
-                streamWriter.WriteLine("   \"" + prefabDetail.PrefabNumber + "\": \"" + prefabDetail.PrefabPath + ":" + prefabDetail.PrefabPosition + ":" + prefabDetail.PrefabRotation + "\",");
-            }
-            streamWriter.WriteLine("   \"Prefab Count\": " + lootCrateCount);
-            streamWriter.WriteLine("}");
-        }
-        prefabExports.Clear();
-        Debug.Log("Exported " + lootCrateCount + " lootcrates.");
-    }
-
     /// <summary>Centres the Prefab and Path parent objects.</summary>
-    static void CentreSceneObjects(MapInfo terrains)
+    static void CentreSceneObjects(MapInfo mapInfo)
     {
-        GameObject.FindGameObjectWithTag("Prefabs").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
-        GameObject.FindGameObjectWithTag("Paths").GetComponent<LockObject>().SetPosition(new Vector3(terrains.size.x / 2, 500, terrains.size.z / 2));
-    }
-
-    /// <summary>Loads and sets the Land and Water terrains.</summary>
-    public static void LoadTerrains(MapInfo terrains)
-    {
-        Land.terrainData.heightmapResolution = terrains.terrainRes;
-        Land.terrainData.size = terrains.size;
-
-        Water.terrainData.heightmapResolution = terrains.terrainRes;
-        Water.terrainData.size = terrains.size;
-
-        Land.terrainData.SetHeights(0, 0, terrains.land.heights);
-        Water.terrainData.SetHeights(0, 0, terrains.water.heights);
-
-        Land.terrainData.alphamapResolution = terrains.splatRes;
-        Land.terrainData.baseMapResolution = terrains.splatRes;
-        Water.terrainData.alphamapResolution = terrains.splatRes;
-        Water.terrainData.baseMapResolution = terrains.splatRes;
-
-        AreaManager.Reset();
-    }
-
-    /// <summary>Loads and sets up the map Prefabs.</summary>
-    static void LoadPrefabs(MapInfo terrains)
-    {
-        PrefabManager.SpawnPrefabs(terrains.prefabData);
-    }
-
-    /// <summary>Loads and sets up the map Paths.</summary>
-    static void LoadPaths(MapInfo terrains, string loadPath = "")
-    {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        ProgressBarManager.SetProgressIncrement(1f / terrains.pathData.Length);
-        for (int i = 0; i < terrains.pathData.Length; i++)
-        {
-            if (sw.Elapsed.TotalSeconds > 0.1f)
-            {
-                sw.Restart();
-                ProgressBarManager.DisplayIncremental("Loading: " + loadPath, "Spawning Paths: " + i + " / " + terrains.prefabData.Length);
-            }
-            else
-                ProgressBarManager.AddIncrement();
-
-            PathManager.Spawn(terrains.pathData[i]);
-        }
-        ProgressBarManager.Clear();
-    }
-
-    static void LoadSplatMaps(MapInfo terrains)
-    {
-        TopologyData.InitMesh(terrains.topology);
-        SetData(terrains.splatMap, LandLayers.Ground);
-        SetData(terrains.biomeMap, LandLayers.Biome);
-        Parallel.For(0, TerrainTopology.COUNT, i =>
-        {
-            SetData(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-        });
-    }
-
-    static void LoadAlphaMaps(MapInfo terrains)
-    {
-        SetData(terrains.alphaMap, LandLayers.Alpha);
+        PrefabManager.PrefabParent.GetComponent<LockObject>().SetPosition(new Vector3(mapInfo.size.x / 2, 500, mapInfo.size.z / 2));
+        PathManager.PathParent.GetComponent<LockObject>().SetPosition(new Vector3(mapInfo.size.x / 2, 500, mapInfo.size.z / 2));
     }
 
     /// <summary>Loads and sets up the map.</summary>
-    static void LoadMapInfo(MapInfo terrains, string loadPath = "")
+    public static void Load(MapInfo mapInfo, string loadPath = "")
     {
-        ProgressBarManager.Display("Loading: " + loadPath, "Preparing Map", 0.25f);
-        var splatMapTask = Task.Run(() => LoadSplatMaps(terrains));
-        RemoveMapObjects();
-        CentreSceneObjects(terrains);
-        LoadTerrains(terrains);
-        LoadAlphaMaps(terrains);
-        LoadPrefabs(terrains);
-        LoadPaths(terrains, loadPath);
-        SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to Ground.
-        splatMapTask.Wait();
-        ProgressBarManager.Clear();
-    }
-
-    /// <summary>Loads a WorldSerialization and calls LoadMapInfo.</summary>
-    /// <param name="loadPath">The path of the map, used by the progress bars.</param>
-    public static void Load(WorldSerialization world, string loadPath = "")
-    {
-        ProgressBarManager.Display("Loading: " + loadPath, "Loading Map", 0.1f);
-        LoadMapInfo(WorldToTerrain(world), loadPath);
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Load(mapInfo, loadPath));
     }
 
     /// <summary>Saves the map.</summary>
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
-        SaveLayer();
-        ProgressBarManager.Display("Saving Map: " + path, "Saving Prefabs ", 0.4f);
-        WorldSerialization world = TerrainToWorld(Land, Water);
-        ProgressBarManager.Display("Saving Map: " + path, "Saving to disk ", 0.8f);
-        world.Save(path);
-        ProgressBarManager.Clear();
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Save(path));
     }
 
     /// <summary>Creates a new flat terrain.</summary>
     /// <param name="size">The size of the terrain.</param>
     public static void CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
     {
-        LoadMapInfo(EmptyMap(size), "New Map");
-        PaintLayer(LandLayers.Ground, ground);
-        PaintLayer(LandLayers.Biome, biome);
-        SetHeightmap(landHeight, Selections.Terrains.Land, new Dimensions(0, HeightMapRes, 0, HeightMapRes));
-        SetHeightmap(500f, Selections.Terrains.Water, new Dimensions(0, HeightMapRes, 0, HeightMapRes));
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.CreateMap(size, ground, biome, landHeight));
     }
 
     public static List<string> generationPresetList = new List<string>();
@@ -1123,6 +701,82 @@ public static class MapManager
             var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
             generationPresetList.Add(itemNameSplit);
             nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
+        }
+    }
+
+    private class Coroutines
+    {
+        public static IEnumerator Load(MapInfo mapInfo, string loadPath = "")
+        {
+            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+            {
+                var progress = Progress.GetProgressById(Progress.GetId(i));
+                if (progress.finished && progress.name.Contains("Load:"))
+                    progress.Remove();
+            }  
+
+            int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+            int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int prefabID2 = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int pathID = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int pathID2 = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
+
+            var splatMapTask = Task.Run(() => SetSplatMaps(mapInfo));
+
+            PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, prefabID);
+            PathManager.DeletePaths(PathManager.CurrentMapPaths, pathID);
+            CentreSceneObjects(mapInfo);
+            SetTerrain(mapInfo, terrainID);
+            PrefabManager.SpawnPrefabs(mapInfo.prefabData, prefabID2);
+            PathManager.SpawnPaths(mapInfo.pathData, pathID2);
+
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            while (!splatMapTask.IsCompleted)
+            {
+                if (sw.Elapsed.TotalMilliseconds > 0.05f)
+                {
+                    sw.Restart();
+                    yield return null;
+                }
+            }
+            SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to the currently selected.
+            yield return null;
+            Progress.Report(progressID, 0.99f, "Loaded");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+
+        public static IEnumerator Save(string path)
+        {
+            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+            {
+                var progress = Progress.GetProgressById(Progress.GetId(i));
+                if (progress.finished && progress.name.Contains("Save:"))
+                    progress.Remove();
+            }
+
+            int progressID = Progress.Start("Save: " + path.Split('/').Last(), "Saving Map", Progress.Options.Sticky);
+            int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int pathID = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
+
+            SaveLayer();
+            yield return null;
+            TerrainToWorld(Land, Water, (prefabID, pathID, terrainID)).Save(path);
+
+            Progress.Report(progressID, 0.99f, "Saved");
+            Progress.Finish(prefabID, Progress.Status.Succeeded);
+            Progress.Finish(pathID, Progress.Status.Succeeded);
+            Progress.Finish(terrainID, Progress.Status.Succeeded);
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+
+        public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
+        {
+            yield return EditorCoroutineUtility.StartCoroutineOwnerless(Load(EmptyMap(size, landHeight), "New Map"));
+            PaintLayer(LandLayers.Ground, ground);
+            PaintLayer(LandLayers.Biome, biome);
         }
     }
 }

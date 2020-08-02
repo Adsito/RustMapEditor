@@ -17,11 +17,11 @@ public class PrefabDataHolder : MonoBehaviour
 
     public void UpdatePrefabData()
     {
-        prefabData.position = gameObject.transform.position - (0.5f * Land.terrainData.size);
+        prefabData.position = gameObject.transform.localPosition;
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
-
+     
     public void SnapToGround()
     {
         Vector3 newPos = transform.position;
@@ -35,4 +35,6 @@ public class PrefabDataHolder : MonoBehaviour
         foreach (var item in gameObject.GetComponentsInChildren<Light>(true))
             item.enabled = !item.enabled;
     }
+
+    public void BreakPrefab() => PrefabManager.BreakPrefab(gameObject);
 }

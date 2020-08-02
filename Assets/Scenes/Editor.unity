@@ -462,7 +462,7 @@ GameObject:
   m_TagString: Land
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 1
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!154 &1175142914
 TerrainCollider:
@@ -552,7 +552,7 @@ GameObject:
   m_TagString: Water
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 1
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!154 &1365878324
 TerrainCollider:
@@ -611,7 +611,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.32}
+  m_LocalEulerAnglesHint: {x: 0.15, y: 0.086, z: 0.13100001}
 --- !u!114 &1365878327
 MonoBehaviour:
   m_ObjectHideFlags: 0

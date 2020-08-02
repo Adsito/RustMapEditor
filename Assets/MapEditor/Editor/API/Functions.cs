@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
 using static RustMapEditor.Data.TerrainManager;
-using RustMapEditor.Data;
 
 namespace RustMapEditor.UI
 {
@@ -96,7 +95,7 @@ namespace RustMapEditor.UI
                 return;
             var world = new WorldSerialization();
             world.Load(loadFile);
-            MapManager.Load(world, loadFile);
+            MapManager.Load(WorldConverter.WorldToTerrain(world), loadFile);
             ReloadTreeViews();
         }
 
@@ -112,7 +111,6 @@ namespace RustMapEditor.UI
             saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
             if (string.IsNullOrEmpty(saveFile))
                 return;
-            ProgressBarManager.Display("Saving Map: " + saveFile, "Saving Heightmap ", 0.1f);
             MapManager.Save(saveFile);
         }
 
@@ -208,6 +206,10 @@ namespace RustMapEditor.UI
             if (EditorGUI.EndChangeCheck())
                 SetWaterTransparency(SettingsManager.WaterTransparency);
 
+            Elements.BeginToolbarHorizontal();
+            SettingsManager.LoadBundleOnProjectLoad = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnProjectLoad);
+            Elements.EndToolbarHorizontal();
+
         }
         #endregion
 
@@ -217,35 +219,10 @@ namespace RustMapEditor.UI
             Elements.MiniBoldLabel(ToolTips.toolsLabel);
 
             Elements.BeginToolbarHorizontal();
-            deleteOnExport = Elements.ToolbarToggle(ToolTips.deleteOnExport, deleteOnExport);
-            if (Elements.ToolbarButton(ToolTips.exportMapLootCrates))
-            {
-                lootCrateSaveFile = EditorUtility.SaveFilePanel("Export LootCrates", lootCrateSaveFile, "LootCrateData", "json");
-                if (!String.IsNullOrEmpty(lootCrateSaveFile))
-                    MapManager.ExportLootCrates(lootCrateSaveFile, deleteOnExport);
-            }
-            if (Elements.ToolbarButton(ToolTips.exportMapPrefabs))
-            {
-                mapPrefabSaveFile = EditorUtility.SaveFilePanel("Export Map Prefabs", mapPrefabSaveFile, "MapData", "json");
-                if (!String.IsNullOrEmpty(mapPrefabSaveFile))
-                    MapManager.ExportMapPrefabs(mapPrefabSaveFile, deleteOnExport);
-            }
-            Elements.EndToolbarHorizontal();
-
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.hidePrefabsInRustEdit))
-                MapManager.HidePrefabsInRustEdit();
-            if (Elements.ToolbarButton(ToolTips.breakRustEditPrefabs))
-                MapManager.BreakRustEditCustomPrefabs();
-            if (Elements.ToolbarButton(ToolTips.groupRustEditPrefabs))
-                MapManager.GroupRustEditCustomPrefabs();
-            Elements.EndToolbarHorizontal();
-
-            Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.deleteMapPrefabs))
-                MapManager.RemoveMapObjects(true, false);
+                PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
             if (Elements.ToolbarButton(ToolTips.deleteMapPaths))
-                MapManager.RemoveMapObjects(false, true);
+                PathManager.DeletePaths(PathManager.CurrentMapPaths);
             Elements.EndToolbarHorizontal();
         }
         public static void AssetBundle()
@@ -751,6 +728,14 @@ namespace RustMapEditor.UI
                 target.ToggleLights();
             Elements.EndToolbarHorizontal();
         }
+
+        public static void BreakPrefab(PrefabDataHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.breakPrefab))
+                target.BreakPrefab();
+            Elements.EndToolbarHorizontal();
+        }
         #endregion
 
         #region Functions
@@ -828,7 +813,7 @@ namespace RustMapEditor.UI
         }
         #endregion
 
-        #region PrefabsList
+        #region TreeViews
         public static void DisplayPrefabName(string name)
         {
             Elements.BeginToolbarHorizontal();
@@ -863,6 +848,23 @@ namespace RustMapEditor.UI
                 treeView.RefreshTreeView(showAllPrefabs);
             Elements.EndToolbarHorizontal();
         }
+
+
+        public static void HierachyOptions(PrefabDataHolder[] prefabs, ref string name)
+        {
+            Elements.MiniBoldLabel(ToolTips.hierachyOptionsLabel);
+
+            Elements.BeginToolbarHorizontal();
+            name = Elements.ToolbarTextField(name);
+            if (Elements.ToolbarButton(ToolTips.hierachyRename))
+                PrefabManager.RenamePrefabs(prefabs, name);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(ToolTips.hierachyDelete))
+                PrefabManager.DeletePrefabs(prefabs);
+            Elements.EndToolbarHorizontal();
+        }
         #endregion
 
         #region CreateNewMap
@@ -891,7 +893,7 @@ namespace RustMapEditor.UI
                     case 1:
                         return;
                     case 2:
-                        Functions.SaveMapPanel();
+                        SaveMapPanel();
                         break;
                 }
                 MapManager.CreateMap(mapSize, TerrainSplat.TypeToIndex((int)layers.Ground), TerrainBiome.TypeToIndex((int)layers.Biome), landHeight);
