@@ -25,9 +25,9 @@ public static class TopologyData
             for (int j = 0; j < topology.res; j++)
             {
                 if ((topology[i, j] & layer) != 0)
-                    splatMap[i, j, 0] = float.MinValue;
+                    splatMap[i, j, 0] = 1f;
                 else
-                    splatMap[i, j, 1] = float.MaxValue;
+                    splatMap[i, j, 1] = 1f;
             }
         });
         return splatMap;
