@@ -187,7 +187,7 @@ public static class PrefabManager
 
             for (int i = 0; i < transforms.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 0.05f)
+                if (sw.Elapsed.TotalSeconds > 0.2f)
                 {
                     yield return null;
                     Progress.Report(progressId, (float)i / transforms.Length, "Scanning Prefab: " + i + " / " + transforms.Length);
