@@ -4,6 +4,7 @@ namespace RustMapEditor.Variables
 {
     public static class ToolTips
     {
+        public const string EditorVersion = "v0.1.6";
         public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
         public static GUIContent optionsLabel = new GUIContent("Options");
 
@@ -11,7 +12,7 @@ namespace RustMapEditor.Variables
         public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
         public static GUIContent systemRAM = new GUIContent("RAM: " + SystemInfo.systemMemorySize / 1000 + "GB");
         public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
-        public static GUIContent editorVersion = new GUIContent("Editor Version: v0.1.5");
+        public static GUIContent editorVersion = new GUIContent("Editor Version: " + EditorVersion);
 
         public static GUIContent runPreset = new GUIContent("Run Preset", "Run this preset with all it's current nodes.");
         public static GUIContent deletePreset = new GUIContent("Delete Preset", "Delete this preset from Unity.");
