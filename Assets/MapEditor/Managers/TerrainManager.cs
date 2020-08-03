@@ -213,7 +213,6 @@ namespace RustMapEditor.Data
             AreaManager.Reset();
 
             Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
-            Progress.Finish(progressID, Progress.Status.Succeeded);
         }
 
         public static void SetSplatMaps(MapInfo mapInfo)

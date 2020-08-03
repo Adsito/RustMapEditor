@@ -172,6 +172,13 @@ public static class PrefabManager
     {
         public static IEnumerator BreakPrefab(GameObject prefab)
         {
+            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+            {
+                var progress = Progress.GetProgressById(Progress.GetId(i));
+                if (progress.finished && progress.name.Contains("Break Prefab"))
+                    progress.Remove();
+            }
+
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
@@ -180,7 +187,7 @@ public static class PrefabManager
 
             for (int i = 0; i < transforms.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 0.5f)
+                if (sw.Elapsed.TotalSeconds > 0.05f)
                 {
                     yield return null;
                     Progress.Report(progressId, (float)i / transforms.Length, "Scanning Prefab: " + i + " / " + transforms.Length);
@@ -200,6 +207,7 @@ public static class PrefabManager
                 }
             }
             GameObject.DestroyImmediate(prefab);
+            Progress.Report(progressId, 0.99f, "Scanned: " + transforms.Length + " prefabs.");
             Progress.Finish(progressId);
         }
 

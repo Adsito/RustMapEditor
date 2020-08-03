@@ -754,6 +754,7 @@ public static class MapManager
             }
 
             Progress.Report(progressID, 0.99f, "Loaded");
+            Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
 
