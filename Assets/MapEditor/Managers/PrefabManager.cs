@@ -169,11 +169,6 @@ public static class PrefabManager
 
     private static class Coroutines
     {
-        {
-
-
-        }
-
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs, int progressID)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
