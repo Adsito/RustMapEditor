@@ -716,20 +716,20 @@ public static class MapManager
             }  
 
             int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
-            int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
-            int prefabID2 = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
-            int pathID = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
-            int pathID2 = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+            int spwPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
             int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
 
             var splatMapTask = Task.Run(() => SetSplatMaps(mapInfo));
 
-            PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, prefabID);
-            PathManager.DeletePaths(PathManager.CurrentMapPaths, pathID);
+            PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
+            PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
             CentreSceneObjects(mapInfo);
             SetTerrain(mapInfo, terrainID);
-            PrefabManager.SpawnPrefabs(mapInfo.prefabData, prefabID2);
-            PathManager.SpawnPaths(mapInfo.pathData, pathID2);
+            PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
+            PathManager.SpawnPaths(mapInfo.pathData, spwPath);
 
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -741,8 +741,18 @@ public static class MapManager
                     yield return null;
                 }
             }
+
             SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to the currently selected.
-            yield return null;
+
+            while (Progress.GetProgressById(spwPrefab).running)
+            {
+                if (sw.Elapsed.TotalMilliseconds > 0.05f)
+                {
+                    sw.Restart();
+                    yield return null;
+                }
+            }
+
             Progress.Report(progressID, 0.99f, "Loaded");
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }

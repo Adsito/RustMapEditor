@@ -165,10 +165,44 @@ public static class PrefabManager
 
     public static void BreakPrefab(GameObject prefab)
     {
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.BreakPrefab(prefab));
     }
 
     private static class Coroutines
     {
+        public static IEnumerator BreakPrefab(GameObject prefab)
+        {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            var transforms = prefab.GetComponentsInChildren<Transform>();
+            int progressId = Progress.Start("Break Prefab", null, Progress.Options.Sticky);
+
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.5f)
+                {
+                    yield return null;
+                    Progress.Report(progressId, (float)i / transforms.Length, "Scanning Prefab: " + i + " / " + transforms.Length);
+                    sw.Restart();
+                }
+                var nameSplit = transforms[i].gameObject.name.Split(' ');
+                var prefabName = nameSplit[0].Trim() + ".prefab";
+                var prefabPaths = AssetManager.ManifestStrings.Where(x => x.Contains(prefabName));
+                if (prefabPaths.Count() == 1)
+                {
+                    GameObject go = GameObject.Instantiate(Load(prefabPaths.First()), PrefabParent);
+                    go.transform.position = transforms[i].gameObject.transform.position;
+                    go.transform.rotation = transforms[i].gameObject.transform.rotation;
+                    go.transform.localScale = transforms[i].gameObject.transform.localScale;
+                    go.name = Load(prefabPaths.First()).name;
+                    go.SetActive(true);
+                }
+            }
+            GameObject.DestroyImmediate(prefab);
+            Progress.Finish(progressId);
+        }
+
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs, int progressID)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
