@@ -264,19 +264,21 @@ public static class AssetManager
 				foreach (var filename in asset.GetAllAssetNames())
 				{
 					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.2f)
+					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						sw.Restart();
+						
 						yield return null;
+                                                sw.Restart();    
 					}
 				}
 				foreach (var filename in asset.GetAllScenePaths())
 				{
 					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.2f)
+					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						sw.Restart();
+						
 						yield return null;
+                                                sw.Restart();
 					}
 				}
 			}
