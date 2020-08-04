@@ -264,7 +264,7 @@ public static class AssetManager
 				foreach (var filename in asset.GetAllAssetNames())
 				{
 					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					if (sw.Elapsed.TotalMilliseconds >= 0.2f)
 					{
 						sw.Restart();
 						yield return null;
@@ -273,7 +273,7 @@ public static class AssetManager
 				foreach (var filename in asset.GetAllScenePaths())
 				{
 					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					if (sw.Elapsed.TotalMilliseconds >= 0.2f)
 					{
 						sw.Restart();
 						yield return null;
