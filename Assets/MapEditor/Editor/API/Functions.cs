@@ -789,6 +789,14 @@ namespace RustMapEditor.UI
             PrefabHierachyWindow.ReloadTree();
             PathHierachyWindow.ReloadTree();
         }
+
+        public static void CopyText(string text)
+        {
+            TextEditor editor = new TextEditor();
+            editor.text = text;
+            editor.SelectAll();
+            editor.Copy();
+        }
         #endregion
 
         #region NodeGraph
@@ -818,7 +826,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabName(string name)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabName);
+            if (Elements.ToolbarButton(ToolTips.prefabName))
+                CopyText(name);
             Elements.ToolbarLabel(new GUIContent(name, name));
             Elements.EndToolbarHorizontal();
         }
@@ -826,7 +835,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabID);
+            if (Elements.ToolbarButton(ToolTips.prefabID))
+                CopyText(prefab.id.ToString());
             Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
             Elements.EndToolbarHorizontal();
         }
@@ -834,7 +844,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabPath);
+            if (Elements.ToolbarButton(ToolTips.prefabPath))
+                CopyText(AssetManager.ToPath(prefab.id));
             Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
             Elements.EndToolbarHorizontal();
         }
@@ -857,8 +868,14 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             name = Elements.ToolbarTextField(name);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyRename))
+            {
                 PrefabManager.RenamePrefabs(prefabs, name);
+                ReloadTreeViews();
+            }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();

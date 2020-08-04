@@ -265,6 +265,7 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Replacing Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
+                prefabs[i].UpdatePrefabData();
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
@@ -287,6 +288,7 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Replacing Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
+                prefabs[i].UpdatePrefabData();
                 Spawn(DefaultPrefab, prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
