@@ -31,7 +31,7 @@ public static class PrefabManager
         if (DefaultPrefab != null && PrefabParent != null)
         {
             EditorApplication.update -= OnProjectLoad;
-            if (!AssetManager.IsInitialised && SettingsManager.LoadBundleOnProjectLoad)
+            if (!AssetManager.IsInitialised && SettingsManager.LoadBundleOnLaunch)
                 AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
         }
     }

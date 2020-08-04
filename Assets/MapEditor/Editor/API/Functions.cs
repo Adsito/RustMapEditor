@@ -165,6 +165,7 @@ namespace RustMapEditor.UI
                 OpenDiscord();
             Elements.EndToolbarHorizontal();
         }
+
         public static void EditorSettings()
         {
             Elements.BoldLabel(ToolTips.editorSettingsLabel);
@@ -207,7 +208,7 @@ namespace RustMapEditor.UI
                 SetWaterTransparency(SettingsManager.WaterTransparency);
 
             Elements.BeginToolbarHorizontal();
-            SettingsManager.LoadBundleOnProjectLoad = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnProjectLoad);
+            SettingsManager.LoadBundleOnLaunch = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnLaunch);
             Elements.EndToolbarHorizontal();
 
         }
