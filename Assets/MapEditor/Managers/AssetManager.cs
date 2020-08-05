@@ -266,9 +266,8 @@ public static class AssetManager
 					AssetPaths.Add(filename, asset);
 					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						
 						yield return null;
-                                                sw.Restart();    
+						sw.Restart();    
 					}
 				}
 				foreach (var filename in asset.GetAllScenePaths())
@@ -276,9 +275,8 @@ public static class AssetManager
 					AssetPaths.Add(filename, asset);
 					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						
 						yield return null;
-                                                sw.Restart();
+						sw.Restart();
 					}
 				}
 			}
@@ -306,10 +304,10 @@ public static class AssetManager
 			});
 			while (!setLookups.IsCompleted)
             {
-				if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+				if (sw.Elapsed.TotalMilliseconds >= 0.1f)
                 {
-					sw.Restart();
 					yield return null;
+					sw.Restart();
 				}
 			}
 		}
