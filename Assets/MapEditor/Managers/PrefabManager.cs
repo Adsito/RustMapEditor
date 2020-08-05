@@ -111,6 +111,17 @@ public static class PrefabManager
         newObj.SetActive(true);
     }
 
+    /// <summary>Spawns a prefab and parents to the selected transform.</summary>
+    public static void Spawn(GameObject go, Transform transform, string name)
+    {
+        GameObject newObj = GameObject.Instantiate(go, PrefabParent);
+        newObj.transform.position = transform.position;
+        newObj.transform.rotation = transform.rotation;
+        newObj.transform.localScale = transform.localScale;
+        newObj.name = name;
+        newObj.SetActive(true);
+    }
+
     /// <summary>Spawns the prefab set in PrefabToSpawn at the spawnPos</summary>
     public static void SpawnPrefab(Vector3 spawnPos)
     {
@@ -197,26 +208,16 @@ public static class PrefabManager
                 var prefabName = nameSplit[0].Trim() + ".prefab";
                 var prefabPaths = AssetManager.ManifestStrings.Where(x => x.Contains(prefabName));
                 if (prefabPaths.Count() == 1)
-                {
-                    GameObject go = GameObject.Instantiate(Load(prefabPaths.First()), PrefabParent);
-                    go.transform.position = transforms[i].gameObject.transform.position;
-                    go.transform.rotation = transforms[i].gameObject.transform.rotation;
-                    go.transform.localScale = transforms[i].gameObject.transform.localScale;
-                    go.name = Load(prefabPaths.First()).name;
-                    go.SetActive(true);
-                }
+                    Spawn(Load(prefabPaths.First()), transforms[i], prefabName);
+
                 else if (prefabPaths.Count() > 1)
                 {
                     foreach (var item in prefabPaths)
                     {
-                        if (item.EndsWith(prefabName))
+                        if (item.EndsWith(prefabName) && !item.Contains(@"assets/bundled/prefabs/ui/"))
                         {
-                            GameObject go = GameObject.Instantiate(Load(prefabPaths.First()), PrefabParent);
-                            go.transform.position = transforms[i].gameObject.transform.position;
-                            go.transform.rotation = transforms[i].gameObject.transform.rotation;
-                            go.transform.localScale = transforms[i].gameObject.transform.localScale;
-                            go.name = Load(prefabPaths.First()).name;
-                            go.SetActive(true);
+                            Spawn(Load(item), transforms[i], prefabName);
+                            break;
                         }
                     }
                 }

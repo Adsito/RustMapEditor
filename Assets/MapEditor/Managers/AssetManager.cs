@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 public static class AssetManager
