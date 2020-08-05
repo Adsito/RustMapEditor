@@ -10,7 +10,7 @@ namespace RustMapEditor.UI
     public static class Functions
     {
         #region Menu Items
-        [MenuItem("Rust Map Editor/Main Menu", false, 0)]
+        [MenuItem("Rust Map Editor/Main Menu", false, -1)]
         public static void OpenMainMenu()
         {
             MapManagerWindow window = (MapManagerWindow)EditorWindow.GetWindow(typeof(MapManagerWindow), false, "Rust Map Editor");

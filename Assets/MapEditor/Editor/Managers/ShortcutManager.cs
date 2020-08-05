@@ -85,4 +85,7 @@ public static class ShortcutManager
 
     [Shortcut("RustMapEditor/Disable Hide Flags")]
     public static void DisableHideFlags() => SceneManager.ToggleHideFlags(false);
+
+    [Shortcut("RustMapEditor/Open Settings Menu"), MenuItem("Rust Map Editor/Settings", false, 0)]
+    public static void OpenSettings() => SettingsWindow.Init();
 }

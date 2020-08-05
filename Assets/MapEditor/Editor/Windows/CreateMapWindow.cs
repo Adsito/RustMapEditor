@@ -13,6 +13,8 @@ public class CreateMapWindow : EditorWindow
 
     public static void Init()
     {
+        if (HasOpenInstances<CreateMapWindow>())
+            return;
         CreateMapWindow window = CreateInstance<CreateMapWindow>();
         window.position = new Rect(ScenePos.x + ScenePos.width / 2 - 75f, ScenePos.y + ScenePos.height / 2, 250f, 123f);
         window.ShowPopup();

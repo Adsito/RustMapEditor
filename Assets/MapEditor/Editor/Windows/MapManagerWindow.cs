@@ -48,7 +48,6 @@ public class MapManagerWindow : EditorWindow
                 Functions.EditorInfo();
                 Functions.MapInfo();
                 Functions.EditorLinks();
-                Functions.EditorSettings();
                 break;
             #endregion
             #region Prefabs
