@@ -205,6 +205,21 @@ public static class PrefabManager
                     go.name = Load(prefabPaths.First()).name;
                     go.SetActive(true);
                 }
+                else if (prefabPaths.Count() > 1)
+                {
+                    foreach (var item in prefabPaths)
+                    {
+                        if (item.EndsWith(prefabName))
+                        {
+                            GameObject go = GameObject.Instantiate(Load(prefabPaths.First()), PrefabParent);
+                            go.transform.position = transforms[i].gameObject.transform.position;
+                            go.transform.rotation = transforms[i].gameObject.transform.rotation;
+                            go.transform.localScale = transforms[i].gameObject.transform.localScale;
+                            go.name = Load(prefabPaths.First()).name;
+                            go.SetActive(true);
+                        }
+                    }
+                }
             }
             GameObject.DestroyImmediate(prefab);
             Progress.Report(progressId, 0.99f, "Scanned: " + transforms.Length + " prefabs.");

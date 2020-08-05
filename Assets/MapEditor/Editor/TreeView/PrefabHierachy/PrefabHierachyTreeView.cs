@@ -86,6 +86,9 @@ namespace RustMapEditor.UI
         {
             List<PrefabHierachyElement> prefabHierachyElements = new List<PrefabHierachyElement>();
             prefabHierachyElements.Add(new PrefabHierachyElement("", -1, -1));
+			if (PrefabManager.PrefabParent == null)
+				return prefabHierachyElements;
+
             var prefabs = PrefabManager.CurrentMapPrefabs;
             for (int i = 0; i < prefabs.Length; i++)
             {
@@ -101,7 +104,7 @@ namespace RustMapEditor.UI
 		public static List<PrefabDataHolder> PrefabDataFromSelection(PrefabHierachyTreeView treeView)
         {
 			List<PrefabDataHolder> prefabDataList = new List<PrefabDataHolder>();
-            foreach (var item in treeView.GetSelection())
+			foreach (var item in treeView.GetSelection())
 				prefabDataList.Add(treeView.treeModel.Find(item).prefabDataHolder);
 
 			return prefabDataList;

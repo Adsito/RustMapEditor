@@ -91,7 +91,10 @@ namespace RustMapEditor.UI
         {
             List<PathHierachyElement> pathHierachyElements = new List<PathHierachyElement>();
             pathHierachyElements.Add(new PathHierachyElement("", -1, -1));
-            var paths = GameObject.FindObjectsOfType<PathDataHolder>();
+            if (PathManager.DefaultPath == null)
+                return pathHierachyElements;
+
+            var paths = PathManager.CurrentMapPaths;
             for (int i = 0; i < paths.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}:{4}:{5}", paths[i].pathData.name, paths[i].pathData.width, paths[i].pathData.innerPadding, paths[i].pathData.outerPadding, paths[i].pathData.innerFade, paths[i].pathData.outerFade);
@@ -196,9 +199,7 @@ namespace RustMapEditor.UI
             var item = (TreeViewItem<PathHierachyElement>)args.item;
 
             for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
-            {
                 CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
-            }
         }
 
         void CellGUI(Rect cellRect, TreeViewItem<PathHierachyElement> item, Columns column, ref RowGUIArgs args)
