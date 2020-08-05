@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class SceneManager
@@ -35,5 +36,13 @@ public static class SceneManager
                     path.gameObject.transform.SetParent(PathManager.PathParent);
             }
         }
+    }
+
+    public static void ToggleHideFlags(bool enabled)
+    {
+        foreach (var item in GameObject.FindObjectsOfType<SceneObjectHideFlags>())
+            item.ToggleHideFlags(enabled);
+
+        SceneHierarchyHooks.ReloadAllSceneHierarchies();
     }
 }

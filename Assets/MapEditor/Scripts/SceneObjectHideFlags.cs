@@ -7,6 +7,11 @@ public class SceneObjectHideFlags : MonoBehaviour
 
     private void Start()
     {
-        gameObject.hideFlags = HideFlags.None;
+        gameObject.hideFlags = Flags;
+    }
+
+    public void ToggleHideFlags(bool enabled) 
+    {
+        gameObject.hideFlags = enabled ? Flags : HideFlags.None;
     }
 }

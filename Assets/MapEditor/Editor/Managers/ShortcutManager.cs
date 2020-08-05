@@ -79,4 +79,10 @@ public static class ShortcutManager
     {
         EditorTools.SetActiveTool(typeof(ScaleToolCentred));
     }
+
+    [Shortcut("RustMapEditor/Enable Hide Flags")]
+    public static void EnableHideFlags() => SceneManager.ToggleHideFlags(true);
+
+    [Shortcut("RustMapEditor/Disable Hide Flags")]
+    public static void DisableHideFlags() => SceneManager.ToggleHideFlags(false);
 }
