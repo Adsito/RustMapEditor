@@ -32,8 +32,6 @@ public static class MapManager
         {
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
-            SceneManager.CentreSceneView(SceneView.lastActiveSceneView);
-            SceneManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
         }
     }
     
