@@ -52,8 +52,8 @@ public static class SceneManager
     public static void SetClippingDistances(ArrayList sceneViews)
     {
         foreach (SceneView item in sceneViews)
-            if (item.cameraSettings.nearClip < 0.1f)
-                item.cameraSettings.nearClip = 0.1f;
+            if (item.cameraSettings.nearClip < 0.5f)
+                item.cameraSettings.nearClip = 0.5f;
     }
 
     private static void OnSceneChanged()
