@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace RustMapEditor.UI
 {
-    internal class PathHierachyTreeView : TreeViewWithTreeModel<PathHierachyElement>
+    internal class PathHierarchyTreeView : TreeViewWithTreeModel<PathHierarchyElement>
     {
         const float kRowHeights = 20f;
         const float kToggleWidth = 18f;
@@ -74,7 +74,7 @@ namespace RustMapEditor.UI
             }
         }
 
-        public PathHierachyTreeView(TreeViewState state, MultiColumnHeader multicolumnHeader, TreeModel<PathHierachyElement> model) : base(state, multicolumnHeader, model)
+        public PathHierarchyTreeView(TreeViewState state, MultiColumnHeader multicolumnHeader, TreeModel<PathHierarchyElement> model) : base(state, multicolumnHeader, model)
         {
             Assert.AreEqual(m_SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
@@ -87,10 +87,10 @@ namespace RustMapEditor.UI
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
-        public static List<PathHierachyElement> GetPathHierachyElements()
+        public static List<PathHierarchyElement> GetPathHierachyElements()
         {
-            List<PathHierachyElement> pathHierachyElements = new List<PathHierachyElement>();
-            pathHierachyElements.Add(new PathHierachyElement("", -1, -1));
+            List<PathHierarchyElement> pathHierachyElements = new List<PathHierarchyElement>();
+            pathHierachyElements.Add(new PathHierarchyElement("", -1, -1));
             if (PathManager.DefaultPath == null)
                 return pathHierachyElements;
 
@@ -98,7 +98,7 @@ namespace RustMapEditor.UI
             for (int i = 0; i < paths.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}:{4}:{5}", paths[i].pathData.name, paths[i].pathData.width, paths[i].pathData.innerPadding, paths[i].pathData.outerPadding, paths[i].pathData.innerFade, paths[i].pathData.outerFade);
-                pathHierachyElements.Add(new PathHierachyElement(name, 0, i) 
+                pathHierachyElements.Add(new PathHierarchyElement(name, 0, i) 
                 { 
                     pathData = paths[i]
                 });
@@ -139,7 +139,7 @@ namespace RustMapEditor.UI
             if (sortedColumns.Length == 0)
                 return;
 
-            var myTypes = rootItem.children.Cast<TreeViewItem<PathHierachyElement>>();
+            var myTypes = rootItem.children.Cast<TreeViewItem<PathHierarchyElement>>();
             var orderedQuery = InitialOrder(myTypes, sortedColumns);
             for (int i = 1; i < sortedColumns.Length; i++)
             {
@@ -172,7 +172,7 @@ namespace RustMapEditor.UI
             rootItem.children = orderedQuery.Cast<TreeViewItem>().ToList();
         }
 
-        IOrderedEnumerable<TreeViewItem<PathHierachyElement>> InitialOrder(IEnumerable<TreeViewItem<PathHierachyElement>> myTypes, int[] history)
+        IOrderedEnumerable<TreeViewItem<PathHierarchyElement>> InitialOrder(IEnumerable<TreeViewItem<PathHierarchyElement>> myTypes, int[] history)
         {
             SortOption sortOption = m_SortOptions[history[0]];
             bool ascending = multiColumnHeader.IsSortedAscending(history[0]);
@@ -196,13 +196,13 @@ namespace RustMapEditor.UI
 
         protected override void RowGUI(RowGUIArgs args)
         {
-            var item = (TreeViewItem<PathHierachyElement>)args.item;
+            var item = (TreeViewItem<PathHierarchyElement>)args.item;
 
             for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
                 CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
         }
 
-        void CellGUI(Rect cellRect, TreeViewItem<PathHierachyElement> item, Columns column, ref RowGUIArgs args)
+        void CellGUI(Rect cellRect, TreeViewItem<PathHierarchyElement> item, Columns column, ref RowGUIArgs args)
         {
             CenterRectUsingSingleLineHeight(ref cellRect);
 

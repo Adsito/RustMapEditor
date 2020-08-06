@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace RustMapEditor.UI
 {
-	internal class PrefabHierachyTreeView : TreeViewWithTreeModel<PrefabHierachyElement>
+	internal class PrefabHierarchyTreeView : TreeViewWithTreeModel<PrefabHierarchyElement>
 	{
 		const float kRowHeights = 20f;
 		const float kToggleWidth = 18f;
@@ -68,7 +68,7 @@ namespace RustMapEditor.UI
 			}
 		}
 
-		public PrefabHierachyTreeView (TreeViewState state, MultiColumnHeader multicolumnHeader, TreeModel<PrefabHierachyElement> model) : base (state, multicolumnHeader, model)
+		public PrefabHierarchyTreeView (TreeViewState state, MultiColumnHeader multicolumnHeader, TreeModel<PrefabHierarchyElement> model) : base (state, multicolumnHeader, model)
 		{
 			Assert.AreEqual(m_SortOptions.Length , Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
@@ -82,10 +82,10 @@ namespace RustMapEditor.UI
 			Reload();
 		}
 
-        public static List<PrefabHierachyElement> GetPrefabHierachyElements()
+        public static List<PrefabHierarchyElement> GetPrefabHierachyElements()
         {
-            List<PrefabHierachyElement> prefabHierachyElements = new List<PrefabHierachyElement>();
-            prefabHierachyElements.Add(new PrefabHierachyElement("", -1, -1));
+            List<PrefabHierarchyElement> prefabHierachyElements = new List<PrefabHierarchyElement>();
+            prefabHierachyElements.Add(new PrefabHierarchyElement("", -1, -1));
 			if (PrefabManager.PrefabParent == null)
 				return prefabHierachyElements;
 
@@ -93,7 +93,7 @@ namespace RustMapEditor.UI
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}", prefabs[i].name.Replace(':', ' '), "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id);
-                prefabHierachyElements.Add(new PrefabHierachyElement(name, 0, i) 
+                prefabHierachyElements.Add(new PrefabHierarchyElement(name, 0, i) 
 				{
 					prefabDataHolder = prefabs[i],
 				});
@@ -101,7 +101,7 @@ namespace RustMapEditor.UI
             return prefabHierachyElements;
         }
 
-		public static List<PrefabDataHolder> PrefabDataFromSelection(PrefabHierachyTreeView treeView)
+		public static List<PrefabDataHolder> PrefabDataFromSelection(PrefabHierarchyTreeView treeView)
         {
 			List<PrefabDataHolder> prefabDataList = new List<PrefabDataHolder>();
 			foreach (var item in treeView.GetSelection())
@@ -142,7 +142,7 @@ namespace RustMapEditor.UI
 			if (sortedColumns.Length == 0)
 				return;
 
-			var myTypes = rootItem.children.Cast<TreeViewItem<PrefabHierachyElement> >();
+			var myTypes = rootItem.children.Cast<TreeViewItem<PrefabHierarchyElement> >();
 			var orderedQuery = InitialOrder (myTypes, sortedColumns);
 			for (int i=1; i<sortedColumns.Length; i++)
 			{
@@ -169,7 +169,7 @@ namespace RustMapEditor.UI
 			rootItem.children = orderedQuery.Cast<TreeViewItem> ().ToList ();
 		}
 
-		IOrderedEnumerable<TreeViewItem<PrefabHierachyElement>> InitialOrder(IEnumerable<TreeViewItem<PrefabHierachyElement>> myTypes, int[] history)
+		IOrderedEnumerable<TreeViewItem<PrefabHierarchyElement>> InitialOrder(IEnumerable<TreeViewItem<PrefabHierarchyElement>> myTypes, int[] history)
 		{
 			SortOption sortOption = m_SortOptions[history[0]];
 			bool ascending = multiColumnHeader.IsSortedAscending(history[0]);
@@ -189,13 +189,13 @@ namespace RustMapEditor.UI
 
 		protected override void RowGUI (RowGUIArgs args)
 		{
-			var item = (TreeViewItem<PrefabHierachyElement>) args.item;
+			var item = (TreeViewItem<PrefabHierarchyElement>) args.item;
 
 			for (int i = 0; i < args.GetNumVisibleColumns (); ++i)
 				CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
 		}
 
-		void CellGUI (Rect cellRect, TreeViewItem<PrefabHierachyElement> item, Columns column, ref RowGUIArgs args)
+		void CellGUI (Rect cellRect, TreeViewItem<PrefabHierarchyElement> item, Columns column, ref RowGUIArgs args)
 		{
 			CenterRectUsingSingleLineHeight(ref cellRect);
 

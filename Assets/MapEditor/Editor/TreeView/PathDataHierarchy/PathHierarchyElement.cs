@@ -3,13 +3,13 @@
 namespace RustMapEditor.UI
 {
     [Serializable]
-    internal class PathHierachyElement : TreeElement
+    internal class PathHierarchyElement : TreeElement
     {
         public string pathName;
         public float width, innerPadding, outerPadding, innerFade, outerFade;
         public PathDataHolder pathData;
 
-        public PathHierachyElement(string name, int depth, int id) : base(name, depth, id)
+        public PathHierarchyElement(string name, int depth, int id) : base(name, depth, id)
         {
             if (!String.IsNullOrEmpty(name))
             {

@@ -3,13 +3,13 @@ using System;
 namespace RustMapEditor.UI
 {
 	[Serializable]
-	internal class PrefabHierachyElement : TreeElement
+	internal class PrefabHierarchyElement : TreeElement
 	{
 	    public string prefabName, type, category;
         public uint rustID;
         public PrefabDataHolder prefabDataHolder;
 
-		public PrefabHierachyElement (string name, int depth, int id) : base (name, depth, id)
+		public PrefabHierarchyElement (string name, int depth, int id) : base (name, depth, id)
 		{
             if (!String.IsNullOrEmpty(name))
             {

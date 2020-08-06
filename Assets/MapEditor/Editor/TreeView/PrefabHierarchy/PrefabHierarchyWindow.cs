@@ -7,13 +7,13 @@ using System.Collections.Generic;
 
 namespace RustMapEditor.UI
 {
-	class PrefabHierachyWindow : EditorWindow
+	class PrefabHierarchyWindow : EditorWindow
 	{
 		[NonSerialized] bool m_Initialized;
 		[SerializeField] TreeViewState treeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
-		PrefabHierachyTreeView m_TreeView;
+		PrefabHierarchyTreeView m_TreeView;
 
 		[NonSerialized] string category;
 
@@ -32,7 +32,7 @@ namespace RustMapEditor.UI
 			get { return new Rect(20, 10, position.width - position.width / 3, 20); }
 		}
 
-		public PrefabHierachyTreeView treeView
+		public PrefabHierarchyTreeView treeView
 		{
 			get { return m_TreeView; }
 		}
@@ -96,9 +96,9 @@ namespace RustMapEditor.UI
 				if (firstInit)
 					multiColumnHeader.ResizeToFit ();
 
-				var treeModel = new TreeModel<PrefabHierachyElement>(PrefabHierachyTreeView.GetPrefabHierachyElements());
+				var treeModel = new TreeModel<PrefabHierarchyElement>(PrefabHierarchyTreeView.GetPrefabHierachyElements());
 				
-				m_TreeView = new PrefabHierachyTreeView(treeViewState, multiColumnHeader, treeModel);
+				m_TreeView = new PrefabHierarchyTreeView(treeViewState, multiColumnHeader, treeModel);
 
 				m_SearchField = new SearchField();
 				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
@@ -134,7 +134,7 @@ namespace RustMapEditor.UI
 		void DrawOptions(Rect rect)
         {
 			GUILayout.BeginArea(rect);
-			Functions.HierachyOptions(PrefabHierachyTreeView.PrefabDataFromSelection(treeView).ToArray(), ref category);
+			Functions.HierachyOptions(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView).ToArray(), ref category);
 			GUILayout.EndArea();
         }
 
@@ -146,9 +146,9 @@ namespace RustMapEditor.UI
 
         public static void ReloadTree()
 		{
-			if (HasOpenInstances<PrefabHierachyWindow>())
+			if (HasOpenInstances<PrefabHierarchyWindow>())
 			{
-				PrefabHierachyWindow window = (PrefabHierachyWindow)GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
+				PrefabHierarchyWindow window = (PrefabHierarchyWindow)GetWindow(typeof(PrefabHierarchyWindow), false, "Prefab Hierachy");
 				window.m_Initialized = false;
 			}
 		}

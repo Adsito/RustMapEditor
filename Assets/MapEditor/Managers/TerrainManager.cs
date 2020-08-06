@@ -36,7 +36,10 @@ namespace RustMapEditor.Data
         public static LandLayers LandLayer { get; private set; }
 
         /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
-        public static TerrainTopology.Enum TopologyLayer { get; private set; }
+        public static TerrainTopology.Enum TopologyLayerEnum { get; private set; }
+
+        /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
+        public static int TopologyLayer { get => TerrainTopology.TypeToIndex((int)TopologyLayerEnum); }
 
         /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
         public static int LastTopologyLayer { get; private set; } = 0;
@@ -313,7 +316,7 @@ namespace RustMapEditor.Data
                         LandLayer = layer;
                         break;
                 }
-                TopologyLayer = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
+                TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
                 LayerSet = true;
                 yield return null;
             }

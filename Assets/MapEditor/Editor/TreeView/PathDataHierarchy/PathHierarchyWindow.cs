@@ -6,13 +6,13 @@ using RustMapEditor.Variables;
 
 namespace RustMapEditor.UI
 {
-	class PathHierachyWindow : EditorWindow
+	class PathHierarchyWindow : EditorWindow
 	{
 		[NonSerialized] bool m_Initialized;
 		[SerializeField] TreeViewState treeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
-		PathHierachyTreeView m_TreeView;
+		PathHierarchyTreeView m_TreeView;
 
 		Rect multiColumnTreeViewRect
 		{
@@ -24,7 +24,7 @@ namespace RustMapEditor.UI
 			get { return new Rect (20f, 10f, position.width-40f, 20f); }
 		}
 
-		public PathHierachyTreeView treeView
+		public PathHierarchyTreeView treeView
 		{
 			get { return m_TreeView; }
 		}
@@ -103,9 +103,9 @@ namespace RustMapEditor.UI
 				if (firstInit)
 					multiColumnHeader.ResizeToFit ();
 
-				var treeModel = new TreeModel<PathHierachyElement>(PathHierachyTreeView.GetPathHierachyElements());
+				var treeModel = new TreeModel<PathHierarchyElement>(PathHierarchyTreeView.GetPathHierachyElements());
 				
-				m_TreeView = new PathHierachyTreeView(treeViewState, multiColumnHeader, treeModel);
+				m_TreeView = new PathHierarchyTreeView(treeViewState, multiColumnHeader, treeModel);
 
 				m_SearchField = new SearchField();
 				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
@@ -139,9 +139,9 @@ namespace RustMapEditor.UI
 
 		public static void ReloadTree()
 		{
-			if (EditorWindow.HasOpenInstances<PathHierachyWindow>())
+			if (EditorWindow.HasOpenInstances<PathHierarchyWindow>())
 			{
-				PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Path Hierachy");
+				PathHierarchyWindow window = (PathHierarchyWindow)EditorWindow.GetWindow(typeof(PrefabHierarchyWindow), false, "Path Hierachy");
 				window.m_Initialized = false;
 			}
 		}

@@ -9,68 +9,6 @@ namespace RustMapEditor.UI
 {
     public static class Functions
     {
-        #region Menu Items
-        [MenuItem("Rust Map Editor/Main Menu", false, -1)]
-        public static void OpenMainMenu()
-        {
-            MapManagerWindow window = (MapManagerWindow)EditorWindow.GetWindow(typeof(MapManagerWindow), false, "Rust Map Editor");
-        }
-
-        [MenuItem("Rust Map Editor/Hierachy/Prefabs", false, 1)]
-        static void OpenPrefabHierachy()
-        {
-            PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
-        }
-
-        [MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
-        static void OpenPathHierachy()
-        {
-            PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PathHierachyWindow), false, "Path Hierachy");
-        }
-
-        [MenuItem("Rust Map Editor/Prefabs", false, 1)]
-        static void OpenPrefabsList()
-        {
-            PrefabsListWindow window = (PrefabsListWindow)EditorWindow.GetWindow(typeof(PrefabsListWindow), false, "Prefabs List");
-        }
-
-        [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
-        public static void OpenTerrainTools()
-        {
-            Selection.activeGameObject = Land.gameObject;
-        }
-
-        [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
-        public static void OpenWiki()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Discord", false, 10)]
-        public static void OpenDiscord()
-        {
-            Application.OpenURL("https://discord.gg/HPmTWVa");
-        }
-
-        [MenuItem("Rust Map Editor/Links/RoadMap", false, 10)]
-        public static void OpenRoadMap()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Report Bug", false, 10)]
-        public static void OpenReportBug()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Request Feature", false, 10)]
-        public static void OpenRequestFeature()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
-        }
-        #endregion
-
         #region MainMenu
         public static void EditorIO(string mapName = "custommap")
         {
@@ -151,18 +89,18 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.reportBug))
-                OpenReportBug();
+                ShortcutManager.OpenReportBug();
             if (Elements.ToolbarButton(ToolTips.requestFeature))
-                OpenRequestFeature();
+                ShortcutManager.OpenRequestFeature();
             if (Elements.ToolbarButton(ToolTips.roadMap))
-                OpenRoadMap();
+                ShortcutManager.OpenRoadMap();
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.wiki))
-                OpenWiki();
+                ShortcutManager.OpenWiki();
             if (Elements.ToolbarButton(ToolTips.discord))
-                OpenDiscord();
+                ShortcutManager.OpenDiscord();
             Elements.EndToolbarHorizontal();
         }
 
@@ -786,8 +724,8 @@ namespace RustMapEditor.UI
 
         public static void ReloadTreeViews()
         {
-            PrefabHierachyWindow.ReloadTree();
-            PathHierachyWindow.ReloadTree();
+            PrefabHierarchyWindow.ReloadTree();
+            PathHierarchyWindow.ReloadTree();
         }
 
         public static void CopyText(string text)
