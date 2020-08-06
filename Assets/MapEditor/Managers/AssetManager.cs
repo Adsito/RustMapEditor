@@ -335,8 +335,13 @@ public static class AssetManager
 					}
 					yield return null;
 				}
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_tundra.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
+
+				// Fix for overgrowth materials: 
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); 
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth_swamp.mat").DisableKeyword("_TINTENABLED_ON");
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_tundra.mat").DisableKeyword("_TINTENABLED_ON");
+				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_temperate.mat").DisableKeyword("_TINTENABLED_ON");
+
 				Progress.Report(materialID, 0.99f, "Set " + materials.Length + " materials.");
 				Progress.Finish(materialID, Progress.Status.Succeeded);
 			}
