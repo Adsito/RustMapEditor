@@ -42,3 +42,4 @@ Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_inuse.mat
 Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_pending.mat
 Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_selected.mat
 Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_selected_inuse.mat
+Specular : assets/content/vehicles/sedan_a/models/materials/sedan_glass.mat
