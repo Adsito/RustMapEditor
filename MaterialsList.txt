@@ -34,3 +34,11 @@ Standard : assets/content/nature/caves/models/materials/cave_blend_a.mat
 Standard : assets/content/structures/warehouses/models/materials/glass_industrial.mat
 Specular : assets/prefabs/building/wall.frame.shopfront/models/materials/glass_reinforced_shop.mat
 Specular : assets/prefabs/weapons/flamethrower/model/materials/glass.mat
+Standard : assets/prefabs/tools/hose/ioslothandles/ioslothandlehose.mat
+Standard : assets/prefabs/tools/hose/ioslothandles/ioslothandlehose_inuse.mat
+Standard : assets/prefabs/tools/hose/ioslothandles/ioslothandlehose_pending.mat
+Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle.mat
+Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_inuse.mat
+Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_pending.mat
+Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_selected.mat
+Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_selected_inuse.mat
