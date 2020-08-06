@@ -33,3 +33,4 @@ Standard : assets/content/structures/junkyard/materials/junkyard_mounds.mat
 Standard : assets/content/nature/caves/models/materials/cave_blend_a.mat
 Standard : assets/content/structures/warehouses/models/materials/glass_industrial.mat
 Specular : assets/prefabs/building/wall.frame.shopfront/models/materials/glass_reinforced_shop.mat
+Specular : assets/prefabs/weapons/flamethrower/model/materials/glass.mat
