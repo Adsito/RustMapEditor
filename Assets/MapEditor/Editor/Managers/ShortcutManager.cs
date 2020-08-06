@@ -35,10 +35,10 @@ public static class ShortcutManager
     [Shortcut("RustMapEditor/Invert Land")]
     public static void InvertLand() => MapManager.InvertHeightmap(Selections.Terrains.Land);
 
-    [Shortcut("Rust Map Editor/Select Land")]
+    [Shortcut("RustMapEditor/Select Land")]
     public static void SelectLand() => Selection.activeGameObject = TerrainManager.Land.gameObject;
 
-    [Shortcut("Rust Map Editor/Select Water")]
+    [Shortcut("RustMapEditor/Select Water")]
     public static void SelectWater() => Selection.activeGameObject = TerrainManager.Water.gameObject;
 
     [Shortcut("RustMapEditor/Move Tool", KeyCode.W, ShortcutModifiers.Shift)]
