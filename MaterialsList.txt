@@ -45,3 +45,4 @@ Standard : assets/prefabs/tools/wire/ioslothandles/ioslothandle_selected_inuse.m
 Specular : assets/content/vehicles/sedan_a/models/materials/sedan_glass.mat
 Specular : assets/content/structures/gas_station/exterior/models/materials/gas_station_frames.mat
 Specular : assets/content/props/electrical_boxes/models/materials/electrical_boxes.mat
+Specular : assets/content/props/lockers/models/materials/locker.mat
