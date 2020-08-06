@@ -29,7 +29,7 @@ public static class ShortcutManager
     [Shortcut("RustMapEditor/Centre Scene View")]
     public static void CentreSceneView()
     {
-        MapManager.CentreSceneView(SceneView.lastActiveSceneView);
+        SceneManager.CentreSceneView(SceneView.lastActiveSceneView);
     }
 
     [Shortcut("RustMapEditor/Clear Map Prefabs")]

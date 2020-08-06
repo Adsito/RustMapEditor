@@ -32,30 +32,8 @@ public static class MapManager
         {
             EditorApplication.update -= OnProjectLoad;
             CreateMap(1000);
-            CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
-        }
-    }
-
-    public static void CentreSceneView(SceneView sceneView)
-    {
-        if (sceneView != null)
-        {
-            sceneView.orthographic = false;
-            sceneView.pivot = new Vector3(500f, 600f, 500f);
-            sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
-        }
-    }
-
-    public static void SetCullingDistances(Camera[] camera, float prefabDist, float pathDist)
-    {
-        float[] distances = new float[32];
-        distances[8] = prefabDist;
-        distances[9] = pathDist;
-        foreach (var item in camera)
-        {
-            item.layerCullDistances = distances;
-            SceneView.RepaintAll();
+            SceneManager.CentreSceneView(SceneView.lastActiveSceneView);
+            SceneManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
         }
     }
     

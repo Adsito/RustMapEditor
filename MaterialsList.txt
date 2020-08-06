@@ -30,3 +30,4 @@ Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_m
 Standard : assets/content/structures/portacabins/models/materials/portacabin_glass.mat
 Standard : assets/content/structures/security_door/models/materials/security_door_glass.mat
 Standard : assets/content/structures/junkyard/materials/junkyard_mounds.mat
+Standard : assets/content/nature/caves/models/materials/cave_blend_a.mat
