@@ -361,7 +361,9 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-					mat.renderQueue = -1;
+					mat.EnableKeyword("_NORMALMAP");
+					mat.EnableKeyword("_SPECGLOSSMAP");
+					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
 					break;
 				case 1f:
 					mat.SetOverrideTag("RenderType", "TransparentCutout");
