@@ -332,16 +332,12 @@ public static class AssetManager
 						case "Specular":
 							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), spc));
 							break;
+						case "Foliage":
+							LoadAsset<Material>(lineSplit[1]).DisableKeyword("_TINTENABLED_ON");
+							break;
 					}
 					yield return null;
 				}
-
-				// Fix for overgrowth materials: 
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); 
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth_swamp.mat").DisableKeyword("_TINTENABLED_ON");
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_tundra.mat").DisableKeyword("_TINTENABLED_ON");
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_temperate.mat").DisableKeyword("_TINTENABLED_ON");
-
 				Progress.Report(materialID, 0.99f, "Set " + materials.Length + " materials.");
 				Progress.Finish(materialID, Progress.Status.Succeeded);
 			}
