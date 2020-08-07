@@ -65,6 +65,7 @@ public static class SceneManager
                 if (item.TryGetComponent(out PrefabDataHolder prefab))
                 {
                     prefab.gameObject.transform.SetParent(PrefabManager.PrefabParent);
+                    Selection.activeObject = prefab;
                     continue;
                 }
                 if (item.TryGetComponent(out PathDataHolder path))

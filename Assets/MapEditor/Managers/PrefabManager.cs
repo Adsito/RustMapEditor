@@ -128,7 +128,7 @@ public static class PrefabManager
     {
         if (PrefabToSpawn != null)
         {
-            GameObject newObj = GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0), PrefabParent);
+            GameObject newObj = GameObject.Instantiate(PrefabToSpawn, spawnPos, Quaternion.Euler(0, 0, 0));
             newObj.name = PrefabToSpawn.name;
             newObj.SetActive(true);
             PrefabToSpawn = null;
