@@ -357,9 +357,10 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-					mat.EnableKeyword("_NORMALMAP");
-					mat.EnableKeyword("_SPECGLOSSMAP");
-					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+					SetKeyword(mat, "_NORMALMAP", mat.GetTexture("_BumpMap") || mat.GetTexture("_DetailNormalMap"));
+					if (mat.HasProperty("_SPECGLOSSMAP"))
+						SetKeyword(mat, "_SPECGLOSSMAP", mat.GetTexture("_SpecGlossMap"));
+					mat.renderQueue = -1;
 					break;
 				case 1f:
 					mat.SetOverrideTag("RenderType", "TransparentCutout");
@@ -369,6 +370,7 @@ public static class AssetManager
 					mat.EnableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
 					break;
 				case 2f:
@@ -379,6 +381,7 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.EnableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 					break;
 				case 3f:
@@ -389,9 +392,18 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 					break;
 			}
+		}
+
+		static void SetKeyword(Material mat, string keyword, bool state)
+		{
+			if (state)
+				mat.EnableKeyword(keyword);
+			else
+				mat.DisableKeyword(keyword);
 		}
 	}
 }
