@@ -9,11 +9,11 @@
 # [Installation and Editor Guide](https://github.com/RustMapMaking/Editor/wiki/Unity-Editor-Guide)
 ### Rust Map Making
 [![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)](https://discord.gg/HPmTWVa)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/RustMapMaking)
 ### Contribute
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Editor/issues)
 ![GitHub issues](https://img.shields.io/github/issues/RustMapMaking/Editor.svg)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/RustMapMaking)
 
 ### Credits
 RustWorldSDK: https://github.com/Facepunch/Rust.World
