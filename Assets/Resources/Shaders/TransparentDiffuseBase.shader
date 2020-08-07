@@ -9,6 +9,7 @@ Properties {
 SubShader {
     Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent"}
     LOD 200
+	Offset -0.01,-0.01
 
 CGPROGRAM
 #pragma surface surf Lambert vertex:SplatmapVert addshadow fullforwardshadows alpha:fade
