@@ -5,6 +5,7 @@ using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 public static class PrefabManager
 {
@@ -196,6 +197,10 @@ public static class PrefabManager
             var transforms = prefab.GetComponentsInChildren<Transform>();
             int progressId = Progress.Start("Break Prefab", null, Progress.Options.Sticky);
 
+            var assetPaths = AssetManager.ManifestStrings.Where(x => x.Contains(".prefab") && !x.Contains(@"/ui/") && !x.Contains(@"assets/prefabs/building/") && !x.Contains(@"/engine/")
+            && !x.Contains(@"/v2_rockformation_underwater/") && !x.Contains(@"/radtown work prefabs/") && !x.Contains(@"/system/") && AssetManager.ToID(x) != 0
+            && !x.Contains(@"/test/") && AssetManager.ToID(x) != 1388803385).ToList();
+
             for (int i = 0; i < transforms.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 0.2f)
@@ -206,7 +211,13 @@ public static class PrefabManager
                 }
                 var nameSplit = transforms[i].gameObject.name.Split(' ');
                 var prefabName = nameSplit[0].Trim() + ".prefab";
-                var prefabPaths = AssetManager.ManifestStrings.Where(x => x.Contains(prefabName));
+                var prefabNameCheck = prefabName.ToLower();
+                // cbf making another text file to read from.
+                if (prefabNameCheck == "props.prefab" || prefabNameCheck == "lights.prefab" || prefabNameCheck == "beam.prefab" ||
+                    prefabNameCheck == "on.prefab" || prefabNameCheck == "fur.prefab" || prefabNameCheck == "ore.prefab" || prefabNameCheck == "buildings.prefab")
+                    continue;
+
+                var prefabPaths = assetPaths.Where(x => x.Contains(prefabName));
                 if (prefabPaths.Count() == 1)
                     Spawn(Load(prefabPaths.First()), transforms[i], prefabName);
 
@@ -214,10 +225,30 @@ public static class PrefabManager
                 {
                     foreach (var item in prefabPaths)
                     {
-                        if (item.EndsWith(prefabName) && !item.Contains(@"assets/bundled/prefabs/ui/") && !item.Contains(@"assets/prefabs/building/"))
+                        if (item.EndsWith(prefabName))
                         {
                             Spawn(Load(item), transforms[i], prefabName);
                             break;
+                        }
+                    }
+                }
+                else
+                {
+                    prefabName = prefabName.ToLower();
+
+                    var prefabPathsLwr = assetPaths.Where(x => x.Contains(prefabName));
+                    if (prefabPathsLwr.Count() == 1)
+                        Spawn(Load(prefabPathsLwr.First()), transforms[i], prefabName);
+
+                    else if (prefabPathsLwr.Count() > 1)
+                    {
+                        foreach (var item in prefabPathsLwr)
+                        {
+                            if (item.EndsWith(prefabName))
+                            {
+                                Spawn(Load(item), transforms[i], prefabName);
+                                break;
+                            }
                         }
                     }
                 }
