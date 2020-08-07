@@ -52,5 +52,8 @@ Specular : assets/content/structures/office_interiors/models/materials/office_ve
 Foliage : assets/content/nature/overgrowth/models/materials/overgrowth.mat
 Foliage : assets/content/nature/overgrowth/models/materials/overgrowth_swamp.mat
 Foliage : assets/content/nature/overgrowth/models/materials/grass_tundra.mat
+Foliage : assets/content/nature/overgrowth/models/materials/grass_tundra_forest.mat
 Foliage : assets/content/nature/overgrowth/models/materials/grass_temperate.mat
 Foliage : assets/content/nature/overgrowth/models/materials/grass_arid.mat
+Foliage : assets/content/nature/overgrowth/models/materials/grass_arctic_frost.mat
+Standard : assets/content/structures/bunker/models/materials/bunker_door.mat
