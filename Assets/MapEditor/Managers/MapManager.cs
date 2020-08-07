@@ -30,7 +30,8 @@ public static class MapManager
         if (Land != null)
         {
             EditorApplication.update -= OnProjectLoad;
-            CreateMap(1000);
+            if (!EditorApplication.isPlaying)
+                CreateMap(1000);
         }
     }
     
