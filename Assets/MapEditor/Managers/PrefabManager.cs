@@ -214,7 +214,7 @@ public static class PrefabManager
                 {
                     foreach (var item in prefabPaths)
                     {
-                        if (item.EndsWith(prefabName) && !item.Contains(@"assets/bundled/prefabs/ui/"))
+                        if (item.EndsWith(prefabName) && !item.Contains(@"assets/bundled/prefabs/ui/") && !item.Contains(@"assets/prefabs/building/"))
                         {
                             Spawn(Load(item), transforms[i], prefabName);
                             break;
