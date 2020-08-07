@@ -1,5 +1,4 @@
 ﻿using System;
-using Rotorz.ReorderableList;
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
@@ -174,27 +173,6 @@ namespace RustMapEditor.UI
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
                 AssetManager.Dispose();
             Elements.EndToolbarHorizontal();
-        }
-        #endregion
-
-        #region Generation Tools
-        public static void NodePresets(Vector2 presetScrollPos)
-        {
-            Elements.BoldLabel(ToolTips.presetsLabel);
-
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.refreshPresets))
-                MapManager.RefreshPresetsList();
-            Elements.EndToolbarHorizontal();
-
-            presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
-            ReorderableListGUI.Title("Node Presets");
-            ReorderableListGUI.ListField(MapManager.generationPresetList, NodePresetDrawer, DrawEmpty);
-            GUILayout.EndScrollView();
-        }
-        public static void DrawEmpty()
-        {
-            Elements.MiniLabel(ToolTips.noPresets);
         }
         #endregion
 
@@ -678,24 +656,6 @@ namespace RustMapEditor.UI
         #endregion
 
         #region Functions
-        public static string NodePresetDrawer(Rect position, string itemValue)
-        {
-            position.width -= 39;
-            GUI.Label(position, itemValue);
-            position.x = position.xMax;
-            position.width = 39;
-            if (GUI.Button(position, ToolTips.openPreset, EditorStyles.toolbarButton))
-            {
-                MapManager.RefreshPresetsList();
-                MapManager.nodePresetLookup.TryGetValue(itemValue, out UnityEngine.Object preset);
-                if (preset != null)
-                    AssetDatabase.OpenAsset(preset.GetInstanceID());
-                else
-                    Debug.LogError("The preset you are trying to open is null.");
-            }
-            return itemValue;
-        }
-
         /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>
         /// <param name="topology">The Topology layer to set.</param>
@@ -734,29 +694,6 @@ namespace RustMapEditor.UI
             editor.text = text;
             editor.SelectAll();
             editor.Copy();
-        }
-        #endregion
-
-        #region NodeGraph
-        public static void NodeGraphToolbar(XNode.NodeGraph nodeGraph)
-        {
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.runPreset))
-                NodeAsset.Parse(nodeGraph);
-            if (Elements.ToolbarButton(ToolTips.deletePreset))
-            {
-                if (EditorUtility.DisplayDialog("Delete Preset", "Are you sure you wish to delete this preset? Once deleted it can't be undone.", "Ok", "Cancel"))
-                {
-                    XNodeEditor.NodeEditorWindow.focusedWindow.Close();
-                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeGraph));
-                    MapManager.RefreshPresetsList();
-                }
-            }
-            if (Elements.ToolbarButton(ToolTips.renamePreset))
-                XNodeEditor.RenamePreset.Show(nodeGraph);
-            if (Elements.ToolbarButton(ToolTips.presetWiki))
-                Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Node-System");
-            Elements.EndToolbarHorizontal();
         }
         #endregion
 

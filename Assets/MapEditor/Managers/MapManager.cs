@@ -21,7 +21,6 @@ public static class MapManager
     static void Init()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
-        RefreshPresetsList(); // Refreshes the node gen presets.
         EditorApplication.update += OnProjectLoad;
     }
 
@@ -660,24 +659,6 @@ public static class MapManager
     public static void CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.CreateMap(size, ground, biome, landHeight));
-    }
-
-    public static List<string> generationPresetList = new List<string>();
-    public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
-
-    /// <summary>Refreshes and adds the new NodePresets in the generationPresetList.</summary>
-    public static void RefreshPresetsList()
-    {
-        var list = AssetDatabase.FindAssets("t:" + NodeAsset.nodeAssetName);
-        generationPresetList.Clear();
-        nodePresetLookup.Clear();
-        foreach (var item in list)
-        {
-            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
-            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
-            generationPresetList.Add(itemNameSplit);
-            nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
-        }
     }
 
     private class Coroutines
