@@ -1,6 +1,4 @@
-﻿using RustMapEditor.Data;
-
-namespace RustMapEditor.Variables
+﻿namespace RustMapEditor.Variables
 {
     public struct Conditions
     {

@@ -1,7 +1,6 @@
 ﻿using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using RustMapEditor.UI;
-using RustMapEditor.Data;
 using RustMapEditor.Variables;
 using UnityEngine;
 using UnityEditor.EditorTools;

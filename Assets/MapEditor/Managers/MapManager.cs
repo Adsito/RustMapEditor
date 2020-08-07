@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
 using Unity.EditorCoroutines.Editor;

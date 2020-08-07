@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 
 [DisallowMultipleComponent]
 [SelectionBase]

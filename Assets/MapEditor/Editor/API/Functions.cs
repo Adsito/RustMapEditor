@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 
 namespace RustMapEditor.UI
 {
