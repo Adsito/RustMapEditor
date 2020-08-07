@@ -81,6 +81,7 @@ namespace RustMapEditor.UI
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
+
         public static List<PrefabsListElement> GetPrefabsListElements(bool showAll = false)
         {
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();

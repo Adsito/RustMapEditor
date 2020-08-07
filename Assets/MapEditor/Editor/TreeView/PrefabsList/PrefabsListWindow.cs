@@ -71,6 +71,7 @@ namespace RustMapEditor.UI
 			var state = new MultiColumnHeaderState(columns);
 			return state;
 		}
+
 		void InitIfNeeded()
 		{
 			if (!m_Initialized)
@@ -148,6 +149,15 @@ namespace RustMapEditor.UI
 			Functions.DisplayPrefabID(treeView.prefabData);
 			Functions.DisplayPrefabPath(treeView.prefabData);
 			GUILayout.EndArea();
+		}
+
+		public static void ReloadTree()
+		{
+			if (HasOpenInstances<PrefabsListWindow>())
+			{
+				PrefabsListWindow window = (PrefabsListWindow)GetWindow(typeof(PrefabsListWindow), false, "Prefab List");
+				window.m_Initialized = false;
+			}
 		}
 	}
 }
