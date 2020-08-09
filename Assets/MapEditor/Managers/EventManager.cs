@@ -10,7 +10,7 @@ public static class EventManager
     /// <summary>Called after Rust Asset Bundles are unloaded from the editor. </summary>
     public static event AssetManagerCallback BundlesDisposed;
 
-    public static void OnBundlesLoaded() => BundlesLoaded.Invoke();
+    public static void OnBundlesLoaded() => BundlesLoaded?.Invoke();
 
-    public static void OnBundlesDisposed() => BundlesDisposed.Invoke();
+    public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();
 }
