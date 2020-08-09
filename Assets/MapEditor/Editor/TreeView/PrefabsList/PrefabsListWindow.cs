@@ -94,7 +94,7 @@ namespace RustMapEditor.UI
 				if (firstInit)
 					multiColumnHeader.ResizeToFit();
 
-				var treeModel = new TreeModel<PrefabsListElement>(PrefabsListTreeView.GetPrefabsListElements());
+				var treeModel = new TreeModel<PrefabsListElement>(PrefabsListTreeView.GetPrefabsListElements(showAllPrefabs));
 
 				m_TreeView = new PrefabsListTreeView(treeViewState, multiColumnHeader, treeModel);
 
