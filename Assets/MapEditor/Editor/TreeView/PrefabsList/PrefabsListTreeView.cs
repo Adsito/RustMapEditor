@@ -91,7 +91,7 @@ namespace RustMapEditor.UI
             if (manifestStrings == null)
                 return prefabsListElements;
 
-            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y)));
+            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
             int prefabID = 1, parentID = -1;
             foreach (var manifestString in prefabStrings)
             {
