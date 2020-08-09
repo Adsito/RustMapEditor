@@ -23,6 +23,7 @@ public static class AssetManager
 	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	public static Dictionary<string, AssetBundle> AssetPaths { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	public static Dictionary<string, Object> Cache { get; private set; } = new Dictionary<string, Object>();
+	public static Dictionary<string, Texture2D> Previews { get; private set; } = new Dictionary<string, Texture2D>();
 
 	public static List<string> ManifestStrings { get => IsInitialised ? GetManifestStrings() : new List<string>(); private set => ManifestStrings = value; }
 
@@ -83,6 +84,24 @@ public static class AssetManager
             }
             Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
             return PrefabManager.DefaultPrefab;
+        }
+    }
+
+	public static Texture2D GetPreview(string filePath)
+    {
+		if (Previews.TryGetValue(filePath, out Texture2D preview))
+			return preview;
+        else
+        {
+			var prefab = LoadPrefab(filePath);
+			if (prefab.name == "DefaultPrefab")
+				return AssetPreview.GetAssetPreview(prefab);
+
+			prefab.SetActive(true);
+			var tex = AssetPreview.GetAssetPreview(prefab) ?? new Texture2D(60, 60);
+			Previews.Add(filePath, tex);
+			prefab.SetActive(false);
+			return tex;
         }
     }
 
@@ -158,6 +177,7 @@ public static class AssetManager
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
 
 			IsInitialised = true; IsInitialising = false;
+			EventManager.OnBundlesLoaded();
 			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
 		}
 
