@@ -16,25 +16,24 @@ namespace RustMapEditor.UI
 
 		private bool showAllPrefabs = false;
 
+		private float rightColumn { get => position.width / 3 * 2 + 40; }
+
 		Rect multiColumnTreeViewRect
 		{
 			get { return new Rect(20, 30, position.width - position.width / 3, position.height - 45); }
 		}
 
-		Rect optionsRect
-		{
-			get { return new Rect(position.width / 3 * 2 + 40, 10, position.width - (position.width / 3 * 2 + 40) - 20, 50); }
-		}
-
 		Rect previewImageRect
 		{
-			get { return new Rect(position.width / 3 * 2 + 40, 60, position.width - (position.width / 3 * 2 + 40) - 20, position.width - (position.width / 3 * 2 + 40) - 20); }
+			get { return new Rect(rightColumn, 10, position.width - rightColumn - 20, position.width - rightColumn - 20); }
 		}
 
 		Rect previewImageDetails
 		{
-			get { return new Rect(position.width / 3 * 2 + 40, position.width - (position.width / 3 * 2 + 40) + 60, position.width - (position.width / 3 * 2 + 40) - 20, position.width - (position.width / 3 * 2 + 40) - 20); }
+			get { return new Rect(rightColumn, position.width - rightColumn + 10, position.width - rightColumn - 20, 120); }
 		}
+
+		Rect options { get { return new Rect(rightColumn, previewImageDetails.height + previewImageRect.height, position.width - rightColumn - 20, position.height - previewImageDetails.height + previewImageRect.height); } }
 
 		Rect searchBarRect
 		{
@@ -119,9 +118,9 @@ namespace RustMapEditor.UI
 			InitIfNeeded();
 			DrawSearchBar(searchBarRect);
 			DrawTreeView(multiColumnTreeViewRect);
-			DrawOptions(optionsRect, treeView, ref showAllPrefabs);
 			DrawPreviewImage(previewImageRect);
 			DrawPreviewDetails(previewImageDetails);
+			DrawOptions(options, treeView, ref showAllPrefabs);
 		}
 
 		void DrawSearchBar(Rect rect)
@@ -137,6 +136,7 @@ namespace RustMapEditor.UI
 		void DrawOptions(Rect rect, PrefabsListTreeView treeView, ref bool showAllPrefabs)
 		{
 			GUILayout.BeginArea(rect);
+			Functions.AssetBundle();
 			Functions.SelectPrefabPaths(treeView, ref showAllPrefabs);
 			GUILayout.EndArea();
 		}
