@@ -212,9 +212,10 @@ public static class PrefabManager
                 var nameSplit = transforms[i].gameObject.name.Split(' ');
                 var prefabName = nameSplit[0].Trim() + ".prefab";
                 var prefabNameCheck = prefabName.ToLower();
-                // cbf making another text file to read from.
+                // cbf making another text file to read from. This is terrible.
                 if (prefabNameCheck == "props.prefab" || prefabNameCheck == "lights.prefab" || prefabNameCheck == "beam.prefab" ||
-                    prefabNameCheck == "on.prefab" || prefabNameCheck == "fur.prefab" || prefabNameCheck == "ore.prefab" || prefabNameCheck == "buildings.prefab")
+                    prefabNameCheck == "on.prefab" || prefabNameCheck == "fur.prefab" || prefabNameCheck == "ore.prefab" || prefabNameCheck == "buildings.prefab" ||
+                    prefabNameCheck == "close.prefab" || prefabNameCheck == "body.prefab" || prefabNameCheck == "prop.prefab")
                     continue;
 
                 var prefabPaths = assetPaths.Where(x => x.Contains(prefabName));

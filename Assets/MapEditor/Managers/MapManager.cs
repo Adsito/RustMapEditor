@@ -664,7 +664,7 @@ public static class MapManager
 
     private class Coroutines
     {
-        public static IEnumerator Load(MapInfo mapInfo, string loadPath = "")
+        public static IEnumerator Load(MapInfo mapInfo, string path = "")
         {
             for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
             {
@@ -673,7 +673,7 @@ public static class MapManager
                     progress.Remove();
             }  
 
-            int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+            int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
@@ -714,6 +714,8 @@ public static class MapManager
             Progress.Report(progressID, 0.99f, "Loaded");
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
+
+            EventManager.OnMapLoaded(path);
         }
 
         public static IEnumerator Save(string path)
@@ -739,6 +741,8 @@ public static class MapManager
             Progress.Finish(pathID, Progress.Status.Succeeded);
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
+
+            EventManager.OnMapSaved(path);
         }
 
         public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)

@@ -9,6 +9,20 @@ using UnityEngine;
 
 public static class AssetManager
 {
+	public static class Callbacks
+    {
+		public delegate void AssetManagerCallback();
+
+		/// <summary>Called after Rust Asset Bundles are loaded into the editor. </summary>
+		public static event AssetManagerCallback BundlesLoaded;
+
+		/// <summary>Called after Rust Asset Bundles are unloaded from the editor. </summary>
+		public static event AssetManagerCallback BundlesDisposed;
+
+		public static void OnBundlesLoaded() => BundlesLoaded?.Invoke();
+		public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();
+	}
+
 	public static string BundlePath { get; private set; }
 
 	public static GameManifest Manifest { get; private set; }
@@ -19,11 +33,11 @@ public static class AssetManager
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
+	public static Dictionary<string, AssetBundle> BundleLookup { get; private set; } = new Dictionary<string, AssetBundle>();
 
 	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, AssetBundle> AssetPaths { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, Object> Cache { get; private set; } = new Dictionary<string, Object>();
-	public static Dictionary<string, Texture2D> Previews { get; private set; } = new Dictionary<string, Texture2D>();
+	public static Dictionary<string, Object> AssetCache { get; private set; } = new Dictionary<string, Object>();
+	public static Dictionary<string, Texture2D> PreviewCache { get; private set; } = new Dictionary<string, Texture2D>();
 
 	public static List<string> ManifestStrings { get => IsInitialised ? GetManifestStrings() : new List<string>(); private set => ManifestStrings = value; }
 
@@ -47,7 +61,7 @@ public static class AssetManager
 
 	private static T GetAsset<T>(string filePath) where T : Object
 	{
-		if (!AssetPaths.TryGetValue(filePath, out AssetBundle bundle))
+		if (!BundleLookup.TryGetValue(filePath, out AssetBundle bundle))
 			return null;
 
 		return bundle.LoadAsset<T>(filePath);
@@ -57,21 +71,21 @@ public static class AssetManager
 	{
 		var asset = default(T);
 
-		if (Cache.ContainsKey(filePath))
-			asset = Cache[filePath] as T;
+		if (AssetCache.ContainsKey(filePath))
+			asset = AssetCache[filePath] as T;
 		else
 		{
 			asset = GetAsset<T>(filePath);
 			if (asset != null)
-				Cache.Add(filePath, asset);
+				AssetCache.Add(filePath, asset);
 		}
 		return asset;
 	}
 
 	public static GameObject LoadPrefab(string filePath)
     {
-        if (Cache.ContainsKey(filePath))
-            return Cache[filePath] as GameObject;
+        if (AssetCache.ContainsKey(filePath))
+            return AssetCache[filePath] as GameObject;
 
         else
         {
@@ -79,7 +93,7 @@ public static class AssetManager
             if (val != null)
             {
                 PrefabManager.Setup(val, filePath);
-                Cache.Add(filePath, val);
+                AssetCache.Add(filePath, val);
                 return val;
             }
             Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
@@ -89,7 +103,7 @@ public static class AssetManager
 
 	public static Texture2D GetPreview(string filePath)
     {
-		if (Previews.TryGetValue(filePath, out Texture2D preview))
+		if (PreviewCache.TryGetValue(filePath, out Texture2D preview))
 			return preview;
         else
         {
@@ -99,7 +113,7 @@ public static class AssetManager
 
 			prefab.SetActive(true);
 			var tex = AssetPreview.GetAssetPreview(prefab) ?? new Texture2D(60, 60);
-			Previews.Add(filePath, tex);
+			PreviewCache.Add(filePath, tex);
 			prefab.SetActive(false);
 			return tex;
         }
@@ -121,7 +135,7 @@ public static class AssetManager
 	public static void AssetDump()
 	{
 		using (StreamWriter streamWriter = new StreamWriter(AssetDumpPath, false))
-			foreach (var item in AssetPaths.Keys)
+			foreach (var item in BundleLookup.Keys)
 				streamWriter.WriteLine(item + " : " + ToID(item));
 	}
 
@@ -177,7 +191,7 @@ public static class AssetManager
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
 
 			IsInitialised = true; IsInitialising = false;
-			EventManager.OnBundlesLoaded();
+			Callbacks.OnBundlesLoaded();
 			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
 		}
 
@@ -209,9 +223,9 @@ public static class AssetManager
             }
 			
 			int bundleCount = Bundles.Count;
-			AssetPaths.Clear();
+			BundleLookup.Clear();
 			Bundles.Clear();
-			Cache.Clear();
+			AssetCache.Clear();
 
 			Progress.Report(bundleID, 0.99f, "Unloaded: " + bundleCount + " bundles.");
 			Progress.Finish(bundleID, Progress.Status.Succeeded);
@@ -282,7 +296,7 @@ public static class AssetManager
 			{
 				foreach (var filename in asset.GetAllAssetNames())
 				{
-					AssetPaths.Add(filename, asset);
+					BundleLookup.Add(filename, asset);
 					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
 						yield return null;
@@ -291,7 +305,7 @@ public static class AssetManager
 				}
 				foreach (var filename in asset.GetAllScenePaths())
 				{
-					AssetPaths.Add(filename, asset);
+					BundleLookup.Add(filename, asset);
 					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
 						yield return null;

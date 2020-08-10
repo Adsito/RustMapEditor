@@ -2,15 +2,13 @@
 
 public static class EventManager
 {
-    public delegate void AssetManagerCallback();
+    public delegate void MapManagerCallback(string mapName = "");
 
-    /// <summary>Called after Rust Asset Bundles are loaded into the editor. </summary>
-    public static event AssetManagerCallback BundlesLoaded;
+    /// <summary>Called after a map has been loaded. Calls on both map loaded and map created.</summary>
+    public static event MapManagerCallback MapLoaded;
 
-    /// <summary>Called after Rust Asset Bundles are unloaded from the editor. </summary>
-    public static event AssetManagerCallback BundlesDisposed;
+    public static event MapManagerCallback MapSaved;
 
-    public static void OnBundlesLoaded() => BundlesLoaded?.Invoke();
-
-    public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();
+    public static void OnMapLoaded(string mapName = "") => MapLoaded?.Invoke(mapName);
+    public static void OnMapSaved(string mapName = "") => MapSaved?.Invoke(mapName);
 }

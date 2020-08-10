@@ -73,7 +73,7 @@ namespace RustMapEditor.UI
 
         private void OnEnable()
         {
-			EventManager.BundlesLoaded += ReloadTree;
+			AssetManager.Callbacks.BundlesLoaded += ReloadTree;
 		}
 
         void InitIfNeeded()
