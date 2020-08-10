@@ -545,9 +545,7 @@ namespace RustMapEditor.Maths
             Parallel.For(0, arrayLength, i =>
             {
                 for (int j = 0; j < arrayLength; j++)
-                {
                     array[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
-                }
             });
             return array;
         }
