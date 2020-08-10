@@ -14,6 +14,20 @@ using System.Collections;
 
 public static class MapManager
 {
+    public static class Callbacks
+    {
+        public delegate void MapManagerCallback(string mapName = "");
+
+        /// <summary>Called after a map has been loaded. Calls on both map loaded and map created.</summary>
+        public static event MapManagerCallback MapLoaded;
+
+        /// <summary>Called after map has been saved and written to disk.</summary>
+        public static event MapManagerCallback MapSaved;
+
+        public static void OnMapLoaded(string mapName = "") => MapLoaded?.Invoke(mapName);
+        public static void OnMapSaved(string mapName = "") => MapSaved?.Invoke(mapName);
+    }
+
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
 
@@ -715,7 +729,7 @@ public static class MapManager
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
-            EventManager.OnMapLoaded(path);
+            Callbacks.OnMapLoaded(path);
         }
 
         public static IEnumerator Save(string path)
@@ -742,7 +756,7 @@ public static class MapManager
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
-            EventManager.OnMapSaved(path);
+            Callbacks.OnMapSaved(path);
         }
 
         public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
