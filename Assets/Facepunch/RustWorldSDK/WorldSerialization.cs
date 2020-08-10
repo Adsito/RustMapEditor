@@ -186,9 +186,7 @@ public class WorldSerialization
                     binaryWriter.Write(Version);
 
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
-                    {
                         Serializer.Serialize(compressionStream, world);
-                    }
                 }
             }
         }
@@ -209,13 +207,10 @@ public class WorldSerialization
                     Version = binaryReader.ReadUInt32();
 
                     if (Version != CurrentVersion)
-                    {
                         Debug.LogWarning("Map Version is: " + Version + " whilst Rust is on: " + CurrentVersion);
-                    }
+
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
-                    {
                         world = Serializer.Deserialize<WorldData>(compressionStream);
-                    }
                 }
             }
         }

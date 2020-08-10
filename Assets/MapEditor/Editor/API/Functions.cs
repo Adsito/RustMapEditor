@@ -1,76 +1,13 @@
 ﻿using System;
-using Rotorz.ReorderableList;
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 
 namespace RustMapEditor.UI
 {
     public static class Functions
     {
-        #region Menu Items
-        [MenuItem("Rust Map Editor/Main Menu", false, 0)]
-        public static void OpenMainMenu()
-        {
-            MapManagerWindow window = (MapManagerWindow)EditorWindow.GetWindow(typeof(MapManagerWindow), false, "Rust Map Editor");
-        }
-
-        [MenuItem("Rust Map Editor/Hierachy/Prefabs", false, 1)]
-        static void OpenPrefabHierachy()
-        {
-            PrefabHierachyWindow window = (PrefabHierachyWindow)EditorWindow.GetWindow(typeof(PrefabHierachyWindow), false, "Prefab Hierachy");
-        }
-
-        [MenuItem("Rust Map Editor/Hierachy/Paths", false, 1)]
-        static void OpenPathHierachy()
-        {
-            PathHierachyWindow window = (PathHierachyWindow)EditorWindow.GetWindow(typeof(PathHierachyWindow), false, "Path Hierachy");
-        }
-
-        [MenuItem("Rust Map Editor/Prefabs", false, 1)]
-        static void OpenPrefabsList()
-        {
-            PrefabsListWindow window = (PrefabsListWindow)EditorWindow.GetWindow(typeof(PrefabsListWindow), false, "Prefabs List");
-        }
-
-        [MenuItem("Rust Map Editor/Terrain Tools", false, 2)]
-        public static void OpenTerrainTools()
-        {
-            Selection.activeGameObject = Land.gameObject;
-        }
-
-        [MenuItem("Rust Map Editor/Links/Wiki", false, 10)]
-        public static void OpenWiki()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Discord", false, 10)]
-        public static void OpenDiscord()
-        {
-            Application.OpenURL("https://discord.gg/HPmTWVa");
-        }
-
-        [MenuItem("Rust Map Editor/Links/RoadMap", false, 10)]
-        public static void OpenRoadMap()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Report Bug", false, 10)]
-        public static void OpenReportBug()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
-        }
-
-        [MenuItem("Rust Map Editor/Links/Request Feature", false, 10)]
-        public static void OpenRequestFeature()
-        {
-            Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
-        }
-        #endregion
-
         #region MainMenu
         public static void EditorIO(string mapName = "custommap")
         {
@@ -151,20 +88,21 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.reportBug))
-                OpenReportBug();
+                ShortcutManager.OpenReportBug();
             if (Elements.ToolbarButton(ToolTips.requestFeature))
-                OpenRequestFeature();
+                ShortcutManager.OpenRequestFeature();
             if (Elements.ToolbarButton(ToolTips.roadMap))
-                OpenRoadMap();
+                ShortcutManager.OpenRoadMap();
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.wiki))
-                OpenWiki();
+                ShortcutManager.OpenWiki();
             if (Elements.ToolbarButton(ToolTips.discord))
-                OpenDiscord();
+                ShortcutManager.OpenDiscord();
             Elements.EndToolbarHorizontal();
         }
+
         public static void EditorSettings()
         {
             Elements.BoldLabel(ToolTips.editorSettingsLabel);
@@ -199,7 +137,7 @@ namespace RustMapEditor.UI
             SettingsManager.PathRenderDistance = Elements.ToolbarSlider(ToolTips.pathRenderDistance, SettingsManager.PathRenderDistance, 0, 5000f);
 
             if (EditorGUI.EndChangeCheck())
-                MapManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
+                SceneManager.SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
 
             EditorGUI.BeginChangeCheck();
             SettingsManager.WaterTransparency = Elements.ToolbarSlider(ToolTips.waterTransparency, SettingsManager.WaterTransparency, 0f, 0.5f);
@@ -207,7 +145,7 @@ namespace RustMapEditor.UI
                 SetWaterTransparency(SettingsManager.WaterTransparency);
 
             Elements.BeginToolbarHorizontal();
-            SettingsManager.LoadBundleOnProjectLoad = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnProjectLoad);
+            SettingsManager.LoadBundleOnLaunch = Elements.ToolbarCheckBox(ToolTips.loadBundleOnProjectLoad, SettingsManager.LoadBundleOnLaunch);
             Elements.EndToolbarHorizontal();
 
         }
@@ -235,27 +173,6 @@ namespace RustMapEditor.UI
             if (Elements.ToolbarButton(ToolTips.unloadBundle))
                 AssetManager.Dispose();
             Elements.EndToolbarHorizontal();
-        }
-        #endregion
-
-        #region Generation Tools
-        public static void NodePresets(Vector2 presetScrollPos)
-        {
-            Elements.BoldLabel(ToolTips.presetsLabel);
-
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.refreshPresets))
-                MapManager.RefreshPresetsList();
-            Elements.EndToolbarHorizontal();
-
-            presetScrollPos = GUILayout.BeginScrollView(presetScrollPos);
-            ReorderableListGUI.Title("Node Presets");
-            ReorderableListGUI.ListField(MapManager.generationPresetList, NodePresetDrawer, DrawEmpty);
-            GUILayout.EndScrollView();
-        }
-        public static void DrawEmpty()
-        {
-            Elements.MiniLabel(ToolTips.noPresets);
         }
         #endregion
 
@@ -739,24 +656,6 @@ namespace RustMapEditor.UI
         #endregion
 
         #region Functions
-        public static string NodePresetDrawer(Rect position, string itemValue)
-        {
-            position.width -= 39;
-            GUI.Label(position, itemValue);
-            position.x = position.xMax;
-            position.width = 39;
-            if (GUI.Button(position, ToolTips.openPreset, EditorStyles.toolbarButton))
-            {
-                MapManager.RefreshPresetsList();
-                MapManager.nodePresetLookup.TryGetValue(itemValue, out UnityEngine.Object preset);
-                if (preset != null)
-                    AssetDatabase.OpenAsset(preset.GetInstanceID());
-                else
-                    Debug.LogError("The preset you are trying to open is null.");
-            }
-            return itemValue;
-        }
-
         /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>
         /// <param name="topology">The Topology layer to set.</param>
@@ -785,31 +684,16 @@ namespace RustMapEditor.UI
 
         public static void ReloadTreeViews()
         {
-            PrefabHierachyWindow.ReloadTree();
-            PathHierachyWindow.ReloadTree();
+            PrefabHierarchyWindow.ReloadTree();
+            PathHierarchyWindow.ReloadTree();
         }
-        #endregion
 
-        #region NodeGraph
-        public static void NodeGraphToolbar(XNode.NodeGraph nodeGraph)
+        public static void CopyText(string text)
         {
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.runPreset))
-                NodeAsset.Parse(nodeGraph);
-            if (Elements.ToolbarButton(ToolTips.deletePreset))
-            {
-                if (EditorUtility.DisplayDialog("Delete Preset", "Are you sure you wish to delete this preset? Once deleted it can't be undone.", "Ok", "Cancel"))
-                {
-                    XNodeEditor.NodeEditorWindow.focusedWindow.Close();
-                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeGraph));
-                    MapManager.RefreshPresetsList();
-                }
-            }
-            if (Elements.ToolbarButton(ToolTips.renamePreset))
-                XNodeEditor.RenamePreset.Show(nodeGraph);
-            if (Elements.ToolbarButton(ToolTips.presetWiki))
-                Application.OpenURL("https://github.com/RustMapMaking/Rust-Map-Editor-Unity/wiki/Node-System");
-            Elements.EndToolbarHorizontal();
+            TextEditor editor = new TextEditor();
+            editor.text = text;
+            editor.SelectAll();
+            editor.Copy();
         }
         #endregion
 
@@ -817,7 +701,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabName(string name)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabName);
+            if (Elements.ToolbarButton(ToolTips.prefabName))
+                CopyText(name);
             Elements.ToolbarLabel(new GUIContent(name, name));
             Elements.EndToolbarHorizontal();
         }
@@ -825,7 +710,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabID);
+            if (Elements.ToolbarButton(ToolTips.prefabID))
+                CopyText(prefab.id.ToString());
             Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
             Elements.EndToolbarHorizontal();
         }
@@ -833,7 +719,8 @@ namespace RustMapEditor.UI
         public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
         {
             Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(ToolTips.prefabPath);
+            if (Elements.ToolbarButton(ToolTips.prefabPath))
+                CopyText(AssetManager.ToPath(prefab.id));
             Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
             Elements.EndToolbarHorizontal();
         }
@@ -856,8 +743,14 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             name = Elements.ToolbarTextField(name);
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyRename))
+            {
                 PrefabManager.RenamePrefabs(prefabs, name);
+                ReloadTreeViews();
+            }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();

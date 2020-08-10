@@ -13,7 +13,8 @@ public static class SettingsManager
     public static float PrefabRenderDistance { get; set; }
     public static float PathRenderDistance { get; set; }
     public static float WaterTransparency { get; set; }
-    public static bool LoadBundleOnProjectLoad { get; set; }
+    public static bool LoadBundleOnLaunch { get; set; }
+    public static bool TerrainTextureSet { get; set; }
     public static string[] PrefabPaths { get; private set; }
 
     [InitializeOnLoadMethod]
@@ -21,25 +22,9 @@ public static class SettingsManager
     {
         if (!File.Exists(SettingsPath))
             using (StreamWriter write = new StreamWriter(SettingsPath, false))
-                write.Write(JsonUtility.ToJson(DefaultSettings(), true));
+                write.Write(JsonUtility.ToJson(new EditorSettings(), true));
 
         LoadSettings();
-    }
-
-    /// <summary>Returns a new EditorSettings struct set with the default settings.</summary>
-    static EditorSettings DefaultSettings()
-    {
-        SetDefaultSettings();
-        EditorSettings editorSettings = new EditorSettings
-        {
-            rustDirectory = RustDirectory,
-            prefabRenderDistance = PrefabRenderDistance,
-            pathRenderDistance = PathRenderDistance,
-            waterTransparency = WaterTransparency,
-            loadbundleonprojectload = LoadBundleOnProjectLoad,
-            prefabPaths = PrefabPaths
-        };
-        return editorSettings;
     }
 
     /// <summary>Saves the current EditorSettings to a JSON file.</summary>
@@ -47,15 +32,10 @@ public static class SettingsManager
     {
         using (StreamWriter write = new StreamWriter(SettingsPath, false))
         {
-            EditorSettings editorSettings = new EditorSettings()
-            {
-                rustDirectory = RustDirectory,
-                prefabRenderDistance = PrefabRenderDistance,
-                pathRenderDistance = PathRenderDistance,
-                waterTransparency = WaterTransparency,
-                loadbundleonprojectload = LoadBundleOnProjectLoad,
-                prefabPaths = PrefabPaths
-            };
+            EditorSettings editorSettings = new EditorSettings
+            (
+                RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch
+            );
             write.Write(JsonUtility.ToJson(editorSettings, true));
         }
     }
@@ -70,7 +50,7 @@ public static class SettingsManager
             PrefabRenderDistance = editorSettings.prefabRenderDistance;
             PathRenderDistance = editorSettings.pathRenderDistance;
             WaterTransparency = editorSettings.waterTransparency;
-            LoadBundleOnProjectLoad = editorSettings.loadbundleonprojectload;
+            LoadBundleOnLaunch = editorSettings.loadbundleonlaunch;
             PrefabPaths = editorSettings.prefabPaths;
         }
     }
@@ -83,33 +63,7 @@ public static class SettingsManager
         PrefabRenderDistance = 700f;
         PathRenderDistance = 250f;
         WaterTransparency = 0.2f;
-        LoadBundleOnProjectLoad = false;
-        SetDefaultPrefabPaths();
-    }
-
-    /// <summary>Sets the spawnable prefab paths to default paths.</summary>
-    public static void SetDefaultPrefabPaths()
-    {
-        PrefabPaths = new string[]
-        {
-            @"assets/bundled/prefabs/autospawn/",
-            @"assets/bundled/prefabs/bunker_rooms/",
-            @"assets/bundled/prefabs/caves/",
-            @"assets/bundled/prefabs/hapis/",
-            @"assets/bundled/prefabs/modding/",
-            @"assets/bundled/prefabs/radtown/",
-            @"assets/bundled/prefabs/static/",
-            @"assets/content/nature/",
-            @"assets/content/building/",
-            @"assets/content/props/",
-            @"assets/content/structures/",
-            @"assets/content/vehicles/",
-            @"assets/prefabs/building/",
-            @"assets/prefabs/building core/",
-            @"assets/prefabs/deployable/",
-            @"assets/prefabs/misc/",
-            @"assets/prefabs/resource/" 
-        };
+        LoadBundleOnLaunch = false;
     }
 }
 
@@ -120,6 +74,21 @@ public struct EditorSettings
     public float prefabRenderDistance;
     public float pathRenderDistance;
     public float waterTransparency;
-    public bool loadbundleonprojectload;
+    public bool loadbundleonlaunch;
+    public bool terrainTextureSet;
     public string[] prefabPaths;
+
+    public EditorSettings
+    (
+        string rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust", float prefabRenderDistance = 700f, float pathRenderDistance = 200f, 
+        float waterTransparency = 0.2f, bool loadbundleonlaunch = false, bool terrainTextureSet = false)
+        {
+            this.rustDirectory = rustDirectory;
+            this.prefabRenderDistance = prefabRenderDistance;
+            this.pathRenderDistance = pathRenderDistance;
+            this.waterTransparency = waterTransparency;
+            this.loadbundleonlaunch = loadbundleonlaunch;
+            this.terrainTextureSet = terrainTextureSet;
+            this.prefabPaths = SettingsManager.PrefabPaths;
+        }
 }

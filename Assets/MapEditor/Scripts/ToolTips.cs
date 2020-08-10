@@ -4,7 +4,7 @@ namespace RustMapEditor.Variables
 {
     public static class ToolTips
     {
-        public const string EditorVersion = "v0.1.6";
+        public const string EditorVersion = "v0.1.7";
         public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
         public static GUIContent optionsLabel = new GUIContent("Options");
 
@@ -27,7 +27,7 @@ namespace RustMapEditor.Variables
 
         public static GUIContent hierachyOptionsLabel = new GUIContent("Hierachy Options", "Options which will affect all selected elements in the hierachy.");
         public static GUIContent hierachyDelete = new GUIContent("Delete", "Deletes the selected objects from the map.");
-        public static GUIContent hierachyRename = new GUIContent("Rename", "Renames the selected objects with the input.");
+        public static GUIContent hierachyRename = new GUIContent("Rename Category", "Renames the selected objects with the input.");
 
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");
@@ -41,10 +41,10 @@ namespace RustMapEditor.Variables
         public static GUIContent pathHierachyInnerFade = new GUIContent("Inner Fade", "The inner fade of the path");
         public static GUIContent pathHierachyOuterFade = new GUIContent("Outer Fade", "The outer fade of the path");
 
-        public static GUIContent prefabCategory = new GUIContent("Category:", "The Category group assigned to the prefab.");
-        public static GUIContent prefabID = new GUIContent("ID:", "The Prefab ID assigned to the prefab.");
-        public static GUIContent prefabPath = new GUIContent("Path:", "The path of the prefab inside the asset bundle.");
-        public static GUIContent prefabName = new GUIContent("Name:", "The Prefab name.");
+        public static GUIContent prefabCategory = new GUIContent("Category", "The Category group assigned to the prefab.");
+        public static GUIContent prefabID = new GUIContent("ID", "The Prefab ID assigned to the prefab.");
+        public static GUIContent prefabPath = new GUIContent("Path", "The path of the prefab inside the asset bundle.");
+        public static GUIContent prefabName = new GUIContent("Name", "The Prefab name.");
 
         public static GUIContent assetBundleLabel = new GUIContent("Asset Bundle");
         public static GUIContent loadBundle = new GUIContent("Load", "Loads the Rust asset bundle into memory.");

@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 using static RustMapEditor.Maths.Array;
 using RustMapEditor.Variables;
 using static WorldSerialization;
-using RustMapEditor.Data;
 using UnityEditor;
 
 public static class WorldConverter

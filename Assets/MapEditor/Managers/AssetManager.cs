@@ -5,11 +5,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 public static class AssetManager
 {
+	public static class Callbacks
+    {
+		public delegate void AssetManagerCallback();
+
+		/// <summary>Called after Rust Asset Bundles are loaded into the editor. </summary>
+		public static event AssetManagerCallback BundlesLoaded;
+
+		/// <summary>Called after Rust Asset Bundles are unloaded from the editor. </summary>
+		public static event AssetManagerCallback BundlesDisposed;
+
+		public static void OnBundlesLoaded() => BundlesLoaded?.Invoke();
+		public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();
+	}
+
 	public static string BundlePath { get; private set; }
 
 	public static GameManifest Manifest { get; private set; }
@@ -20,10 +33,11 @@ public static class AssetManager
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
+	public static Dictionary<string, AssetBundle> BundleLookup { get; private set; } = new Dictionary<string, AssetBundle>();
 
 	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, AssetBundle> AssetPaths { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
-	public static Dictionary<string, Object> Cache { get; private set; } = new Dictionary<string, Object>();
+	public static Dictionary<string, Object> AssetCache { get; private set; } = new Dictionary<string, Object>();
+	public static Dictionary<string, Texture2D> PreviewCache { get; private set; } = new Dictionary<string, Texture2D>();
 
 	public static List<string> ManifestStrings { get => IsInitialised ? GetManifestStrings() : new List<string>(); private set => ManifestStrings = value; }
 
@@ -47,7 +61,7 @@ public static class AssetManager
 
 	private static T GetAsset<T>(string filePath) where T : Object
 	{
-		if (!AssetPaths.TryGetValue(filePath, out AssetBundle bundle))
+		if (!BundleLookup.TryGetValue(filePath, out AssetBundle bundle))
 			return null;
 
 		return bundle.LoadAsset<T>(filePath);
@@ -57,21 +71,21 @@ public static class AssetManager
 	{
 		var asset = default(T);
 
-		if (Cache.ContainsKey(filePath))
-			asset = Cache[filePath] as T;
+		if (AssetCache.ContainsKey(filePath))
+			asset = AssetCache[filePath] as T;
 		else
 		{
 			asset = GetAsset<T>(filePath);
 			if (asset != null)
-				Cache.Add(filePath, asset);
+				AssetCache.Add(filePath, asset);
 		}
 		return asset;
 	}
 
 	public static GameObject LoadPrefab(string filePath)
     {
-        if (Cache.ContainsKey(filePath))
-            return Cache[filePath] as GameObject;
+        if (AssetCache.ContainsKey(filePath))
+            return AssetCache[filePath] as GameObject;
 
         else
         {
@@ -79,11 +93,29 @@ public static class AssetManager
             if (val != null)
             {
                 PrefabManager.Setup(val, filePath);
-                Cache.Add(filePath, val);
+                AssetCache.Add(filePath, val);
                 return val;
             }
             Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
             return PrefabManager.DefaultPrefab;
+        }
+    }
+
+	public static Texture2D GetPreview(string filePath)
+    {
+		if (PreviewCache.TryGetValue(filePath, out Texture2D preview))
+			return preview;
+        else
+        {
+			var prefab = LoadPrefab(filePath);
+			if (prefab.name == "DefaultPrefab")
+				return AssetPreview.GetAssetPreview(prefab);
+
+			prefab.SetActive(true);
+			var tex = AssetPreview.GetAssetPreview(prefab) ?? new Texture2D(60, 60);
+			PreviewCache.Add(filePath, tex);
+			prefab.SetActive(false);
+			return tex;
         }
     }
 
@@ -103,7 +135,7 @@ public static class AssetManager
 	public static void AssetDump()
 	{
 		using (StreamWriter streamWriter = new StreamWriter(AssetDumpPath, false))
-			foreach (var item in AssetPaths.Keys)
+			foreach (var item in BundleLookup.Keys)
 				streamWriter.WriteLine(item + " : " + ToID(item));
 	}
 
@@ -159,6 +191,7 @@ public static class AssetManager
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
 
 			IsInitialised = true; IsInitialising = false;
+			Callbacks.OnBundlesLoaded();
 			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
 		}
 
@@ -190,9 +223,9 @@ public static class AssetManager
             }
 			
 			int bundleCount = Bundles.Count;
-			AssetPaths.Clear();
+			BundleLookup.Clear();
 			Bundles.Clear();
-			Cache.Clear();
+			AssetCache.Clear();
 
 			Progress.Report(bundleID, 0.99f, "Unloaded: " + bundleCount + " bundles.");
 			Progress.Finish(bundleID, Progress.Status.Succeeded);
@@ -263,20 +296,20 @@ public static class AssetManager
 			{
 				foreach (var filename in asset.GetAllAssetNames())
 				{
-					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					BundleLookup.Add(filename, asset);
+					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						sw.Restart();
 						yield return null;
+						sw.Restart();    
 					}
 				}
 				foreach (var filename in asset.GetAllScenePaths())
 				{
-					AssetPaths.Add(filename, asset);
-					if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+					BundleLookup.Add(filename, asset);
+					if (sw.Elapsed.TotalMilliseconds >= 0.5f)
 					{
-						sw.Restart();
 						yield return null;
+						sw.Restart();
 					}
 				}
 			}
@@ -304,10 +337,10 @@ public static class AssetManager
 			});
 			while (!setLookups.IsCompleted)
             {
-				if (sw.Elapsed.TotalMilliseconds >= 0.05f)
+				if (sw.Elapsed.TotalMilliseconds >= 0.1f)
                 {
-					sw.Restart();
 					yield return null;
+					sw.Restart();
 				}
 			}
 		}
@@ -333,11 +366,12 @@ public static class AssetManager
 						case "Specular":
 							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), spc));
 							break;
+						case "Foliage":
+							LoadAsset<Material>(lineSplit[1]).DisableKeyword("_TINTENABLED_ON");
+							break;
 					}
 					yield return null;
 				}
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/overgrowth.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
-				LoadAsset<Material>(@"assets/content/nature/overgrowth/models/materials/grass_tundra.mat").DisableKeyword("_TINTENABLED_ON"); // Fix for overgrowth materials.
 				Progress.Report(materialID, 0.99f, "Set " + materials.Length + " materials.");
 				Progress.Finish(materialID, Progress.Status.Succeeded);
 			}
@@ -357,6 +391,9 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					SetKeyword(mat, "_NORMALMAP", mat.GetTexture("_BumpMap") || mat.GetTexture("_DetailNormalMap"));
+					if (mat.HasProperty("_SPECGLOSSMAP"))
+						SetKeyword(mat, "_SPECGLOSSMAP", mat.GetTexture("_SpecGlossMap"));
 					mat.renderQueue = -1;
 					break;
 				case 1f:
@@ -367,6 +404,7 @@ public static class AssetManager
 					mat.EnableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
 					break;
 				case 2f:
@@ -377,6 +415,7 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.EnableKeyword("_ALPHABLEND_ON");
 					mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 					break;
 				case 3f:
@@ -387,9 +426,18 @@ public static class AssetManager
 					mat.DisableKeyword("_ALPHATEST_ON");
 					mat.DisableKeyword("_ALPHABLEND_ON");
 					mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 					break;
 			}
+		}
+
+		static void SetKeyword(Material mat, string keyword, bool state)
+		{
+			if (state)
+				mat.EnableKeyword(keyword);
+			else
+				mat.DisableKeyword(keyword);
 		}
 	}
 }

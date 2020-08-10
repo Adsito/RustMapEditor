@@ -1,5 +1,4 @@
-﻿using RustMapEditor.Data;
-using RustMapEditor.Variables;
+﻿using RustMapEditor.Variables;
 
 public static class AreaManager
 {

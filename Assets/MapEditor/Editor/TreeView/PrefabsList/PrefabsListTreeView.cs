@@ -81,6 +81,7 @@ namespace RustMapEditor.UI
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
+
         public static List<PrefabsListElement> GetPrefabsListElements(bool showAll = false)
         {
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
@@ -90,7 +91,7 @@ namespace RustMapEditor.UI
             if (manifestStrings == null)
                 return prefabsListElements;
 
-            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y)));
+            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
             int prefabID = 1, parentID = -1;
             foreach (var manifestString in prefabStrings)
             {
@@ -227,17 +228,13 @@ namespace RustMapEditor.UI
             Reload();
         }
 
-        void SetItemSelected(int id)
+        public void SetItemSelected(int id)
         {
             var itemClicked = treeModel.Find(id);
             if (itemClicked.rustID == 0)
                 return;
 
-            PrefabManager.Load(itemClicked.rustID).SetActive(true);
-            previewImage = AssetPreview.GetAssetPreview(PrefabManager.Load(itemClicked.rustID));
-            if (previewImage == null)
-                previewImage = new Texture2D(60, 60);
-
+            previewImage = AssetManager.GetPreview(AssetManager.ToPath(itemClicked.rustID));
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
         }

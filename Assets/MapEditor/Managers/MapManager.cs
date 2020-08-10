@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
-using static RustMapEditor.Data.TerrainManager;
+using static TerrainManager;
 using static RustMapEditor.Maths.Array;
 using static WorldConverter;
 using Unity.EditorCoroutines.Editor;
@@ -21,7 +21,6 @@ public static class MapManager
     static void Init()
     {
         terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
-        RefreshPresetsList(); // Refreshes the node gen presets.
         EditorApplication.update += OnProjectLoad;
     }
 
@@ -31,31 +30,8 @@ public static class MapManager
         if (Land != null)
         {
             EditorApplication.update -= OnProjectLoad;
-            CreateMap(1000);
-            CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
-        }
-    }
-
-    public static void CentreSceneView(SceneView sceneView)
-    {
-        if (sceneView != null)
-        {
-            sceneView.orthographic = false;
-            sceneView.pivot = new Vector3(500f, 600f, 500f);
-            sceneView.rotation = Quaternion.Euler(25f, 0f, 0f);
-        }
-    }
-
-    public static void SetCullingDistances(Camera[] camera, float prefabDist, float pathDist)
-    {
-        float[] distances = new float[32];
-        distances[8] = prefabDist;
-        distances[9] = pathDist;
-        foreach (var item in camera)
-        {
-            item.layerCullDistances = distances;
-            SceneView.RepaintAll();
+            if (!EditorApplication.isPlaying)
+                CreateMap(1000);
         }
     }
     
@@ -686,27 +662,9 @@ public static class MapManager
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.CreateMap(size, ground, biome, landHeight));
     }
 
-    public static List<string> generationPresetList = new List<string>();
-    public static Dictionary<string, UnityEngine.Object> nodePresetLookup = new Dictionary<string, UnityEngine.Object>();
-
-    /// <summary>Refreshes and adds the new NodePresets in the generationPresetList.</summary>
-    public static void RefreshPresetsList()
-    {
-        var list = AssetDatabase.FindAssets("t:" + NodeAsset.nodeAssetName);
-        generationPresetList.Clear();
-        nodePresetLookup.Clear();
-        foreach (var item in list)
-        {
-            var itemName = AssetDatabase.GUIDToAssetPath(item).Split('/');
-            var itemNameSplit = itemName[itemName.Length - 1].Replace(".asset", "");
-            generationPresetList.Add(itemNameSplit);
-            nodePresetLookup.Add(itemNameSplit, AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(item), typeof(NodePreset)));
-        }
-    }
-
     private class Coroutines
     {
-        public static IEnumerator Load(MapInfo mapInfo, string loadPath = "")
+        public static IEnumerator Load(MapInfo mapInfo, string path = "")
         {
             for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
             {
@@ -715,7 +673,7 @@ public static class MapManager
                     progress.Remove();
             }  
 
-            int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+            int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
@@ -754,7 +712,10 @@ public static class MapManager
             }
 
             Progress.Report(progressID, 0.99f, "Loaded");
+            Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
+
+            EventManager.OnMapLoaded(path);
         }
 
         public static IEnumerator Save(string path)
@@ -780,6 +741,8 @@ public static class MapManager
             Progress.Finish(pathID, Progress.Status.Succeeded);
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
+
+            EventManager.OnMapSaved(path);
         }
 
         public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
