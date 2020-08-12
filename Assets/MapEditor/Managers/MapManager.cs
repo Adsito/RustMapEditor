@@ -349,7 +349,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Rotate(GetAlphaMap(), CW), landLayerToPaint);
+                SetData(Rotate(AlphaArray, CW), landLayerToPaint);
                 break;
         }
     }
@@ -392,7 +392,7 @@ public static class MapManager
 
         Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
-            conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
+            conditionsMet = CheckConditions(AlphaArray, conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
 
         Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -429,7 +429,7 @@ public static class MapManager
                 SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
-                bool[,] alphaMapToPaint = GetAlphaMap();
+                bool[,] alphaMapToPaint = AlphaArray;
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
@@ -459,7 +459,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
+                SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
                 break;
         }
     }
@@ -498,7 +498,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), true), landLayerToPaint);
+                SetData(SetValues(AlphaArray, true), landLayerToPaint);
                 break;
         }
     }
@@ -530,7 +530,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), false), landLayerToPaint);
+                SetData(SetValues(AlphaArray, false), landLayerToPaint);
                 break;
         }
     }
@@ -562,7 +562,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Invert(GetAlphaMap()), landLayerToPaint);
+                SetData(Invert(AlphaArray), landLayerToPaint);
                 break;
         }
     }
@@ -600,7 +600,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(GetAlphaMap(), GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
+                SetData(SetRange(AlphaArray, GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
                 break;
         }
     }
@@ -642,7 +642,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRiver(GetAlphaMap(), GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
+                SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
                 break;
             
         }

@@ -180,7 +180,7 @@ public static class WorldConverter
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        bool[,] terrainHoles = GetAlphaMap();
+        bool[,] terrainHoles = AlphaArray;
         var alphaTask = Task.Run(() =>
         {
             Parallel.For(0, textureResolution, i =>

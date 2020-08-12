@@ -9,11 +9,28 @@ using System.Threading.Tasks;
 
 public static class TerrainManager
 {
+    public static class Callbacks
+    {
+        public delegate void TerrainManagerCallback(LandLayers layer, int? topology = null);
+
+        /// <summary>Called after the active layer is changed. </summary>
+        public static event TerrainManagerCallback LayerChanged;
+
+        /// <summary>Called after the active layer is saved. </summary>
+        public static event TerrainManagerCallback LayerSaved;
+
+        public static void OnLayerChanged(LandLayers layer, int? topology = null) => LayerChanged?.Invoke(layer, topology);
+        public static void OnLayerSaved(LandLayers layer, int? topology = null) => LayerSaved?.Invoke(layer, topology);
+    }
+
     /// <summary>The Ground textures of the map. [Res, Res, Textures(8)].</summary>
     public static float[,,] GroundArray { get; private set; }
 
-    /// <summary>The Biome textures of the map. [Res, Res, Textures(4)</summary>
+    /// <summary>The Biome textures of the map. [Res, Res, Textures(4)]</summary>
     public static float[,,] BiomeArray { get; private set; }
+
+    /// <summary>The Alpha textures of the map. [Res, Res]</summary>
+    public static bool[,] AlphaArray { get => Land.terrainData.GetHoles(0, 0, SplatMapRes, SplatMapRes); }
 
     /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
     public static float[][,,] TopologyArray { get; private set; } = new float[TerrainTopology.COUNT][,,];
@@ -56,13 +73,15 @@ public static class TerrainManager
     public static int HeightMapRes { get => Land.terrainData.heightmapResolution; }
     public static int SplatMapRes { get => Land.terrainData.alphamapResolution; }
 
+    /// <summary>The size of each splat relative to the terrain size it covers.</summary>
+    public static float SplatSize { get => Land.terrainData.size.x / SplatMapRes; }
+
     /// <summary>The state of the layer being applied to the terrain.</summary>
     public static bool LayerSet { get; private set; }
 
     [InitializeOnLoadMethod]
     private static void Init()
     {
-        TerrainCallbacks.textureChanged += TextureChanged;
         TerrainCallbacks.heightmapChanged += HeightmapChanged;
         EditorApplication.update += ProjectLoaded;
     }
@@ -78,12 +97,6 @@ public static class TerrainManager
         Color _color = WaterMaterial.color;
         _color.a = alpha;
         WaterMaterial.color = _color;
-    }
-
-    /// <summary>Gets the size of each splat relative to the terrain size it covers.</summary>
-    public static float GetSplatSize()
-    {
-        return Land.terrainData.size.x / SplatMapRes;
     }
 
     public static float[,] GetSlopes()
@@ -113,12 +126,6 @@ public static class TerrainManager
             SlopeArray = null;
     }
 
-    /// <summary>Callback for whenever the alphamap is updated.</summary>
-    private static void TextureChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
-    {
-
-    }
-
     /// <summary>Changes the active Land and Topology Layers.</summary>
     /// <param name="layer">The LandLayer to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
@@ -142,12 +149,6 @@ public static class TerrainManager
                 return TopologyArray[topology];
         }
         return null;
-    }
-
-    /// <summary>Returns the current maps alphaArray.</summary>
-    public static bool[,] GetAlphaMap()
-    {
-        return Land.terrainData.GetHoles(0, 0, SplatMapRes, SplatMapRes);
     }
 
     /// <summary>Sets the array data of LandLayer.</summary>
@@ -287,6 +288,7 @@ public static class TerrainManager
         {
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayer(layer, topology));
+            Callbacks.OnLayerChanged(layer);
             LayerSet = true;
         }
 
@@ -339,6 +341,7 @@ public static class TerrainManager
             foreach (var item in Land.terrainData.alphamapTextures)
                 Undo.ClearUndo(item);
 
+            Callbacks.OnLayerSaved(LandLayer);
             yield return null;
         }
     }
