@@ -35,11 +35,11 @@ public static class AssetManager
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
 	public static Dictionary<string, AssetBundle> BundleLookup { get; private set; } = new Dictionary<string, AssetBundle>();
 
-	public static Dictionary<string, AssetBundle> Bundles { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
+	public static Dictionary<string, AssetBundle> BundleCache { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
 	public static Dictionary<string, Object> AssetCache { get; private set; } = new Dictionary<string, Object>();
 	public static Dictionary<string, Texture2D> PreviewCache { get; private set; } = new Dictionary<string, Texture2D>();
 
-	public static List<string> ManifestStrings { get => IsInitialised ? GetManifestStrings() : new List<string>(); private set => ManifestStrings = value; }
+	public static List<string> AssetPaths { get; private set; } = new List<string>();
 
 	public static bool IsInitialised { get; private set; }
 
@@ -118,18 +118,6 @@ public static class AssetManager
 			return tex;
         }
     }
-
-	private static List<string> GetManifestStrings()
-	{
-		if (Manifest == null)
-			return null;
-
-		List<string> manifestStrings = new List<string>();
-		foreach (var item in Manifest.pooledStrings)
-			manifestStrings.Add(item.str);
-
-		return manifestStrings;
-	}
 
 	/// <summary>Dumps every asset found in the Rust content bundle to a text file.</summary>
 	public static void AssetDump()
@@ -215,16 +203,16 @@ public static class AssetManager
 			while (PrefabManager.IsChangingPrefabs)
 				yield return null;
 
-			for (int i = 0; i < Bundles.Count; i++)
+			for (int i = 0; i < BundleCache.Count; i++)
             {
-				Progress.Report(bundleID, (float)i / Bundles.Count, "Unloading: " + Bundles.ElementAt(i).Key);
-				Bundles.ElementAt(i).Value.Unload(true);
+				Progress.Report(bundleID, (float)i / BundleCache.Count, "Unloading: " + BundleCache.ElementAt(i).Key);
+				BundleCache.ElementAt(i).Value.Unload(true);
 				yield return null;
             }
 			
-			int bundleCount = Bundles.Count;
+			int bundleCount = BundleCache.Count;
 			BundleLookup.Clear();
-			Bundles.Clear();
+			BundleCache.Clear();
 			AssetCache.Clear();
 
 			Progress.Report(bundleID, 0.99f, "Unloaded: " + bundleCount + " bundles.");
@@ -282,7 +270,7 @@ public static class AssetManager
 					IsInitialising = false;
 					yield break;
 				}
-				Bundles.Add(bundles[i], asset.assetBundle);
+				BundleCache.Add(bundles[i], asset.assetBundle);
 			}
 			rootBundle.Unload(true);
 		}
@@ -292,7 +280,7 @@ public static class AssetManager
 			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 			sw.Start();
 
-			foreach (var asset in Bundles.Values)
+			foreach (var asset in BundleCache.Values)
 			{
 				foreach (var filename in asset.GetAllAssetNames())
 				{
@@ -314,7 +302,7 @@ public static class AssetManager
 				}
 			}
 
-			Progress.Report(ID.bundle, 0.99f, "Loaded " + Bundles.Count + " bundles.");
+			Progress.Report(ID.bundle, 0.99f, "Loaded " + BundleCache.Count + " bundles.");
 			Progress.Finish(ID.bundle, Progress.Status.Succeeded);
 
 			Manifest = GetAsset<GameManifest>(ManifestPath);
@@ -332,6 +320,8 @@ public static class AssetManager
 				{
 					IDLookup.Add(Manifest.pooledStrings[i].hash, Manifest.pooledStrings[i].str);
 					PathLookup.Add(Manifest.pooledStrings[i].str, Manifest.pooledStrings[i].hash);
+					if (ToID(Manifest.pooledStrings[i].str) != 0)
+						AssetPaths.Add(Manifest.pooledStrings[i].str);
 				}
 				AssetDump();
 			});

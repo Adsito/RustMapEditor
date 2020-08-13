@@ -87,11 +87,8 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = AssetManager.ManifestStrings;
-            if (manifestStrings == null)
-                return prefabsListElements;
 
-            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
+            var prefabStrings = showAll ? AssetManager.AssetPaths.Where(x => x.Contains(".prefab")) : AssetManager.AssetPaths.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
             int prefabID = 1, parentID = -1;
             foreach (var manifestString in prefabStrings)
             {
@@ -104,7 +101,6 @@ namespace RustMapEditor.UI
 
                     if (!treeviewParents.ContainsKey(treePath))
                     {
-                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
                         if (i != assetNameSplit.Length - 1)
                         {
                             var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID--);
@@ -113,9 +109,8 @@ namespace RustMapEditor.UI
                         }
                         else
                         {
+                            var prefabName = assetNameSplit.Last().Replace(".prefab", "");
                             var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, manifestString);
-                            if (treeviewItem.rustID == 0)
-                                continue;
                             prefabsListElements.Add(treeviewItem);
                             treeviewParents.Add(treePath, treeviewItem);
                         }
@@ -143,9 +138,7 @@ namespace RustMapEditor.UI
                 return;
 
             if (multiColumnHeader.sortedColumnIndex == -1)
-            {
                 return;
-            }
             SortByMultipleColumns();
             TreeToList(root, rows);
             Repaint();
@@ -198,9 +191,7 @@ namespace RustMapEditor.UI
             var item = (TreeViewItem<PrefabsListElement>)args.item;
 
             for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
-            {
                 CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
-            }
         }
 
         void CellGUI(Rect cellRect, TreeViewItem<PrefabsListElement> item, Columns column, ref RowGUIArgs args)

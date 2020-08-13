@@ -748,7 +748,7 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyRename))
             {
-                PrefabManager.RenamePrefabs(prefabs, name);
+                PrefabManager.RenamePrefabCategories(prefabs, name);
                 ReloadTreeViews();
             }
             Elements.EndToolbarHorizontal();

@@ -169,10 +169,16 @@ public static class PrefabManager
         }
     }
 
-    public static void RenamePrefabs(PrefabDataHolder[] prefabs, string name)
+    public static void RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
     {
         foreach (var item in prefabs)
             item.prefabData.category = name;
+    }
+
+    public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id)
+    {
+        foreach (var item in prefabs)
+            item.prefabData.id = id;
     }
 
     public static void BreakPrefab(GameObject prefab)
@@ -197,7 +203,7 @@ public static class PrefabManager
             var transforms = prefab.GetComponentsInChildren<Transform>();
             int progressId = Progress.Start("Break Prefab", null, Progress.Options.Sticky);
 
-            var assetPaths = AssetManager.ManifestStrings.Where(x => x.Contains(".prefab") && !x.Contains(@"/ui/") && !x.Contains(@"assets/prefabs/building/") && !x.Contains(@"/engine/")
+            var assetPaths = AssetManager.AssetPaths.Where(x => x.Contains(".prefab") && !x.Contains(@"/ui/") && !x.Contains(@"assets/prefabs/building/") && !x.Contains(@"/engine/")
             && !x.Contains(@"/v2_rockformation_underwater/") && !x.Contains(@"/radtown work prefabs/") && !x.Contains(@"/system/") && AssetManager.ToID(x) != 0
             && !x.Contains(@"/test/") && AssetManager.ToID(x) != 1388803385).ToList();
 
@@ -255,7 +261,7 @@ public static class PrefabManager
                     }
                 }
             }
-            GameObject.DestroyImmediate(prefab);
+            GameObject.DestroyImmediate(prefab, true);
             Progress.Report(progressId, 0.99f, "Scanned: " + transforms.Length + " prefabs.");
             Progress.Finish(progressId);
         }
