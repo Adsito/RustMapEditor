@@ -27,7 +27,8 @@ namespace RustMapEditor.Variables
 
         public static GUIContent hierachyOptionsLabel = new GUIContent("Hierachy Options", "Options which will affect all selected elements in the hierachy.");
         public static GUIContent hierachyDelete = new GUIContent("Delete", "Deletes the selected objects from the map.");
-        public static GUIContent hierachyRename = new GUIContent("Rename Category", "Renames the selected objects with the input.");
+        public static GUIContent hierachyCategoryRename = new GUIContent("Rename Category", "Renames the selected prefab categories with the input.");
+        public static GUIContent hierachyIDRename = new GUIContent("Rename ID", "Renames the selected prefab IDs with the input.");
 
         public static GUIContent prefabHierachyName = new GUIContent("Name", "The name of the prefab.");
         public static GUIContent prefabHierachyType = new GUIContent("Type", "If the prefab is custom built or native to Rust.");

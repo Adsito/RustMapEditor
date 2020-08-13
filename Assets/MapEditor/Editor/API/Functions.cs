@@ -746,10 +746,18 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.hierachyRename))
+            if (Elements.ToolbarButton(ToolTips.hierachyCategoryRename))
             {
                 PrefabManager.RenamePrefabCategories(prefabs, name);
                 ReloadTreeViews();
+            }
+            if (Elements.ToolbarButton(ToolTips.hierachyIDRename))
+            {
+                if (uint.TryParse(name, out uint result))
+                {
+                    PrefabManager.RenamePrefabIDs(prefabs, result);
+                    ReloadTreeViews();
+                }
             }
             Elements.EndToolbarHorizontal();
 
