@@ -73,3 +73,6 @@ Standard : assets/content/props/signs/materials/signs.mat
 Standard : assets/content/structures/dredge/models/materials/dredge_glass.mat
 Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_masked.mat
 Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_masked2.mat
+Specular : assets/content/props/large_industrial_props/models/materials/large_industrial_prop_c.mat
+Specular : assets/content/structures/wooden_cabins/models/materials/wood_cabin.mat
+Standard : assets/content/textures/decals/chillzone_decal.mat
