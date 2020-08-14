@@ -57,3 +57,8 @@ Foliage : assets/content/nature/overgrowth/models/materials/grass_temperate.mat
 Foliage : assets/content/nature/overgrowth/models/materials/grass_arid.mat
 Foliage : assets/content/nature/overgrowth/models/materials/grass_arctic_frost.mat
 Standard : assets/content/structures/bunker/models/materials/bunker_door.mat
+Specular : assets/content/props/pipes/models/materials/pipes.mat
+Specular : assets/content/props/industrial_fixtures/models/materials/vents.mat
+Specular : assets/content/props/small_junk/models/materials/small_junk.mat
+Specular : assets/content/textures/generic/industrial_doors_a/industrial_doors.mat
+Specular : assets/content/structures/gas_station/exterior/models/materials/hole_soil.mat
