@@ -67,3 +67,9 @@ Specular : assets/content/structures/portacabins/models/materials/portacabin_mar
 Specular : assets/content/structures/portacabins/models/materials/portacabin_wood_panels.mat
 Standard : assets/content/structures/abandonded lighthouse/materials/lighthouse_lamp.mat
 Standard : assets/content/props/office_furniture/chair/models/materials/office_chair.mat
+Standard : assets/prefabs/deployable/lantern/model/materials/lantern_glass_on.mat
+Standard : assets/content/props/wooden_furniture/materials/tabledoor.mat
+Standard : assets/content/props/signs/materials/signs.mat
+Standard : assets/content/structures/dredge/models/materials/dredge_glass.mat
+Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_masked.mat
+Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_masked2.mat
