@@ -62,3 +62,8 @@ Specular : assets/content/props/industrial_fixtures/models/materials/vents.mat
 Specular : assets/content/props/small_junk/models/materials/small_junk.mat
 Specular : assets/content/textures/generic/industrial_doors_a/industrial_doors.mat
 Specular : assets/content/structures/gas_station/exterior/models/materials/hole_soil.mat
+Specular : assets/content/structures/warehouses/models/materials/warehouse_glass.mat
+Specular : assets/content/structures/portacabins/models/materials/portacabin_markings.mat
+Specular : assets/content/structures/portacabins/models/materials/portacabin_wood_panels.mat
+Standard : assets/content/structures/abandonded lighthouse/materials/lighthouse_lamp.mat
+Standard : assets/content/props/office_furniture/chair/models/materials/office_chair.mat
