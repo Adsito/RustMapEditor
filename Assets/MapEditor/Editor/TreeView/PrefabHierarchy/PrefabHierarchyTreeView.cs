@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace RustMapEditor.UI
 {
-	internal class PrefabHierarchyTreeView : TreeViewWithTreeModel<PrefabHierarchyElement>
+	public class PrefabHierarchyTreeView : TreeViewWithTreeModel<PrefabHierarchyElement>
 	{
 		const float kRowHeights = 20f;
 		const float kToggleWidth = 18f;
@@ -227,8 +227,8 @@ namespace RustMapEditor.UI
 
         protected override void DoubleClickedItem(int id)
 		{
-			SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabDataHolder.gameObject.transform.position);
-			Selection.activeObject = treeModel.Find(id).prefabDataHolder.gameObject;
+			//SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabDataHolder.gameObject.transform.position);
+			//Selection.activeObject = treeModel.Find(id).prefabDataHolder.gameObject;
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System;
 namespace RustMapEditor.UI
 {
 	[Serializable]
-	internal class PrefabHierarchyElement : TreeElement
+	public class PrefabHierarchyElement : TreeElement
 	{
 	    public string PrefabName, Type, Category;
         public uint RustID;

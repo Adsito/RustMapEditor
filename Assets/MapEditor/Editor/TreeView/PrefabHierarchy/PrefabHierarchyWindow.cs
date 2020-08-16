@@ -134,7 +134,7 @@ namespace RustMapEditor.UI
 		void DrawOptions(Rect rect)
         {
 			GUILayout.BeginArea(rect);
-			Functions.HierachyOptions(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView).ToArray(), ref category);
+			Functions.PrefabHierachyOptions(treeView, ref category);
 			GUILayout.EndArea();
         }
 
