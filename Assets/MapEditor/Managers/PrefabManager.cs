@@ -171,8 +171,7 @@ public static class PrefabManager
 
     public static void RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
     {
-        foreach (var item in prefabs)
-            item.prefabData.category = name;
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabCategories(prefabs, name));
     }
 
     public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id)
@@ -351,6 +350,35 @@ public static class PrefabManager
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
             IsChangingPrefabs = false;
+        }
+
+        public static IEnumerator RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
+        {
+            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+            {
+                var progress = Progress.GetProgressById(Progress.GetId(i));
+                if (progress.finished && progress.name.Contains("Break Prefab"))
+                    progress.Remove();
+            }
+
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            int progressId = Progress.Start("Rename Prefab", null, Progress.Options.Sticky);
+
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                prefabs[i].prefabData.category = name;
+                if (sw.Elapsed.TotalSeconds > 0.2f)
+                {
+                    yield return null;
+                    Progress.Report(progressId, (float)i / prefabs.Length, "Renaming Prefab: " + i + " / " + prefabs.Length);
+                    sw.Restart();
+                }
+            }
+
+            Progress.Report(progressId, 0.99f, "Renamed: " + prefabs.Length + " prefabs.");
+            Progress.Finish(progressId);
         }
     }
 }
