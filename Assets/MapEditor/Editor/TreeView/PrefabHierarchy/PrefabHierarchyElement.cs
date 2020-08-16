@@ -5,19 +5,18 @@ namespace RustMapEditor.UI
 	[Serializable]
 	internal class PrefabHierarchyElement : TreeElement
 	{
-	    public string prefabName, type, category;
-        public uint rustID;
+	    public string PrefabName, Type, Category;
+        public uint RustID;
         public PrefabDataHolder prefabDataHolder;
 
-		public PrefabHierarchyElement (string name, int depth, int id) : base (name, depth, id)
+		public PrefabHierarchyElement (int depth, int id, string name, string type= "", string category = "", uint rustID = 0) : base (name, depth, id)
 		{
             if (!String.IsNullOrEmpty(name))
             {
-                var values = name.Split(':');
-                prefabName = values[0];
-                type = values[1];
-                category = values[2];
-                rustID = uint.Parse(values[3]);
+                PrefabName = name.Split(':')[0];
+                Type = type;
+                Category = category;
+                RustID = rustID;
             }
         }
 	}

@@ -59,12 +59,8 @@ namespace RustMapEditor.UI
 				result.Add(current);
 
 				if (current.hasChildren && current.children[0] != null)
-				{
 					for (int i = current.children.Count - 1; i >= 0; i--)
-					{
 						stack.Push(current.children[i]);
-					}
-				}
 			}
 		}
 
@@ -85,7 +81,7 @@ namespace RustMapEditor.UI
         public static List<PrefabHierarchyElement> GetPrefabHierachyElements()
         {
             List<PrefabHierarchyElement> prefabHierachyElements = new List<PrefabHierarchyElement>();
-            prefabHierachyElements.Add(new PrefabHierarchyElement("", -1, -1));
+            prefabHierachyElements.Add(new PrefabHierarchyElement(-1, -1, ""));
 			if (PrefabManager.PrefabParent == null)
 				return prefabHierachyElements;
 
@@ -93,7 +89,7 @@ namespace RustMapEditor.UI
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = String.Format("{0}:{1}:{2}:{3}", prefabs[i].name.Replace(':', ' '), "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id);
-                prefabHierachyElements.Add(new PrefabHierarchyElement(name, 0, i) 
+                prefabHierachyElements.Add(new PrefabHierarchyElement(0, i, name, "Rust", prefabs[i].prefabData.category, prefabs[i].prefabData.id) 
 				{
 					prefabDataHolder = prefabs[i],
 				});
@@ -152,16 +148,16 @@ namespace RustMapEditor.UI
 				switch (sortOption)
 				{
 					case SortOption.Name:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.prefabName, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.data.PrefabName, ascending);
 						break;
 					case SortOption.Type:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.type, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.data.Type, ascending);
 						break;
 					case SortOption.Category:
-						orderedQuery = orderedQuery.ThenBy(l => l.data.category, ascending);
+						orderedQuery = orderedQuery.ThenBy(l => l.data.Category, ascending);
 						break;
                     case SortOption.RustID:
-                        orderedQuery = orderedQuery.ThenBy(l => l.data.rustID, ascending);
+                        orderedQuery = orderedQuery.ThenBy(l => l.data.RustID, ascending);
                         break;
                 }
 			}
@@ -176,13 +172,13 @@ namespace RustMapEditor.UI
 			switch (sortOption)
 			{
 				case SortOption.Name:
-					return myTypes.Order(l => l.data.prefabName, ascending);
+					return myTypes.Order(l => l.data.PrefabName, ascending);
 				case SortOption.Type:
-					return myTypes.Order(l => l.data.type, ascending);
+					return myTypes.Order(l => l.data.Type, ascending);
 				case SortOption.Category:
-					return myTypes.Order(l => l.data.category, ascending);
+					return myTypes.Order(l => l.data.Category, ascending);
                 case SortOption.RustID:
-                    return myTypes.Order(l => l.data.rustID, ascending);
+                    return myTypes.Order(l => l.data.RustID, ascending);
             }
 			return myTypes.Order(l => l.data.name, ascending);
 		}
@@ -205,16 +201,16 @@ namespace RustMapEditor.UI
                     Rect textRect = cellRect;
                     textRect.x += GetContentIndent(item);
                     textRect.xMax = cellRect.xMax - textRect.x;
-					GUI.Label(cellRect, item.data.prefabName); 
+					GUI.Label(cellRect, item.data.PrefabName); 
                     break;
 				case Columns.Type:
-                    GUI.Label(cellRect, item.data.type);
+                    GUI.Label(cellRect, item.data.Type);
 					break;
                 case Columns.Category:
-                    GUI.Label(cellRect, item.data.category);
+                    GUI.Label(cellRect, item.data.Category);
                     break;
                 case Columns.RustID:
-                    GUI.Label(cellRect, item.data.rustID.ToString());
+                    GUI.Label(cellRect, item.data.RustID.ToString());
                     break;
             }
 		}
