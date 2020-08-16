@@ -222,7 +222,7 @@ public static class PrefabManager
                 if (prefabNameCheck == "props.prefab" || prefabNameCheck == "lights.prefab" || prefabNameCheck == "beam.prefab" ||
                     prefabNameCheck == "on.prefab" || prefabNameCheck == "fur.prefab" || prefabNameCheck == "ore.prefab" || prefabNameCheck == "buildings.prefab" ||
                     prefabNameCheck == "close.prefab" || prefabNameCheck == "body.prefab" || prefabNameCheck == "prop.prefab" || prefabNameCheck == "_back.prefab" ||
-                    prefabNameCheck == "10.prefab")
+                    prefabNameCheck == "10.prefab" || prefabNameCheck == "structure.prefab")
                     continue;
 
                 var prefabPaths = assetPaths.Where(x => x.Contains(prefabName));
