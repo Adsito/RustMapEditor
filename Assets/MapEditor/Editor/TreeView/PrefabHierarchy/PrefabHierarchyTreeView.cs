@@ -227,8 +227,8 @@ namespace RustMapEditor.UI
 
         protected override void DoubleClickedItem(int id)
 		{
-			//SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabDataHolder.gameObject.transform.position);
-			//Selection.activeObject = treeModel.Find(id).prefabDataHolder.gameObject;
+			SceneView.lastActiveSceneView.LookAt(treeModel.Find(id).prefabDataHolder.gameObject.transform.position);
+			Selection.activeObject = treeModel.Find(id).prefabDataHolder.gameObject;
 		}
 	}
 }
