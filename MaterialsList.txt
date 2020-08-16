@@ -66,7 +66,7 @@ Specular : assets/content/structures/warehouses/models/materials/warehouse_glass
 Specular : assets/content/structures/portacabins/models/materials/portacabin_markings.mat
 Specular : assets/content/structures/portacabins/models/materials/portacabin_wood_panels.mat
 Standard : assets/content/structures/abandonded lighthouse/materials/lighthouse_lamp.mat
-Standard : assets/content/props/office_furniture/chair/models/materials/office_chair.mat
+Specular : assets/content/props/office_furniture/chair/models/materials/office_chair.mat
 Standard : assets/prefabs/deployable/lantern/model/materials/lantern_glass_on.mat
 Standard : assets/content/props/wooden_furniture/materials/tabledoor.mat
 Standard : assets/content/props/signs/materials/signs.mat
