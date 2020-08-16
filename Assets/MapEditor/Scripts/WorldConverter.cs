@@ -127,7 +127,7 @@ public static class WorldConverter
         terrains.prefabData = world.world.prefabs.ToArray();
 
         terrains.terrainRes = heightMap.res;
-        terrains.splatRes = Mathf.Clamp(Mathf.ClosestPowerOfTwo(heightMap.res), 512, heightMap.res - 1);
+        terrains.splatRes = splatMap.res;
         terrains.size = terrainSize;
 
         var heightTask = Task.Run(() => ShortMapToFloatArray(heightMap));
