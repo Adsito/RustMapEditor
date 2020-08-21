@@ -748,6 +748,7 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyCategoryRename))
             {
+                name = String.IsNullOrEmpty(name) ? "" : name;
                 PrefabManager.RenamePrefabCategories(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView).ToArray(), name);
                 ReloadTreeViews();
             }
