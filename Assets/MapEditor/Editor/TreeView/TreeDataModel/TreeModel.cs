@@ -15,7 +15,7 @@ namespace RustMapEditor
 
 	public class TreeModel<T> where T : TreeElement
 	{
-		IList<T> m_Data;
+		public IList<T> m_Data;
 		T m_Root;
 		int m_MaxID;
 	
@@ -228,7 +228,4 @@ namespace RustMapEditor
 				modelChanged ();
 		}
 	}
-
-
-
 }
