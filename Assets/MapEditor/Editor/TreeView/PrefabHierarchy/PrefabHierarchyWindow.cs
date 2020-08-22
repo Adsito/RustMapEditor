@@ -16,6 +16,7 @@ namespace RustMapEditor.UI
 		PrefabHierarchyTreeView m_TreeView;
 
 		[NonSerialized] string category;
+		[NonSerialized] bool replace;
 
 		Rect multiColumnTreeViewRect
 		{
@@ -134,7 +135,7 @@ namespace RustMapEditor.UI
 		void DrawOptions(Rect rect)
         {
 			GUILayout.BeginArea(rect);
-			Functions.PrefabHierachyOptions(treeView, ref category);
+			Functions.PrefabHierachyOptions(treeView, ref category, ref replace);
 			GUILayout.EndArea();
         }
 

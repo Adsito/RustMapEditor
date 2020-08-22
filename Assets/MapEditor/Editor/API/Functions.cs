@@ -737,7 +737,7 @@ namespace RustMapEditor.UI
         }
 
 
-        public static void PrefabHierachyOptions(PrefabHierarchyTreeView treeView, ref string name)
+        public static void PrefabHierachyOptions(PrefabHierarchyTreeView treeView, ref string name, ref bool replace)
         {
             Elements.MiniBoldLabel(ToolTips.hierachyOptionsLabel);
 
@@ -752,11 +752,15 @@ namespace RustMapEditor.UI
                 PrefabManager.RenamePrefabCategories(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView), name);
                 ReloadTreeViews();
             }
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
+            replace = Elements.ToolbarToggle(ToolTips.hierachyReplace, replace);
             if (Elements.ToolbarButton(ToolTips.hierachyIDRename))
             {
                 if (uint.TryParse(name, out uint result))
                 {
-                    PrefabManager.RenamePrefabIDs(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView), result);
+                    PrefabManager.RenamePrefabIDs(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView), result, replace);
                     ReloadTreeViews();
                 }
             }

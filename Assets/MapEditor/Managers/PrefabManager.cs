@@ -174,8 +174,9 @@ public static class PrefabManager
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabCategories(prefabs, name));
     }
 
-    public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id)
+    public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
     {
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabIDs(prefabs, id, replace));
         foreach (var item in prefabs)
             item.prefabData.id = id;
     }
@@ -284,18 +285,53 @@ public static class PrefabManager
             for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
             {
                 var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Break Prefab"))
+                if (progress.finished && progress.name.Contains("Rename Prefab Categories"))
                     progress.Remove();
             }
 
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            int progressId = Progress.Start("Rename Prefab", null, Progress.Options.Sticky);
+            int progressId = Progress.Start("Rename Prefab Categories", null, Progress.Options.Sticky);
 
             for (int i = 0; i < prefabs.Length; i++)
             {
                 prefabs[i].prefabData.category = name;
+                if (sw.Elapsed.TotalSeconds > 0.2f)
+                {
+                    yield return null;
+                    Progress.Report(progressId, (float)i / prefabs.Length, "Renaming Prefab: " + i + " / " + prefabs.Length);
+                    sw.Restart();
+                }
+            }
+
+            Progress.Report(progressId, 0.99f, "Renamed: " + prefabs.Length + " prefabs.");
+            Progress.Finish(progressId);
+        }
+
+        public static IEnumerator RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
+        {
+            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
+            {
+                var progress = Progress.GetProgressById(Progress.GetId(i));
+                if (progress.finished && progress.name.Contains("Rename Prefab IDs"))
+                    progress.Remove();
+            }
+
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            int progressId = Progress.Start("Rename Prefab IDs", null, Progress.Options.Sticky);
+
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                prefabs[i].prefabData.id = id;
+                if (replace)
+                {
+                    prefabs[i].UpdatePrefabData();
+                    Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
+                    GameObject.DestroyImmediate(prefabs[i].gameObject);
+                }
                 if (sw.Elapsed.TotalSeconds > 0.2f)
                 {
                     yield return null;
