@@ -101,10 +101,11 @@ namespace RustMapEditor.UI
 		public static PrefabDataHolder[] PrefabDataFromSelection(PrefabHierarchyTreeView treeView)
         {
 			var selection = treeView.GetSelection();
+			var treeList = treeView.treeModel.m_Data.ToList();
 			PrefabDataHolder[] prefabDataList = new PrefabDataHolder[selection.Count];
 			Parallel.For(0, selection.Count, i => 
 			{
-				prefabDataList[i] = treeView.treeModel.Find(selection.ElementAt(i)).prefabDataHolder;
+				prefabDataList[i] = treeList.Find(x => x.id == selection.ElementAt(i)).prefabDataHolder;
 			});
 			return prefabDataList;
 		}
