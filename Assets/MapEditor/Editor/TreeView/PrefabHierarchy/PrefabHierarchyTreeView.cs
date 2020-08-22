@@ -5,6 +5,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEditor;
+using System.Threading.Tasks;
 
 namespace RustMapEditor.UI
 {
@@ -97,12 +98,14 @@ namespace RustMapEditor.UI
             return prefabHierachyElements;
         }
 
-		public static List<PrefabDataHolder> PrefabDataFromSelection(PrefabHierarchyTreeView treeView)
+		public static PrefabDataHolder[] PrefabDataFromSelection(PrefabHierarchyTreeView treeView)
         {
-			List<PrefabDataHolder> prefabDataList = new List<PrefabDataHolder>();
-			foreach (var item in treeView.GetSelection())
-				prefabDataList.Add(treeView.treeModel.Find(item).prefabDataHolder);
-
+			var selection = treeView.GetSelection();
+			PrefabDataHolder[] prefabDataList = new PrefabDataHolder[selection.Count];
+			Parallel.For(0, selection.Count, i => 
+			{
+				prefabDataList[i] = treeView.treeModel.Find(selection.ElementAt(i)).prefabDataHolder;
+			});
 			return prefabDataList;
 		}
 
