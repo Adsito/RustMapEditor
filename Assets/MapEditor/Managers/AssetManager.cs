@@ -92,9 +92,10 @@ public static class AssetManager
             GameObject val = GetAsset<GameObject>(filePath);
             if (val != null)
             {
-                PrefabManager.Setup(val, filePath);
-                AssetCache.Add(filePath, val);
-                return val;
+				PrefabManager.Setup(val, filePath);
+				AssetCache.Add(filePath, val);
+				PrefabManager.Callbacks.OnPrefabLoaded(val);
+				return val;
             }
             Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
             return PrefabManager.DefaultPrefab;
@@ -152,12 +153,7 @@ public static class AssetManager
 		public static IEnumerator Initialise(string bundlesRoot)
 		{
 			IsInitialising = true;
-			for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-			{
-				var progress = Progress.GetProgressById(Progress.GetId(i));
-				if (progress.finished && progress.name.Contains("Asset Bundles"))
-					progress.Remove();
-			}
+			ProgressManager.RemoveProgressBars("Asset Bundles");
 
 			int progressID = Progress.Start("Load Asset Bundles", null, Progress.Options.Sticky);
 			int bundleID = Progress.Start("Bundles", null, Progress.Options.Sticky, progressID);
@@ -186,12 +182,7 @@ public static class AssetManager
 		public static IEnumerator Dispose() 
 		{
 			IsInitialising = true;
-			for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-			{
-				var progress = Progress.GetProgressById(Progress.GetId(i));
-				if (progress.finished && progress.name.Contains("Asset Bundles"))
-					progress.Remove();
-			}
+			ProgressManager.RemoveProgressBars("Unload Asset Bundles");
 
 			int progressID = Progress.Start("Unload Asset Bundles", null, Progress.Options.Sticky);
 			int bundleID = Progress.Start("Bundles", null, Progress.Options.Sticky, progressID);
@@ -277,7 +268,7 @@ public static class AssetManager
 
 		public static IEnumerator SetBundleReferences((int parent, int bundle) ID)
 		{
-			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+			var sw = new System.Diagnostics.Stopwatch();
 			sw.Start();
 
 			foreach (var asset in BundleCache.Values)

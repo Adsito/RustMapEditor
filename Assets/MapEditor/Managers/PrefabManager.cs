@@ -7,6 +7,16 @@ using System.Collections.Generic;
 
 public static class PrefabManager
 {
+    public static class Callbacks
+    {
+        public delegate void PrefabManagerCallback(GameObject prefab);
+
+        /// <summary>Called after prefab is loaded and setup from bundle. </summary>
+        public static event PrefabManagerCallback PrefabLoaded;
+
+        public static void OnPrefabLoaded(GameObject prefab) => PrefabLoaded?.Invoke(prefab);
+    }
+
     public static GameObject DefaultPrefab { get; private set; }
     public static Transform PrefabParent { get; private set; }
     public static GameObject PrefabToSpawn;
