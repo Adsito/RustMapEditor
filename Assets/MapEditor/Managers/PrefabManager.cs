@@ -3,9 +3,7 @@ using UnityEditor;
 using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
-using System;
 
 public static class PrefabManager
 {
@@ -177,8 +175,6 @@ public static class PrefabManager
     public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabIDs(prefabs, id, replace));
-        foreach (var item in prefabs)
-            item.prefabData.id = id;
     }
 
     public static void BreakPrefab(GameObject prefab)
@@ -195,7 +191,7 @@ public static class PrefabManager
 
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs, int progressID)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
@@ -214,7 +210,7 @@ public static class PrefabManager
 
         public static IEnumerator DeletePrefabs(PrefabDataHolder[] prefabs, int progressID = 0)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             if (progressID == 0)
@@ -236,7 +232,7 @@ public static class PrefabManager
 
         public static IEnumerator ReplaceWithLoaded(PrefabDataHolder[] prefabs, int progressID)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
@@ -259,7 +255,7 @@ public static class PrefabManager
 
         public static IEnumerator ReplaceWithDefault(PrefabDataHolder[] prefabs, int progressID)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
@@ -282,17 +278,11 @@ public static class PrefabManager
 
         public static IEnumerator RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Rename Prefab Categories"))
-                    progress.Remove();
-            }
-
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
+            ProgressManager.RemoveProgressBars("Rename Prefab Categories");
             int progressId = Progress.Start("Rename Prefab Categories", null, Progress.Options.Sticky);
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
             {
@@ -311,17 +301,11 @@ public static class PrefabManager
 
         public static IEnumerator RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Rename Prefab IDs"))
-                    progress.Remove();
-            }
-
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
+            ProgressManager.RemoveProgressBars("Rename Prefab IDs");
             int progressId = Progress.Start("Rename Prefab IDs", null, Progress.Options.Sticky);
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
             {

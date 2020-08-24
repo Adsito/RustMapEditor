@@ -680,12 +680,7 @@ public static class MapManager
     {
         public static IEnumerator Load(MapInfo mapInfo, string path = "")
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Load:"))
-                    progress.Remove();
-            }  
+            ProgressManager.RemoveProgressBars("Load:");
 
             int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
@@ -703,7 +698,7 @@ public static class MapManager
             PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
             PathManager.SpawnPaths(mapInfo.pathData, spwPath);
 
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             while (!splatMapTask.IsCompleted)
             {
@@ -734,12 +729,7 @@ public static class MapManager
 
         public static IEnumerator Save(string path)
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Save:"))
-                    progress.Remove();
-            }
+            ProgressManager.RemoveProgressBars("Save:");
 
             int progressID = Progress.Start("Save: " + path.Split('/').Last(), "Saving Map", Progress.Options.Sticky);
             int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
