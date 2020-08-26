@@ -33,7 +33,10 @@ public static class SceneManager
         distances[8] = prefabDist;
         distances[9] = pathDist;
         foreach (var item in camera)
+        {
             item.layerCullDistances = distances;
+            item.layerCullSpherical = true;
+        }
 
         SceneView.RepaintAll();
     }

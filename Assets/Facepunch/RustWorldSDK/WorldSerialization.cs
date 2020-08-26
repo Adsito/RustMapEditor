@@ -113,9 +113,7 @@ public class WorldSerialization
     public MapData GetMap(string name)
     {
         for (int i = 0; i < world.maps.Count; i++)
-        {
             if (world.maps[i].name == name) return world.maps[i];
-        }
         return null;
     }
 
@@ -155,9 +153,7 @@ public class WorldSerialization
     public PathData GetPath(string name)
     {
         for (int i = 0; i < world.paths.Count; i++)
-        {
             if (world.paths[i].name == name) return world.paths[i];
-        }
         return null;
     }
 
