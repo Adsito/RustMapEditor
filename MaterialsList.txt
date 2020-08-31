@@ -82,3 +82,6 @@ Standard : assets/prefabs/misc/recycler/light_red.mat
 Standard : assets/prefabs/misc/recycler/light_green.mat
 Specular : assets/prefabs/misc/small ration float/materials/waterbottle.mat
 Standard : assets/content/structures/harbor/tugboat/models/materials/tugboat_glass.mat
+Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_inner.mat
+Specular : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_outer_refract.mat
+Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_opaque.mat
