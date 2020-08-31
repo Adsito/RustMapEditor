@@ -76,3 +76,4 @@ Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_m
 Specular : assets/content/props/large_industrial_props/models/materials/large_industrial_prop_c.mat
 Specular : assets/content/structures/wooden_cabins/models/materials/wood_cabin.mat
 Standard : assets/content/textures/decals/chillzone_decal.mat
+Standart : assets/content/structures/military_tunnels_signage/models/materials/mt_signs.mat
