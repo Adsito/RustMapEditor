@@ -85,3 +85,4 @@ Standard : assets/content/structures/harbor/tugboat/models/materials/tugboat_gla
 Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_inner.mat
 Specular : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_outer_refract.mat
 Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_opaque.mat
+Specular : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_outer.mat
