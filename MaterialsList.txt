@@ -78,3 +78,5 @@ Specular : assets/content/structures/wooden_cabins/models/materials/wood_cabin.m
 Standard : assets/content/textures/decals/chillzone_decal.mat
 Standard : assets/content/structures/military_tunnels_signage/models/materials/mt_signs.mat
 Standard : assets/content/structures/wooden_buildings/models/materials/wooden_buildings_glass.mat
+Standard : assets/prefabs/misc/recycler/light_red.mat
+Standard : assets/prefabs/misc/recycler/light_green.mat
