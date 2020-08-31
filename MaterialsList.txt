@@ -81,3 +81,4 @@ Standard : assets/content/structures/wooden_buildings/models/materials/wooden_bu
 Standard : assets/prefabs/misc/recycler/light_red.mat
 Standard : assets/prefabs/misc/recycler/light_green.mat
 Specular : assets/prefabs/misc/small ration float/materials/waterbottle.mat
+Standard : assets/content/structures/harbor/tugboat/models/materials/tugboat_glass.mat
