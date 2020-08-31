@@ -101,6 +101,11 @@ public static class PrefabManager
             item.enabled = false;
         foreach (var item in go.GetComponentsInChildren<CanvasGroup>())
             item.enabled = false;
+        foreach (var item in go.GetComponentsInChildren<ParticleSystem>())
+        {
+            var emission = item.emission;
+            emission.enabled = false;
+        }
 
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
