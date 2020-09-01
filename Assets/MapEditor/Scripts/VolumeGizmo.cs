@@ -4,7 +4,7 @@ using UnityEditor;
 [ExecuteAlways]
 public class VolumeGizmo : MonoBehaviour
 {
-    //[HideInInspector]
+    [HideInInspector]
     public Mesh mesh;
 
     private void OnDrawGizmos()
