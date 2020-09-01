@@ -102,6 +102,7 @@ public static class AssetManager
         }
     }
 
+	/// <summary>Returns a preview image of the asset located at the filepath. Caches the results.</summary>
 	public static Texture2D GetPreview(string filePath)
     {
 		if (PreviewCache.TryGetValue(filePath, out Texture2D preview))
@@ -360,6 +361,9 @@ public static class AssetManager
 
 		public static IEnumerator UpdateShader(Material mat, Shader shader)
 		{
+			if (mat == null)
+				yield break;
+
 			mat.shader = shader;
 			yield return null;
 			switch (mat.GetFloat("_Mode"))
