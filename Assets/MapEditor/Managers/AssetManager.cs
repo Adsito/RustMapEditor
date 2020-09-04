@@ -30,6 +30,7 @@ public static class AssetManager
 	public const string ManifestPath = "assets/manifest.asset";
 	public const string AssetDumpPath = "AssetDump.txt";
 	public const string MaterialsListPath = "MaterialsList.txt";
+	public const string VolumesListPath = "VolumesList.txt";
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
@@ -121,6 +122,37 @@ public static class AssetManager
         }
     }
 
+	/// <summary>Adds the volume gizmo component to the prefabs in the VolumesList.</summary>
+	public static void SetVolumeGizmos()
+    {
+		if (File.Exists(VolumesListPath))
+        {
+			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			var cubeMesh = cube.GetComponent<MeshFilter>().sharedMesh;
+			GameObject.DestroyImmediate(cube);
+			var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			var sphereMesh = sphere.GetComponent<MeshFilter>().sharedMesh;
+			GameObject.DestroyImmediate(sphere);
+
+			var volumes = File.ReadAllLines(VolumesListPath);
+            for (int i = 0; i < volumes.Length; i++)
+            {
+				var lineSplit = volumes[i].Split(':');
+				lineSplit[0] = lineSplit[0].Trim(' '); // Volume Mesh Type
+				lineSplit[1] = lineSplit[1].Trim(' '); // Prefab Path
+                switch (lineSplit[0])
+                {
+					case "Cube":
+						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = cubeMesh;
+						break;
+					case "Sphere":
+						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = sphereMesh;
+						break;
+                }
+            }
+        }
+    }
+
 	/// <summary>Dumps every asset found in the Rust content bundle to a text file.</summary>
 	public static void AssetDump()
 	{
@@ -176,6 +208,7 @@ public static class AssetManager
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
 
 			IsInitialised = true; IsInitialising = false;
+			SetVolumeGizmos();
 			Callbacks.OnBundlesLoaded();
 			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
 		}
