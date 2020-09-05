@@ -59,7 +59,10 @@ public static class ShortcutManager
     public static void OpenMainMenu() => EditorWindow.GetWindow(typeof(MapManagerWindow), false, "Rust Map Editor");
 
     [Shortcut("RustMapEditor/Settings Menu"), MenuItem("Rust Map Editor/Settings", false, 0)]
-    public static void OpenSettings() => SettingsWindow.Init();
+    public static void OpenSettingsMenu() => SettingsWindow.Init();
+
+    [Shortcut("RustMapEditor/Layers Menu"), MenuItem("Rust Map Editor/Layers", false, 0)]
+    public static void OpenLayersMenu() => LayersWindow.Init();
 
     [Shortcut("RustMapEditor/Prefab Hierarchy"), MenuItem("Rust Map Editor/Hierarchy/Prefabs", false, 1)]
     public static void OpenPrefabHierarchy() => EditorWindow.GetWindow(typeof(PrefabHierarchyWindow), false, "Prefab Hierarchy");

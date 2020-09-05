@@ -163,6 +163,7 @@ namespace RustMapEditor.UI
                 PathManager.DeletePaths(PathManager.CurrentMapPaths);
             Elements.EndToolbarHorizontal();
         }
+
         public static void AssetBundle()
         {
             Elements.MiniBoldLabel(ToolTips.assetBundleLabel);
