@@ -36,7 +36,7 @@ public class LayersWindow : EditorWindow
         switch (TerrainManager.LandLayer)
         {
             case LandLayers.Ground:
-                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
+                Functions.TextureSelect((LandLayers)layerIndex, ref layers);
                 Functions.AreaSelect();
                 Functions.LayerTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground));
                 Functions.RotateTools(TerrainManager.LandLayer);
@@ -45,7 +45,7 @@ public class LayersWindow : EditorWindow
                 Functions.HeightTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
                 break;
             case LandLayers.Biome:
-                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
+                Functions.TextureSelect((LandLayers)layerIndex, ref layers);
                 Functions.AreaSelect();
                 Functions.LayerTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome));
                 Functions.RotateTools(TerrainManager.LandLayer);
