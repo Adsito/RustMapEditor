@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -58,6 +59,17 @@ public static class SceneManager
                 item.cameraSettings.nearClip = 0.5f;
     }
 
+    public static PrefabDataHolder[] GetSelectedPrefabs()
+    {
+        List<PrefabDataHolder> prefabs = new List<PrefabDataHolder>();
+        foreach (var item in Selection.gameObjects)
+        {
+            if (item.TryGetComponent(out PrefabDataHolder holder))
+                prefabs.Add(holder);
+        }
+        return prefabs.ToArray();
+    }
+
     private static void OnSceneChanged()
     {
         if (EditorScene.rootCount != 4)
@@ -72,6 +84,8 @@ public static class SceneManager
                 }
                 if (item.TryGetComponent(out PathDataHolder path))
                     path.gameObject.transform.SetParent(PathManager.PathParent);
+                if (item.TryGetComponent(out PrefabCategoryParent categoryParent))
+                    categoryParent.gameObject.transform.SetParent(PrefabManager.PrefabParent);
             }
         }
     }
