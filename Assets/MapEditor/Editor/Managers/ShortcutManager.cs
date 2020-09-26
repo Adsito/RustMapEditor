@@ -4,6 +4,7 @@ using RustMapEditor.UI;
 using RustMapEditor.Variables;
 using UnityEngine;
 using UnityEditor.EditorTools;
+using System.Linq;
 
 public static class ShortcutManager
 {
@@ -48,6 +49,9 @@ public static class ShortcutManager
 
     [Shortcut("RustMapEditor/Scale Tool", KeyCode.R, ShortcutModifiers.Shift)]
     public static void SelectScaleTool() => EditorTools.SetActiveTool(typeof(ScaleToolCentred));
+
+    [Shortcut("RustMapEditor/Create Custom Prefab"), MenuItem("Rust Map Editor/Create Custom Prefab", false, 5)]
+    public static void CreateCustomPrefab() => PrefabManager.CreateCustomPrefab("Default", SceneManager.GetSelectedPrefabs());
 
     [Shortcut("RustMapEditor/Enable Hide Flags")]
     public static void EnableHideFlags() => SceneManager.ToggleHideFlags(true);

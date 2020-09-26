@@ -3,8 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using static TerrainManager;
 
-[DisallowMultipleComponent]
-[SelectionBase]
+[SelectionBase, DisallowMultipleComponent]
 public class PrefabDataHolder : MonoBehaviour
 {
     public WorldSerialization.PrefabData prefabData;

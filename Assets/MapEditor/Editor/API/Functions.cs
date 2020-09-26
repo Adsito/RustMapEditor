@@ -656,6 +656,24 @@ namespace RustMapEditor.UI
         }
         #endregion
 
+        #region CustomPrefab
+        public static void CustomPrefabName(CustomPrefabHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(new GUIContent("Name"));
+            target.CustomPrefab.Data.Name = Elements.ToolbarDelayedTextField(target.CustomPrefab.Data.Name);
+            Elements.EndToolbarHorizontal();
+        }
+
+        public static void CustomPrefabAuthor(CustomPrefabHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(new GUIContent("Author"));
+            target.CustomPrefab.Data.Author = Elements.ToolbarDelayedTextField(target.CustomPrefab.Data.Author);
+            Elements.EndToolbarHorizontal();
+        }
+        #endregion
+
         #region Functions
         /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>

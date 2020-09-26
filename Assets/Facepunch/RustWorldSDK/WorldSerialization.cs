@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using ProtoBuf;
 using LZ4;
@@ -47,6 +46,17 @@ public class WorldSerialization
         [ProtoMember(3)] public VectorData position;
         [ProtoMember(4)] public VectorData rotation;
         [ProtoMember(5)] public VectorData scale;
+
+
+        public PrefabData() { }
+        public PrefabData(string category, uint id, Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            this.category = category;
+            this.id = id;
+            this.position = position;
+            this.rotation = rotation;
+            this.scale = scale;
+        }
     }
 
     [Serializable]
@@ -125,50 +135,6 @@ public class WorldSerialization
         map.data = data;
 
         world.maps.Add(map);
-    }
-
-    public IEnumerable<PrefabData> GetPrefabs(string category)
-    {
-        return world.prefabs.Where(p => p.category == category);
-    }
-
-    public void AddPrefab(string category, uint id, Vector3 position, Quaternion rotation, Vector3 scale)
-    {
-        var prefab = new PrefabData();
-
-        prefab.category = category;
-        prefab.id = id;
-        prefab.position = position;
-        prefab.rotation = rotation;
-        prefab.scale = scale;
-
-        world.prefabs.Add(prefab);
-    }
-
-    public IEnumerable<PathData> GetPaths(string name)
-    {
-        return world.paths.Where(p => p.name.Contains(name));
-    }
-
-    public PathData GetPath(string name)
-    {
-        for (int i = 0; i < world.paths.Count; i++)
-            if (world.paths[i].name == name) return world.paths[i];
-        return null;
-    }
-
-    public void AddPath(PathData path)
-    {
-        world.paths.Add(path);
-    }
-
-    public void Clear()
-    {
-        world.maps.Clear();
-        world.prefabs.Clear();
-        world.paths.Clear();
-
-        Version = CurrentVersion;
     }
 
     public void Save(string fileName)

@@ -4,6 +4,10 @@ using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using LZ4;
+using ProtoBuf;
+using System;
 
 public static class PrefabManager
 {
@@ -73,6 +77,42 @@ public static class PrefabManager
         obj.name = category;
         PrefabCategories.Add(category, obj.transform);
         return obj.transform;
+    }
+
+    public static void CreateCustomPrefab(string name, PrefabDataHolder[] prefabs)
+    {
+        if (prefabs.Length == 0)
+            return;
+
+        var obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/CustomPrefab"), PrefabParent, false);
+        obj.name = name;
+        obj.transform.position = prefabs[0].transform.position;
+        var holder = obj.GetComponent<CustomPrefabHolder>();
+        holder.Setup(name, prefabs);
+        foreach (var item in prefabs)
+            item.transform.SetParent(obj.transform);
+
+        holder.CustomPrefab.Data.Path = EditorUtility.SaveFilePanel("Save Prefab", "", "CustomPrefab", "prefab");
+        SaveCustomPrefab(holder.CustomPrefab);
+    }
+
+    public static void LoadCustomPrefab(CustomPrefab customPrefab)
+    {
+
+    }
+
+    public static void SaveCustomPrefab(CustomPrefab customPrefab)
+    {
+        try
+        {
+            using (var fileStream = new FileStream(customPrefab.Data.Path, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
+                    Serializer.Serialize(compressionStream, customPrefab.Data);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
     }
 
     /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
