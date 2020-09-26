@@ -86,3 +86,6 @@ Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_tra
 Specular : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_outer_refract.mat
 Standard : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_opaque.mat
 Specular : assets/prefabs/deployable/planter_bottle/materials/planter_bottle_transparent_outer.mat
+Standard : assets/content/structures/runway/models/materials/airfield_markings.mat
+Specular : assets/prefabs/deployable/research table/materials/research_table_lens.mat
+Specular : assets/prefabs/deployable/research table/materials/research_table.mat
