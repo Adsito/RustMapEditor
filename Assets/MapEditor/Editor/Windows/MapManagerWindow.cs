@@ -6,10 +6,9 @@ using RustMapEditor.Variables;
 public class MapManagerWindow : EditorWindow
 {
     #region Values
-    string prefabSaveFile = "", mapPrefabSaveFile = "";
     int mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0;
     float offset = 0f, heightSet = 500f, heightLow = 450f, heightHigh = 750f;
-    bool clampOffset = true;
+    bool clampOffset = true, autoUpdate = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
     Conditions conditions = new Conditions() 
     { 
@@ -17,7 +16,6 @@ public class MapManagerWindow : EditorWindow
     };
     Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field};
     int texture = 0, smoothPasses = 0;
-    bool deletePrefabs = false, autoUpdate = false;
     Vector2 scrollPos = new Vector2(0, 0);
     Selections.Objects rotateSelection;
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f, blurDirection = 0f, filterStrength = 1f;
@@ -47,7 +45,7 @@ public class MapManagerWindow : EditorWindow
             #region Prefabs
             case 1:
                 Functions.AssetBundle();
-                Functions.PrefabTools(ref deletePrefabs, prefabSaveFile, mapPrefabSaveFile);
+                Functions.PrefabTools();
                 break;
             #endregion
             case 2:

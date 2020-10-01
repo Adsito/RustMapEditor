@@ -152,7 +152,7 @@ namespace RustMapEditor.UI
         #endregion
 
         #region Prefabs
-        public static void PrefabTools(ref bool deleteOnExport, string lootCrateSaveFile = "", string mapPrefabSaveFile = "")
+        public static void PrefabTools()
         {
             Elements.MiniBoldLabel(ToolTips.toolsLabel);
 
