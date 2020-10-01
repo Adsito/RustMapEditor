@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[SelectionBase, DisallowMultipleComponent]
+[SelectionBase, DisallowMultipleComponent, ExecuteAlways]
 public class CustomPrefabHolder : MonoBehaviour
 {
     public CustomPrefab CustomPrefab { get; private set; }
