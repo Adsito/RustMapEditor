@@ -661,7 +661,7 @@ namespace RustMapEditor.UI
         {
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(new GUIContent("Name"));
-            target.CustomPrefab.Data.Name = Elements.ToolbarDelayedTextField(target.CustomPrefab.Data.Name);
+            target.CustomPrefab.Name = Elements.ToolbarDelayedTextField(target.CustomPrefab.Name);
             Elements.EndToolbarHorizontal();
         }
 
@@ -669,7 +669,7 @@ namespace RustMapEditor.UI
         {
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(new GUIContent("Author"));
-            target.CustomPrefab.Data.Author = Elements.ToolbarDelayedTextField(target.CustomPrefab.Data.Author);
+            target.CustomPrefab.Author = Elements.ToolbarDelayedTextField(target.CustomPrefab.Author);
             Elements.EndToolbarHorizontal();
         }
         #endregion

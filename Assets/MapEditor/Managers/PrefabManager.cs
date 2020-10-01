@@ -28,6 +28,7 @@ public static class PrefabManager
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
 
     public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
+    public static Dictionary<string, CustomPrefab> CustomPrefabs = new Dictionary<string, CustomPrefab>();
 
     public static bool IsChangingPrefabs { get; private set; }
 
@@ -92,22 +93,38 @@ public static class PrefabManager
         foreach (var item in prefabs)
             item.transform.SetParent(obj.transform);
 
-        holder.CustomPrefab.Data.Path = EditorUtility.SaveFilePanel("Save Prefab", "", "CustomPrefab", "prefab");
+        holder.CustomPrefab.Path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", "CustomPrefab", "prefab");
         SaveCustomPrefab(holder.CustomPrefab);
     }
 
-    public static void LoadCustomPrefab(CustomPrefab customPrefab)
+    public static void LoadCustomPrefabs()
     {
-
+        foreach (var item in Directory.GetFiles("Prefabs", "*.prefab", SearchOption.AllDirectories))
+        {
+            try
+            {
+                using (var fileStream = new FileStream(item, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
+                    {
+                        var prefab = Serializer.Deserialize<CustomPrefab>(compressionStream);
+                        if (!CustomPrefabs.ContainsKey(prefab.Hash))
+                            CustomPrefabs.Add(prefab.Hash, prefab);
+                    }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
+        }
     }
 
-    public static void SaveCustomPrefab(CustomPrefab customPrefab)
+    public static void SaveCustomPrefab(CustomPrefab prefab)
     {
         try
         {
-            using (var fileStream = new FileStream(customPrefab.Data.Path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var fileStream = new FileStream(prefab.Path, FileMode.Create, FileAccess.Write, FileShare.None))
                 using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
-                    Serializer.Serialize(compressionStream, customPrefab.Data);
+                    Serializer.Serialize(compressionStream, prefab);
         }
         catch (Exception e)
         {
@@ -289,6 +306,8 @@ public static class PrefabManager
         {
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+            var sw2 = new System.Diagnostics.Stopwatch();
+            sw2.Start();
 
             for (int i = 0; i < prefabs.Length; i++)
             {
@@ -304,7 +323,7 @@ public static class PrefabManager
             }
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
-
+            Debug.Log(sw2.Elapsed.TotalMilliseconds);
             IsChangingPrefabs = false;
         }
 

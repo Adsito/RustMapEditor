@@ -12,7 +12,7 @@ public class CustomPrefabHolder : MonoBehaviour
         foreach (var item in prefabs)
             prefabsList.Add(new CustomPrefab.PrefabData { Prefab = item.prefabData });
 
-        CustomPrefab = new CustomPrefab { Data = new CustomPrefab.Base { Name = name, Prefabs = prefabsList } };
+        CustomPrefab = new CustomPrefab { Name = name, Prefabs = prefabsList };
     }
 
     public void Update()
