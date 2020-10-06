@@ -268,7 +268,7 @@ public static class PrefabManager
 
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 1.5f)
+                if (sw.Elapsed.TotalSeconds > 4f)
                 {
                     yield return null;
                     Progress.Report(progressID, (float)i / prefabs.Length, "Spawning Prefabs: " + i + " / " + prefabs.Length);
@@ -311,7 +311,7 @@ public static class PrefabManager
 
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 1.5f)
+                if (sw.Elapsed.TotalSeconds > 4f)
                 {
                     yield return null;
                     Progress.Report(progressID, (float)i / prefabs.Length, "Replacing Prefabs: " + i + " / " + prefabs.Length);
