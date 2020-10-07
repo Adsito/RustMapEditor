@@ -23,8 +23,6 @@ public static class AssetManager
 		public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();
 	}
 
-	public static string BundlePath { get; private set; }
-
 	public static GameManifest Manifest { get; private set; }
 
 	public const string ManifestPath = "assets/manifest.asset";
