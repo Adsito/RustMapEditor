@@ -13,10 +13,10 @@ namespace RustMapEditor.UI
 		[SerializeField] TreeViewState treeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
-		PrefabHierarchyTreeView m_TreeView;
+		PrefabHierarchyTreeView treeView;
 
-		[NonSerialized] string category;
-		[NonSerialized] bool replace;
+		string category;
+		bool replace;
 
 		Rect multiColumnTreeViewRect
 		{
@@ -31,11 +31,6 @@ namespace RustMapEditor.UI
 		Rect searchBarRect
 		{
 			get { return new Rect(20, 10, position.width - position.width / 3, 20); }
-		}
-
-		public PrefabHierarchyTreeView treeView
-		{
-			get { return m_TreeView; }
 		}
 
         public static MultiColumnHeaderState DefaultMultiColumnHeaderState(float treeViewWidth)
@@ -99,10 +94,10 @@ namespace RustMapEditor.UI
 
 				var treeModel = new TreeModel<PrefabHierarchyElement>(PrefabHierarchyTreeView.GetPrefabHierachyElements());
 				
-				m_TreeView = new PrefabHierarchyTreeView(treeViewState, multiColumnHeader, treeModel);
+				treeView = new PrefabHierarchyTreeView(treeViewState, multiColumnHeader, treeModel);
 
 				m_SearchField = new SearchField();
-				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
+				m_SearchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
 
 				m_Initialized = true;
 			}
@@ -129,7 +124,7 @@ namespace RustMapEditor.UI
 
 		void DrawTreeView (Rect rect)
 		{
-			m_TreeView.OnGUI(rect);
+			treeView.OnGUI(rect);
 		}
 
 		void DrawOptions(Rect rect)

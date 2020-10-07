@@ -726,21 +726,21 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
+        public static void DisplayPrefabID(uint prefabID)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.prefabID))
-                CopyText(prefab.id.ToString());
-            Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
+                CopyText(prefabID.ToString());
+            Elements.ToolbarLabel(new GUIContent(prefabID.ToString(), prefabID.ToString()));
             Elements.EndToolbarHorizontal();
         }
 
-        public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
+        public static void DisplayPrefabPath(string prefabPath)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.prefabPath))
-                CopyText(AssetManager.ToPath(prefab.id));
-            Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
+                CopyText(prefabPath);
+            Elements.ToolbarLabel(new GUIContent(prefabPath, prefabPath));
             Elements.EndToolbarHorizontal();
         }
 

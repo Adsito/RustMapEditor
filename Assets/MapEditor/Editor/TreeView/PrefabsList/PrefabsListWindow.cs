@@ -12,7 +12,7 @@ namespace RustMapEditor.UI
 		[SerializeField] TreeViewState treeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		SearchField m_SearchField;
-		PrefabsListTreeView m_TreeView;
+		PrefabsListTreeView treeView;
 
 		private bool showAllPrefabs = false;
 
@@ -35,15 +35,7 @@ namespace RustMapEditor.UI
 
 		Rect options { get { return new Rect(rightColumn, previewImageDetails.height + previewImageRect.height, position.width - rightColumn - 20, position.height - previewImageDetails.height + previewImageRect.height); } }
 
-		Rect searchBarRect
-		{
-			get { return new Rect(20, 10, position.width - position.width / 3, 20); }
-		}
-
-		public PrefabsListTreeView treeView
-		{
-			get { return m_TreeView; }
-		}
+		Rect searchBarRect { get { return new Rect(20, 10, position.width - position.width / 3, 20); } }
 
 		public static MultiColumnHeaderState DefaultMultiColumnHeaderState(float treeViewWidth)
 		{
@@ -95,13 +87,12 @@ namespace RustMapEditor.UI
 
 				var treeModel = new TreeModel<PrefabsListElement>(PrefabsListTreeView.GetPrefabsListElements(showAllPrefabs));
 
-				m_TreeView = new PrefabsListTreeView(treeViewState, multiColumnHeader, treeModel);
+				treeView = new PrefabsListTreeView(treeViewState, multiColumnHeader, treeModel);
 
 				m_SearchField = new SearchField();
-				m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
+				m_SearchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
 
 				treeView.previewImage = new Texture2D(60, 60);
-				treeView.prefabData = new WorldSerialization.PrefabData() { id = 0 };
 
 				m_Initialized = true;
 			}
@@ -130,7 +121,7 @@ namespace RustMapEditor.UI
 
 		void DrawTreeView(Rect rect)
 		{
-			m_TreeView.OnGUI(rect);
+			treeView.OnGUI(rect);
 		}
 
 		void DrawOptions(Rect rect, PrefabsListTreeView treeView, ref bool showAllPrefabs)
@@ -151,8 +142,8 @@ namespace RustMapEditor.UI
 			GUILayout.BeginArea(rect);
 			Elements.BoldLabel(ToolTips.prefabDetailsLabel);
 			Functions.DisplayPrefabName(treeView.prefabName);
-			Functions.DisplayPrefabID(treeView.prefabData);
-			Functions.DisplayPrefabPath(treeView.prefabData);
+			Functions.DisplayPrefabID(treeView.prefabID);
+			Functions.DisplayPrefabPath(treeView.prefabPath);
 			GUILayout.EndArea();
 		}
 

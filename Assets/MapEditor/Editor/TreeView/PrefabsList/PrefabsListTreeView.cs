@@ -10,12 +10,10 @@ namespace RustMapEditor.UI
 {
     public class PrefabsListTreeView : TreeViewWithTreeModel<PrefabsListElement>
     {
-        const float kRowHeights = 20f;
-        const float kToggleWidth = 18f;
-
         public Texture2D previewImage;
         public WorldSerialization.PrefabData prefabData;
-        public string prefabName;
+        public string prefabName, prefabPath;
+        public uint prefabID;
 
         public bool showAll = false;
 
@@ -72,12 +70,12 @@ namespace RustMapEditor.UI
         {
             Assert.AreEqual(m_SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
-            rowHeight = kRowHeights;
+            rowHeight = 20f;
             columnIndexForTreeFoldouts = 0;
             showAlternatingRowBackgrounds = true;
             showBorder = true;
-            customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f;
-            extraSpaceBeforeIconAndLabel = kToggleWidth;
+            customFoldoutYOffset = (20f - EditorGUIUtility.singleLineHeight) * 0.5f;
+            extraSpaceBeforeIconAndLabel = 18f;
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
@@ -111,6 +109,36 @@ namespace RustMapEditor.UI
                         {
                             var prefabName = assetNameSplit.Last().Replace(".prefab", "");
                             var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, manifestString);
+                            prefabsListElements.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
+                        }
+                    }
+                }
+            }
+
+            PrefabManager.LoadCustomPrefabs();
+            foreach (var item in PrefabManager.CustomPrefabs)
+            {
+                var assetNameSplit = item.Key.Split('\\');
+                for (int i = 0; i < assetNameSplit.Length; i++)
+                {
+                    var treePath = "";
+                    for (int j = 0; j <= i; j++)
+                        treePath += assetNameSplit[j];
+
+                    if (!treeviewParents.ContainsKey(treePath))
+                    {
+                        if (i != assetNameSplit.Length - 1)
+                        {
+                            var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID--);
+                            prefabsListElements.Add(treeviewItem);
+                            treeviewParents.Add(treePath, treeviewItem);
+                        }
+                        else
+                        {
+                            var prefabName = assetNameSplit.Last().Replace(".prefab", "");
+                            var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++);
+                            treeviewItem.rustID = 1;
                             prefabsListElements.Add(treeviewItem);
                             treeviewParents.Add(treePath, treeviewItem);
                         }
@@ -191,10 +219,10 @@ namespace RustMapEditor.UI
             var item = (TreeViewItem<PrefabsListElement>)args.item;
 
             for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
-                CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
+                CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i));
         }
 
-        void CellGUI(Rect cellRect, TreeViewItem<PrefabsListElement> item, Columns column, ref RowGUIArgs args)
+        void CellGUI(Rect cellRect, TreeViewItem<PrefabsListElement> item, Columns column)
         {
             CenterRectUsingSingleLineHeight(ref cellRect);
 
@@ -208,7 +236,7 @@ namespace RustMapEditor.UI
                     break;
                 case Columns.ID:
                     if (item.data.rustID != 0)
-                    GUI.Label(cellRect, item.data.rustID.ToString());
+                        GUI.Label(cellRect, item.data.rustID.ToString());
                     break;
             }
         }
@@ -228,6 +256,8 @@ namespace RustMapEditor.UI
             previewImage = AssetManager.GetPreview(AssetManager.ToPath(itemClicked.rustID));
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
+            prefabPath = AssetManager.ToPath(prefabData.id);
+            prefabID = prefabData.id;
         }
 
         protected override bool CanStartDrag(CanStartDragArgs args)
