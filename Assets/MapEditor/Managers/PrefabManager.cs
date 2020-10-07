@@ -93,8 +93,12 @@ public static class PrefabManager
         foreach (var item in prefabs)
             item.transform.SetParent(obj.transform);
 
-        holder.CustomPrefab.Path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", "CustomPrefab", "prefab");
-        SaveCustomPrefab(holder.CustomPrefab);
+        var path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", "CustomPrefab", "prefab");
+        if (!String.IsNullOrEmpty(path))
+        {
+            holder.CustomPrefab.Path = path;
+            SaveCustomPrefab(holder.CustomPrefab);
+        }
     }
 
     public static void LoadCustomPrefabs()

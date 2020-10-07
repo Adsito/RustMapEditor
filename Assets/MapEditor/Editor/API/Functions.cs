@@ -672,6 +672,23 @@ namespace RustMapEditor.UI
             target.CustomPrefab.Author = Elements.ToolbarDelayedTextField(target.CustomPrefab.Author);
             Elements.EndToolbarHorizontal();
         }
+
+        public static void SaveCustomPrefab(CustomPrefabHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            if (Elements.ToolbarButton(new GUIContent("Update", "Saves the changes to disk.")))
+                PrefabManager.SaveCustomPrefab(target.CustomPrefab);
+            if (Elements.ToolbarButton(new GUIContent("Save", "Saves the current prefab to the selected path.")))
+            {
+                var path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", target.CustomPrefab.Name, "prefab");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    target.CustomPrefab.Path = path;
+                    PrefabManager.SaveCustomPrefab(target.CustomPrefab);
+                }
+            }
+            Elements.EndToolbarHorizontal();
+        }
         #endregion
 
         #region Functions
