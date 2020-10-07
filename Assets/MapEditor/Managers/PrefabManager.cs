@@ -107,8 +107,8 @@ public static class PrefabManager
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
                     {
                         var prefab = Serializer.Deserialize<CustomPrefab>(compressionStream);
-                        if (!CustomPrefabs.ContainsKey(prefab.Hash))
-                            CustomPrefabs.Add(prefab.Hash, prefab);
+                        if (!CustomPrefabs.ContainsKey(item))
+                            CustomPrefabs.Add(item, prefab);
                     }
             }
             catch (Exception e)
