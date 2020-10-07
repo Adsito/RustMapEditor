@@ -1,9 +1,9 @@
 {
-    "rustDirectory": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Rust",
+    "rustDirectory": "C:/Program Files (x86)/Steam/steamapps/common/Rust",
     "prefabRenderDistance": 700.0,
     "pathRenderDistance": 250.0,
     "waterTransparency": 0.20000000298023225,
-    "loadbundleonprojectload": false,
+    "loadbundleonlaunch": false,
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
         "assets/bundled/prefabs/bunker_rooms/",
