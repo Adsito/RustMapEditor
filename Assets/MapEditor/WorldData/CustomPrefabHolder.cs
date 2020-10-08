@@ -4,7 +4,7 @@ using UnityEngine;
 [SelectionBase, DisallowMultipleComponent, ExecuteAlways]
 public class CustomPrefabHolder : MonoBehaviour
 {
-    public CustomPrefab CustomPrefab { get; private set; }
+    public CustomPrefab CustomPrefab = new CustomPrefab();
 
     public void Setup(string name, PrefabDataHolder[] prefabs)
     {
@@ -12,7 +12,8 @@ public class CustomPrefabHolder : MonoBehaviour
         foreach (var item in prefabs)
             prefabsList.Add(new CustomPrefab.PrefabData { Prefab = item.prefabData });
 
-        CustomPrefab = new CustomPrefab { Name = name, Prefabs = prefabsList };
+        CustomPrefab.Name = name;
+        CustomPrefab.Prefabs = prefabsList;
     }
 
     public void Update()
