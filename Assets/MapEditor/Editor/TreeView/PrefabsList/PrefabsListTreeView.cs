@@ -116,7 +116,7 @@ namespace RustMapEditor.UI
                 }
             }
 
-            PrefabManager.LoadCustomPrefabs();
+            CustomPrefab.Load();
             foreach (var item in PrefabManager.CustomPrefabs)
             {
                 var assetNameSplit = item.Key.Split('\\');

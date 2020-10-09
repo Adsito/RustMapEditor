@@ -51,7 +51,7 @@ public static class ShortcutManager
     public static void SelectScaleTool() => EditorTools.SetActiveTool(typeof(ScaleToolCentred));
 
     [Shortcut("RustMapEditor/Create Custom Prefab"), MenuItem("Rust Map Editor/Create Custom Prefab", false, 5)]
-    public static void CreateCustomPrefab() => PrefabManager.CreateCustomPrefab("Default", SceneManager.GetSelectedPrefabs());
+    public static void CreateCustomPrefab() => CustomPrefab.Create(SceneManager.GetSelectedPrefabs());
 
     [Shortcut("RustMapEditor/Enable Hide Flags")]
     public static void EnableHideFlags() => SceneManager.ToggleHideFlags(true);

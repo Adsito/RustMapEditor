@@ -80,62 +80,6 @@ public static class PrefabManager
         return obj.transform;
     }
 
-    public static void CreateCustomPrefab(string name, PrefabDataHolder[] prefabs)
-    {
-        if (prefabs.Length == 0)
-            return;
-
-        var obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/CustomPrefab"), PrefabParent, false);
-        obj.name = name;
-        obj.transform.position = prefabs[0].transform.position;
-        var holder = obj.GetComponent<CustomPrefabHolder>();
-        holder.Setup(name, prefabs);
-        foreach (var item in prefabs)
-            item.transform.SetParent(obj.transform);
-
-        var path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", "CustomPrefab", "prefab");
-        if (!String.IsNullOrEmpty(path))
-        {
-            holder.CustomPrefab.Path = path;
-            SaveCustomPrefab(holder.CustomPrefab);
-        }
-    }
-
-    public static void LoadCustomPrefabs()
-    {
-        foreach (var item in Directory.GetFiles("Prefabs", "*.prefab", SearchOption.AllDirectories))
-        {
-            try
-            {
-                using (var fileStream = new FileStream(item, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
-                    {
-                        var prefab = Serializer.Deserialize<CustomPrefab>(compressionStream);
-                        if (!CustomPrefabs.ContainsKey(item))
-                            CustomPrefabs.Add(item, prefab);
-                    }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.Message);
-            }
-        }
-    }
-
-    public static void SaveCustomPrefab(CustomPrefab prefab)
-    {
-        try
-        {
-            using (var fileStream = new FileStream(prefab.Path, FileMode.Create, FileAccess.Write, FileShare.None))
-                using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
-                    Serializer.Serialize(compressionStream, prefab);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.Message);
-        }
-    }
-
     /// <summary>Sets up the prefabs loaded from the bundle file for use in the editor.</summary>
     /// <param name="go">GameObject to process, should be from one of the asset bundles.</param>
     /// <param name="filePath">Asset filepath of the gameobject, used to get and set the PrefabID.</param>
