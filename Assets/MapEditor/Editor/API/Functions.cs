@@ -673,6 +673,14 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
+        public static void CustomPrefabHash(CustomPrefabHolder target)
+        {
+            Elements.BeginToolbarHorizontal();
+            Elements.ToolbarLabel(new GUIContent("Hash"));
+            Elements.ToolbarSelectableLabel(target.CustomPrefab.Hash);
+            Elements.EndToolbarHorizontal();
+        }
+
         public static void SaveCustomPrefab(CustomPrefabHolder target)
         {
             Elements.BeginToolbarHorizontal();

@@ -12,6 +12,7 @@ public class CustomPrefabHolderEditor : Editor
 
         Functions.CustomPrefabName(script);
         Functions.CustomPrefabAuthor(script);
+        Functions.CustomPrefabHash(script);
         Functions.SaveCustomPrefab(script);
     }
 }
