@@ -137,8 +137,7 @@ namespace RustMapEditor.UI
                         else
                         {
                             var prefabName = assetNameSplit.Last().Replace(".prefab", "");
-                            var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++);
-                            treeviewItem.rustID = 1;
+                            var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, item.Key);
                             prefabsListElements.Add(treeviewItem);
                             treeviewParents.Add(treePath, treeviewItem);
                         }
@@ -256,8 +255,8 @@ namespace RustMapEditor.UI
             previewImage = AssetManager.GetPreview(AssetManager.ToPath(itemClicked.rustID));
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
-            prefabPath = AssetManager.ToPath(prefabData.id);
-            prefabID = prefabData.id;
+            prefabPath = AssetManager.ToPath(itemClicked.rustID);
+            prefabID = itemClicked.rustID;
         }
 
         protected override bool CanStartDrag(CanStartDragArgs args)

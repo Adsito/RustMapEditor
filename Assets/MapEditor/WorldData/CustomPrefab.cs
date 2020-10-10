@@ -39,17 +39,24 @@ public class CustomPrefab
 
     public static void Load()
     {
+        uint prefabCount = 0;
         foreach (var item in Directory.GetFiles("Prefabs", "*.prefab", SearchOption.AllDirectories))
         {
             try
             {
                 using (var fileStream = new FileStream(item, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
                     {
                         var prefab = Serializer.Deserialize<CustomPrefab>(compressionStream);
                         if (!PrefabManager.CustomPrefabs.ContainsKey(item))
+                        {
                             PrefabManager.CustomPrefabs.Add(item, prefab);
+                            AssetManager.IDLookup.Add(++prefabCount, item);
+                            AssetManager.PathLookup.Add(item, prefabCount);
+                        }
                     }
+                }
             }
             catch (Exception e)
             {
@@ -72,6 +79,8 @@ public class CustomPrefab
             Debug.LogError(e.Message);
         }
     }
+
+
 
     public static string GenerateHash(CustomPrefab prefab)
     {
