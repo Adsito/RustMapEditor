@@ -17,7 +17,7 @@ public class CustomPrefab
     [ProtoMember(5)] public int Version;
     [ProtoMember(6)] public List<PrefabData> Prefabs;
 
-    [ProtoContract, Serializable]
+    [ProtoContract]
     public class PrefabData
     {
         [ProtoMember(1)] public WorldSerialization.PrefabData Prefab;
@@ -97,46 +97,46 @@ public class CustomPrefab
 		foreach (var item in prefab.Children)
 			HashPrefab(item, checkSum);
     }
-}
 
-class CheckSum
-{
-	private List<byte> values = new List<byte>();
+    private class CheckSum
+    {
+        private List<byte> values = new List<byte>();
 
-	public void Add(float f, int bytes)
-	{
-		var v = new Union32();
-		v.f = f;
-		if (bytes >= 4) values.Add(v.b1);
-		if (bytes >= 3) values.Add(v.b2);
-		if (bytes >= 2) values.Add(v.b3);
-		if (bytes >= 1) values.Add(v.b4);
-	}
+        public void Add(float f, int bytes)
+        {
+            var v = new Union32();
+            v.f = f;
+            if (bytes >= 4) values.Add(v.b1);
+            if (bytes >= 3) values.Add(v.b2);
+            if (bytes >= 2) values.Add(v.b3);
+            if (bytes >= 1) values.Add(v.b4);
+        }
 
-	public void Add(uint u)
-	{
-		var v = new Union32();
-		v.u = u;
-		values.Add(v.b1);
-		values.Add(v.b2);
-		values.Add(v.b3);
-		values.Add(v.b4);
-	}
+        public void Add(uint u)
+        {
+            var v = new Union32();
+            v.u = u;
+            values.Add(v.b1);
+            values.Add(v.b2);
+            values.Add(v.b3);
+            values.Add(v.b4);
+        }
 
-	public string MD5()
-	{
-		var hashFunc = new MD5CryptoServiceProvider();
-		var hashBytes = hashFunc.ComputeHash(values.ToArray());
-		return BytesToString(hashBytes);
-	}
+        public string MD5()
+        {
+            var hashFunc = new MD5CryptoServiceProvider();
+            var hashBytes = hashFunc.ComputeHash(values.ToArray());
+            return BytesToString(hashBytes);
+        }
 
-	private string BytesToString(byte[] bytes)
-	{
-		var sb = new StringBuilder();
+        private string BytesToString(byte[] bytes)
+        {
+            var sb = new StringBuilder();
 
-		for (int x = 0; x < bytes.Length; x++)
-			sb.Append(bytes[x].ToString("x2"));
+            for (int x = 0; x < bytes.Length; x++)
+                sb.Append(bytes[x].ToString("x2"));
 
-		return sb.ToString();
-	}
+            return sb.ToString();
+        }
+    }
 }
