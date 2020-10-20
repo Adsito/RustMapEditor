@@ -249,12 +249,12 @@ public static class TerrainManager
     private static TerrainLayer[] GetBiomeTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[4];
-        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Tundra.terrainlayer");
-        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/tundra");
+        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arid.terrainlayer");
+        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arid");
         textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Temperate.terrainlayer");
         textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/temperate");
-        textures[2] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arid.terrainlayer");
-        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arid");
+        textures[2] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Tundra.terrainlayer");
+        textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/tundra");
         textures[3] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arctic.terrainlayer");
         textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
         return textures;
