@@ -7,6 +7,7 @@ public class LayersWindow : EditorWindow
 {
     int layerIndex = (int)TerrainManager.LandLayer;
     bool aboveTerrain = false;
+    Vector2 scrollPos = new Vector2(0, 0);
     Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field };
     SlopesInfo slopesInfo = new SlopesInfo() { SlopeLow = 40f, SlopeHigh = 60f, SlopeBlendLow = 25f, SlopeBlendHigh = 75f, BlendSlopes = false };
     HeightsInfo heightsInfo = new HeightsInfo() { HeightLow = 400f, HeightHigh = 600f, HeightBlendLow = 300f, HeightBlendHigh = 700f, BlendHeights = false };
@@ -22,6 +23,8 @@ public class LayersWindow : EditorWindow
 
     private void OnGUI()
     {
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
+
         GUIContent[] layersOptionsMenu = new GUIContent[4];
         layersOptionsMenu[0] = new GUIContent("Ground");
         layersOptionsMenu[1] = new GUIContent("Biome");
@@ -72,5 +75,6 @@ public class LayersWindow : EditorWindow
                 Functions.HeightTools(TerrainManager.LandLayer, 0, ref heightsInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 break;
         }
+        EditorGUILayout.EndScrollView();
     }
 }
