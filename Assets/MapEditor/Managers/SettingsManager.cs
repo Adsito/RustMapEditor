@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using RustMapEditor.Variables;
+using System.Diagnostics;
 
 public static class SettingsManager
 {
@@ -37,6 +38,7 @@ public static class SettingsManager
                 RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch
             );
             write.Write(JsonUtility.ToJson(editorSettings, true));
+            UnityEngine.Debug.Log("Saved new editor settings.");
         }
     }
 
@@ -52,6 +54,7 @@ public static class SettingsManager
             WaterTransparency = editorSettings.waterTransparency;
             LoadBundleOnLaunch = editorSettings.loadbundleonlaunch;
             PrefabPaths = editorSettings.prefabPaths;
+            UnityEngine.Debug.Log("Discarded new changes!");
         }
     }
 
@@ -64,6 +67,7 @@ public static class SettingsManager
         PathRenderDistance = 250f;
         WaterTransparency = 0.2f;
         LoadBundleOnLaunch = false;
+        UnityEngine.Debug.Log("Settings are set to default now!");
     }
 }
 
