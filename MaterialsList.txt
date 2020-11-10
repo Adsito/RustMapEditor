@@ -91,3 +91,4 @@ Standard : assets/content/structures/runway/models/materials/airfield_markings.m
 Specular : assets/prefabs/deployable/research table/materials/research_table_lens.mat
 Specular : assets/prefabs/deployable/research table/materials/research_table.mat
 Foliage : assets/content/nature/treessource/american_beech/models/materials/beech.mat
+Standard: assets/prefabs/deployable/mixingtable/model/materials/mixingtable_glass.mat
