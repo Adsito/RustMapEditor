@@ -4,10 +4,6 @@ using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using LZ4;
-using ProtoBuf;
-using System;
 
 public static class PrefabManager
 {
@@ -87,8 +83,8 @@ public static class PrefabManager
     {
         go.SetLayerRecursively(8);
         go.SetTagRecursively("Untagged");
+        go.SetStaticRecursively(true);
         go.RemoveNameUnderscore();
-        go.isStatic = true;
 
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
@@ -117,6 +113,8 @@ public static class PrefabManager
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
         prefabDataHolder.Setup();
+
+        go.SetActive(false);
         return go;
     }
 
