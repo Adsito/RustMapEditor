@@ -86,11 +86,6 @@ public static class AssetManager
         if (AssetCache.ContainsKey(filePath))
             return AssetCache[filePath] as GameObject;
 
-		else if (filePath.Contains(@"Prefabs\")) // Handles custom prefabs.
-        {
-			return new GameObject("placeholder");
-        }
-
         else
         {
             GameObject val = GetAsset<GameObject>(filePath);

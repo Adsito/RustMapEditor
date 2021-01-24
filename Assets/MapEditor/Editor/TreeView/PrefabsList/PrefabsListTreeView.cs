@@ -115,35 +115,6 @@ namespace RustMapEditor.UI
                     }
                 }
             }
-
-            CustomPrefab.Load();
-            foreach (var item in PrefabManager.CustomPrefabs)
-            {
-                var assetNameSplit = item.Key.Split('\\');
-                for (int i = 0; i < assetNameSplit.Length; i++)
-                {
-                    var treePath = "";
-                    for (int j = 0; j <= i; j++)
-                        treePath += assetNameSplit[j];
-
-                    if (!treeviewParents.ContainsKey(treePath))
-                    {
-                        if (i != assetNameSplit.Length - 1)
-                        {
-                            var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID--);
-                            prefabsListElements.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                        }
-                        else
-                        {
-                            var prefabName = assetNameSplit.Last().Replace(".prefab", "");
-                            var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, item.Key);
-                            prefabsListElements.Add(treeviewItem);
-                            treeviewParents.Add(treePath, treeviewItem);
-                        }
-                    }
-                }
-            }
             return prefabsListElements;
         }
 

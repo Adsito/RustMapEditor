@@ -656,49 +656,6 @@ namespace RustMapEditor.UI
         }
         #endregion
 
-        #region CustomPrefab
-        public static void CustomPrefabName(CustomPrefabHolder target)
-        {
-            Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(new GUIContent("Name"));
-            target.CustomPrefab.Name = Elements.ToolbarDelayedTextField(target.CustomPrefab.Name);
-            Elements.EndToolbarHorizontal();
-        }
-
-        public static void CustomPrefabAuthor(CustomPrefabHolder target)
-        {
-            Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(new GUIContent("Author"));
-            target.CustomPrefab.Author = Elements.ToolbarDelayedTextField(target.CustomPrefab.Author);
-            Elements.EndToolbarHorizontal();
-        }
-
-        public static void CustomPrefabHash(CustomPrefabHolder target)
-        {
-            Elements.BeginToolbarHorizontal();
-            Elements.ToolbarLabel(new GUIContent("Hash"));
-            Elements.ToolbarSelectableLabel(target.CustomPrefab.Hash);
-            Elements.EndToolbarHorizontal();
-        }
-
-        public static void SaveCustomPrefab(CustomPrefabHolder target)
-        {
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(new GUIContent("Save", "Saves the changes to disk.")))
-                CustomPrefab.Save(target.CustomPrefab);
-            if (Elements.ToolbarButton(new GUIContent("Save As", "Saves the current prefab to the selected path.")))
-            {
-                var path = EditorUtility.SaveFilePanel("Save Prefab", "Prefabs", target.CustomPrefab.Name, "prefab");
-                if (!string.IsNullOrEmpty(path))
-                {
-                    target.CustomPrefab.Path = path;
-                    CustomPrefab.Save(target.CustomPrefab);
-                }
-            }
-            Elements.EndToolbarHorizontal();
-        }
-        #endregion
-
         #region Functions
         /// <summary>Sets the active landLayer to the index.</summary>
         /// <param name="landIndex">The landLayer to change to.</param>

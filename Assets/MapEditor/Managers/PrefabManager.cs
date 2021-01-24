@@ -24,7 +24,6 @@ public static class PrefabManager
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
 
     public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
-    public static Dictionary<string, CustomPrefab> CustomPrefabs = new Dictionary<string, CustomPrefab>();
 
     public static bool IsChangingPrefabs { get; private set; }
 
