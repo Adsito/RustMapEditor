@@ -14,6 +14,12 @@ public static class GameObjectExt
             transform.gameObject.tag = tag;
     }
 
+    public static void SetStaticRecursively(this GameObject go, bool active)
+    {
+        foreach (var transform in go.GetComponentsInChildren<Transform>(true))
+            transform.gameObject.isStatic = active;
+    }
+
     public static void RemoveNameUnderscore(this GameObject go)
     {
         go.name = go.name.Replace('_', ' ');
