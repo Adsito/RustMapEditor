@@ -196,18 +196,8 @@ public static class PrefabManager
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabIDs(prefabs, id, replace));
     }
 
-    public static void BreakPrefab(GameObject prefab)
-    {
-        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.BreakPrefab(prefab));
-    }
-
     private static class Coroutines
     {
-        public static IEnumerator BreakPrefab(GameObject prefab)
-        {
-            yield return null;
-        }
-
         public static IEnumerator SpawnPrefabs(PrefabData[] prefabs, int progressID)
         {
             var sw = new System.Diagnostics.Stopwatch();
