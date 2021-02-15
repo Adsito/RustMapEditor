@@ -42,7 +42,7 @@ public static class AssetManager
 
 	public static bool IsInitialised { get; private set; }
 
-	/// <summary>Loads the prefabs from the Rust prefab bundle.</summary>
+	/// <summary>Loads the Rust bundles into memory.</summary>
 	/// <param name="bundlesRoot">The file path to the Rust bundles file.</param>
 	public static void Initialise(string bundlesRoot)
 	{
@@ -51,6 +51,9 @@ public static class AssetManager
 		if (IsInitialised)
 			Debug.Log("Bundles already loaded.");
 	}
+
+	/// <summary>Loads the Rust bundles at the currently set directory.</summary>
+	public static void Initialise() => Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
 
 	public static void Dispose()
 	{
