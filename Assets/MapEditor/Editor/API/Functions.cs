@@ -57,11 +57,8 @@ namespace RustMapEditor.UI
                 NewMapPanel();
         }
 
-        public static void NewMapPanel()
-        {
-            CreateMapWindow.Init();
-        }
-
+        public static void NewMapPanel() => CreateMapWindow.Init();
+        
         public static void MapInfo()
         {
             if (Land != null)
