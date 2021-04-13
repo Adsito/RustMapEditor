@@ -4,6 +4,7 @@ using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class PrefabManager
 {
@@ -20,6 +21,9 @@ public static class PrefabManager
     public static GameObject DefaultPrefab { get; private set; }
     public static Transform PrefabParent { get; private set; }
     public static GameObject PrefabToSpawn;
+
+    /// <summary>List of prefab names from the asset bundle.</summary>
+    private static List<string> Prefabs;
 
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
 
@@ -61,6 +65,22 @@ public static class PrefabManager
         return Load(AssetManager.ToPath(id));
     }
 
+    /// <summary>Searches through all prefabs found in bundle files, returning matches.</summary>
+    /// <returns>List of strings containing the path matching the <paramref name="key"/>.</returns>
+    public static List<string> Search(string key)
+    {
+        if (Prefabs == null)
+        {
+            Prefabs = new List<string>();
+            foreach (var i in AssetManager.AssetPaths)
+                if (i.EndsWith(".prefab"))
+                    Prefabs.Add(i);
+
+            Prefabs.OrderBy(x => x);
+        }
+
+        return Prefabs.Where(x => x.Contains(key)).ToList();
+    }
 
     /// <summary>Gets the parent prefab category transform from the hierachy.</summary>
     public static Transform GetParent(string category)

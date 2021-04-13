@@ -57,12 +57,8 @@ namespace RustMapEditor.UI
                 result.Add(current);
 
                 if (current.hasChildren && current.children[0] != null)
-                {
                     for (int i = current.children.Count - 1; i >= 0; i--)
-                    {
                         stack.Push(current.children[i]);
-                    }
-                }
             }
         }
 
@@ -257,10 +253,7 @@ namespace RustMapEditor.UI
             return false;
         }
 
-        protected override void SelectionChanged(IList<int> selectedIds)
-        {
-            SetItemSelected(selectedIds[0]);
-        }
+        protected override void SelectionChanged(IList<int> selectedIds) => SetItemSelected(selectedIds[0]);
 
         protected override void DoubleClickedItem(int id)
         {
