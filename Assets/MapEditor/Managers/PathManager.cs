@@ -69,7 +69,7 @@ public static class PathManager
     {
         public static IEnumerator SpawnPaths(PathData[] paths, int progressID)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             for (int i = 0; i < paths.Length; i++)
@@ -88,7 +88,7 @@ public static class PathManager
 
         public static IEnumerator DeletePaths(PathDataHolder[] paths, int progressID = 0)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             if (progressID == 0)

@@ -37,6 +37,7 @@ public static class SettingsManager
                 RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch
             );
             write.Write(JsonUtility.ToJson(editorSettings, true));
+            Debug.Log("Saved Settings.");
         }
     }
 
@@ -64,6 +65,7 @@ public static class SettingsManager
         PathRenderDistance = 250f;
         WaterTransparency = 0.2f;
         LoadBundleOnLaunch = false;
+        Debug.Log("Default Settings set.");
     }
 }
 

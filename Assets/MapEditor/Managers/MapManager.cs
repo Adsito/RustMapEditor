@@ -14,6 +14,20 @@ using System.Collections;
 
 public static class MapManager
 {
+    public static class Callbacks
+    {
+        public delegate void MapManagerCallback(string mapName = "");
+
+        /// <summary>Called after a map has been loaded. Calls on both map loaded and map created.</summary>
+        public static event MapManagerCallback MapLoaded;
+
+        /// <summary>Called after map has been saved and written to disk.</summary>
+        public static event MapManagerCallback MapSaved;
+
+        public static void OnMapLoaded(string mapName = "") => MapLoaded?.Invoke(mapName);
+        public static void OnMapSaved(string mapName = "") => MapSaved?.Invoke(mapName);
+    }
+
     public static Texture terrainFilterTexture;
     public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
 
@@ -335,7 +349,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Rotate(GetAlphaMap(), CW), landLayerToPaint);
+                SetData(Rotate(AlphaArray, CW), landLayerToPaint);
                 break;
         }
     }
@@ -378,7 +392,7 @@ public static class MapManager
 
         Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
-            conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
+            conditionsMet = CheckConditions(AlphaArray, conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
 
         Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -415,7 +429,7 @@ public static class MapManager
                 SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
-                bool[,] alphaMapToPaint = GetAlphaMap();
+                bool[,] alphaMapToPaint = AlphaArray;
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
@@ -445,7 +459,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
+                SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
                 break;
         }
     }
@@ -484,7 +498,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), true), landLayerToPaint);
+                SetData(SetValues(AlphaArray, true), landLayerToPaint);
                 break;
         }
     }
@@ -516,7 +530,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(GetAlphaMap(), false), landLayerToPaint);
+                SetData(SetValues(AlphaArray, false), landLayerToPaint);
                 break;
         }
     }
@@ -548,7 +562,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Invert(GetAlphaMap()), landLayerToPaint);
+                SetData(Invert(AlphaArray), landLayerToPaint);
                 break;
         }
     }
@@ -586,7 +600,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(GetAlphaMap(), GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
+                SetData(SetRange(AlphaArray, GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
                 break;
         }
     }
@@ -628,7 +642,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRiver(GetAlphaMap(), GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
+                SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
                 break;
             
         }
@@ -666,12 +680,7 @@ public static class MapManager
     {
         public static IEnumerator Load(MapInfo mapInfo, string path = "")
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Load:"))
-                    progress.Remove();
-            }  
+            ProgressManager.RemoveProgressBars("Load:");
 
             int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
@@ -689,7 +698,7 @@ public static class MapManager
             PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
             PathManager.SpawnPaths(mapInfo.pathData, spwPath);
 
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             while (!splatMapTask.IsCompleted)
             {
@@ -715,17 +724,12 @@ public static class MapManager
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
-            EventManager.OnMapLoaded(path);
+            Callbacks.OnMapLoaded(path);
         }
 
         public static IEnumerator Save(string path)
         {
-            for (int i = 0; i < Progress.GetCount(); i++) // Remove old progress
-            {
-                var progress = Progress.GetProgressById(Progress.GetId(i));
-                if (progress.finished && progress.name.Contains("Save:"))
-                    progress.Remove();
-            }
+            ProgressManager.RemoveProgressBars("Save:");
 
             int progressID = Progress.Start("Save: " + path.Split('/').Last(), "Saving Map", Progress.Options.Sticky);
             int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
@@ -742,7 +746,7 @@ public static class MapManager
             Progress.Finish(terrainID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
-            EventManager.OnMapSaved(path);
+            Callbacks.OnMapSaved(path);
         }
 
         public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)

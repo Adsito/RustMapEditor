@@ -27,11 +27,6 @@ namespace RustMapEditor.UI
             return EditorGUILayout.ToggleLeft(guiContent, toggle, "ToolbarButton");
         }
 
-        public static void ToolbarLabelField(GUIContent label, GUIContent label2)
-        {
-            EditorGUILayout.LabelField(label, label2);
-        }
-
         public static string ToolbarTextField(string text)
         {
             return EditorGUILayout.TextField(text, EditorStyles.toolbarTextField);
@@ -40,6 +35,11 @@ namespace RustMapEditor.UI
         public static string ToolbarDelayedTextField(string text)
         {
             return EditorGUILayout.DelayedTextField(text, EditorStyles.toolbarTextField);
+        }
+
+        public static void ToolbarSelectableLabel(string text)
+        {
+            EditorGUILayout.SelectableLabel(text, EditorStyles.toolbarButton);
         }
 
         public static int ToolbarIntField(int value)

@@ -119,20 +119,12 @@ namespace RustMapEditor
 				T current = stack.Pop();
 				// Matches search?
 				if (current.name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
-				{
 					if (!current.hasChildren) // Filters out including parent objects in the search.
-					{
 						result.Add(new TreeViewItem<T>(current.id, kItemDepth, current.name, current));
-					}
-				}
 
 				if (current.children != null && current.children.Count > 0)
-				{
 					foreach (var element in current.children)
-					{
 						stack.Push((T)element);
-					}
-				}
 			}
 		}
 

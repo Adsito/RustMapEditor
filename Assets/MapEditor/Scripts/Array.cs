@@ -35,9 +35,8 @@ namespace RustMapEditor.Maths
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
                     for (int k = 0; k < channelLength; k++)
-                    {
                         array[i, j, k] = 0;
-                    }
+
                     array[i, j, channel] = 1;
                 }
             });
@@ -52,9 +51,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = value;
-                }
             });
             return array;
         }
@@ -76,9 +73,8 @@ namespace RustMapEditor.Maths
                     if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
                     {
                         for (int k = 0; k < channelCount; k++)
-                        {
                             array[i, j, k] = 0;
-                        }
+
                         array[i, j, channel] = 1;
                     }
                 }
@@ -100,9 +96,8 @@ namespace RustMapEditor.Maths
                     if (range[i, j] >= rangeLow && range[i, j] <= rangeHigh)
                     {
                         for (int k = 0; k < channelLength; k++)
-                        {
                             array[i, j, k] = 0;
-                        }
+
                         array[i, j, channel] = 1;
                     }
                     else if (range[i, j] >= rangeBlendLow && range[i, j] < rangeLow)
@@ -163,9 +158,7 @@ namespace RustMapEditor.Maths
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
                     if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
-                    {
                         array[i, j] = value;
-                    }
                 }
             });
             return array;
@@ -186,9 +179,8 @@ namespace RustMapEditor.Maths
                         if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
                         {
                             for (int k = 0; k < channelLength; k++)
-                            {
                                 array[i, j, k] = 0;
-                            }
+
                             array[i, j, channel] = 1;
                         }
                     }
@@ -203,9 +195,8 @@ namespace RustMapEditor.Maths
                         if (waterHeights[i, j] > 500)
                         {
                             for (int k = 0; k < channelLength; k++)
-                            {
                                 array[i, j, k] = 0;
-                            }
+
                             array[i, j, channel] = 1;
                         }
                     }
@@ -226,9 +217,7 @@ namespace RustMapEditor.Maths
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         if (waterHeights[i, j] > 500 && waterHeights[i, j] > landHeights[i, j])
-                        {
                             array[i, j] = value;
-                        }
                     }
                 });
             }
@@ -239,9 +228,7 @@ namespace RustMapEditor.Maths
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         if (waterHeights[i, j] > 500)
-                        {
                             array[i, j] = value;
-                        }
                     }
                 });
             }
@@ -256,13 +243,10 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < arrayLength; j++)
                 {
                     if (array[i, j] < minValue)
-                    {
                         conditionsMet[i, j] = true;
-                    }
+
                     else if (array[i, j] > maxValue)
-                    {
                         conditionsMet[i, j] = true;
-                    }
                 }
             });
             return conditionsMet;
@@ -277,9 +261,7 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < arrayLength; j++)
                 {
                     if (array[i, j, layer] < weight)
-                    {
                         conditionsMet[i, j] = true;
-                    }
                 }
             });
             return conditionsMet;
@@ -293,9 +275,7 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < arrayLength; j++)
                 {
                     if (array[i, j] != value)
-                    {
                         conditionsMet[i, j] = true;
-                    }
                 }
             });
             return conditionsMet;
@@ -311,9 +291,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = Mathf.Clamp(array[i, j], minValue, maxValue);
-                }
             });
             return array;
         }
@@ -332,9 +310,7 @@ namespace RustMapEditor.Maths
                 Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
-                    {
                         newArray[i, j] = array[j, dmns.x1 - i - 1];
-                    }
                 });
             }
             else
@@ -342,9 +318,7 @@ namespace RustMapEditor.Maths
                 Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
-                    {
                         newArray[i, j] = array[dmns.z1 - j - 1, i];
-                    }
                 });
             }
             return newArray;
@@ -364,9 +338,7 @@ namespace RustMapEditor.Maths
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         for (int k = 0; k < channelLength; k++)
-                        {
                             newArray[i, j, k] = array[j, dmns.x1 - i - 1, k];
-                        }
                     }
                 });
             }
@@ -377,9 +349,7 @@ namespace RustMapEditor.Maths
                     for (int j = dmns.z0; j < dmns.z1; j++)
                     {
                         for (int k = 0; k < channelLength; k++)
-                        {
                             newArray[i, j, k] = array[dmns.z1 - j - 1, i, k];
-                        }
                     }
                 });
             }
@@ -397,9 +367,7 @@ namespace RustMapEditor.Maths
                 Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
-                    {
                         newArray[i, j] = array[j, dmns.x1 - i - 1];
-                    }
                 });
             }
             else
@@ -407,9 +375,7 @@ namespace RustMapEditor.Maths
                 Parallel.For(dmns.x0, dmns.x1, i =>
                 {
                     for (int j = dmns.z0; j < dmns.z1; j++)
-                    {
                         newArray[i, j] = array[dmns.z1 - j - 1, i];
-                    }
                 });
             }
             return newArray;
@@ -425,9 +391,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = 1 - array[i, j];
-                }
             });
             return array;
         }
@@ -443,9 +407,7 @@ namespace RustMapEditor.Maths
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
                     for (int k = 0; k < channelLength; k++)
-                    {
                         array[i, j, k] = 1 - array[i, j, k];
-                    }
                 }
             });
             return array;
@@ -459,9 +421,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = !array[i, j];
-                }
             });
             return array;
         }
@@ -481,13 +441,10 @@ namespace RustMapEditor.Maths
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
                     if (array[i, j] < lowestPoint)
-                    {
                         lowestPoint = array[i, j];
-                    }
+
                     else if (array[i, j] > highestPoint)
-                    {
                         highestPoint = array[i, j];
-                    }
                 }
             });
             heightRange = highestPoint - lowestPoint;
@@ -495,9 +452,7 @@ namespace RustMapEditor.Maths
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
-                {
                     array[i, j] = normaliseLow + ((array[i, j] - lowestPoint) / heightRange) * normalisedHeightRange;
-                }
             });
             return array;
         }
@@ -545,9 +500,7 @@ namespace RustMapEditor.Maths
             Parallel.For(0, arrayLength, i =>
             {
                 for (int j = 0; j < arrayLength; j++)
-                {
                     array[i, j] = BitUtility.Short2Float(terrainMap[i, j]);
-                }
             });
             return array;
         }
@@ -595,10 +548,9 @@ namespace RustMapEditor.Maths
                 for (int j = 0; j < arrayLength; j++)
                 {
                     for (int k = 0; k < channelLength; k++)
-                    {
                         splatWeights[k] = array[i, j, k];
-                    }
                     float normalisedWeights = splatWeights.Sum();
+
                     for (int k = 0; k < channelLength; k++)
                     {
                         splatWeights[k] /= normalisedWeights;

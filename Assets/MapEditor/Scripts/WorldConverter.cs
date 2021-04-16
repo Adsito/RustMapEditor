@@ -127,7 +127,7 @@ public static class WorldConverter
         terrains.prefabData = world.world.prefabs.ToArray();
 
         terrains.terrainRes = heightMap.res;
-        terrains.splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(world.world.size * 0.5f)), 16, 2048);
+        terrains.splatRes = splatMap.res;
         terrains.size = terrainSize;
 
         var heightTask = Task.Run(() => ShortMapToFloatArray(heightMap));
@@ -180,7 +180,7 @@ public static class WorldConverter
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        bool[,] terrainHoles = GetAlphaMap();
+        bool[,] terrainHoles = AlphaArray;
         var alphaTask = Task.Run(() =>
         {
             Parallel.For(0, textureResolution, i =>

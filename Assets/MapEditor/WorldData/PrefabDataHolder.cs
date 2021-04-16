@@ -3,8 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using static TerrainManager;
 
-[DisallowMultipleComponent]
-[SelectionBase]
+[SelectionBase, DisallowMultipleComponent]
 public class PrefabDataHolder : MonoBehaviour
 {
     public WorldSerialization.PrefabData prefabData;
@@ -35,6 +34,4 @@ public class PrefabDataHolder : MonoBehaviour
         foreach (var item in gameObject.GetComponentsInChildren<Light>(true))
             item.enabled = !item.enabled;
     }
-
-    public void BreakPrefab() => PrefabManager.BreakPrefab(gameObject);
 }

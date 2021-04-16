@@ -57,11 +57,8 @@ namespace RustMapEditor.UI
                 NewMapPanel();
         }
 
-        public static void NewMapPanel()
-        {
-            CreateMapWindow.Init();
-        }
-
+        public static void NewMapPanel() => CreateMapWindow.Init();
+        
         public static void MapInfo()
         {
             if (Land != null)
@@ -152,7 +149,7 @@ namespace RustMapEditor.UI
         #endregion
 
         #region Prefabs
-        public static void PrefabTools(ref bool deleteOnExport, string lootCrateSaveFile = "", string mapPrefabSaveFile = "")
+        public static void PrefabTools()
         {
             Elements.MiniBoldLabel(ToolTips.toolsLabel);
 
@@ -163,6 +160,7 @@ namespace RustMapEditor.UI
                 PathManager.DeletePaths(PathManager.CurrentMapPaths);
             Elements.EndToolbarHorizontal();
         }
+
         public static void AssetBundle()
         {
             Elements.MiniBoldLabel(ToolTips.assetBundleLabel);
@@ -645,14 +643,6 @@ namespace RustMapEditor.UI
                 target.ToggleLights();
             Elements.EndToolbarHorizontal();
         }
-
-        public static void BreakPrefab(PrefabDataHolder target)
-        {
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.breakPrefab))
-                target.BreakPrefab();
-            Elements.EndToolbarHorizontal();
-        }
         #endregion
 
         #region Functions
@@ -707,21 +697,21 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void DisplayPrefabID(WorldSerialization.PrefabData prefab)
+        public static void DisplayPrefabID(uint prefabID)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.prefabID))
-                CopyText(prefab.id.ToString());
-            Elements.ToolbarLabel(new GUIContent(prefab.id.ToString(), prefab.id.ToString()));
+                CopyText(prefabID.ToString());
+            Elements.ToolbarLabel(new GUIContent(prefabID.ToString(), prefabID.ToString()));
             Elements.EndToolbarHorizontal();
         }
 
-        public static void DisplayPrefabPath(WorldSerialization.PrefabData prefab)
+        public static void DisplayPrefabPath(string prefabPath)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.prefabPath))
-                CopyText(AssetManager.ToPath(prefab.id));
-            Elements.ToolbarLabel(new GUIContent(AssetManager.ToPath(prefab.id), AssetManager.ToPath(prefab.id)));
+                CopyText(prefabPath);
+            Elements.ToolbarLabel(new GUIContent(prefabPath, prefabPath));
             Elements.EndToolbarHorizontal();
         }
 
@@ -737,7 +727,7 @@ namespace RustMapEditor.UI
         }
 
 
-        public static void HierachyOptions(PrefabDataHolder[] prefabs, ref string name)
+        public static void PrefabHierachyOptions(PrefabHierarchyTreeView treeView, ref string name, ref bool replace)
         {
             Elements.MiniBoldLabel(ToolTips.hierachyOptionsLabel);
 
@@ -746,16 +736,29 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.hierachyRename))
+            if (Elements.ToolbarButton(ToolTips.hierachyCategoryRename))
             {
-                PrefabManager.RenamePrefabs(prefabs, name);
+                name = String.IsNullOrEmpty(name) ? "" : name;
+                PrefabManager.RenamePrefabCategories(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView), name);
                 ReloadTreeViews();
             }
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
+            replace = Elements.ToolbarToggle(ToolTips.hierachyReplace, replace);
+            if (Elements.ToolbarButton(ToolTips.hierachyIDRename))
+            {
+                if (uint.TryParse(name, out uint result))
+                {
+                    PrefabManager.RenamePrefabIDs(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView), result, replace);
+                    ReloadTreeViews();
+                }
+            }
+            Elements.EndToolbarHorizontal();
+
+            Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.hierachyDelete))
-                PrefabManager.DeletePrefabs(prefabs);
+                PrefabManager.DeletePrefabs(PrefabHierarchyTreeView.PrefabDataFromSelection(treeView));
             Elements.EndToolbarHorizontal();
         }
         #endregion

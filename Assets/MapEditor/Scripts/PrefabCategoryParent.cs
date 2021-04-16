@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[ExecuteInEditMode]
+[ExecuteInEditMode, DisallowMultipleComponent]
 public class PrefabCategoryParent : MonoBehaviour
 {
     public void Update()

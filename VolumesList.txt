@@ -1,0 +1,11 @@
+Cube : assets/bundled/prefabs/modding/ladder_trigger.prefab
+Cube : assets/bundled/prefabs/modding/prevent_building_cube.prefab
+Cube : assets/bundled/prefabs/modding/prevent_movment_volume.prefab
+Cube : assets/bundled/prefabs/modding/terrain_trigger.prefab
+Cube : assets/bundled/prefabs/modding/water_trigger.prefab
+Cube : assets/bundled/prefabs/modding/environmentvolumebuilding.prefab
+Cube : assets/bundled/prefabs/modding/environmentvolumeunderground.prefab
+Cube : assets/bundled/prefabs/modding/invisible_collider.prefab : 2159418374
+Sphere : assets/bundled/prefabs/modding/prevent_building_sphere.prefab
+Sphere : assets/bundled/prefabs/modding/safezonesphere.prefab
+Sphere : assets/content/structures/radiation/radiationsphere.prefab

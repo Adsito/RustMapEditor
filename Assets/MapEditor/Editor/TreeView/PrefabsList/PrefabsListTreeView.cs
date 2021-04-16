@@ -10,12 +10,10 @@ namespace RustMapEditor.UI
 {
     public class PrefabsListTreeView : TreeViewWithTreeModel<PrefabsListElement>
     {
-        const float kRowHeights = 20f;
-        const float kToggleWidth = 18f;
-
         public Texture2D previewImage;
         public WorldSerialization.PrefabData prefabData;
-        public string prefabName;
+        public string prefabName, prefabPath;
+        public uint prefabID;
 
         public bool showAll = false;
 
@@ -59,12 +57,8 @@ namespace RustMapEditor.UI
                 result.Add(current);
 
                 if (current.hasChildren && current.children[0] != null)
-                {
                     for (int i = current.children.Count - 1; i >= 0; i--)
-                    {
                         stack.Push(current.children[i]);
-                    }
-                }
             }
         }
 
@@ -72,12 +66,12 @@ namespace RustMapEditor.UI
         {
             Assert.AreEqual(m_SortOptions.Length, Enum.GetValues(typeof(Columns)).Length, "Ensure number of sort options are in sync with number of MyColumns enum values");
 
-            rowHeight = kRowHeights;
+            rowHeight = 20f;
             columnIndexForTreeFoldouts = 0;
             showAlternatingRowBackgrounds = true;
             showBorder = true;
-            customFoldoutYOffset = (kRowHeights - EditorGUIUtility.singleLineHeight) * 0.5f;
-            extraSpaceBeforeIconAndLabel = kToggleWidth;
+            customFoldoutYOffset = (20f - EditorGUIUtility.singleLineHeight) * 0.5f;
+            extraSpaceBeforeIconAndLabel = 18f;
             multicolumnHeader.sortingChanged += OnSortingChanged;
             Reload();
         }
@@ -87,11 +81,8 @@ namespace RustMapEditor.UI
             Dictionary<string, PrefabsListElement> treeviewParents = new Dictionary<string, PrefabsListElement>();
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
-            var manifestStrings = AssetManager.ManifestStrings;
-            if (manifestStrings == null)
-                return prefabsListElements;
 
-            var prefabStrings = showAll ? manifestStrings.Where(x => x.Contains(".prefab")): manifestStrings.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
+            var prefabStrings = showAll ? AssetManager.AssetPaths.Where(x => x.Contains(".prefab")) : AssetManager.AssetPaths.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
             int prefabID = 1, parentID = -1;
             foreach (var manifestString in prefabStrings)
             {
@@ -104,7 +95,6 @@ namespace RustMapEditor.UI
 
                     if (!treeviewParents.ContainsKey(treePath))
                     {
-                        var prefabName = assetNameSplit[assetNameSplit.Length - 1].Replace(".prefab", "");
                         if (i != assetNameSplit.Length - 1)
                         {
                             var treeviewItem = new PrefabsListElement(assetNameSplit[i], i, parentID--);
@@ -113,9 +103,8 @@ namespace RustMapEditor.UI
                         }
                         else
                         {
+                            var prefabName = assetNameSplit.Last().Replace(".prefab", "");
                             var treeviewItem = new PrefabsListElement(prefabName.Replace('_', ' '), i, prefabID++, manifestString);
-                            if (treeviewItem.rustID == 0)
-                                continue;
                             prefabsListElements.Add(treeviewItem);
                             treeviewParents.Add(treePath, treeviewItem);
                         }
@@ -143,9 +132,7 @@ namespace RustMapEditor.UI
                 return;
 
             if (multiColumnHeader.sortedColumnIndex == -1)
-            {
                 return;
-            }
             SortByMultipleColumns();
             TreeToList(root, rows);
             Repaint();
@@ -198,12 +185,10 @@ namespace RustMapEditor.UI
             var item = (TreeViewItem<PrefabsListElement>)args.item;
 
             for (int i = 0; i < args.GetNumVisibleColumns(); ++i)
-            {
-                CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i), ref args);
-            }
+                CellGUI(args.GetCellRect(i), item, (Columns)args.GetColumn(i));
         }
 
-        void CellGUI(Rect cellRect, TreeViewItem<PrefabsListElement> item, Columns column, ref RowGUIArgs args)
+        void CellGUI(Rect cellRect, TreeViewItem<PrefabsListElement> item, Columns column)
         {
             CenterRectUsingSingleLineHeight(ref cellRect);
 
@@ -217,7 +202,7 @@ namespace RustMapEditor.UI
                     break;
                 case Columns.ID:
                     if (item.data.rustID != 0)
-                    GUI.Label(cellRect, item.data.rustID.ToString());
+                        GUI.Label(cellRect, item.data.rustID.ToString());
                     break;
             }
         }
@@ -237,6 +222,8 @@ namespace RustMapEditor.UI
             previewImage = AssetManager.GetPreview(AssetManager.ToPath(itemClicked.rustID));
             prefabData = PrefabManager.Load(itemClicked.rustID).GetComponent<PrefabDataHolder>().prefabData;
             prefabName = itemClicked.prefabName;
+            prefabPath = AssetManager.ToPath(itemClicked.rustID);
+            prefabID = itemClicked.rustID;
         }
 
         protected override bool CanStartDrag(CanStartDragArgs args)
@@ -266,10 +253,7 @@ namespace RustMapEditor.UI
             return false;
         }
 
-        protected override void SelectionChanged(IList<int> selectedIds)
-        {
-            SetItemSelected(selectedIds[0]);
-        }
+        protected override void SelectionChanged(IList<int> selectedIds) => SetItemSelected(selectedIds[0]);
 
         protected override void DoubleClickedItem(int id)
         {
