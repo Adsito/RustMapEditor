@@ -41,13 +41,13 @@ public static class ShortcutManager
     public static void SelectWater() => Selection.activeGameObject = TerrainManager.Water.gameObject;
 
     [Shortcut("RustMapEditor/Move Tool", KeyCode.W, ShortcutModifiers.Shift)]
-    public static void SelectMoveTool() => EditorTools.SetActiveTool(typeof(MoveToolCentred));
+    public static void SelectMoveTool() => ToolManager.SetActiveTool(typeof(MoveToolCentred));
 
     [Shortcut("RustMapEditor/Rotate Tool", KeyCode.E, ShortcutModifiers.Shift)]
-    public static void SelectRotateTool() => EditorTools.SetActiveTool(typeof(RotateToolCentred));
+    public static void SelectRotateTool() => ToolManager.SetActiveTool(typeof(RotateToolCentred));
 
     [Shortcut("RustMapEditor/Scale Tool", KeyCode.R, ShortcutModifiers.Shift)]
-    public static void SelectScaleTool() => EditorTools.SetActiveTool(typeof(ScaleToolCentred));
+    public static void SelectScaleTool() => ToolManager.SetActiveTool(typeof(ScaleToolCentred));
 
     [Shortcut("RustMapEditor/Enable Hide Flags")]
     public static void EnableHideFlags() => SceneManager.ToggleHideFlags(true);
