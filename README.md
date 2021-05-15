@@ -6,9 +6,7 @@
 
 
 # [Installation and Editor Guide](https://github.com/RustMapMaking/Editor/wiki/Unity-Editor-Guide)
-### Rust Map Making
-[![Discord](https://img.shields.io/discord/503695639918411788.svg?label=Discord)](https://discord.gg/HPmTWVa)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/RustMapMaking)
+
 ### Contribute
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Editor/issues)
@@ -17,4 +15,4 @@
 ### Credits
 RustWorldSDK: https://github.com/Facepunch/Rust.World
 
-This editor originates from the codebase of the very first Rust Map Making community editor, found here: https://github.com/JasonM97/Rust-Map-Editor
+This editor originates from the codebase of the very first community editor, found here: https://github.com/JasonM97/Rust-Map-Editor
