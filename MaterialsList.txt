@@ -10,9 +10,7 @@ Standard : assets/content/structures/rocket_factory_building/models/materials/ro
 Standard : assets/content/structures/launch_site/models/materials/glass_industrial.mat
 Standard : assets/content/structures/train_tracks/models/materials/train_track.mat
 Standard : assets/content/nature/stalagmites/models/materials/stalagmites.mat
-Standard : assets/content/nature/rocks/models/materials/rock_ledge.mat
 Standard : assets/content/nature/caves/models/materials/cave_gravel.mat
-Specular : assets/content/nature/rocks/models/materials/rocks_ms_atlas_cave.mat
 Specular : assets/content/nature/driftwood/materials/driftwood_caves.mat
 Specular : assets/content/nature/driftwood/materials/twig_caves.mat
 Standard : assets/content/structures/timber_mine/models/materials/mine_rockwalls.mat
@@ -22,8 +20,6 @@ Specular : assets/content/props/rubble_piles/models/materials/gravel_pile.mat
 Standard : assets/content/vehicles/digger_vehicle/models/materials/digger_glass.mat
 Standard : assets/content/vehicles/dump_truck/models/materials/dump_truck_glass.mat
 Specular : assets/content/vehicles/dump_truck/models/materials/dump_truck_gravel.mat
-Standard : assets/content/nature/rocks/models/materials/rock_quarry.mat
-Specular : assets/content/nature/rocks/models/materials/rock_quarry_small.mat
 Standard : assets/content/props/concrete_debris/models/materials/concrete_debris_tinted.mat
 Standard : assets/content/structures/checkpoint/models/materials/checkpoint_windows.mat
 Standard : assets/prefabs/misc/xmas/xmasdecorations/models/materials/xmas_deco_masked2.mat
@@ -49,13 +45,6 @@ Specular : assets/content/props/lockers/models/materials/locker.mat
 Specular : assets/content/structures/rocket/models/materials/plastic_wrap.mat
 Specular : assets/content/structures/rocket/models/materials/plastic_wrap_lod.mat
 Specular : assets/content/structures/office_interiors/models/materials/office_vents.mat
-Foliage : assets/content/nature/overgrowth/models/materials/overgrowth.mat
-Foliage : assets/content/nature/overgrowth/models/materials/overgrowth_swamp.mat
-Foliage : assets/content/nature/overgrowth/models/materials/grass_tundra.mat
-Foliage : assets/content/nature/overgrowth/models/materials/grass_tundra_forest.mat
-Foliage : assets/content/nature/overgrowth/models/materials/grass_temperate.mat
-Foliage : assets/content/nature/overgrowth/models/materials/grass_arid.mat
-Foliage : assets/content/nature/overgrowth/models/materials/grass_arctic_frost.mat
 Foliage : assets/content/nature/treessource/pine/models/materials/pine.mat
 Standard : assets/content/structures/bunker/models/materials/bunker_door.mat
 Specular : assets/content/props/pipes/models/materials/pipes.mat
