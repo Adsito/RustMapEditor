@@ -157,7 +157,7 @@ namespace RustMapEditor.Maths
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
-                    if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                    if (range[i * 2, j * 2] > rangeLow && range[i * 2, j * 2] < rangeHigh)
                         array[i, j] = value;
                 }
             });

@@ -274,37 +274,9 @@ public static class MapManager
         }
     }
 
-    /// <summary>Returns the height of the HeightMap at the selected coords.</summary>
-    /// <param name="x">The X coordinate.</param>
-    /// <param name="z">The Z coordinate.</param>
-    public static float GetHeight(int x, int z)
-    {
-        float xNorm = (float)x / (float)Land.terrainData.alphamapHeight;
-        float yNorm = (float)z / (float)Land.terrainData.alphamapHeight;
-        float height = Land.terrainData.GetInterpolatedHeight(xNorm, yNorm);
-        return height;
-    }
-
-    /// <summary>Returns a 2D array of the height values.</summary>
-    public static float[,] GetHeights()
-    {
-        return Land.terrainData.GetInterpolatedHeights(0, 0, Land.terrainData.alphamapHeight, Land.terrainData.alphamapHeight, 1f / (float)Land.terrainData.alphamapHeight, 1f / (float)Land.terrainData.alphamapHeight);
-    }
-
     public static float[,] GetWaterHeights()
     {
         return Water.terrainData.GetInterpolatedHeights(0, 0, Water.terrainData.alphamapHeight, Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight);
-    }
-
-    /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
-    /// <param name="x">The X coordinate.</param>
-    /// <param name="z">The Z coordinate.</param>
-    public static float GetSlope(int x, int z)
-    {
-        float xNorm = (float)x / Land.terrainData.alphamapHeight;
-        float yNorm = (float)z / Land.terrainData.alphamapHeight;
-        float slope = Land.terrainData.GetSteepness(xNorm, yNorm);
-        return slope;
     }
 
     #region SplatMap Methods
@@ -329,9 +301,9 @@ public static class MapManager
     /// <param name="x">The X coordinate.</param>
     /// <param name="z">The Z coordinate.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static float GetTexture(LandLayers landLayer, int texture, int x, int z, int topology = 0)
+    public static float GetTexture(LandLayers landLayer, int texture, int x, int z)
     {
-        return GetSplatMap(landLayer, topology)[x, z, texture];
+        return GetSplatMap(landLayer)[x, z, texture];
     }
 
     /// <summary>Rotates the selected layer.</summary>
@@ -349,7 +321,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Rotate(AlphaArray, CW), landLayerToPaint);
+                //SetData(Rotate(AlphaArray, CW), landLayerToPaint);
                 break;
         }
     }
@@ -392,7 +364,7 @@ public static class MapManager
 
         Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
-            conditionsMet = CheckConditions(AlphaArray, conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
+            //conditionsMet = CheckConditions(AlphaArray, conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
 
         Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -429,13 +401,14 @@ public static class MapManager
                 SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
+                /*
                 bool[,] alphaMapToPaint = AlphaArray;
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
                         alphaMapToPaint[i, j] = (conditionsMet[i, j] == false) ? conditionsMet[i, j] : alphaMapToPaint[i, j];
                 });
-                SetData(alphaMapToPaint, landLayerToPaint);
+                SetData(alphaMapToPaint, landLayerToPaint);*/
                 break;
         }
         Progress.Finish(progressId);
@@ -459,7 +432,7 @@ public static class MapManager
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
+                //SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
                 break;
         }
     }
@@ -495,10 +468,10 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(AlphaArray, true), landLayerToPaint);
+                //SetData(SetValues(AlphaArray, true), landLayerToPaint);
                 break;
         }
     }
@@ -530,7 +503,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(SetValues(AlphaArray, false), landLayerToPaint);
+                //SetData(SetValues(AlphaArray, false), landLayerToPaint);
                 break;
         }
     }
@@ -562,7 +535,7 @@ public static class MapManager
                 SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                SetData(Invert(AlphaArray), landLayerToPaint);
+                //SetData(Invert(AlphaArray), landLayerToPaint);
                 break;
         }
     }
@@ -596,11 +569,11 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                SetData(SetRange(AlphaArray, GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
+                //SetData(SetRange(AlphaArray, GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
                 break;
         }
     }
@@ -628,21 +601,20 @@ public static class MapManager
     /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
     /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
-    /// <param name="t">The texture to paint.</param>
+    /// <param name="tex">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintRiver(LandLayers landLayerToPaint, bool aboveTerrain, int t, int topology = 0)
+    public static void PaintRiver(LandLayers landLayerToPaint, bool aboveTerrain, int tex, int topology = 0)
     {
         switch (landLayerToPaint)
         {
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                SetData(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, t), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetData(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, tex), landLayerToPaint, topology);
+                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                bool value = (t == 0) ? true : false;
-                SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, value), landLayerToPaint);
+                //SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, tex == 0), landLayerToPaint);
                 break;
             
         }

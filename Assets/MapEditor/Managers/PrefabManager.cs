@@ -25,6 +25,7 @@ public static class PrefabManager
     /// <summary>List of prefab names from the asset bundle.</summary>
     private static List<string> Prefabs;
 
+    /// <summary>Prefabs currently spawned on the map.</summary>
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
 
     public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
@@ -131,7 +132,6 @@ public static class PrefabManager
 
         PrefabDataHolder prefabDataHolder = go.AddComponent<PrefabDataHolder>();
         prefabDataHolder.prefabData = new PrefabData() { id = AssetManager.ToID(filePath) };
-        prefabDataHolder.Setup();
 
         go.SetActive(false);
         return go;
@@ -264,6 +264,8 @@ public static class PrefabManager
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
+            var sw2 = new System.Diagnostics.Stopwatch();
+            sw2.Start();
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 4f)
@@ -278,6 +280,7 @@ public static class PrefabManager
             }
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
+            Debug.Log(sw2.Elapsed.TotalMilliseconds);
             IsChangingPrefabs = false;
         }
 

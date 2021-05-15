@@ -11,6 +11,7 @@ public static class PathManager
     public static GameObject DefaultNode { get; private set; }
     public static Transform PathParent { get; private set; }
 
+    /// <summary>Paths currently spawned on the map.</summary>
     public static PathDataHolder[] CurrentMapPaths { get => PathParent.GetComponentsInChildren<PathDataHolder>(); }
 
     public enum PathType

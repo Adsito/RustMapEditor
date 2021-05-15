@@ -33,7 +33,7 @@ public static class WorldConverter
     {
         MapInfo terrains = new MapInfo();
 
-        int splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(size * 0.50f)), 16, 2048);
+        int splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(size * 0.50f)), 512, 2048);
 
         List<PathData> paths = new List<PathData>();
         List<PrefabData> prefabs = new List<PrefabData>();
@@ -41,7 +41,7 @@ public static class WorldConverter
         terrains.pathData = paths.ToArray();
         terrains.prefabData = prefabs.ToArray();
 
-        terrains.terrainRes = Mathf.NextPowerOfTwo((int)(size * 0.50f)) + 1;
+        terrains.terrainRes = Mathf.Clamp(Mathf.NextPowerOfTwo(size), 512, 4096) + 1;
         terrains.size = new Vector3(size, 1000, size);
 
         terrains.land.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], landHeight / 1000f, new Dimensions(0, terrains.terrainRes, 0, terrains.terrainRes));
@@ -152,14 +152,13 @@ public static class WorldConverter
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
         var splatTask = Task.Run(() =>
         {
+            /*
             Parallel.For(0, 8, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
-                {
                     for (int k = 0; k < textureResolution; k++)
                         splatMap[i, j, k] = BitUtility.Float2Byte(GroundArray[j, k, i]);
-                }
-            });
+            });*/
             splatBytes = splatMap.ToByteArray();
         });
 
@@ -167,27 +166,27 @@ public static class WorldConverter
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
         var biomeTask = Task.Run(() =>
         {
+            /*
             Parallel.For(0, 4, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
-                {
                     for (int k = 0; k < textureResolution; k++)
                         biomeMap[i, j, k] = BitUtility.Float2Byte(BiomeArray[j, k, i]);
-                }
-            });
+            });*/
             biomeBytes = biomeMap.ToByteArray();
         });
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        bool[,] terrainHoles = AlphaArray;
+        //bool[,] terrainHoles = AlphaArray;
         var alphaTask = Task.Run(() =>
         {
+            /*
             Parallel.For(0, textureResolution, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
                     alphaMap[0, i, j] = BitUtility.Bool2Byte(terrainHoles[i, j]);
-            });
+            });*/
             alphaBytes = alphaMap.ToByteArray();
         });
 

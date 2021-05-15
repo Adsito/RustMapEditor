@@ -23,18 +23,6 @@ public static class TerrainManager
         public static void OnLayerSaved(LandLayers layer, int? topology = null) => LayerSaved?.Invoke(layer, topology);
     }
 
-    /// <summary>The Ground textures of the map. [Res, Res, Textures(8)].</summary>
-    public static float[,,] GroundArray { get; private set; }
-
-    /// <summary>The Biome textures of the map. [Res, Res, Textures(4)]</summary>
-    public static float[,,] BiomeArray { get; private set; }
-
-    /// <summary>The Alpha textures of the map. [Res, Res]</summary>
-    public static bool[,] AlphaArray { get => Land.terrainData.GetHoles(0, 0, SplatMapRes, SplatMapRes); }
-
-    /// <summary>The Topology layers, and textures of the map. [31][Res, Res, Textures(2)]</summary>
-    public static float[][,,] TopologyArray { get; private set; } = new float[TerrainTopology.COUNT][,,];
-
     /// <summary>The Terrain layers used by the terrain for paint operations</summary>
     public static TerrainLayer[] GroundTextures { get; private set; } = null;
 
@@ -44,8 +32,66 @@ public static class TerrainManager
     /// <summary>The Terrain layers used by the terrain for paint operations</summary>
     public static TerrainLayer[] MiscTextures { get; private set; } = null;
 
-    /// <summary>The current slopearray of the terrain.</summary>
-    public static float[,] SlopeArray { get; private set; }
+    public static Data[,] Terrain { get; set; }
+
+    public static void Set(this Data[,] data)
+    {
+        for (int x = 0; x < data.GetLength(0); x++)
+            for (int y = 0; y < data.GetLength(0); y++)
+                data[x, y] = new Data(0);
+    }
+
+    public struct Data
+    {
+        public Data(int i)
+        {
+            Ground = new float[TerrainSplat.COUNT];
+            Biome = new float[TerrainBiome.COUNT];
+            Alpha = true;
+            Topology = new bool[TerrainTopology.COUNT];
+            Slope = null;
+            Height = null;
+            WaterHeight = null;
+        }
+
+        #region Splats
+        /// <summary>Ground textures, use <seealso cref="TerrainSplat.TypeToIndex(int)"/> for texture indexes.</summary>
+        /// <value>Strength of texture at <seealso cref="TerrainSplat"/> index, normalised between 0-1.</value>
+        public float[] Ground;
+
+        /// <summary>Biome textures, use <seealso cref="TerrainBiome.TypeToIndex(int)"/> for texture indexes.</summary>
+        /// <value>Strength of texture at <seealso cref="TerrainBiome"/> index, normalised between 0-1.</value>
+        public float[] Biome;
+
+        /// <summary>Alpha/Transparency value of terrain.</summary>
+        /// <value>True = Visible / False = Invisible.</value>
+        public bool Alpha;
+
+        /// <summary>Topology layers and value, use <seealso cref="TerrainTopology.TypeToIndex(int)"/> for topology layer indexes.</summary>
+        /// <value>True = Active / False = Inactive.</value>
+        public bool[] Topology;
+        #endregion
+
+        #region HeightMap
+        public void ResetHeights()
+        {
+            Slope = null;
+            Height = null;
+        }
+
+        /// <summary>The current slope value.</summary>
+        /// <value>Slope angle in degrees, between 0 - 90.</value>
+        public float? Slope;
+
+        /// <summary>The current height value.</summary>
+        /// <value>Height in metres, between 0 - 1000.</value> 
+        public float? Height;
+
+        /// <summary>The current water height value.</summary>
+        /// <value>Height in metres, between 0 - 1000.</value> 
+        public float? WaterHeight;
+        #endregion
+    }
 
     /// <summary>The LandLayer currently being displayed on the terrain.</summary>
     public static LandLayers LandLayer { get; private set; }
@@ -92,24 +138,103 @@ public static class TerrainManager
         SetTerrainReferences();
     }
 
+    #region HeightMap
+    /// <summary>Checks if selected Alphamap index is a valid coord.</summary>
+    /// <returns>True if Alphamap index is valid, false otherwise.</returns>
+    public static bool IsValidIndex(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= SplatMapRes || y >= SplatMapRes)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>Returns the slope of the HeightMap at the selected coords.</summary>
+    /// <returns>Float within the range 0° - 90°. Null if out of bounds.</returns>
+    public static float? GetSlope(int x, int y)
+    {
+        if (!IsValidIndex(x, y))
+        {
+            Debug.LogError($"Index: {x},{y} is out of bounds for GetSlope.");
+            return null;
+        }
+
+        if (Terrain[x, y].Slope == null)
+        {
+            float slope = Land.terrainData.GetSteepness((float)x / SplatMapRes, (float)y / SplatMapRes);
+            Terrain[x, y].Slope = slope;
+            return slope;
+        }
+
+        return Terrain[x, y].Slope;
+    }
+
+    /// <summary>Returns a 2D array of the slope values.</summary>
+    /// <returns>Floats within the range 0° - 90°.</returns>
+    public static float[,] GetSlopes()
+    {
+        float[,] slopes = new float[SplatMapRes, SplatMapRes];
+        for (int x = 0; x < SplatMapRes; x++)
+        {
+            for (int y = 0; y < SplatMapRes; y++)
+            {
+                slopes[x, y] = Land.terrainData.GetSteepness((float)x / SplatMapRes, (float)y / SplatMapRes);
+                Terrain[x, y].Slope = slopes[x, y];
+            }
+        }
+
+        return slopes;
+    }
+
+    /// <summary>Updates cached Slope values with current.</summary>
+    public static void UpdateSlopes()
+    {
+        for (int x = 0; x < SplatMapRes; x++)
+            for (int y = 0; y < SplatMapRes; y++)
+                Terrain[x, y].Slope = Land.terrainData.GetSteepness((float)x / SplatMapRes, (float)y / SplatMapRes);
+    }
+
+    /// <summary>Returns the height of the HeightMap at the selected coords.</summary>
+    /// <returns>Float within the range 0m - 1000m. Null if out of bounds.</returns>
+    public static float? GetHeight(int x, int y)
+    {
+        if (!IsValidIndex(x, y))
+        {
+            Debug.LogError($"Index: {x},{y} is out of bounds for GetHeight.");
+            return 0;
+        }
+
+        if (Terrain[x, y].Height == null)
+        {
+            float height = Land.terrainData.GetInterpolatedHeight((float)x / SplatMapRes, (float)y / SplatMapRes);
+            Terrain[x, y].Height = height;
+            return height;
+        }
+
+        return Terrain[x, y].Height;
+    }
+
+    /// <summary>Returns a 2D array of the height values.</summary>
+    /// <returns>Floats within the range 0m - 1000m.</returns>
+    public static float[,] GetHeights()
+    {
+        float[,] heights = Land.terrainData.GetInterpolatedHeights(0, 0, SplatMapRes, SplatMapRes, 1f / SplatMapRes, 1f / SplatMapRes);
+        for (int x = 0; x < SplatMapRes; x++)
+            for (int y = 0; y < SplatMapRes; y++)
+                Terrain[x, y].Height = heights[x, y];
+
+        return heights;
+    }
+
+    /// <summary>Updates cached Height values with current.</summary>
+    public static void UpdateHeights() => GetHeights();
+
+    #endregion
     public static void SetWaterTransparency(float alpha)
     {
         Color _color = WaterMaterial.color;
         _color.a = alpha;
         WaterMaterial.color = _color;
-    }
-
-    public static float[,] GetSlopes()
-    {
-        if (SlopeArray != null)
-            return SlopeArray;
-
-        SlopeArray = new float[HeightMapRes, HeightMapRes];
-        for (int i = 0; i < Land.terrainData.alphamapHeight; i++)
-            for (int j = 0; j < Land.terrainData.alphamapHeight; j++)
-                SlopeArray[j, i] = Land.terrainData.GetSteepness((float)i / (float)Land.terrainData.alphamapHeight, (float)j / (float)Land.terrainData.alphamapHeight);
-
-        return SlopeArray;
     }
 
     public static void SetTerrainReferences()
@@ -122,60 +247,129 @@ public static class TerrainManager
     /// <summary>Callback for whenever the heightmap is updated.</summary>
     private static void HeightmapChanged(Terrain terrain, RectInt heightRegion, bool synched)
     {
-        if (terrain == Land)
-            SlopeArray = null;
+        if (0 == 1)
+        {
+            foreach (var item in heightRegion.allPositionsWithin)
+            {
+                if (item.x < 0 || item.x >= SplatMapRes)
+                    continue;
+                if (item.y < 0 || item.y >= SplatMapRes)
+                    continue;
+
+                Terrain[item.x, item.y].ResetHeights();
+            }
+        }
+            
     }
 
     /// <summary>Changes the active Land and Topology Layers.</summary>
     /// <param name="layer">The LandLayer to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
-    public static void ChangeLandLayer(LandLayers layer, int topology = 0)
-    {
-        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ChangeLayer(layer, topology));
-    }
+    public static void ChangeLandLayer(LandLayers layer, int topology = 0) => EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ChangeLayer(layer, topology));
 
     /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
-    /// <param name="landLayer">The LandLayer to return. (Ground, Biome, Topology)</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public static float[,,] GetSplatMap(LandLayers landLayer, int topology = 0)
+    /// <param name="landLayer">The LandLayer to return. (Ground, Biome)</param>
+    /// <returns>3D float array in Alphamap format. [x, y, Texture]</returns>
+    public static float[,,] GetSplatMap(LandLayers layer, int topology = 0)
     {
-        switch (landLayer)
+        if (layer.Equals(LandLayers.Alpha))
+        {
+            Debug.LogError($"GetSplatMap({layer}) cannot return float[,,].");
+            return null;
+        }
+
+        //if (LandLayer.Equals(layer)) // Returns currently displayed Alphamap.
+            //return Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+
+        float[,,] splatMap = new float[SplatMapRes, SplatMapRes, MapManager.TextureCount(layer)];
+        int res = SplatMapRes;
+        switch (layer)
         {
             case LandLayers.Ground:
-                return GroundArray;
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++)
+                        for (int z = 0; z < MapManager.TextureCount(layer); z++)
+                            splatMap[x, y, z] = Terrain[x, y].Ground[z];
+                });
+                return splatMap;
             case LandLayers.Biome:
-                return BiomeArray;
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++)
+                        for (int z = 0; z < MapManager.TextureCount(layer); z++)
+                            splatMap[x, y, z] = Terrain[x, y].Biome[z];
+                });
+                return splatMap;
+
             case LandLayers.Topology:
-                return TopologyArray[topology];
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++) 
+                    {
+                        splatMap[x, y, 0] = Terrain[x, y].Topology[topology] == true ? 0f : 1f;
+                        splatMap[x, y, 1] = Terrain[x, y].Topology[topology] == true ? 1f : 0f;
+                    }
+                });
+                return splatMap;
+
+            default:
+                return null;
         }
-        return null;
     }
 
     /// <summary>Sets the array data of LandLayer.</summary>
     /// <param name="layer">The layer to set the data to.</param>
-    /// <param name="topology">The topology layer if the landlayer is topology.</param>
+    /// <param name="topology">The topology layer if layer is topology.</param>
     public static void SetData(float[,,] array, LandLayers layer, int topology = 0)
     {
+        int res = array.GetLength(0);
+
         switch (layer)
         {
             case LandLayers.Ground:
-                GroundArray = array;
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++)
+                        for (int z = 0; z < MapManager.TextureCount(layer); z++)
+                            Terrain[x, y].Ground[z] = array[x, y, z];
+                });
                 break;
+
             case LandLayers.Biome:
-                BiomeArray = array;
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++)
+                        for (int z = 0; z < MapManager.TextureCount(layer); z++)
+                            Terrain[x, y].Biome[z] = array[x, y, z];
+                });
                 break;
+
             case LandLayers.Topology:
-                TopologyArray[topology] = array;
+                Parallel.For(0, res, x =>
+                {
+                    for (int y = 0; y < res; y++)
+                        Terrain[x, y].Topology[topology] = (array[x, y, 0] == 0f);
+                });
+                break;
+
+            default:
+                Debug.LogWarning($"SetData(float[,,], {layer}) is not a valid layer to set. Use SetData(bool[,], {layer}) to set {layer}.");
                 break;
         }
+
+        //if (LandLayer.Equals(layer))
+            //Land.terrainData.SetAlphamaps(0, 0, array);
     }
 
     /// <summary>Sets the array data of LandLayer.</summary>
     /// <param name="layer">The layer to set the data to.</param>
     public static void SetData(bool[,] array, LandLayers layer)
     {
-        if (layer == LandLayers.Alpha)
+        if (layer.Equals(LandLayers.Alpha))
             Land.terrainData.SetHoles(0, 0, array);
+        else
+            Debug.LogWarning($"SetData(bool[,], {layer}) is not a valid layer to set. Use SetData(float[,,], {layer}) to set {layer}.");
     }
 
     /// <summary>Sets the terrain alphamaps to the LandLayer.</summary>
@@ -187,13 +381,9 @@ public static class TerrainManager
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SetLayer(layer, topology));
     }
 
-    /// <summary>Saves any changes made to the Alphamaps, like the paint brush.</summary>
-    /// <param name="topology">The Topology layer, if active.</param>
-    public static void SaveLayer()
-    {
-        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
-    }
-
+    /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
+    public static void SaveLayer() => EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
+    
     /// <summary>Loads and sets the Land and Water terrain objects.</summary>
     public static void SetTerrain(MapInfo mapInfo, int progressID)
     {
@@ -211,6 +401,7 @@ public static class TerrainManager
         Water.terrainData.SetHeights(0, 0, mapInfo.water.heights);
         Progress.Report(progressID, .9f, "Loaded: Water");
 
+
         SetData(mapInfo.alphaMap, LandLayers.Alpha);
         AreaManager.Reset();
 
@@ -219,6 +410,9 @@ public static class TerrainManager
 
     public static void SetSplatMaps(MapInfo mapInfo)
     {
+        Terrain = new Data[mapInfo.splatRes, mapInfo.splatRes];
+        Terrain.Set();
+
         TopologyData.InitMesh(mapInfo.topology);
         SetData(mapInfo.splatMap, LandLayers.Ground);
         SetData(mapInfo.biomeMap, LandLayers.Biome);
@@ -228,7 +422,7 @@ public static class TerrainManager
         });
     }
 
-    private static void GetTextures()
+    private static void GetTerrainTextures()
     {
         GroundTextures = GetGroundTextures();
         BiomeTextures = GetBiomeTextures();
@@ -289,33 +483,30 @@ public static class TerrainManager
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayer(layer, topology));
             Callbacks.OnLayerChanged(layer);
-            LayerSet = true;
         }
 
         public static IEnumerator SetLayer(LandLayers layer, int topology = 0)
         {
             if (GroundTextures == null || BiomeTextures == null || MiscTextures == null)
-                GetTextures();
+                GetTerrainTextures();
 
             switch (layer)
             {
                 case LandLayers.Ground:
                     Land.terrainData.terrainLayers = GroundTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, GroundArray);
-                    LandLayer = layer;
+                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer));
                     break;
                 case LandLayers.Biome:
                     Land.terrainData.terrainLayers = BiomeTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, BiomeArray);
-                    LandLayer = layer;
+                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer));
                     break;
                 case LandLayers.Topology:
                     LastTopologyLayer = topology;
                     Land.terrainData.terrainLayers = MiscTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
-                    LandLayer = layer;
+                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer, topology));
                     break;
             }
+            LandLayer = layer;
             TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
             LayerSet = true;
             yield return null;
@@ -329,13 +520,13 @@ public static class TerrainManager
             switch (LandLayer)
             {
                 case LandLayers.Ground:
-                    GroundArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                    //GroundArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
                     break;
                 case LandLayers.Biome:
-                    BiomeArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                    //BiomeArray = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
                     break;
                 case LandLayers.Topology:
-                    TopologyArray[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
+                    //TopologyArray[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, Land.terrainData.alphamapWidth, Land.terrainData.alphamapHeight);
                     break;
             }
             foreach (var item in Land.terrainData.alphamapTextures)

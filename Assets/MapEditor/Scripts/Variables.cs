@@ -104,7 +104,7 @@
     public enum AlphaTextures
     {
         Visible = 0,
-        InVisible = 1,
+        Invisible = 1,
     }
     public enum TopologyTextures
     {
