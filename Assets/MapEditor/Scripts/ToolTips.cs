@@ -4,7 +4,7 @@ namespace RustMapEditor.Variables
 {
     public static class ToolTips
     {
-        public const string EditorVersion = "v0.1.8";
+        public static string EditorVersion = Application.version;
         public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
         public static GUIContent optionsLabel = new GUIContent("Options");
 
