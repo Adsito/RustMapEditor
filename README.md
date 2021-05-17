@@ -3,8 +3,6 @@
 [![GitHub](https://img.shields.io/github/license/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/blob/master/LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/RustMapMaking/Rust-Map-Editor-Unity.svg)](https://github.com/RustMapMaking/Editor/commits/master)
 
-# [Installation and Editor Guide](https://github.com/RustMapMaking/Editor/wiki/Unity-Editor-Guide)
-
 ### Contribute
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/RustMapMaking/Editor/issues)
