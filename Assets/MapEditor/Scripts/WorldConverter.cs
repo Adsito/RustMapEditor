@@ -152,13 +152,12 @@ public static class WorldConverter
         var splatMap = new TerrainMap<byte>(splatBytes, 8);
         var splatTask = Task.Run(() =>
         {
-            /*
             Parallel.For(0, 8, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
                     for (int k = 0; k < textureResolution; k++)
-                        splatMap[i, j, k] = BitUtility.Float2Byte(GroundArray[j, k, i]);
-            });*/
+                        splatMap[i, j, k] = BitUtility.Float2Byte(Ground[j, k, i]);
+            });
             splatBytes = splatMap.ToByteArray();
         });
 
@@ -166,27 +165,25 @@ public static class WorldConverter
         var biomeMap = new TerrainMap<byte>(biomeBytes, 4);
         var biomeTask = Task.Run(() =>
         {
-            /*
             Parallel.For(0, 4, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
                     for (int k = 0; k < textureResolution; k++)
-                        biomeMap[i, j, k] = BitUtility.Float2Byte(BiomeArray[j, k, i]);
-            });*/
+                        biomeMap[i, j, k] = BitUtility.Float2Byte(Biome[j, k, i]);
+            });
             biomeBytes = biomeMap.ToByteArray();
         });
 
         byte[] alphaBytes = new byte[textureResolution * textureResolution * 1];
         var alphaMap = new TerrainMap<byte>(alphaBytes, 1);
-        //bool[,] terrainHoles = AlphaArray;
+        bool[,] terrainHoles = GetAlphaMap();
         var alphaTask = Task.Run(() =>
         {
-            /*
             Parallel.For(0, textureResolution, i =>
             {
                 for (int j = 0; j < textureResolution; j++)
                     alphaMap[0, i, j] = BitUtility.Bool2Byte(terrainHoles[i, j]);
-            });*/
+            });
             alphaBytes = alphaMap.ToByteArray();
         });
 
@@ -217,8 +214,8 @@ public static class WorldConverter
         }
         Progress.Report(ID.path, 0.99f, "Saved " + PathManager.CurrentMapPaths.Length + " paths.");
 
-        byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
-        byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapResolution, water.terrainData.heightmapResolution));
+        byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes));
+        byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes));
 
         Task.WaitAll(splatTask, biomeTask, alphaTask, topologyTask);
         Progress.Report(ID.terrain, 0.99f, "Saved " + TerrainSize.x + " size map.");

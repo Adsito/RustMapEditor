@@ -145,66 +145,15 @@
             Land = 1 << 0,
             Water = 1 << 1,
         }
-        public enum Layers
-        {
-            Ground = 1 << 0,
-            Biome = 1 << 1,
-            Alpha = 1 << 2,
-            Topology = 1 << 3,
-        }
     }
-    public class PrefabExport
-    {
-        public int PrefabNumber
-        {
-            get; set;
-        }
-        public uint PrefabID
-        {
-            get; set;
-        }
-        public string PrefabPath
-        {
-            get; set;
-        }
-        public string PrefabPosition
-        {
-            get; set;
-        }
-        public string PrefabScale
-        {
-            get; set;
-        }
-        public string PrefabRotation
-        {
-            get; set;
-        }
-    }
+
     public class Layers
     {
-        public TerrainSplat.Enum Ground
-        {
-            get; set;
-        }
-        public TerrainBiome.Enum Biome
-        {
-            get; set;
-        }
-        public TerrainTopology.Enum Topologies
-        {
-            get; set;
-        }
-        public LandLayers LandLayer
-        {
-            get; set;
-        }
-        public AlphaTextures AlphaTexture
-        {
-            get; set;
-        }
-        public TopologyTextures TopologyTexture
-        {
-            get; set;
-        }
+        public TerrainSplat.Enum Ground;
+        public TerrainBiome.Enum Biome;
+        public TerrainTopology.Enum Topologies;
+        public LandLayers LandLayer;
+        public AlphaTextures AlphaTexture;
+        public TopologyTextures TopologyTexture;
     }
 }
