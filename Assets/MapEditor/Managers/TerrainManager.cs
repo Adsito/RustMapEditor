@@ -21,9 +21,9 @@ public static class TerrainManager
         /// <summary>Called when the active layer is dirtied/updated.</summary>
         public static event Layer LayerUpdated;
 
-        public static void OnLayerChanged(LandLayers layer, int? topology = null) => LayerChanged?.Invoke(layer, topology);
-        public static void OnLayerSaved(LandLayers layer, int? topology = null) => LayerSaved?.Invoke(layer, topology);
-        public static void OnLayerUpdated(LandLayers layer, int? topology = null) => LayerUpdated?.Invoke(layer, topology);
+        public static void OnLayerChanged(LandLayers layer, int topology) => LayerChanged?.Invoke(layer, topology);
+        public static void OnLayerSaved(LandLayers layer, int topology) => LayerSaved?.Invoke(layer, topology);
+        public static void OnLayerUpdated(LandLayers layer, int topology) => LayerUpdated?.Invoke(layer, topology);
     }
 
     #region Splats
@@ -50,6 +50,8 @@ public static class TerrainManager
 
     /// <summary>The size of each splat relative to the terrain size it covers.</summary>
     public static float SplatSize { get => Land.terrainData.size.x / SplatMapRes; }
+
+    
 
     public static bool AlphaDirty = false;
     #endregion
@@ -185,6 +187,7 @@ public static class TerrainManager
     /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
     public static void SetSplatMaps(MapInfo mapInfo)
     {
+        LandLayer = LandLayers.Ground;
         SplatMapRes = mapInfo.splatRes;
 
         SetSplatMap(mapInfo.splatMap, LandLayers.Ground);
@@ -196,6 +199,8 @@ public static class TerrainManager
         {
             SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
         });
+
+        SetLayer(LandLayer, TopologyLayer); // Sets the alphamaps to the currently selected.
     }
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
@@ -203,6 +208,7 @@ public static class TerrainManager
         if (Land.Equals(terrain) && Mouse.current.leftButton.isPressed)
         {
             Debug.Log("Fired");
+            Callbacks.OnLayerUpdated(LandLayer, TopologyLayer);
             LayerDirty = true;
         }
     }
@@ -219,10 +225,12 @@ public static class TerrainManager
     /// <value>Height in metres, between 0 - 1000.</value> 
     private static float[,] Height;
 
-    /// <summary>Resolution of the heightmap.</summary>
+    /// <summary>Resolution of the HeightMap.</summary>
     /// <value>Power of ^2 + 1, between 1025 - 4097.</value>
     public static int HeightMapRes { get; private set; }
 
+    /// <summary>Resolution of the AlphaMap.</summary>
+    /// <value>Power of ^2, between 1024 - 4096.</value>
     public static int AlphaMapRes { get => HeightMapRes - 1; }
     #endregion
 
@@ -350,19 +358,57 @@ public static class TerrainManager
         _color.a = alpha;
         WaterMaterial.color = _color;
     }
+
+    /// <summary>Sets up the inputted terrain's terraindata.</summary>
+    private static void SetupTerrain(MapInfo mapInfo, Terrain terrain)
+    {
+        terrain.terrainData.heightmapResolution = mapInfo.terrainRes;
+        terrain.terrainData.size = mapInfo.size;
+        terrain.terrainData.alphamapResolution = mapInfo.splatRes;
+        terrain.terrainData.baseMapResolution = mapInfo.splatRes;
+        terrain.terrainData.SetHeights(0, 0, terrain.Equals(Land) ? mapInfo.land.heights : mapInfo.water.heights);
+    }
+
+    /// <summary>Loads and sets the Land and Water terrain objects.</summary>
+    public static void SetTerrain(MapInfo mapInfo, int progressID)
+    {
+        HeightMapRes = mapInfo.terrainRes;
+
+        SetupTerrain(mapInfo, Land);
+        Progress.Report(progressID, .5f, "Loaded: Land");
+        SetupTerrain(mapInfo, Water);
+        Progress.Report(progressID, .9f, "Loaded: Water");
+        
+        AreaManager.Reset();
+        Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
+    }
     #endregion
     #endregion
 
     #region Terrain Textures
     /// <summary>The Terrain layers used by the terrain for paint operations</summary>
-    private static TerrainLayer[] GroundTextures = null, BiomeTextures = null, MiscTextures = null;
+    private static TerrainLayer[] GroundTextures = null, BiomeTextures = null, TopologyTextures = null;
 
     #region Methods
-    private static void GetTerrainTextures()
+    private static TerrainLayer[] GetLayerTextures()
+    {
+        if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
+            SetTerrainTextures();
+
+        return LandLayer switch
+        {
+            LandLayers.Ground => GroundTextures,
+            LandLayers.Biome => BiomeTextures,
+            _ => TopologyTextures
+        };
+    }
+
+    /// <summary>Sets the TerrainLayer references in TerrainManager to the asset on disk.</summary>
+    private static void SetTerrainTextures()
     {
         GroundTextures = GetGroundTextures();
         BiomeTextures = GetBiomeTextures();
-        MiscTextures = GetMiscTextures();
+        TopologyTextures = GetTopologyTextures();
         AssetDatabase.SaveAssets();
     }
 
@@ -402,7 +448,7 @@ public static class TerrainManager
         return textures;
     }
 
-    private static TerrainLayer[] GetMiscTextures()
+    private static TerrainLayer[] GetTopologyTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/Active.terrainlayer");
@@ -429,6 +475,14 @@ public static class TerrainManager
     /// <summary>The state of the current layer data.</summary>
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
+
+    /// <summary>The amount of TerrainLayers used on the current LandLayer.</summary>
+    public static int LayerCount => LandLayer switch
+    {
+        LandLayers.Ground => 8,
+        LandLayers.Biome => 4,
+        _ => 2
+    };
     #endregion
 
     #region Methods
@@ -465,32 +519,6 @@ public static class TerrainManager
 
     /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
     public static void SaveLayer() => EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
-    
-    /// <summary>Loads and sets the Land and Water terrain objects.</summary>
-    public static void SetTerrain(MapInfo mapInfo, int progressID)
-    {
-        HeightMapRes = mapInfo.terrainRes;
-
-        Land.terrainData.heightmapResolution = mapInfo.terrainRes;
-        Land.terrainData.size = mapInfo.size;
-        Land.terrainData.alphamapResolution = mapInfo.splatRes;
-        Land.terrainData.baseMapResolution = mapInfo.splatRes;
-        Land.terrainData.SetHeights(0, 0, mapInfo.land.heights);
-        Progress.Report(progressID, .5f, "Loaded: Land");
-
-        Water.terrainData.heightmapResolution = mapInfo.terrainRes;
-        Water.terrainData.size = mapInfo.size;
-        Water.terrainData.alphamapResolution = mapInfo.splatRes;
-        Water.terrainData.baseMapResolution = mapInfo.splatRes;
-        Water.terrainData.SetHeights(0, 0, mapInfo.water.heights);
-        Progress.Report(progressID, .9f, "Loaded: Water");
-
-        AreaManager.Reset();
-
-        Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
-    }
-
-    
 
     private static class Coroutines
     {
@@ -498,13 +526,13 @@ public static class TerrainManager
         {
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayer(layer, topology));
-            Callbacks.OnLayerChanged(layer);
+            Callbacks.OnLayerChanged(layer, topology);
         }
 
         public static IEnumerator SetLayer(LandLayers layer, int topology = 0)
         {
-            if (GroundTextures == null || BiomeTextures == null || MiscTextures == null)
-                GetTerrainTextures();
+            if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
+                SetTerrainTextures();
 
             switch (layer)
             {
@@ -518,7 +546,7 @@ public static class TerrainManager
                     break;
                 case LandLayers.Topology:
                     LastTopologyLayer = topology;
-                    Land.terrainData.terrainLayers = MiscTextures;
+                    Land.terrainData.terrainLayers = TopologyTextures;
                     Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer, topology));
                     break;
             }
@@ -548,7 +576,7 @@ public static class TerrainManager
             foreach (var item in Land.terrainData.alphamapTextures)
                 Undo.ClearUndo(item);
 
-            Callbacks.OnLayerSaved(LandLayer);
+            Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
             yield return null;
         }
     }
