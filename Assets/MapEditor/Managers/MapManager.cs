@@ -670,8 +670,6 @@ public static class MapManager
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to the currently selected.
-
             while (Progress.GetProgressById(spwPrefab).running)
             {
                 if (sw.Elapsed.TotalMilliseconds > 0.05f)
