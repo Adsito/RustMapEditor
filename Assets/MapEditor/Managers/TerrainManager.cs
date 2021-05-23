@@ -84,17 +84,12 @@ public static class TerrainManager
     {
         if (0 == 0)
         {
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
             bool[,] tempAlpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
             Parallel.For(0, SplatMapRes, i =>
             {
                 for (int j = 0; j < SplatMapRes; j++)
-                {
                     Alpha[i, j] = tempAlpha[i * 2, j * 2];
-                }
             });
-            Debug.Log(sw.Elapsed.TotalMilliseconds);
             AlphaDirty = false;
         }
         return Alpha;
@@ -157,13 +152,50 @@ public static class TerrainManager
         // Check for array dimensions not matching alphamap.
         if (array.GetLength(0) != AlphaMapRes || array.GetLength(1) != AlphaMapRes)
         {
-            Debug.LogError($"SetAlphaMap(array[{array.GetLength(0)}, {array.GetLength(1)}]) dimensions invalid, should be array[{AlphaMapRes}, {AlphaMapRes}].");
-            return;
+            // Special case for converting Alphamaps from the Rust resolution to the Unity Editor resolution. 
+            if (array.GetLength(0) == SplatMapRes && array.GetLength(1) == SplatMapRes)
+            {
+                if (Alpha == null || Alpha.GetLength(0) != AlphaMapRes)
+                    Alpha = new bool[AlphaMapRes, AlphaMapRes];
+
+                Parallel.For(0, AlphaMapRes, i =>
+                {
+                    for (int j = 0; j < AlphaMapRes; j++)
+                        Alpha[i, j] = array[i / 2, j / 2];
+                });
+
+                Land.terrainData.SetHoles(0, 0, Alpha);
+                AlphaDirty = false;
+                return;
+            }
+
+            else
+            {
+                Debug.LogError($"SetAlphaMap(array[{array.GetLength(0)}, {array.GetLength(1)}]) dimensions invalid, should be array[{AlphaMapRes}, {AlphaMapRes}].");
+                return;
+            }
         }
 
         Alpha = array;
         Land.terrainData.SetHoles(0, 0, Alpha);
         AlphaDirty = false;
+    }
+
+    /// <summary>Sets and initialises the Splat/AlphaMaps of all layers from MapInfo. Called when first loading/creating a map.</summary>
+    /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
+    public static void SetSplatMaps(MapInfo mapInfo)
+    {
+        SplatMapRes = mapInfo.splatRes;
+
+        SetSplatMap(mapInfo.splatMap, LandLayers.Ground);
+        SetSplatMap(mapInfo.biomeMap, LandLayers.Biome);
+        SetAlphaMap(mapInfo.alphaMap);
+
+        TopologyData.Set(mapInfo.topology);
+        Parallel.For(0, TerrainTopology.COUNT, i =>
+        {
+            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
+        });
     }
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
@@ -458,31 +490,7 @@ public static class TerrainManager
         Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
     }
 
-    public static void SetSplatMaps(MapInfo mapInfo)
-    {
-        LandLayer = LandLayers.Ground;
-        SplatMapRes = mapInfo.splatRes;
-        TopologyData.InitMesh(mapInfo.topology);
-
-        SetSplatMap(mapInfo.splatMap, LandLayers.Ground);
-        SetSplatMap(mapInfo.biomeMap, LandLayers.Biome);
-        var sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-        bool[,] alpha = new bool[AlphaMapRes, AlphaMapRes];
-        Parallel.For(0, AlphaMapRes, i =>
-        {
-            for (int j = 0; j < AlphaMapRes; j++)
-            {
-                alpha[i, j] = mapInfo.alphaMap[i / 2, j / 2];
-            }
-        });
-        Debug.Log(sw.Elapsed.TotalMilliseconds);
-        SetAlphaMap(alpha);
-        Parallel.For(0, TerrainTopology.COUNT, i =>
-        {
-            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-        });
-    }
+    
 
     private static class Coroutines
     {

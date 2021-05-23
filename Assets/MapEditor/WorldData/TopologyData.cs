@@ -54,5 +54,5 @@ public static class TopologyData
         top = topologyMap.ToByteArray();
     }
 
-    public static void InitMesh(TerrainMap<int> topology) => top = topology.ToByteArray();
+    public static void Set(TerrainMap<int> topology) => top = topology.ToByteArray();
 }
