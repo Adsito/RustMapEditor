@@ -466,10 +466,6 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
-                break;
-            case LandLayers.Alpha:
-                //SetData(SetValues(AlphaArray, true), landLayerToPaint);
                 break;
         }
     }
@@ -662,8 +658,7 @@ public static class MapManager
             PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
             PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
             CentreSceneObjects(mapInfo);
-            SetTerrain(mapInfo, terrainID);
-            SetSplatMaps(mapInfo);
+            TerrainManager.Load(mapInfo, terrainID);
             PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
             PathManager.SpawnPaths(mapInfo.pathData, spwPath);
 
@@ -711,8 +706,6 @@ public static class MapManager
         public static IEnumerator CreateMap(int size, int ground = 4, int biome = 1, float landHeight = 503f)
         {
             yield return EditorCoroutineUtility.StartCoroutineOwnerless(Load(EmptyMap(size, landHeight), "New Map"));
-            PaintLayer(LandLayers.Ground, ground);
-            PaintLayer(LandLayers.Biome, biome);
         }
     }
 }

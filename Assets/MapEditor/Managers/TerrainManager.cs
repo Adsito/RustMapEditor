@@ -31,27 +31,20 @@ public static class TerrainManager
     /// <summary>Ground textures [x, y, texture] use <seealso cref="TerrainSplat.TypeToIndex(int)"/> for texture indexes.</summary>
     /// <value>Strength of texture at <seealso cref="TerrainSplat"/> index, normalised between 0 - 1.</value>
     public static float[,,] Ground { get; private set; }
-
     /// <summary>Biome textures [x, y, texture] use <seealso cref="TerrainBiome.TypeToIndex(int)"/> for texture indexes.</summary>
     /// <value>Strength of texture at <seealso cref="TerrainBiome"/> index, normalised between 0-1.</value>
     public static float[,,] Biome { get; private set; }
-
     /// <summary>Alpha/Transparency value of terrain.</summary>
     /// <value>True = Visible / False = Invisible.</value>
-    private static bool[,] Alpha;
-
+    public static bool[,] Alpha { get; private set; }
     /// <summary>Topology layers [topology][x, y, texture] and value, use <seealso cref="TerrainTopology.TypeToIndex(int)"/> for topology layer indexes.</summary>
     /// <value>True = Active / False = Inactive.</value>
     public static float[][,,] Topology { get; private set; } = new float[TerrainTopology.COUNT][,,];
-
     /// <summary>Resolution of the splatmap/alphamap.</summary>
     /// <value>Power of ^2, between 512 - 2048.</value>
     public static int SplatMapRes { get; private set; }
-
     /// <summary>The size of each splat relative to the terrain size it covers.</summary>
     public static float SplatSize { get => Land.terrainData.size.x / SplatMapRes; }
-
-    
 
     public static bool AlphaDirty = false;
     #endregion
@@ -66,15 +59,24 @@ public static class TerrainManager
         {
             case LandLayers.Ground:
                 if (LandLayer.Equals(layer) && LayerDirty)
+                {
                     Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                    LayerDirty = false;
+                }
                 return Ground;
             case LandLayers.Biome:
                 if (LandLayer.Equals(layer) && LayerDirty)
+                {
                     Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                    LayerDirty = false;
+                }
                 return Biome;
             case LandLayers.Topology:
                 if (LandLayer.Equals(layer) && TopologyLayer == topology && LayerDirty)
+                {
                     Topology[topology] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                    LayerDirty = false;
+                }
                 return Topology[topology];
             default:
                 Debug.LogError($"GetSplatMap({layer}) cannot return type float[,,].");
@@ -84,7 +86,7 @@ public static class TerrainManager
 
     public static bool[,] GetAlphaMap()
     {
-        if (0 == 0)
+        if (AlphaDirty)
         {
             bool[,] tempAlpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
             Parallel.For(0, SplatMapRes, i =>
@@ -184,8 +186,7 @@ public static class TerrainManager
     }
 
     /// <summary>Sets and initialises the Splat/AlphaMaps of all layers from MapInfo. Called when first loading/creating a map.</summary>
-    /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
-    public static void SetSplatMaps(MapInfo mapInfo)
+    private static void SetSplatMaps(MapInfo mapInfo)
     {
         LandLayer = LandLayers.Ground;
         SplatMapRes = mapInfo.splatRes;
@@ -199,15 +200,12 @@ public static class TerrainManager
         {
             SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
         });
-
-        SetLayer(LandLayer, TopologyLayer); // Sets the alphamaps to the currently selected.
     }
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
-        if (Land.Equals(terrain) && Mouse.current.leftButton.isPressed)
+        if (!IsLoading && Land.Equals(terrain) && Mouse.current.leftButton.isPressed)
         {
-            Debug.Log("Fired");
             Callbacks.OnLayerUpdated(LandLayer, TopologyLayer);
             LayerDirty = true;
         }
@@ -342,6 +340,9 @@ public static class TerrainManager
     public static Vector3 TerrainSize { get => Land.terrainData.size; }
     /// <summary>The offset of the terrain from World Space.</summary>
     public static Vector3 MapOffset { get => 0.5f * TerrainSize; }
+    /// <summary>The condition of the current terrain.</summary>
+    /// <value>True = Terrain is loading / False = Terrain is loaded.</value>
+    public static bool IsLoading { get; private set; } = true;
     #endregion
 
     #region Methods
@@ -370,7 +371,7 @@ public static class TerrainManager
     }
 
     /// <summary>Loads and sets the Land and Water terrain objects.</summary>
-    public static void SetTerrain(MapInfo mapInfo, int progressID)
+    private static void SetTerrain(MapInfo mapInfo, int progressID)
     {
         HeightMapRes = mapInfo.terrainRes;
 
@@ -381,6 +382,16 @@ public static class TerrainManager
         
         AreaManager.Reset();
         Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
+    }
+
+    /// <summary>Loads and sets up the terrain and associated splatmaps.</summary>
+    /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
+    public static void Load(MapInfo mapInfo, int progressID)
+    {
+        IsLoading = true;
+        SetTerrain(mapInfo, progressID);
+        SetSplatMaps(mapInfo);
+        IsLoading = false;
     }
     #endregion
     #endregion
@@ -451,10 +462,6 @@ public static class TerrainManager
     private static TerrainLayer[] GetTopologyTextures()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
-        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/Active.terrainlayer");
-        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
-        textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/InActive.terrainlayer");
-        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Topology/Active.terrainlayer");
         textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Topology/active");
         textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Topology/InActive.terrainlayer");
@@ -475,11 +482,10 @@ public static class TerrainManager
     /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
     public static int LastTopologyLayer { get; private set; } = 0;
     /// <summary>The state of the layer being applied to the terrain.</summary>
-    public static bool LayerSet { get; private set; }
+    public static bool LayerSet { get; private set; } = true;
     /// <summary>The state of the current layer data.</summary>
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
-
     /// <summary>The amount of TerrainLayers used on the current LandLayer.</summary>
     public static int LayerCount => LandLayer switch
     {
@@ -542,16 +548,16 @@ public static class TerrainManager
             {
                 case LandLayers.Ground:
                     Land.terrainData.terrainLayers = GroundTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer));
+                    Land.terrainData.SetAlphamaps(0, 0, Ground);
                     break;
                 case LandLayers.Biome:
                     Land.terrainData.terrainLayers = BiomeTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer));
+                    Land.terrainData.SetAlphamaps(0, 0, Biome);
                     break;
                 case LandLayers.Topology:
                     LastTopologyLayer = topology;
                     Land.terrainData.terrainLayers = TopologyTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, GetSplatMap(layer, topology));
+                    Land.terrainData.SetAlphamaps(0, 0, Topology[topology]);
                     break;
             }
             LandLayer = layer;
@@ -563,20 +569,28 @@ public static class TerrainManager
         public static IEnumerator SaveLayer()
         {
             while (!LayerSet)
+            {
+                Debug.Log("Layer not set.");
                 yield return null;
 
-            switch (LandLayer)
-            {
-                case LandLayers.Ground:
-                    Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
-                case LandLayers.Biome:
-                    Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
-                case LandLayers.Topology:
-                    Topology[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
             }
+
+            if (LayerDirty)
+            {
+                switch (LandLayer)
+                {
+                    case LandLayers.Ground:
+                        Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                        break;
+                    case LandLayers.Biome:
+                        Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                        break;
+                    case LandLayers.Topology:
+                        Topology[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
+                        break;
+                }
+            }
+           
             foreach (var item in Land.terrainData.alphamapTextures)
                 Undo.ClearUndo(item);
 
