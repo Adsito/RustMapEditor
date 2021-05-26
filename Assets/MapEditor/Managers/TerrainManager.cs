@@ -455,6 +455,10 @@ public static class TerrainManager
         textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/active");
         textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Misc/InActive.terrainlayer");
         textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Misc/inactive");
+        textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Topology/Active.terrainlayer");
+        textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Topology/active");
+        textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Topology/InActive.terrainlayer");
+        textures[1].diffuseTexture = Resources.Load<Texture2D>("Textures/Topology/inactive");
         return textures;
     }
     #endregion

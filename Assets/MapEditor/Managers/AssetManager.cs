@@ -71,7 +71,7 @@ public static class AssetManager
 
     public static T LoadAsset<T>(string filePath) where T : Object
 	{
-		var asset = default(T);
+		T asset;
 
 		if (AssetCache.ContainsKey(filePath))
 			asset = AssetCache[filePath] as T;
