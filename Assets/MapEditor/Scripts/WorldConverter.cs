@@ -29,7 +29,7 @@ public static class WorldConverter
         public float[,] heights;
     }
     
-    public static MapInfo EmptyMap(int size, float landHeight)
+    public static MapInfo EmptyMap(int size, float landHeight, TerrainSplat.Enum ground = TerrainSplat.Enum.Grass, TerrainBiome.Enum biome = TerrainBiome.Enum.Temperate)
     {
         MapInfo terrains = new MapInfo();
 
@@ -49,7 +49,17 @@ public static class WorldConverter
 
         terrains.splatRes = splatRes;
         terrains.splatMap = new float[splatRes, splatRes, 8];
+        Parallel.For(0, splatRes, i =>
+        {
+            for (int j = 0; j < splatRes; j++)
+                terrains.splatMap[i, j, TerrainSplat.TypeToIndex((int)ground)] = 1f;
+        });
         terrains.biomeMap = new float[splatRes, splatRes, 4];
+        Parallel.For(0, splatRes, i =>
+        {
+            for (int j = 0; j < splatRes; j++)
+                terrains.biomeMap[i, j, TerrainBiome.TypeToIndex((int)biome)] = 1f;
+        });
         terrains.alphaMap = new bool[splatRes, splatRes];
         Parallel.For(0, splatRes, i =>
         {
