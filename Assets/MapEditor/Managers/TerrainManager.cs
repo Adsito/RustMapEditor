@@ -481,8 +481,6 @@ public static class TerrainManager
     public static int TopologyLayer { get => TerrainTopology.TypeToIndex((int)TopologyLayerEnum); }
     /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
     public static int LastTopologyLayer { get; private set; } = 0;
-    /// <summary>The state of the layer being applied to the terrain.</summary>
-    public static bool LayerSet { get; private set; } = true;
     /// <summary>The state of the current layer data.</summary>
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
@@ -499,7 +497,12 @@ public static class TerrainManager
     /// <summary>Changes the active Land and Topology Layers.</summary>
     /// <param name="layer">The LandLayer to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
-    public static void ChangeLandLayer(LandLayers layer, int topology = 0) => EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.ChangeLayer(layer, topology));
+    public static void ChangeLandLayer(LandLayers layer, int topology = 0)
+    {
+        SaveLayer();
+        SetLayer(layer, topology);
+        Callbacks.OnLayerChanged(layer, topology);
+    }
     #endregion
     #endregion
 
@@ -523,80 +526,54 @@ public static class TerrainManager
     /// <param name="topology">The Topology layer to set.</param>
     public static void SetLayer(LandLayers layer, int topology = 0)
     {
-        LayerSet = false;
-        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SetLayer(layer, topology));
+        if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
+            SetTerrainTextures();
+
+        switch (layer)
+        {
+            case LandLayers.Ground:
+                Land.terrainData.terrainLayers = GroundTextures;
+                Land.terrainData.SetAlphamaps(0, 0, Ground);
+                break;
+            case LandLayers.Biome:
+                Land.terrainData.terrainLayers = BiomeTextures;
+                Land.terrainData.SetAlphamaps(0, 0, Biome);
+                break;
+            case LandLayers.Topology:
+                LastTopologyLayer = topology;
+                Land.terrainData.terrainLayers = TopologyTextures;
+                Land.terrainData.SetAlphamaps(0, 0, Topology[topology]);
+                break;
+        }
+        LandLayer = layer;
+        TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
     }
 
     /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
-    public static void SaveLayer() => EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveLayer());
-
-    private static class Coroutines
+    public static void SaveLayer()
     {
-        public static IEnumerator ChangeLayer(LandLayers layer, int topology = 0)
+        if (LayerDirty)
         {
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(SaveLayer());
-            yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetLayer(layer, topology));
-            Callbacks.OnLayerChanged(layer, topology);
-        }
-
-        public static IEnumerator SetLayer(LandLayers layer, int topology = 0)
-        {
-            if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
-                SetTerrainTextures();
-
-            switch (layer)
+            switch (LandLayer)
             {
                 case LandLayers.Ground:
-                    Land.terrainData.terrainLayers = GroundTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, Ground);
+                    Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     break;
                 case LandLayers.Biome:
-                    Land.terrainData.terrainLayers = BiomeTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, Biome);
+                    Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     break;
                 case LandLayers.Topology:
-                    LastTopologyLayer = topology;
-                    Land.terrainData.terrainLayers = TopologyTextures;
-                    Land.terrainData.SetAlphamaps(0, 0, Topology[topology]);
+                    Topology[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     break;
             }
-            LandLayer = layer;
-            TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
-            LayerSet = true;
-            yield return null;
+
+            LayerDirty = false;
         }
 
-        public static IEnumerator SaveLayer()
-        {
-            while (!LayerSet)
-            {
-                Debug.Log("Layer not set.");
-                yield return null;
+        foreach (var item in Land.terrainData.alphamapTextures)
+            Undo.ClearUndo(item);
 
-            }
-
-            if (LayerDirty)
-            {
-                switch (LandLayer)
-                {
-                    case LandLayers.Ground:
-                        Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                        break;
-                    case LandLayers.Biome:
-                        Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                        break;
-                    case LandLayers.Topology:
-                        Topology[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                        break;
-                }
-            }
-           
-            foreach (var item in Land.terrainData.alphamapTextures)
-                Undo.ClearUndo(item);
-
-            Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
-            yield return null;
-        }
+        Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
     }
     #endregion
 }
