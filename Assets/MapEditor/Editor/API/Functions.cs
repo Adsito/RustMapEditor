@@ -646,14 +646,6 @@ namespace RustMapEditor.UI
         #endregion
 
         #region Functions
-        /// <summary>Sets the active landLayer to the index.</summary>
-        /// <param name="landIndex">The landLayer to change to.</param>
-        /// <param name="topology">The Topology layer to set.</param>
-        public static void SetLandLayer(LandLayers landIndex, int topology = 0)
-        {
-            ChangeLandLayer(landIndex, topology);
-        }
-
         public static SlopesInfo ClampValues(SlopesInfo info)
         {
             info.SlopeLow = Mathf.Clamp(info.SlopeLow, 0f, info.SlopeHigh);

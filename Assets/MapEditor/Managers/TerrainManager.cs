@@ -117,10 +117,10 @@ public static class TerrainManager
         }
 
         // Check for array dimensions not matching alphamap.
-        if (array.GetLength(0) != SplatMapRes || array.GetLength(1) != SplatMapRes || array.GetLength(2) != MapManager.TextureCount(layer))
+        if (array.GetLength(0) != SplatMapRes || array.GetLength(1) != SplatMapRes || array.GetLength(2) != LayerCount(layer))
         {
-            Debug.LogError($"SetSplatMap(array[{array.GetLength(0)}, {array.GetLength(1)}, {MapManager.TextureCount(layer)}]) dimensions invalid, should be " +
-                $"array[{ SplatMapRes}, { SplatMapRes}, { MapManager.TextureCount(layer)}].");
+            Debug.LogError($"SetSplatMap(array[{array.GetLength(0)}, {array.GetLength(1)}, {LayerCount(layer)}]) dimensions invalid, should be " +
+                $"array[{ SplatMapRes}, { SplatMapRes}, {LayerCount(layer)}].");
             return;
         }
 
@@ -139,6 +139,9 @@ public static class TerrainManager
 
         if (LandLayer.Equals(layer))
         {
+            if (!GetLayerTextures().Equals(Land.terrainData.terrainLayers))
+                Land.terrainData.terrainLayers = GetLayerTextures();
+
             Land.terrainData.SetAlphamaps(0, 0, array);
             LayerDirty = false;
         }
@@ -188,7 +191,6 @@ public static class TerrainManager
     /// <summary>Sets and initialises the Splat/AlphaMaps of all layers from MapInfo. Called when first loading/creating a map.</summary>
     private static void SetSplatMaps(MapInfo mapInfo)
     {
-        LandLayer = LandLayers.Ground;
         SplatMapRes = mapInfo.splatRes;
 
         SetSplatMap(mapInfo.splatMap, LandLayers.Ground);
@@ -196,10 +198,8 @@ public static class TerrainManager
         SetAlphaMap(mapInfo.alphaMap);
 
         TopologyData.Set(mapInfo.topology);
-        Parallel.For(0, TerrainTopology.COUNT, i =>
-        {
+        for (int i = 0; i < TerrainTopology.COUNT; i++)
             SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-        });
     }
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
@@ -218,15 +218,12 @@ public static class TerrainManager
     /// <summary>The current slope values stored as [x, y].</summary>
     /// <value>Slope angle in degrees, between 0 - 90.</value>
     private static float[,] Slope;
-
     /// <summary>The current height values stored as [x, y].</summary>
     /// <value>Height in metres, between 0 - 1000.</value> 
     private static float[,] Height;
-
     /// <summary>Resolution of the HeightMap.</summary>
     /// <value>Power of ^2 + 1, between 1025 - 4097.</value>
     public static int HeightMapRes { get; private set; }
-
     /// <summary>Resolution of the AlphaMap.</summary>
     /// <value>Power of ^2, between 1024 - 4096.</value>
     public static int AlphaMapRes { get => HeightMapRes - 1; }
@@ -485,12 +482,7 @@ public static class TerrainManager
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
     /// <summary>The amount of TerrainLayers used on the current LandLayer.</summary>
-    public static int LayerCount => LandLayer switch
-    {
-        LandLayers.Ground => 8,
-        LandLayers.Biome => 4,
-        _ => 2
-    };
+    public static int Layers => LayerCount(LandLayer);
     #endregion
 
     #region Methods
@@ -499,9 +491,27 @@ public static class TerrainManager
     /// <param name="topology">The Topology layer to change to.</param>
     public static void ChangeLandLayer(LandLayers layer, int topology = 0)
     {
+        if (layer.Equals(LandLayers.Alpha))
+            return;
+
         SaveLayer();
-        SetLayer(layer, topology);
+        LandLayer = layer;
+        SetSplatMap(GetSplatMap(layer, topology), layer, topology);
+        foreach (var item in Land.terrainData.alphamapTextures)
+            Undo.ClearUndo(item);
         Callbacks.OnLayerChanged(layer, topology);
+    }
+
+    /// <summary>Layer count in layer chosen, used for determining the size of the splatmap array.</summary>
+    /// <param name="layer">The LandLayer to return the texture count from. (Ground, Biome or Topology)</param>
+    public static int LayerCount(LandLayers layer)
+    {
+        return layer switch
+        {
+            LandLayers.Ground => 8,
+            LandLayers.Biome => 4,
+            _ => 2
+        };
     }
     #endregion
     #endregion
@@ -521,58 +531,10 @@ public static class TerrainManager
         SetTerrainReferences();
     }
 
-    /// <summary>Sets the terrain alphamaps to the LandLayer.</summary>
-    /// <param name="layer">The LandLayer to set.</param>
-    /// <param name="topology">The Topology layer to set.</param>
-    public static void SetLayer(LandLayers layer, int topology = 0)
-    {
-        if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
-            SetTerrainTextures();
-
-        switch (layer)
-        {
-            case LandLayers.Ground:
-                Land.terrainData.terrainLayers = GroundTextures;
-                Land.terrainData.SetAlphamaps(0, 0, Ground);
-                break;
-            case LandLayers.Biome:
-                Land.terrainData.terrainLayers = BiomeTextures;
-                Land.terrainData.SetAlphamaps(0, 0, Biome);
-                break;
-            case LandLayers.Topology:
-                LastTopologyLayer = topology;
-                Land.terrainData.terrainLayers = TopologyTextures;
-                Land.terrainData.SetAlphamaps(0, 0, Topology[topology]);
-                break;
-        }
-        LandLayer = layer;
-        TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
-    }
-
     /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
     public static void SaveLayer()
     {
-        if (LayerDirty)
-        {
-            switch (LandLayer)
-            {
-                case LandLayers.Ground:
-                    Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
-                case LandLayers.Biome:
-                    Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
-                case LandLayers.Topology:
-                    Topology[LastTopologyLayer] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
-                    break;
-            }
-
-            LayerDirty = false;
-        }
-
-        foreach (var item in Land.terrainData.alphamapTextures)
-            Undo.ClearUndo(item);
-
+        SetSplatMap(GetSplatMap(LandLayer, TopologyLayer), LandLayer, TopologyLayer);
         Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
     }
     #endregion

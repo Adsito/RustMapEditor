@@ -34,12 +34,12 @@ public class LayersWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
         if (EditorGUI.EndChangeCheck())
-            Functions.SetLandLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
+            TerrainManager.ChangeLandLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
 
-        switch (TerrainManager.LandLayer)
+        switch ((LandLayers)layerIndex)
         {
             case LandLayers.Ground:
-                Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
                 Functions.AreaSelect();
                 Functions.LayerTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground));
                 Functions.RotateTools(TerrainManager.LandLayer);
@@ -48,7 +48,7 @@ public class LayersWindow : EditorWindow
                 Functions.HeightTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
                 break;
             case LandLayers.Biome:
-                Functions.TextureSelect((LandLayers)layerIndex, ref layers);
+                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
                 Functions.AreaSelect();
                 Functions.LayerTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome));
                 Functions.RotateTools(TerrainManager.LandLayer);
@@ -57,12 +57,12 @@ public class LayersWindow : EditorWindow
                 Functions.HeightTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome), ref heightsInfo);
                 break;
             case LandLayers.Alpha:
-                Functions.LayerTools(TerrainManager.LandLayer, 0, 1);
+                Functions.LayerTools((LandLayers)layerIndex, 0, 1);
                 Functions.AreaSelect();
-                Functions.RotateTools(TerrainManager.LandLayer);
-                Functions.RiverTools(TerrainManager.LandLayer, 0, ref aboveTerrain, 1);
-                Functions.SlopeTools(TerrainManager.LandLayer, 0, ref slopesInfo, 1);
-                Functions.HeightTools(TerrainManager.LandLayer, 0, ref heightsInfo, 1);
+                Functions.RotateTools((LandLayers)layerIndex);
+                Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1);
+                Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1);
+                Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1);
                 break;
             case LandLayers.Topology:
                 Functions.TopologyLayerSelect(ref layers);

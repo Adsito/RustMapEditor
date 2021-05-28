@@ -280,30 +280,6 @@ public static class MapManager
     }
 
     #region SplatMap Methods
-    /// <summary>Texture count in layer chosen, used for determining the size of the splatmap array.</summary>
-    /// <param name="landLayer">The LandLayer to return the texture count from. (Ground, Biome, Alpha, Topology)</param>
-    public static int TextureCount(LandLayers landLayer)
-    {
-        return landLayer switch
-        {
-            LandLayers.Ground => 8,
-            LandLayers.Biome => 4,
-            LandLayers.Topology => 2,
-            _ => 0
-        };
-    }
-
-    /// <summary>Returns the value of a texture at the selected coords.</summary>
-    /// <param name="landLayer">The LandLayer of the texture. (Ground, Biome, Alpha, Topology)</param>
-    /// <param name="texture">The texture to get.</param>
-    /// <param name="x">The X coordinate.</param>
-    /// <param name="z">The Z coordinate.</param>
-    /// <param name="topology">The Topology layer, if selected.</param>
-    public static float GetTexture(LandLayers landLayer, int texture, int x, int z)
-    {
-        return GetSplatMap(landLayer)[x, z, texture];
-    }
-
     /// <summary>Rotates the selected layer.</summary>
     /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
@@ -316,7 +292,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 //SetData(Rotate(AlphaArray, CW), landLayerToPaint);
@@ -384,7 +360,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 float[,,] splatMapToPaint = GetSplatMap(landLayerToPaint, topology);
-                int textureCount = TextureCount(landLayerToPaint);
+                int textureCount = LayerCount(landLayerToPaint);
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
@@ -396,7 +372,7 @@ public static class MapManager
                         }
                 });
                 SetSplatMap(splatMapToPaint, landLayerToPaint, topology);
-                SetLayer(landLayerToPaint, topology);
+                //SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
                 /*
@@ -426,7 +402,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -449,7 +425,7 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
-                SetLayer(LandLayer);
+                //SetLayer(LandLayer);
                 break;
         }
     }
@@ -494,7 +470,7 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 //SetData(SetValues(AlphaArray, false), landLayerToPaint);
@@ -526,7 +502,7 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetSplatMap(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 //SetData(Invert(AlphaArray), landLayerToPaint);
@@ -563,7 +539,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -587,7 +563,7 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetSlopes(), t, slopeLow, slopeHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
-                SetLayer(LandLayer);
+                //SetLayer(LandLayer);
                 break;
         }
     }
@@ -605,7 +581,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, tex), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
+                //SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 //SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, tex == 0), landLayerToPaint);
