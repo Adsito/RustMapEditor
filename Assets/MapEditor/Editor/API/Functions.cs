@@ -448,7 +448,7 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
 
             if (EditorGUI.EndChangeCheck())
-                ChangeLandLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                ChangeLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
         }
 
         public static void SlopeTools(LandLayers landLayer, int texture, ref SlopesInfo slopeInfo, int erase = 0, int topology = 0)

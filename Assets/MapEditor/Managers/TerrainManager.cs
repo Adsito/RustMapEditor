@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
-using System.Collections;
-using Unity.EditorCoroutines.Editor;
 using static WorldConverter;
 using System.Threading.Tasks;
 
@@ -139,8 +137,8 @@ public static class TerrainManager
 
         if (LandLayer.Equals(layer))
         {
-            if (!GetLayerTextures().Equals(Land.terrainData.terrainLayers))
-                Land.terrainData.terrainLayers = GetLayerTextures();
+            if (!GetTerrainLayers().Equals(Land.terrainData.terrainLayers))
+                Land.terrainData.terrainLayers = GetTerrainLayers();
 
             Land.terrainData.SetAlphamaps(0, 0, array);
             LayerDirty = false;
@@ -303,14 +301,16 @@ public static class TerrainManager
 
     /// <summary>Returns a 2D array of the height values.</summary>
     /// <returns>Floats within the range 0m - 1000m.</returns>
-    public static float[,] GetHeights()
+    public static float[,] GetHeights(Enum terrain = Enum.Land)
     {
-        if (Height != null)
+        if (Height != null && terrain == Enum.Land)
             return Height;
-
-        Height = Land.terrainData.GetInterpolatedHeights(0, 0, SplatMapRes, SplatMapRes, 1f / SplatMapRes, 1f / SplatMapRes);
-
-        return Height;
+        if (terrain == Enum.Land)
+        {
+            Height = Land.terrainData.GetInterpolatedHeights(0, 0, SplatMapRes, SplatMapRes, 1f / SplatMapRes, 1f / SplatMapRes);
+            return Height;
+        }
+        return Water.terrainData.GetInterpolatedHeights(0, 0, SplatMapRes, SplatMapRes, 1f / SplatMapRes, 1f / SplatMapRes);
     }
 
     /// <summary>Updates cached Height values with current.</summary>
@@ -340,6 +340,12 @@ public static class TerrainManager
     /// <summary>The condition of the current terrain.</summary>
     /// <value>True = Terrain is loading / False = Terrain is loaded.</value>
     public static bool IsLoading { get; private set; } = true;
+
+    public enum Enum
+    {
+        Land,
+        Water
+    }
     #endregion
 
     #region Methods
@@ -393,34 +399,43 @@ public static class TerrainManager
     #endregion
     #endregion
 
-    #region Terrain Textures
+    #region Terrain Layers
     /// <summary>The Terrain layers used by the terrain for paint operations</summary>
-    private static TerrainLayer[] GroundTextures = null, BiomeTextures = null, TopologyTextures = null;
+    private static TerrainLayer[] GroundLayers = null, BiomeLayers = null, TopologyLayers = null;
 
     #region Methods
-    private static TerrainLayer[] GetLayerTextures()
+    /// <summary>Clears the alphamap textures currently on the undo heap.</summary>
+    private static void ClearTerrainUndo()
     {
-        if (GroundTextures == null || BiomeTextures == null || TopologyTextures == null)
-            SetTerrainTextures();
+        foreach (var item in Land.terrainData.alphamapTextures)
+            Undo.ClearUndo(item);
+    }
+
+    /// <summary>Sets the unity terrain references if not already set, and returns the current terrain layers.</summary>
+    /// <returns>Array of TerrainLayers currently displayed on the Land Terrain.</returns>
+    public static TerrainLayer[] GetTerrainLayers()
+    {
+        if (GroundLayers == null || BiomeLayers == null || TopologyLayers == null)
+            SetTerrainLayers();
 
         return LandLayer switch
         {
-            LandLayers.Ground => GroundTextures,
-            LandLayers.Biome => BiomeTextures,
-            _ => TopologyTextures
+            LandLayers.Ground => GroundLayers,
+            LandLayers.Biome => BiomeLayers,
+            _ => TopologyLayers
         };
     }
 
     /// <summary>Sets the TerrainLayer references in TerrainManager to the asset on disk.</summary>
-    private static void SetTerrainTextures()
+    public static void SetTerrainLayers()
     {
-        GroundTextures = GetGroundTextures();
-        BiomeTextures = GetBiomeTextures();
-        TopologyTextures = GetTopologyTextures();
+        GroundLayers = GetGroundLayers();
+        BiomeLayers = GetBiomeLayers();
+        TopologyLayers = GetTopologyLayers();
         AssetDatabase.SaveAssets();
     }
 
-    private static TerrainLayer[] GetGroundTextures()
+    private static TerrainLayer[] GetGroundLayers()
     {
         TerrainLayer[] textures = new TerrainLayer[8];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Ground/Dirt.terrainlayer");
@@ -442,7 +457,7 @@ public static class TerrainManager
         return textures;
     }
 
-    private static TerrainLayer[] GetBiomeTextures()
+    private static TerrainLayer[] GetBiomeLayers()
     {
         TerrainLayer[] textures = new TerrainLayer[4];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arid.terrainlayer");
@@ -456,7 +471,7 @@ public static class TerrainManager
         return textures;
     }
 
-    private static TerrainLayer[] GetTopologyTextures()
+    private static TerrainLayer[] GetTopologyLayers()
     {
         TerrainLayer[] textures = new TerrainLayer[2];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Topology/Active.terrainlayer");
@@ -486,10 +501,17 @@ public static class TerrainManager
     #endregion
 
     #region Methods
+    /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
+    public static void SaveLayer()
+    {
+        SetSplatMap(GetSplatMap(LandLayer, TopologyLayer), LandLayer, TopologyLayer);
+        Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
+    }
+
     /// <summary>Changes the active Land and Topology Layers.</summary>
     /// <param name="layer">The LandLayer to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
-    public static void ChangeLandLayer(LandLayers layer, int topology = 0)
+    public static void ChangeLayer(LandLayers layer, int topology = 0)
     {
         if (layer.Equals(LandLayers.Alpha))
             return;
@@ -497,8 +519,7 @@ public static class TerrainManager
         SaveLayer();
         LandLayer = layer;
         SetSplatMap(GetSplatMap(layer, topology), layer, topology);
-        foreach (var item in Land.terrainData.alphamapTextures)
-            Undo.ClearUndo(item);
+        
         Callbacks.OnLayerChanged(layer, topology);
     }
 
@@ -529,13 +550,6 @@ public static class TerrainManager
     {
         EditorApplication.update -= ProjectLoaded;
         SetTerrainReferences();
-    }
-
-    /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
-    public static void SaveLayer()
-    {
-        SetSplatMap(GetSplatMap(LandLayer, TopologyLayer), LandLayer, TopologyLayer);
-        Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
     }
     #endregion
 }

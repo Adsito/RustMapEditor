@@ -34,7 +34,7 @@ public class LayersWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
         if (EditorGUI.EndChangeCheck())
-            TerrainManager.ChangeLandLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
+            TerrainManager.ChangeLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
 
         switch ((LandLayers)layerIndex)
         {

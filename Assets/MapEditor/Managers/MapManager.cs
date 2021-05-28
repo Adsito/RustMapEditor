@@ -52,7 +52,7 @@ public static class MapManager
     public static List<int> GetEnumSelection<T>(T enumGroup)
     {
         List<int> selectedEnums = new List<int>();
-        for (int i = 0; i < Enum.GetValues(typeof(T)).Length; i++)
+        for (int i = 0; i < System.Enum.GetValues(typeof(T)).Length; i++)
         {
             int layer = 1 << i;
             if ((Convert.ToInt32(enumGroup) & layer) != 0)
@@ -272,11 +272,6 @@ public static class MapManager
                 Water.terrainData.SetHeights(0, 0, ClampValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), minimumHeight, maximumHeight, dmns));
                 break;
         }
-    }
-
-    public static float[,] GetWaterHeights()
-    {
-        return Water.terrainData.GetInterpolatedHeights(0, 0, Water.terrainData.alphamapHeight, Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight, 1f / (float)Water.terrainData.alphamapHeight);
     }
 
     #region SplatMap Methods
@@ -580,7 +575,7 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, tex), landLayerToPaint, topology);
+                SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetHeights(TerrainManager.Enum.Water), aboveTerrain, tex), landLayerToPaint, topology);
                 //SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
