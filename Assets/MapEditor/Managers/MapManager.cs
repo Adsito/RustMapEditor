@@ -287,10 +287,9 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                //SetData(Rotate(AlphaArray, CW), landLayerToPaint);
+                SetAlphaMap(Rotate(GetAlphaMap(), CW));
                 break;
         }
     }
@@ -333,7 +332,7 @@ public static class MapManager
 
         Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
-            //conditionsMet = CheckConditions(AlphaArray, conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
+            conditionsMet = CheckConditions(GetAlphaMap(), conditionsMet, (conditions.AlphaConditions.Texture == 0) ? true : false);
 
         Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
@@ -367,17 +366,15 @@ public static class MapManager
                         }
                 });
                 SetSplatMap(splatMapToPaint, landLayerToPaint, topology);
-                //SetLayer(landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
-                /*
-                bool[,] alphaMapToPaint = AlphaArray;
+                bool[,] alphaMapToPaint = GetAlphaMap();
                 Parallel.For(0, splatRes, i =>
                 {
                     for (int j = 0; j < splatRes; j++)
                         alphaMapToPaint[i, j] = (conditionsMet[i, j] == false) ? conditionsMet[i, j] : alphaMapToPaint[i, j];
                 });
-                SetData(alphaMapToPaint, landLayerToPaint);*/
+                SetAlphaMap(alphaMapToPaint);
                 break;
         }
         Progress.Finish(progressId);
@@ -397,11 +394,10 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                //SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
+                SetAlphaMap(SetRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh));
                 break;
         }
     }
@@ -420,7 +416,6 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
-                //SetLayer(LandLayer);
                 break;
         }
     }
@@ -437,6 +432,9 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
+                break;
+            case LandLayers.Alpha:
+                SetAlphaMap(SetValues(GetAlphaMap(), true));
                 break;
         }
     }
@@ -465,10 +463,9 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                //SetData(SetValues(AlphaArray, false), landLayerToPaint);
+                SetAlphaMap(SetValues(GetAlphaMap(), false));
                 break;
         }
     }
@@ -497,10 +494,9 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetSplatMap(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                //SetData(Invert(AlphaArray), landLayerToPaint);
+                SetAlphaMap(Invert(GetAlphaMap()));
                 break;
         }
     }
@@ -534,11 +530,10 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
-                //SetData(SetRange(AlphaArray, GetSlopes(), value, slopeLow, slopeHigh), landLayerToPaint);
+                SetAlphaMap(SetRange(GetAlphaMap(), GetSlopes(), value, slopeLow, slopeHigh));
                 break;
         }
     }
@@ -558,7 +553,6 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetSlopes(), t, slopeLow, slopeHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
-                //SetLayer(LandLayer);
                 break;
         }
     }
@@ -576,10 +570,9 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetHeights(TerrainManager.Enum.Water), aboveTerrain, tex), landLayerToPaint, topology);
-                //SetLayer(LandLayer, TerrainTopology.TypeToIndex(TopologyLayer));
                 break;
             case LandLayers.Alpha:
-                //SetData(SetRiver(AlphaArray, GetHeights(), GetWaterHeights(), aboveTerrain, tex == 0), landLayerToPaint);
+                SetAlphaMap(SetRiver(GetAlphaMap(), GetHeights(), GetHeights(TerrainManager.Enum.Water), aboveTerrain, tex == 0));
                 break;
             
         }

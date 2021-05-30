@@ -84,7 +84,7 @@ public static class TerrainManager
 
     public static bool[,] GetAlphaMap()
     {
-        if (AlphaDirty)
+        if (0 == 0) //TODO: Implement AlphaDirty.
         {
             bool[,] tempAlpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
             Parallel.For(0, SplatMapRes, i =>
@@ -261,7 +261,7 @@ public static class TerrainManager
         }
 
         if (Slope == null)
-            return Land.terrainData.GetSteepness((float)x / SplatMapRes, (float)y / SplatMapRes);
+            return Land.terrainData.GetSteepness((float)y / SplatMapRes, (float)x / SplatMapRes);
 
         return Slope[x, y];
     }
@@ -272,10 +272,12 @@ public static class TerrainManager
     {
         if (Slope != null)
             return Slope;
+        if (Slope == null)
+            Slope = new float[SplatMapRes, SplatMapRes];
 
         for (int x = 0; x < SplatMapRes; x++)
             for (int y = 0; y < SplatMapRes; y++)
-                Slope[x, y] = Land.terrainData.GetSteepness((float)x / SplatMapRes, (float)y / SplatMapRes);
+                Slope[x, y] = Land.terrainData.GetSteepness((float)y / SplatMapRes, (float)x / SplatMapRes);
 
         return Slope;
     }

@@ -46,7 +46,7 @@ namespace RustMapEditor.Maths
         public static bool[,] SetValues(bool[,] array, bool value, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -70,7 +70,7 @@ namespace RustMapEditor.Maths
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
                 {
-                    if (range[i, j] > rangeLow && range[i, j] < rangeHigh)
+                    if (range[i, j] >= rangeLow && range[i, j] <= rangeHigh)
                     {
                         for (int k = 0; k < channelCount; k++)
                             array[i, j, k] = 0;
@@ -151,8 +151,8 @@ namespace RustMapEditor.Maths
         public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
-           
+                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
                 for (int j = dmns.z0; j < dmns.z1; j++)
@@ -208,7 +208,7 @@ namespace RustMapEditor.Maths
         public static bool[,] SetRiver(bool[,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, bool value, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
 
             if (aboveTerrain)
             {
@@ -359,7 +359,7 @@ namespace RustMapEditor.Maths
         public static bool[,] Rotate(bool[,] array, bool CW, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
 
             bool[,] newArray = new bool[array.GetLength(0), array.GetLength(1)];
             if (CW)
@@ -416,7 +416,7 @@ namespace RustMapEditor.Maths
         public static bool[,] Invert(bool[,] array, Dimensions dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
