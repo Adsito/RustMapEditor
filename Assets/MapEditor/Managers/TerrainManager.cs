@@ -44,7 +44,7 @@ public static class TerrainManager
     /// <summary>The size of each splat relative to the terrain size it covers.</summary>
     public static float SplatSize { get => Land.terrainData.size.x / SplatMapRes; }
 
-    public static bool AlphaDirty = false;
+    public static bool AlphaDirty { get; set; } = true;
     #endregion
 
     #region Methods
@@ -84,7 +84,7 @@ public static class TerrainManager
 
     public static bool[,] GetAlphaMap()
     {
-        if (0 == 0) //TODO: Implement AlphaDirty.
+        if (AlphaDirty)
         {
             bool[,] tempAlpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
             Parallel.For(0, SplatMapRes, i =>
@@ -204,8 +204,17 @@ public static class TerrainManager
     {
         if (!IsLoading && Land.Equals(terrain) && Mouse.current.leftButton.isPressed)
         {
-            Callbacks.OnLayerUpdated(LandLayer, TopologyLayer);
-            LayerDirty = true;
+            switch (textureName)
+            {
+                case "holes":
+                    AlphaDirty = true;
+                    Callbacks.OnLayerUpdated(LandLayers.Alpha, TopologyLayer);
+                    break;
+                case "alphamap":
+                    LayerDirty = true;
+                    Callbacks.OnLayerUpdated(LandLayer, TopologyLayer);
+                    break;
+            }
         }
     }
     #endregion
