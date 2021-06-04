@@ -86,12 +86,7 @@ public static class TerrainManager
     {
         if (AlphaDirty)
         {
-            bool[,] tempAlpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
-            Parallel.For(0, SplatMapRes, i =>
-            {
-                for (int j = 0; j < SplatMapRes; j++)
-                    Alpha[i, j] = tempAlpha[i * 2, j * 2];
-            });
+            Alpha = Land.terrainData.GetHoles(0, 0, AlphaMapRes, AlphaMapRes);
             AlphaDirty = false;
         }
         return Alpha;
