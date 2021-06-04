@@ -552,8 +552,8 @@ namespace RustMapEditor.UI
         {
             Elements.MiniBoldLabel(ToolTips.areaSelectLabel);
 
-            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, Land.terrainData.alphamapResolution);
-            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, Land.terrainData.alphamapResolution);
+            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, SplatMapRes);
+            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, SplatMapRes);
 
             if (Elements.ToolbarButton(ToolTips.resetArea))
                 AreaManager.Reset();
