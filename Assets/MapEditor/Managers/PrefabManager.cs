@@ -153,8 +153,7 @@ public static class PrefabManager
     public static void Spawn(GameObject go, Transform transform, string name)
     {
         GameObject newObj = GameObject.Instantiate(go, PrefabParent);
-        newObj.transform.position = transform.position;
-        newObj.transform.rotation = transform.rotation;
+        newObj.transform.SetPositionAndRotation(transform.position, transform.rotation);
         newObj.transform.localScale = transform.localScale;
         newObj.name = name;
         newObj.SetActive(true);
@@ -214,6 +213,14 @@ public static class PrefabManager
     public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabIDs(prefabs, id, replace));
+    }
+
+    /// <summary>Rotates all prefabs in map 90° Clockwise or Counter Clockwise.</summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotatePrefabs(bool CW)
+    {
+        PrefabParent.Rotate(0, 90, 0, Space.World);
+        PrefabParent.gameObject.GetComponent<LockObject>().UpdateTransform();
     }
 
     private static class Coroutines

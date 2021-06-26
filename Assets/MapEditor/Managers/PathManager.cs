@@ -56,6 +56,14 @@ public static class PathManager
         newObject.GetComponent<PathDataHolder>().pathData = pathData;
     }
 
+    /// <summary>Rotates all paths in map 90° Clockwise or Counter Clockwise.</summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotatePaths(bool CW)
+    {
+        PathParent.transform.Rotate(0, CW ? 90f : -90f, 0, Space.World);
+        PathParent.gameObject.GetComponent<LockObject>().UpdateTransform();
+    }
+
     public static void SpawnPaths(PathData[] paths, int progressID)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnPaths(paths, progressID));
