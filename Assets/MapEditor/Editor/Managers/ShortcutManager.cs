@@ -74,17 +74,14 @@ public static class ShortcutManager
     public static void OpenPrefabList() => EditorWindow.GetWindow(typeof(PrefabsListWindow), false, "Prefab List");
 
     [Shortcut("RustMapEditor/Open Wiki")]
-    public static void OpenWiki() => Application.OpenURL("https://github.com/RustMapMaking/Editor/wiki");
+    public static void OpenWiki() => Application.OpenURL("https://github.com/Adsito/Editor/wiki");
 
     [Shortcut("RustMapEditor/Open Discord")]
     public static void OpenDiscord() => Application.OpenURL("https://discord.gg/HPmTWVa");
 
-    [Shortcut("RustMapEditor/Open RoadMap")]
-    public static void OpenRoadMap() => Application.OpenURL("https://github.com/RustMapMaking/Editor/projects/1");
-
     [Shortcut("RustMapEditor/Open Report Bug")]
-    public static void OpenReportBug() => Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
+    public static void OpenReportBug() => Application.OpenURL("https://github.com/Adsito/Editor/issues/new?assignees=Adsito&labels=bug&template=bug-report.md&title=%5BBUG%5D+Bug+name+goes+here");
 
     [Shortcut("RustMapEditor/Open Request Feature")]
-    public static void OpenRequestFeature() => Application.OpenURL("https://github.com/RustMapMaking/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
+    public static void OpenRequestFeature() => Application.OpenURL("https://github.com/Adsito/Editor/issues/new?assignees=Adsito&labels=enhancement&template=feature-request.md&title=%5BREQUEST%5D+Request+name+goes+here");
 }

@@ -88,8 +88,6 @@ namespace RustMapEditor.UI
                 ShortcutManager.OpenReportBug();
             if (Elements.ToolbarButton(ToolTips.requestFeature))
                 ShortcutManager.OpenRequestFeature();
-            if (Elements.ToolbarButton(ToolTips.roadMap))
-                ShortcutManager.OpenRoadMap();
             Elements.EndToolbarHorizontal();
 
             Elements.BeginToolbarHorizontal();
