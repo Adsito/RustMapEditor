@@ -1,7 +1,6 @@
 ﻿using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using RustMapEditor.UI;
-using RustMapEditor.Variables;
 using UnityEngine;
 using UnityEditor.EditorTools;
 
@@ -32,7 +31,7 @@ public static class ShortcutManager
     public static void InvertLayer() => MapManager.InvertLayer(TerrainManager.LandLayer, TerrainManager.TopologyLayer);
 
     [Shortcut("RustMapEditor/Invert Land")]
-    public static void InvertLand() => MapManager.InvertHeightmap(Selections.Terrains.Land);
+    public static void InvertLand() => TerrainManager.InvertHeightMap(TerrainManager.TerrainType.Land);
 
     [Shortcut("RustMapEditor/Select Land")]
     public static void SelectLand() => Selection.activeGameObject = TerrainManager.Land.gameObject;

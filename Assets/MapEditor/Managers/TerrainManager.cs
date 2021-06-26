@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.TerrainAPI;
 using RustMapEditor.Variables;
+using RustMapEditor.Maths;
 using static WorldConverter;
 using System.Threading.Tasks;
 
@@ -229,6 +230,8 @@ public static class TerrainManager
     /// <summary>Resolution of the AlphaMap.</summary>
     /// <value>Power of ^2, between 1024 - 4096.</value>
     public static int AlphaMapRes { get => HeightMapRes - 1; }
+
+    public static Vector2 HeightMapCentre { get => new Vector2(0.5f, 0.5f); }
     #endregion
 
     #region Methods
@@ -307,11 +310,11 @@ public static class TerrainManager
 
     /// <summary>Returns a 2D array of the height values.</summary>
     /// <returns>Floats within the range 0m - 1000m.</returns>
-    public static float[,] GetHeights(Enum terrain = Enum.Land)
+    public static float[,] GetHeights(TerrainType terrain = TerrainType.Land)
     {
-        if (Height != null && terrain == Enum.Land)
+        if (Height != null && terrain == TerrainType.Land)
             return Height;
-        if (terrain == Enum.Land)
+        if (terrain == TerrainType.Land)
         {
             Height = Land.terrainData.GetInterpolatedHeights(0, 0, SplatMapRes, SplatMapRes, 1f / SplatMapRes, 1f / SplatMapRes);
             return Height;
@@ -321,6 +324,95 @@ public static class TerrainManager
 
     /// <summary>Updates cached Height values with current.</summary>
     public static void UpdateHeights() => GetHeights();
+
+    /// <summary>Rotates the HeightMap 90° Clockwise or Counter Clockwise.</summary>
+    /// <param name="CW">True = 90°, False = 270°</param>
+    public static void RotateHeightMap(bool CW, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    {
+        if (terrain == TerrainType.Land)
+        {
+            Height = Array.Rotate(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, Array.Rotate(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
+    }
+
+    /// <summary>Sets the HeightMap to the height input.</summary>
+    /// <param name="height">The height to set.</param>
+    public static void SetHeightMapHeight(float height, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    {
+        height /= 1000f; // Normalises user input to a value between 0 - 1f.
+        if (terrain == TerrainType.Land)
+        {
+            Height = Array.SetValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, Array.SetValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
+    }
+
+    /// <summary>Inverts the HeightMap heights.</summary>
+    public static void InvertHeightMap(TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    {
+        if (terrain == TerrainType.Land)
+        {
+            Height = Array.Invert(GetHeights(), dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, GetHeights(terrain));
+    }
+
+    /// <summary> Normalises the HeightMap between two heights.</summary>
+    /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
+    /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
+    public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrains = TerrainType.Land, Dimensions dmns = null)
+    {
+        normaliseLow /= 1000f; normaliseHigh /= 1000f;
+
+        if (terrains == TerrainType.Land)
+        {
+            Height = Array.Normalise(GetHeights(), normaliseLow, normaliseHigh, dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, Array.Normalise(GetHeights(terrains), normaliseLow, normaliseHigh, dmns));
+    }
+
+    /// <summary>Terraces the HeightMap.</summary>
+    /// <param name="featureSize">The height of each terrace.</param>
+    /// <param name="interiorCornerWeight">The weight of the terrace effect.</param>
+    public static void TerraceErodeHeightMap(float featureSize, float interiorCornerWeight)
+    {
+        Material mat = new Material((Shader)AssetDatabase.LoadAssetAtPath("Packages/com.unity.terrain-tools/Shaders/TerraceErosion.shader", typeof(Shader)));
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
+        Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
+        mat.SetTexture("_BrushTex", MapManager.terrainFilterTexture);
+        mat.SetVector("_BrushParams", brushParams);
+        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
+        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
+        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - TerraceErosion");
+    }
+
+    /// <summary>Smooths the HeightMap.</summary>
+    /// <param name="filterStrength">The strength of the smoothing.</param>
+    /// <param name="blurDirection">The direction the smoothing should preference. Between -1f - 1f.</param>
+    public static void SmoothHeightMap(float filterStrength, float blurDirection)
+    {
+        Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
+        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
+        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
+        Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
+        mat.SetTexture("_BrushTex", MapManager.terrainFilterTexture);
+        mat.SetVector("_BrushParams", brushParams);
+        Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);
+        mat.SetVector("_SmoothWeights", smoothWeights);
+        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
+        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
+        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
+    }
 
     /// <summary>Callback for whenever the heightmap is updated.</summary>
     private static void HeightMapChanged(Terrain terrain, RectInt heightRegion, bool synched)
@@ -347,7 +439,7 @@ public static class TerrainManager
     /// <value>True = Terrain is loading / False = Terrain is loaded.</value>
     public static bool IsLoading { get; private set; } = true;
 
-    public enum Enum
+    public enum TerrainType
     {
         Land,
         Water

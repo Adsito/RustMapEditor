@@ -29,7 +29,6 @@ public static class MapManager
     }
 
     public static Texture terrainFilterTexture;
-    public static Vector2 heightmapCentre = new Vector2(0.5f, 0.5f);
 
     [InitializeOnLoadMethod]
     static void Init()
@@ -51,7 +50,7 @@ public static class MapManager
     
     public static List<int> GetEnumSelection<T>(T enumGroup)
     {
-        List<int> selectedEnums = new List<int>();
+        var selectedEnums = new List<int>();
         for (int i = 0; i < System.Enum.GetValues(typeof(T)).Length; i++)
         {
             int layer = 1 << i;
@@ -68,173 +67,27 @@ public static class MapManager
             switch (item)
             {
                 case 0:
-                    RotateLayer(LandLayers.Ground, CW);
-                    break;
                 case 1:
-                    RotateLayer(LandLayers.Biome, CW);
-                    break;
                 case 2:
-                    RotateLayer(LandLayers.Alpha, CW);
+                    RotateLayer((LandLayers) item, CW);
                     break;
                 case 3:
                     RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, CW);
                     break;
                 case 4:
-                    RotateTerrains(CW, Selections.Terrains.Land);
+                    RotateHeightMap(CW);
                     break;
                 case 5:
-                    RotateTerrains(CW, Selections.Terrains.Water);
+                    RotateHeightMap(CW, TerrainType.Water);
                     break;
                 case 6:
-                    RotatePrefabs(CW);
+                    PrefabManager.RotatePrefabs(CW);
                     break;
                 case 7:
-                    RotatePaths(CW);
+                    PathManager.RotatePaths(CW);
                     break;
             }
         }
-    }
-
-    /// <summary>Rotates prefabs 90°.</summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotatePrefabs(bool CW)
-    {
-        var prefabRotate = GameObject.FindGameObjectWithTag("Prefabs");
-        if (CW)
-        {
-            prefabRotate.transform.Rotate(0, 90, 0, Space.World);
-            prefabRotate.GetComponent<LockObject>().UpdateTransform();
-        }
-        else
-        {
-            prefabRotate.transform.Rotate(0, -90, 0, Space.World);
-            prefabRotate.GetComponent<LockObject>().UpdateTransform();
-        }
-    }
-
-    /// <summary>Rotates paths 90°.</summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotatePaths(bool CW)
-    {
-        var pathRotate = GameObject.FindGameObjectWithTag("Paths");
-        if (CW)
-        {
-            pathRotate.transform.Rotate(0, 90, 0, Space.World);
-            pathRotate.GetComponent<LockObject>().UpdateTransform();
-        }
-        else
-        {
-            pathRotate.transform.Rotate(0, -90, 0, Space.World);
-            pathRotate.GetComponent<LockObject>().UpdateTransform();
-        }
-    }
-
-    /// <summary>Rotates the selected terrains.</summary>
-    /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateTerrains(bool CW, Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        foreach (var item in GetEnumSelection(terrains))
-        {
-            switch (item)
-            {
-                case 0:
-                    Land.terrainData.SetHeights(0, 0, Rotate(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
-                    break;
-                case 1:
-                    Water.terrainData.SetHeights(0, 0, Rotate(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
-                    break;
-            }
-        }
-    }
-
-    /// <summary>Sets the selected terrains to the height set.</summary>
-    /// <param name="height">The height to set.</param>
-    public static void SetHeightmap(float height, Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        height /= 1000f;
-        foreach (var item in GetEnumSelection(terrains))
-        {
-            switch (item)
-            {
-                case 0:
-                    Land.terrainData.SetHeights(0, 0, SetValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
-                    break;
-                case 1:
-                    Water.terrainData.SetHeights(0, 0, SetValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
-                    break;
-            }
-        }
-    }
-
-    /// <summary>Inverts the selected terrains.</summary>
-    public static void InvertHeightmap(Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        foreach (var item in GetEnumSelection(terrains))
-        {
-            switch (item)
-            {
-                case 0:
-                    Land.terrainData.SetHeights(0, 0, Invert(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), dmns));
-                    break;
-                case 1:
-                    Water.terrainData.SetHeights(0, 0, Invert(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), dmns));
-                    break;
-            }
-        }
-    }
-
-    /// <summary> Normalises the terrain between two heights.</summary>
-    /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
-    /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
-    public static void NormaliseHeightmap(float normaliseLow, float normaliseHigh, Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        normaliseLow /= 1000f; normaliseHigh /= 1000f;
-        foreach (var item in GetEnumSelection(terrains))
-        {
-            switch (item)
-            {
-                case 0:
-                    Land.terrainData.SetHeights(0, 0, Normalise(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), normaliseLow, normaliseHigh, dmns));
-                    break;
-                case 1:
-                    Water.terrainData.SetHeights(0, 0, Normalise(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), normaliseLow, normaliseHigh, dmns));
-                    break;
-            }
-        }
-    }
-
-    /// <summary>Terraces the HeightMap.</summary>
-    /// <param name="featureSize">The height of each terrace.</param>
-    /// <param name="interiorCornerWeight">The weight of the terrace effect.</param>
-    public static void TerraceErodeHeightmap(float featureSize, float interiorCornerWeight)
-    {
-        Material mat = new Material((Shader)AssetDatabase.LoadAssetAtPath("Packages/com.unity.terrain-tools/Shaders/TerraceErosion.shader", typeof(Shader)));
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, heightmapCentre, Land.terrainData.size.x, 0.0f);
-        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
-        Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
-        mat.SetTexture("_BrushTex", terrainFilterTexture);
-        mat.SetVector("_BrushParams", brushParams);
-        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
-        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
-        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - TerraceErosion");
-    }
-
-    /// <summary>Smooths the terrain.</summary>
-    /// <param name="filterStrength">The strength of the smoothing.</param>
-    /// <param name="blurDirection">The direction the smoothing should preference. Between -1f - 1f.</param>
-    public static void SmoothHeightmap(float filterStrength, float blurDirection)
-    {
-        Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
-        BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, heightmapCentre, Land.terrainData.size.x, 0.0f);
-        PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
-        Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
-        mat.SetTexture("_BrushTex", terrainFilterTexture);
-        mat.SetVector("_BrushParams", brushParams);
-        Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);
-        mat.SetVector("_SmoothWeights", smoothWeights);
-        TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
-        Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, (int)TerrainPaintUtility.BuiltinPaintMaterialPasses.SmoothHeights);
-        TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Filter - Smooth Heights");
     }
 
     /// <summary>Increases or decreases the terrain by the offset.</summary>
@@ -569,10 +422,10 @@ public static class MapManager
             case LandLayers.Ground:
             case LandLayers.Biome:
             case LandLayers.Topology:
-                SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetHeights(TerrainManager.Enum.Water), aboveTerrain, tex), landLayerToPaint, topology);
+                SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetHeights(TerrainManager.TerrainType.Water), aboveTerrain, tex), landLayerToPaint, topology);
                 break;
             case LandLayers.Alpha:
-                SetAlphaMap(SetRiver(GetAlphaMap(), GetHeights(), GetHeights(TerrainManager.Enum.Water), aboveTerrain, tex == 0));
+                SetAlphaMap(SetRiver(GetAlphaMap(), GetHeights(), GetHeights(TerrainManager.TerrainType.Water), aboveTerrain, tex == 0));
                 break;
             
         }

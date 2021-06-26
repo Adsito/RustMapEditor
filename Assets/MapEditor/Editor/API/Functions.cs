@@ -183,7 +183,7 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.terraceMap))
-                MapManager.TerraceErodeHeightmap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
+                TerraceErodeHeightMap(terraceErodeFeatureSize, terraceErodeInteriorCornerWeight);
             Elements.EndToolbarHorizontal();
         }
 
@@ -197,7 +197,7 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.smoothMap))
                 for (int i = 0; i < smoothPasses; i++)
-                    MapManager.SmoothHeightmap(filterStrength, blurDirection);
+                    SmoothHeightMap(filterStrength, blurDirection);
             smoothPasses = EditorGUILayout.IntSlider(smoothPasses, 1, 100);
             Elements.EndToolbarHorizontal();
         }
@@ -210,11 +210,11 @@ namespace RustMapEditor.UI
             normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, normaliseHigh);
             normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
             if (EditorGUI.EndChangeCheck() && autoUpdate == true)
-                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Dimensions.HeightMapDimensions());
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.normaliseMap))
-                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Dimensions.HeightMapDimensions());
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
         }
@@ -226,9 +226,9 @@ namespace RustMapEditor.UI
             height = Elements.ToolbarSlider(ToolTips.heightToSet, height, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setLandHeight))
-                MapManager.SetHeightmap(height, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                SetHeightMapHeight(height, dmns: Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setWaterHeight))
-                MapManager.SetHeightmap(height, Selections.Terrains.Water, Dimensions.HeightMapDimensions());
+                SetHeightMapHeight(height, TerrainType.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -265,9 +265,9 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.invertLand))
-                MapManager.InvertHeightmap(Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                InvertHeightMap(dmns: Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.invertWater))
-                MapManager.InvertHeightmap(Selections.Terrains.Water, Dimensions.HeightMapDimensions());
+                InvertHeightMap(TerrainType.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
         #endregion
