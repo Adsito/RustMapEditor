@@ -239,9 +239,9 @@ namespace RustMapEditor.UI
             Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
-                MapManager.ClampHeightmap(heightLow, 1000f, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                ClampHeightMap(heightLow, 1000f, TerrainType.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
-                MapManager.ClampHeightmap(0f, heightHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                ClampHeightMap(0f, heightHigh, TerrainType.Land, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -253,9 +253,9 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             clampOffset = Elements.ToolbarToggle(ToolTips.clampOffset, clampOffset);
             if (Elements.ToolbarButton(ToolTips.offsetLand))
-                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
+                OffsetHeightMap(offset, clampOffset, TerrainType.Land, Dimensions.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.offsetWater))
-                MapManager.OffsetHeightmap(offset, clampOffset, Selections.Terrains.Water, Dimensions.HeightMapDimensions());
+                OffsetHeightMap(offset, clampOffset, TerrainType.Water, Dimensions.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 

@@ -90,43 +90,6 @@ public static class MapManager
         }
     }
 
-    /// <summary>Increases or decreases the terrain by the offset.</summary>
-    /// <param name="offset">The amount to offset by. Negative values offset down.</param>
-    /// <param name="clampOffset">Check if offsetting the heightmap would exceed the min-max values.</param>
-    public static void OffsetHeightmap(float offset, bool clampOffset, Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        offset /= 1000f;
-        foreach (var item in GetEnumSelection(terrains))
-        {
-            switch (item)
-            {
-                case 0:
-                    Land.terrainData.SetHeights(0, 0, Offset(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), offset, clampOffset, dmns));
-                    break;
-                case 1:
-                    Water.terrainData.SetHeights(0, 0, Offset(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), offset, clampOffset, dmns));
-                    break;
-            }
-        }
-    }
-
-    /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
-    /// <param name="minimumHeight">The minimum height to set.</param>
-    /// <param name="maximumHeight">The maximum height to set.</param>
-    public static void ClampHeightmap(float minimumHeight, float maximumHeight, Selections.Terrains terrains, Dimensions dmns = null)
-    {
-        minimumHeight /= 1000f; maximumHeight /= 1000f;
-        switch (terrains)
-        {
-            case Selections.Terrains.Land:
-                Land.terrainData.SetHeights(0, 0, ClampValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), minimumHeight, maximumHeight, dmns));
-                break;
-            case Selections.Terrains.Water:
-                Water.terrainData.SetHeights(0, 0, ClampValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), minimumHeight, maximumHeight, dmns));
-                break;
-        }
-    }
-
     #region SplatMap Methods
     /// <summary>Rotates the selected layer.</summary>
     /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>

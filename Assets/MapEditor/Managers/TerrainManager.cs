@@ -367,17 +367,46 @@ public static class TerrainManager
     /// <summary> Normalises the HeightMap between two heights.</summary>
     /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
-    public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrains = TerrainType.Land, Dimensions dmns = null)
+    public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         normaliseLow /= 1000f; normaliseHigh /= 1000f;
-
-        if (terrains == TerrainType.Land)
+        if (terrain == TerrainType.Land)
         {
             Height = Array.Normalise(GetHeights(), normaliseLow, normaliseHigh, dmns);
             Land.terrainData.SetHeights(0, 0, Height);
         }
         else
-            Water.terrainData.SetHeights(0, 0, Array.Normalise(GetHeights(terrains), normaliseLow, normaliseHigh, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.Normalise(GetHeights(terrain), normaliseLow, normaliseHigh, dmns));
+    }
+
+    /// <summary>Increases or decreases the HeightMap by the offset.</summary>
+    /// <param name="offset">The amount to offset by. Negative values offset down.</param>
+    /// <param name="clampOffset">Check if offsetting the HeightMap would exceed the min-max values.</param>
+    public static void OffsetHeightMap(float offset, bool clampOffset, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    {
+        offset /= 1000f;
+        if (terrain == TerrainType.Land)
+        {
+            Height = Array.Offset(GetHeights(), offset, clampOffset, dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, Array.Offset(GetHeights(terrain), offset, clampOffset, dmns));
+    }
+
+    /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
+    /// <param name="minimumHeight">The minimum height to set.</param>
+    /// <param name="maximumHeight">The maximum height to set.</param>
+    public static void ClampHeightMap(float minimumHeight, float maximumHeight, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    {
+        minimumHeight /= 1000f; maximumHeight /= 1000f;
+        if (terrain == TerrainType.Land)
+        {
+            Height = Array.ClampValues(GetHeights(), minimumHeight, maximumHeight, dmns);
+            Land.terrainData.SetHeights(0, 0, Height);
+        }
+        else
+            Water.terrainData.SetHeights(0, 0, Array.ClampValues(GetHeights(terrain), minimumHeight, maximumHeight, dmns));
     }
 
     /// <summary>Terraces the HeightMap.</summary>
