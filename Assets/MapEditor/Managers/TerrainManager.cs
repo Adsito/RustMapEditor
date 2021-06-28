@@ -325,17 +325,23 @@ public static class TerrainManager
     /// <summary>Updates cached Height values with current.</summary>
     public static void UpdateHeights() => GetHeights();
 
+    /// <summary>Returns the HeightMap array of the selected terrain.</summary>
+    /// <param name="terrain">The HeightMap to return.</param>
+    public static float[,] GetHeightMap(TerrainType terrain = TerrainType.Land)
+    {
+        if (terrain == TerrainType.Land)
+            return Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes);
+        return Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes);
+    }
+
     /// <summary>Rotates the HeightMap 90° Clockwise or Counter Clockwise.</summary>
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateHeightMap(bool CW, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.Rotate(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.Rotate(GetHeightMap(), CW, dmns));
         else
-            Water.terrainData.SetHeights(0, 0, Array.Rotate(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), CW, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.Rotate(GetHeightMap(TerrainType.Water), CW, dmns));
     }
 
     /// <summary>Sets the HeightMap to the height input.</summary>
@@ -344,24 +350,18 @@ public static class TerrainManager
     {
         height /= 1000f; // Normalises user input to a value between 0 - 1f.
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.SetValues(Land.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.SetValues(GetHeightMap(), height, dmns));
         else
-            Water.terrainData.SetHeights(0, 0, Array.SetValues(Water.terrainData.GetHeights(0, 0, HeightMapRes, HeightMapRes), height, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.SetValues(GetHeightMap(TerrainType.Water), height, dmns));
     }
 
     /// <summary>Inverts the HeightMap heights.</summary>
     public static void InvertHeightMap(TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.Invert(GetHeights(), dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.Invert(GetHeightMap(), dmns));
         else
-            Water.terrainData.SetHeights(0, 0, GetHeights(terrain));
+            Water.terrainData.SetHeights(0, 0, GetHeightMap(TerrainType.Water));
     }
 
     /// <summary> Normalises the HeightMap between two heights.</summary>
@@ -369,14 +369,11 @@ public static class TerrainManager
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
     public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
-        normaliseLow /= 1000f; normaliseHigh /= 1000f;
+        normaliseLow /= 1000f; normaliseHigh /= 1000f; // Normalises user input to a value between 0 - 1f.
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.Normalise(GetHeights(), normaliseLow, normaliseHigh, dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.Normalise(GetHeightMap(), normaliseLow, normaliseHigh, dmns));
         else
-            Water.terrainData.SetHeights(0, 0, Array.Normalise(GetHeights(terrain), normaliseLow, normaliseHigh, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.Normalise(GetHeightMap(TerrainType.Water), normaliseLow, normaliseHigh, dmns));
     }
 
     /// <summary>Increases or decreases the HeightMap by the offset.</summary>
@@ -384,14 +381,11 @@ public static class TerrainManager
     /// <param name="clampOffset">Check if offsetting the HeightMap would exceed the min-max values.</param>
     public static void OffsetHeightMap(float offset, bool clampOffset, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
-        offset /= 1000f;
+        offset /= 1000f; // Normalises user input to a value between 0 - 1f.
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.Offset(GetHeights(), offset, clampOffset, dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.Offset(GetHeightMap(), offset, clampOffset, dmns));
         else
-            Water.terrainData.SetHeights(0, 0, Array.Offset(GetHeights(terrain), offset, clampOffset, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.Offset(GetHeightMap(TerrainType.Water), offset, clampOffset, dmns));
     }
 
     /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
@@ -399,14 +393,11 @@ public static class TerrainManager
     /// <param name="maximumHeight">The maximum height to set.</param>
     public static void ClampHeightMap(float minimumHeight, float maximumHeight, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
-        minimumHeight /= 1000f; maximumHeight /= 1000f;
+        minimumHeight /= 1000f; maximumHeight /= 1000f; // Normalises user input to a value between 0 - 1f.
         if (terrain == TerrainType.Land)
-        {
-            Height = Array.ClampValues(GetHeights(), minimumHeight, maximumHeight, dmns);
-            Land.terrainData.SetHeights(0, 0, Height);
-        }
+            Land.terrainData.SetHeights(0, 0, Array.ClampValues(GetHeightMap(), minimumHeight, maximumHeight, dmns));
         else
-            Water.terrainData.SetHeights(0, 0, Array.ClampValues(GetHeights(terrain), minimumHeight, maximumHeight, dmns));
+            Water.terrainData.SetHeights(0, 0, Array.ClampValues(GetHeightMap(TerrainType.Water), minimumHeight, maximumHeight, dmns));
     }
 
     /// <summary>Terraces the HeightMap.</summary>
