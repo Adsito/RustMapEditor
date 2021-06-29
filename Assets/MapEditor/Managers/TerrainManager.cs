@@ -12,6 +12,7 @@ public static class TerrainManager
     public static class Callbacks
     {
         public delegate void Layer(LandLayers layer, int? topology = null);
+        public delegate void HeightMap(TerrainType terrain);
 
         /// <summary>Called after the active layer is changed. </summary>
         public static event Layer LayerChanged;
@@ -19,10 +20,13 @@ public static class TerrainManager
         public static event Layer LayerSaved;
         /// <summary>Called when the active layer is dirtied/updated.</summary>
         public static event Layer LayerUpdated;
+        /// <summary>Called when the Land/Water heightmap is dirtied/updated.</summary>
+        public static event HeightMap HeightMapUpdated;
 
         public static void OnLayerChanged(LandLayers layer, int topology) => LayerChanged?.Invoke(layer, topology);
         public static void OnLayerSaved(LandLayers layer, int topology) => LayerSaved?.Invoke(layer, topology);
         public static void OnLayerUpdated(LandLayers layer, int topology) => LayerUpdated?.Invoke(layer, topology);
+        public static void OnHeightMapUpdated(TerrainType terrain) => HeightMapUpdated?.Invoke(terrain);
     }
 
     #region Splats
@@ -439,6 +443,8 @@ public static class TerrainManager
     {
         if (terrain.Equals(Land))
             ResetHeightCache();
+
+        Callbacks.OnHeightMapUpdated(terrain.Equals(Land) ? TerrainType.Land : TerrainType.Water);
     }
     #endregion
     #endregion
