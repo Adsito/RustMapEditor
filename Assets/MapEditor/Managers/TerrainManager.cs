@@ -235,6 +235,7 @@ public static class TerrainManager
     /// <value>Power of ^2, between 1024 - 4096.</value>
     public static int AlphaMapRes { get => HeightMapRes - 1; }
 
+    private static Texture FilterTexture;
     public static Vector2 HeightMapCentre { get => new Vector2(0.5f, 0.5f); }
     #endregion
 
@@ -413,7 +414,7 @@ public static class TerrainManager
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(1.0f, featureSize, interiorCornerWeight, 0.0f);
-        mat.SetTexture("_BrushTex", MapManager.terrainFilterTexture);
+        mat.SetTexture("_BrushTex", FilterTexture);
         mat.SetVector("_BrushParams", brushParams);
         TerrainPaintUtility.SetupTerrainToolMaterialProperties(paintContext, brushXform, mat);
         Graphics.Blit(paintContext.sourceRenderTexture, paintContext.destinationRenderTexture, mat, 0);
@@ -429,7 +430,7 @@ public static class TerrainManager
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
         Vector4 brushParams = new Vector4(filterStrength, 0.0f, 0.0f, 0.0f);
-        mat.SetTexture("_BrushTex", MapManager.terrainFilterTexture);
+        mat.SetTexture("_BrushTex", FilterTexture);
         mat.SetVector("_BrushParams", brushParams);
         Vector4 smoothWeights = new Vector4(Mathf.Clamp01(1.0f - Mathf.Abs(blurDirection)), Mathf.Clamp01(-blurDirection), Mathf.Clamp01(blurDirection), 0.0f);
         mat.SetVector("_SmoothWeights", smoothWeights);
@@ -673,6 +674,7 @@ public static class TerrainManager
     private static void ProjectLoaded()
     {
         EditorApplication.update -= ProjectLoaded;
+        FilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         SetTerrainReferences();
     }
     #endregion

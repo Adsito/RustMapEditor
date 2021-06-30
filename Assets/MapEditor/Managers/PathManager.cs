@@ -46,7 +46,7 @@ public static class PathManager
         GameObject newObject = GameObject.Instantiate(DefaultPath, averageLocation + PathParent.position, Quaternion.identity, PathParent);
         newObject.name = pathData.name;
 
-        List<GameObject> pathNodes = new List<GameObject>();
+        var pathNodes = new List<GameObject>();
         for (int j = 0; j < pathData.nodes.Length; j++)
         {
             GameObject newNode = GameObject.Instantiate(DefaultNode, newObject.transform);

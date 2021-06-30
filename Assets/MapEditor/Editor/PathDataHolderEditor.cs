@@ -29,18 +29,18 @@ public class PathDataHolderEditor : Editor
         GUILayout.Label("Path Tools", EditorStyles.boldLabel);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Add path node to start"))
-            script.addNodeToStart();
+            script.AddNodeToStart();
         if (GUILayout.Button("Add path node to end"))
-            script.addNodeToEnd();
+            script.AddNodeToEnd();
         GUILayout.EndHorizontal();
         GUILayout.Label("Node Resolution Factor");
         script.resolutionFactor = float.Parse(GUILayout.TextField(script.resolutionFactor + ""));
         script.resolutionFactor = GUILayout.HorizontalSlider(script.resolutionFactor, 0, 1);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Increase Nodes Resolution"))
-            script.increaseNodesRes();
+            script.IncreaseNodesRes();
         if (GUILayout.Button("Decrease Nodes Resolution"))
-            script.decreaseNodesRes();
+            script.DecreaseNodesRes();
         GUILayout.EndHorizontal();
     }
 }

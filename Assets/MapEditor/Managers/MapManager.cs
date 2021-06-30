@@ -19,7 +19,6 @@ public static class MapManager
 
         /// <summary>Called after a map has been loaded. Calls on both map loaded and map created.</summary>
         public static event MapManagerCallback MapLoaded;
-
         /// <summary>Called after map has been saved and written to disk.</summary>
         public static event MapManagerCallback MapSaved;
 
@@ -27,12 +26,9 @@ public static class MapManager
         public static void OnMapSaved(string mapName = "") => MapSaved?.Invoke(mapName);
     }
 
-    public static Texture terrainFilterTexture;
-
     [InitializeOnLoadMethod]
     static void Init()
     {
-        terrainFilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         EditorApplication.update += OnProjectLoad;
     }
 

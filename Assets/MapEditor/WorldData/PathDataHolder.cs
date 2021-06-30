@@ -8,13 +8,11 @@ public class PathDataHolder : MonoBehaviour {
     public float resolutionFactor = 0;
 
 
-    public void addNodeToStart()
+    public void AddNodeToStart()
     {
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
         if (transform.childCount <= 1)
-        {
-            GameObject newNode = Instantiate(pathNodeObj, transform);
-        }
+            Instantiate(pathNodeObj, transform);
         else
         {
             Transform firstNode = transform.GetChild(0);
@@ -27,13 +25,11 @@ public class PathDataHolder : MonoBehaviour {
         }
     }
 
-    public void addNodeToEnd()
+    public void AddNodeToEnd()
     {
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
         if (transform.childCount <= 1)
-        {
-            GameObject newNode = Instantiate(pathNodeObj, transform);
-        }
+            Instantiate(pathNodeObj, transform);
         else
         {
             Transform lastNode = transform.GetChild(transform.childCount-1);
@@ -45,7 +41,7 @@ public class PathDataHolder : MonoBehaviour {
         }
     }
 
-    public void increaseNodesRes()
+    public void IncreaseNodesRes()
     {
         GameObject pathNodeObj = Resources.Load<GameObject>("Paths/PathNode");
         int amount = (int)(resolutionFactor * transform.childCount);
@@ -58,9 +54,7 @@ public class PathDataHolder : MonoBehaviour {
         for (int i = 0; i < transform.childCount; i += step)
         {
             if (i + 1 >= transform.childCount)
-            {
                 continue;
-            }
 
             Transform current = transform.GetChild(i);
             Transform next = transform.GetChild(i+1);
@@ -78,21 +72,17 @@ public class PathDataHolder : MonoBehaviour {
         }
     }
 
-    public void decreaseNodesRes()
+    public void DecreaseNodesRes()
     {
         int amount = (int)(resolutionFactor * transform.childCount);
         if (amount == 0)
             return;
         int step = transform.childCount / amount;
-        List<Transform> nodes = new List<Transform>();
+        var nodes = new List<Transform>();
         for (int i = 0; i < transform.childCount; i += step)
-        {
             nodes.Add(transform.GetChild(i));
-        }
         for (int i = 0; i < nodes.Count; i ++)
-        {
             DestroyImmediate(nodes[i].gameObject);
-        }
     }
 
     private void OnDrawGizmosSelected()
