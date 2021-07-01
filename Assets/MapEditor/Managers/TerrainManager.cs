@@ -53,8 +53,8 @@ public static class TerrainManager
     #endregion
 
     #region Methods
-    /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
-    /// <param name="landLayer">The LayerType to return. (Ground, Biome)</param>
+    /// <summary>Returns the SplatMap at the selected LayerType.</summary>
+    /// <param name="layer">The LayerType to return. (Ground, Biome)</param>
     /// <returns>3D float array in Alphamap format. [x, y, Texture]</returns>
     public static float[,,] GetSplatMap(LayerType layer, int topology = 0)
     {
@@ -627,16 +627,16 @@ public static class TerrainManager
     #region Fields
     /// <summary>The LayerType currently being displayed on the terrain.</summary>
     public static LayerType CurrentLayerType { get; private set; }
-    /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
+    /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LayerType is set to topology.</summary>
     public static TerrainTopology.Enum TopologyLayerEnum { get; private set; }
-    /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
+    /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LayerType is set to topology.</summary>
     public static int TopologyLayer { get => TerrainTopology.TypeToIndex((int)TopologyLayerEnum); }
     /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
     public static int LastTopologyLayer { get; private set; } = 0;
     /// <summary>The state of the current layer data.</summary>
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
-    /// <summary>The amount of TerrainLayers used on the current LandLayer.</summary>
+    /// <summary>The amount of TerrainLayers used on the current LayerType.</summary>
     public static int Layers => LayerCount(CurrentLayerType);
 
     public enum LayerType

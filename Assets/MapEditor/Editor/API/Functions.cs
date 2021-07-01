@@ -414,11 +414,11 @@ namespace RustMapEditor.UI
         #endregion
 
         #region LayerTools
-        public static void TextureSelect(LayerType landLayer, ref Layers layers)
+        public static void TextureSelect(LayerType layer, ref Layers layers)
         {
             Elements.MiniBoldLabel(ToolTips.textureSelectLabel);
 
-            switch (landLayer)
+            switch (layer)
             {
                 case LayerType.Ground:
                     Elements.BeginToolbarHorizontal();
