@@ -46,7 +46,7 @@ public static class MapManager
     public static List<int> GetEnumSelection<T>(T enumGroup)
     {
         var selectedEnums = new List<int>();
-        for (int i = 0; i < System.Enum.GetValues(typeof(T)).Length; i++)
+        for (int i = 0; i < Enum.GetValues(typeof(T)).Length; i++)
         {
             int layer = 1 << i;
             if ((Convert.ToInt32(enumGroup) & layer) != 0)
@@ -64,7 +64,7 @@ public static class MapManager
                 case 0:
                 case 1:
                 case 2:
-                    RotateLayer((LandLayers) item, CW);
+                    RotateLayer((LayerType) item, CW);
                     break;
                 case 3:
                     RotateTopologyLayers((TerrainTopology.Enum)TerrainTopology.EVERYTHING, CW);
@@ -87,19 +87,19 @@ public static class MapManager
 
     #region SplatMap Methods
     /// <summary>Rotates the selected layer.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to rotate. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to rotate. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="CW">True = 90°, False = 270°</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void RotateLayer(LandLayers landLayerToPaint, bool CW, int topology = 0)
+    public static void RotateLayer(LayerType landLayerToPaint, bool CW, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 SetSplatMap(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 SetAlphaMap(Rotate(GetAlphaMap(), CW));
                 break;
         }
@@ -116,17 +116,17 @@ public static class MapManager
         for (int i = 0; i < topologyElements.Count; i++)
         {
             Progress.Report(progressId, (float)i / topologyElements.Count, "Rotating: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
-            RotateLayer(LandLayers.Topology, CW, i);
+            RotateLayer(LayerType.Topology, CW, i);
         }
         Progress.Finish(progressId);
     }
 
     /// <summary>Paints if all the conditions passed in are true.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="texture">The texture to paint.</param>
     /// <param name="conditions">The conditions to check.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintConditional(LandLayers landLayerToPaint, int texture, Conditions conditions, int topology = 0)
+    public static void PaintConditional(LayerType landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
         int splatRes = SplatMapRes;
         bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
@@ -134,12 +134,12 @@ public static class MapManager
         int progressId = Progress.Start("Conditional Paint");
         for (int i = 0; i < TerrainSplat.COUNT; i++)
             if (conditions.GroundConditions.CheckLayer[i])
-                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Ground), conditionsMet, i, conditions.GroundConditions.Weight[i]);
+                conditionsMet = CheckConditions(GetSplatMap(LayerType.Ground), conditionsMet, i, conditions.GroundConditions.Weight[i]);
 
         Progress.Report(progressId, 0.2f, "Checking Biome");
         for (int i = 0; i < TerrainBiome.COUNT; i++)
             if (conditions.BiomeConditions.CheckLayer[i])
-                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Biome), conditionsMet, i, conditions.BiomeConditions.Weight[i]);
+                conditionsMet = CheckConditions(GetSplatMap(LayerType.Biome), conditionsMet, i, conditions.BiomeConditions.Weight[i]);
 
         Progress.Report(progressId, 0.3f, "Checking Alpha");
         if (conditions.AlphaConditions.CheckAlpha)
@@ -148,7 +148,7 @@ public static class MapManager
         Progress.Report(progressId, 0.5f, "Checking Topology");
         for (int i = 0; i < TerrainTopology.COUNT; i++)
             if (conditions.TopologyConditions.CheckLayer[i])
-                conditionsMet = CheckConditions(GetSplatMap(LandLayers.Topology, i), conditionsMet, (int)conditions.TopologyConditions.Texture[i], 0.5f);
+                conditionsMet = CheckConditions(GetSplatMap(LayerType.Topology, i), conditionsMet, (int)conditions.TopologyConditions.Texture[i], 0.5f);
 
         Progress.Report(progressId, 0.7f, "Checking Heights");
         if (conditions.TerrainConditions.CheckHeights)
@@ -161,9 +161,9 @@ public static class MapManager
         Progress.Report(progressId, 0.8f, "Painting");
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 float[,,] splatMapToPaint = GetSplatMap(landLayerToPaint, topology);
                 int textureCount = LayerCount(landLayerToPaint);
                 Parallel.For(0, splatRes, i =>
@@ -178,7 +178,7 @@ public static class MapManager
                 });
                 SetSplatMap(splatMapToPaint, landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 bool[,] alphaMapToPaint = GetAlphaMap();
                 Parallel.For(0, splatRes, i =>
                 {
@@ -192,21 +192,21 @@ public static class MapManager
     }
 
     /// <summary>Paints the layer wherever the height conditions are met.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintHeight(LandLayers landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
+    public static void PaintHeight(LayerType landLayerToPaint, float heightLow, float heightHigh, int t, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 bool value = (t == 0) ? true : false;
                 SetAlphaMap(SetRange(GetAlphaMap(), GetHeights(), value, heightLow, heightHigh));
                 break;
@@ -214,37 +214,37 @@ public static class MapManager
     }
 
     /// <summary>Paints the layer wherever the height conditions are met with a weighting determined by the range the height falls in.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="heightLow">The minimum height to paint at 100% weight.</param>
     /// <param name="heightHigh">The maximum height to paint at 100% weight.</param>
     /// <param name="minBlendLow">The minimum height to start to paint. The texture weight will increase as it gets closer to the heightlow.</param>
     /// <param name="maxBlendHigh">The maximum height to start to paint. The texture weight will increase as it gets closer to the heighthigh.</param>
     /// <param name="t">The texture to paint.</param>
-    public static void PaintHeightBlend(LandLayers landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t)
+    public static void PaintHeightBlend(LayerType landLayerToPaint, float heightLow, float heightHigh, float minBlendLow, float maxBlendHigh, int t)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
+            case LayerType.Ground:
+            case LayerType.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetHeights(), t, heightLow, heightHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
                 break;
         }
     }
 
     /// <summary>Sets whole layer to the active texture.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintLayer(LandLayers landLayerToPaint, int t, int topology = 0)
+    public static void PaintLayer(LayerType landLayerToPaint, int t, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 SetAlphaMap(SetValues(GetAlphaMap(), true));
                 break;
         }
@@ -260,22 +260,22 @@ public static class MapManager
         for (int i = 0; i < topologyElements.Count; i++)
         {
             Progress.Report(progressId, (float)i / topologyElements.Count, "Painting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
-            PaintLayer(LandLayers.Topology, 0, i);
+            PaintLayer(LayerType.Topology, 0, i);
         }
         Progress.Finish(progressId);
     }
 
     /// <summary>Sets whole layer to the inactive texture. Alpha and Topology only.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to clear. (Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to clear. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void ClearLayer(LandLayers landLayerToPaint, int topology = 0)
+    public static void ClearLayer(LayerType landLayerToPaint, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Topology:
+            case LayerType.Topology:
                 SetSplatMap(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 SetAlphaMap(SetValues(GetAlphaMap(), false));
                 break;
         }
@@ -291,22 +291,22 @@ public static class MapManager
         for (int i = 0; i < topologyElements.Count; i++)
         {
             Progress.Report(progressId, (float)i / topologyElements.Count, "Clearing: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
-            ClearLayer(LandLayers.Topology, i);
+            ClearLayer(LayerType.Topology, i);
         }
         Progress.Finish(progressId);
     }
 
     /// <summary>Inverts the active and inactive textures. Alpha and Topology only.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to invert. (Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to invert. (Alpha, Topology)</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void InvertLayer(LandLayers landLayerToPaint, int topology = 0)
+    public static void InvertLayer(LayerType landLayerToPaint, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Topology:
+            case LayerType.Topology:
                 SetSplatMap(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 SetAlphaMap(Invert(GetAlphaMap()));
                 break;
         }
@@ -322,27 +322,27 @@ public static class MapManager
         for (int i = 0; i < topologyElements.Count; i++)
         {
             Progress.Report(progressId, (float)i / topologyElements.Count, "Inverting: " + ((TerrainTopology.Enum)TerrainTopology.IndexToType(i)).ToString());
-            InvertLayer(LandLayers.Topology, i);
+            InvertLayer(LayerType.Topology, i);
         }
         Progress.Finish(progressId);
     }
 
     /// <summary>Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
     /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintSlope(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public static void PaintSlope(LayerType landLayerToPaint, float slopeLow, float slopeHigh, int t, int topology = 0) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 SetSplatMap(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 bool value = (t == 0) ? true : false;
                 SetAlphaMap(SetRange(GetAlphaMap(), GetSlopes(), value, slopeLow, slopeHigh));
                 break;
@@ -350,39 +350,39 @@ public static class MapManager
     }
 
     /// <summary> Paints the layer wherever the slope conditions are met. Includes option to blend.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="slopeLow">The minimum slope to paint at 100% weight.</param>
     /// <param name="slopeHigh">The maximum slope to paint at 100% weight.</param>
     /// <param name="minBlendLow">The minimum slope to start to paint. The texture weight will increase as it gets closer to the slopeLow.</param>
     /// <param name="maxBlendHigh">The maximum slope to start to paint. The texture weight will increase as it gets closer to the slopeHigh.</param>
     /// <param name="t">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintSlopeBlend(LandLayers landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
+    public static void PaintSlopeBlend(LayerType landLayerToPaint, float slopeLow, float slopeHigh, float minBlendLow, float maxBlendHigh, int t) // Paints slope based on the current slope input, the slope range is between 0 - 90
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
+            case LayerType.Ground:
+            case LayerType.Biome:
                 SetSplatMap(SetRangeBlend(GetSplatMap(landLayerToPaint), GetSlopes(), t, slopeLow, slopeHigh, minBlendLow, maxBlendHigh), landLayerToPaint);
                 break;
         }
     }
 
     /// <summary>Paints the splats wherever the water is above 500 and is above the terrain.</summary>
-    /// <param name="landLayerToPaint">The LandLayer to paint. (Ground, Biome, Alpha, Topology)</param>
+    /// <param name="landLayerToPaint">The LayerType to paint. (Ground, Biome, Alpha, Topology)</param>
     /// <param name="aboveTerrain">Check if the watermap is above the terrain before painting.</param>
     /// <param name="tex">The texture to paint.</param>
     /// <param name="topology">The Topology layer, if selected.</param>
-    public static void PaintRiver(LandLayers landLayerToPaint, bool aboveTerrain, int tex, int topology = 0)
+    public static void PaintRiver(LayerType landLayerToPaint, bool aboveTerrain, int tex, int topology = 0)
     {
         switch (landLayerToPaint)
         {
-            case LandLayers.Ground:
-            case LandLayers.Biome:
-            case LandLayers.Topology:
+            case LayerType.Ground:
+            case LayerType.Biome:
+            case LayerType.Topology:
                 SetSplatMap(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetHeights(TerrainManager.TerrainType.Water), aboveTerrain, tex), landLayerToPaint, topology);
                 break;
-            case LandLayers.Alpha:
+            case LayerType.Alpha:
                 SetAlphaMap(SetRiver(GetAlphaMap(), GetHeights(), GetHeights(TerrainManager.TerrainType.Water), aboveTerrain, tex == 0));
                 break;
             

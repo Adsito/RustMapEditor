@@ -2,16 +2,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.TerrainAPI;
+using System.Threading.Tasks;
 using RustMapEditor.Variables;
 using RustMapEditor.Maths;
 using static WorldConverter;
-using System.Threading.Tasks;
 
 public static class TerrainManager
 {
     public static class Callbacks
     {
-        public delegate void Layer(LandLayers layer, int? topology = null);
+        public delegate void Layer(LayerType layer, int? topology = null);
         public delegate void HeightMap(TerrainType terrain);
 
         /// <summary>Called after the active layer is changed. </summary>
@@ -23,9 +23,9 @@ public static class TerrainManager
         /// <summary>Called when the Land/Water heightmap is dirtied/updated.</summary>
         public static event HeightMap HeightMapUpdated;
 
-        public static void OnLayerChanged(LandLayers layer, int topology) => LayerChanged?.Invoke(layer, topology);
-        public static void OnLayerSaved(LandLayers layer, int topology) => LayerSaved?.Invoke(layer, topology);
-        public static void OnLayerUpdated(LandLayers layer, int topology) => LayerUpdated?.Invoke(layer, topology);
+        public static void OnLayerChanged(LayerType layer, int topology) => LayerChanged?.Invoke(layer, topology);
+        public static void OnLayerSaved(LayerType layer, int topology) => LayerSaved?.Invoke(layer, topology);
+        public static void OnLayerUpdated(LayerType layer, int topology) => LayerUpdated?.Invoke(layer, topology);
         public static void OnHeightMapUpdated(TerrainType terrain) => HeightMapUpdated?.Invoke(terrain);
     }
 
@@ -54,28 +54,28 @@ public static class TerrainManager
 
     #region Methods
     /// <summary>Returns the SplatMap at the selected LandLayer.</summary>
-    /// <param name="landLayer">The LandLayer to return. (Ground, Biome)</param>
+    /// <param name="landLayer">The LayerType to return. (Ground, Biome)</param>
     /// <returns>3D float array in Alphamap format. [x, y, Texture]</returns>
-    public static float[,,] GetSplatMap(LandLayers layer, int topology = 0)
+    public static float[,,] GetSplatMap(LayerType layer, int topology = 0)
     {
         switch (layer)
         {
-            case LandLayers.Ground:
-                if (LandLayer.Equals(layer) && LayerDirty)
+            case LayerType.Ground:
+                if (CurrentLayerType == layer && LayerDirty)
                 {
                     Ground = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     LayerDirty = false;
                 }
                 return Ground;
-            case LandLayers.Biome:
-                if (LandLayer.Equals(layer) && LayerDirty)
+            case LayerType.Biome:
+                if (CurrentLayerType == layer && LayerDirty)
                 {
                     Biome = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     LayerDirty = false;
                 }
                 return Biome;
-            case LandLayers.Topology:
-                if (LandLayer.Equals(layer) && TopologyLayer == topology && LayerDirty)
+            case LayerType.Topology:
+                if (CurrentLayerType == layer && TopologyLayer == topology && LayerDirty)
                 {
                     Topology[topology] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
                     LayerDirty = false;
@@ -97,10 +97,10 @@ public static class TerrainManager
         return Alpha;
     }
 
-    /// <summary>Sets SplatMap of the selected LandLayer.</summary>
+    /// <summary>Sets SplatMap of the selected LayerType.</summary>
     /// <param name="layer">The layer to set the data to.</param>
     /// <param name="topology">The topology layer if layer is topology.</param>
-    public static void SetSplatMap(float[,,] array, LandLayers layer, int topology = 0)
+    public static void SetSplatMap(float[,,] array, LayerType layer, int topology = 0)
     {
         if (array == null)
         {
@@ -108,7 +108,7 @@ public static class TerrainManager
             return;
         }
 
-        if (layer.Equals(LandLayers.Alpha))
+        if (layer == LayerType.Alpha)
         {
             Debug.LogWarning($"SetSplatMap(float[,,], {layer}) is not a valid layer to set. Use SetAlphaMap(bool[,]) to set {layer}.");
             return;
@@ -124,18 +124,18 @@ public static class TerrainManager
 
         switch (layer)
         {
-            case LandLayers.Ground:
+            case LayerType.Ground:
                 Ground = array;
                 break;
-            case LandLayers.Biome:
+            case LayerType.Biome:
                 Biome = array;
                 break;
-            case LandLayers.Topology:
+            case LayerType.Topology:
                 Topology[topology] = array;
                 break;
         }
 
-        if (LandLayer.Equals(layer))
+        if (CurrentLayerType == layer)
         {
             if (!GetTerrainLayers().Equals(Land.terrainData.terrainLayers))
                 Land.terrainData.terrainLayers = GetTerrainLayers();
@@ -191,13 +191,13 @@ public static class TerrainManager
     {
         SplatMapRes = mapInfo.splatRes;
 
-        SetSplatMap(mapInfo.splatMap, LandLayers.Ground);
-        SetSplatMap(mapInfo.biomeMap, LandLayers.Biome);
+        SetSplatMap(mapInfo.splatMap, LayerType.Ground);
+        SetSplatMap(mapInfo.biomeMap, LayerType.Biome);
         SetAlphaMap(mapInfo.alphaMap);
 
         TopologyData.Set(mapInfo.topology);
         for (int i = 0; i < TerrainTopology.COUNT; i++)
-            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
+            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LayerType.Topology, i);
     }
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
@@ -208,11 +208,11 @@ public static class TerrainManager
             {
                 case "holes":
                     AlphaDirty = true;
-                    Callbacks.OnLayerUpdated(LandLayers.Alpha, TopologyLayer);
+                    Callbacks.OnLayerUpdated(LayerType.Alpha, TopologyLayer);
                     break;
                 case "alphamap":
                     LayerDirty = true;
-                    Callbacks.OnLayerUpdated(LandLayer, TopologyLayer);
+                    Callbacks.OnLayerUpdated(CurrentLayerType, TopologyLayer);
                     break;
             }
         }
@@ -236,7 +236,7 @@ public static class TerrainManager
     public static int AlphaMapRes { get => HeightMapRes - 1; }
 
     private static Texture FilterTexture;
-    public static Vector2 HeightMapCentre { get => new Vector2(0.5f, 0.5f); }
+    private static Vector2 HeightMapCentre { get => new Vector2(0.5f, 0.5f); }
     #endregion
 
     #region Methods
@@ -466,11 +466,11 @@ public static class TerrainManager
 
     #region Terrains
     #region Fields
-    /// <summary>The land terrain in the scene.</summary>
+    /// <summary>The Land terrain in the scene.</summary>
     public static Terrain Land { get; private set; }
-    /// <summary>The water terrain in the scene.</summary>
+    /// <summary>The Water terrain in the scene.</summary>
     public static Terrain Water { get; private set; }
-    /// <summary>The material used by the water terrain object.</summary>
+    /// <summary>The material used by the Water terrain object.</summary>
     public static Material WaterMaterial { get; private set; }
     /// <summary>The size of the Land and Water terrains in the scene.</summary>
     public static Vector3 TerrainSize { get => Land.terrainData.size; }
@@ -480,6 +480,7 @@ public static class TerrainManager
     /// <value>True = Terrain is loading / False = Terrain is loaded.</value>
     public static bool IsLoading { get; private set; } = true;
 
+    /// <summary>Enum of the 2 different terrains in scene. (Land, Water). Required to reference the terrain objects across the Editor.</summary>
     public enum TerrainType
     {
         Land,
@@ -557,10 +558,10 @@ public static class TerrainManager
         if (GroundLayers == null || BiomeLayers == null || TopologyLayers == null)
             SetTerrainLayers();
 
-        return LandLayer switch
+        return CurrentLayerType switch
         {
-            LandLayers.Ground => GroundLayers,
-            LandLayers.Biome => BiomeLayers,
+            LayerType.Ground => GroundLayers,
+            LayerType.Biome => BiomeLayers,
             _ => TopologyLayers
         };
     }
@@ -624,8 +625,8 @@ public static class TerrainManager
 
     #region Layers
     #region Fields
-    /// <summary>The LandLayer currently being displayed on the terrain.</summary>
-    public static LandLayers LandLayer { get; private set; }
+    /// <summary>The LayerType currently being displayed on the terrain.</summary>
+    public static LayerType CurrentLayerType { get; private set; }
     /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
     public static TerrainTopology.Enum TopologyLayerEnum { get; private set; }
     /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LandLayer is set to topology.</summary>
@@ -636,40 +637,48 @@ public static class TerrainManager
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
     /// <summary>The amount of TerrainLayers used on the current LandLayer.</summary>
-    public static int Layers => LayerCount(LandLayer);
+    public static int Layers => LayerCount(CurrentLayerType);
+
+    public enum LayerType
+    {
+        Ground,
+        Biome,
+        Alpha,
+        Topology
+    }
     #endregion
 
     #region Methods
     /// <summary>Saves any changes made to the Alphamaps, including paint operations.</summary>
     public static void SaveLayer()
     {
-        SetSplatMap(GetSplatMap(LandLayer, TopologyLayer), LandLayer, TopologyLayer);
-        Callbacks.OnLayerSaved(LandLayer, TopologyLayer);
+        SetSplatMap(GetSplatMap(CurrentLayerType, TopologyLayer), CurrentLayerType, TopologyLayer);
+        Callbacks.OnLayerSaved(CurrentLayerType, TopologyLayer);
     }
 
     /// <summary>Changes the active Land and Topology Layers.</summary>
-    /// <param name="layer">The LandLayer to change to.</param>
+    /// <param name="layer">The LayerType to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
-    public static void ChangeLayer(LandLayers layer, int topology = 0)
+    public static void ChangeLayer(LayerType layer, int topology = 0)
     {
-        if (layer.Equals(LandLayers.Alpha))
+        if (layer == LayerType.Alpha)
             return;
 
         SaveLayer();
-        LandLayer = layer;
+        CurrentLayerType = layer;
         SetSplatMap(GetSplatMap(layer, topology), layer, topology);
         
         Callbacks.OnLayerChanged(layer, topology);
     }
 
     /// <summary>Layer count in layer chosen, used for determining the size of the splatmap array.</summary>
-    /// <param name="layer">The LandLayer to return the texture count from. (Ground, Biome or Topology)</param>
-    public static int LayerCount(LandLayers layer)
+    /// <param name="layer">The LayerType to return the texture count from. (Ground, Biome or Topology)</param>
+    public static int LayerCount(LayerType layer)
     {
         return layer switch
         {
-            LandLayers.Ground => 8,
-            LandLayers.Biome => 4,
+            LayerType.Ground => 8,
+            LayerType.Biome => 4,
             _ => 2
         };
     }
@@ -692,10 +701,18 @@ public static class TerrainManager
         SetTerrainReferences();
     }
 
-    /// <summary>Registers changes made to the terrain object after the function is called.</summary>
-    /// <param name="terrain">Terrain object to record.</param>
+    /// <summary>Registers changes made to the HeightMap after the function is called.</summary>
+    /// <param name="terrain">HeightMap to record.</param>
     /// <param name="name">Name of the Undo object on the stack.</param>
     public static void RegisterHeightMapUndo(TerrainType terrain, string name)
+    {
+        Undo.RegisterCompleteObjectUndo(terrain == TerrainType.Land ? Land.terrainData.heightmapTexture : Water.terrainData.heightmapTexture, name);
+    }
+
+    /// <summary>Registers changes made to the SplatMap after the function is called.</summary>
+    /// <param name="terrain">SplatMap to record.</param>
+    /// <param name="name">Name of the Undo object on the stack.</param>
+    public static void RegisterSplatMapUndo(TerrainType terrain, string name)
     {
         Undo.RegisterCompleteObjectUndo(terrain == TerrainType.Land ? Land.terrainData.heightmapTexture : Water.terrainData.heightmapTexture, name);
     }

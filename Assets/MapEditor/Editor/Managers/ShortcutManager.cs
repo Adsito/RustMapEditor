@@ -25,10 +25,10 @@ public static class ShortcutManager
     public static void ClearMapPaths() => PathManager.DeletePaths(PathManager.CurrentMapPaths);
 
     [Shortcut("RustMapEditor/Clear Layer")]
-    public static void ClearLayer() => MapManager.ClearLayer(TerrainManager.LandLayer, TerrainManager.TopologyLayer);
+    public static void ClearLayer() => MapManager.ClearLayer(TerrainManager.CurrentLayerType, TerrainManager.TopologyLayer);
 
     [Shortcut("RustMapEditor/Invert Layer")]
-    public static void InvertLayer() => MapManager.InvertLayer(TerrainManager.LandLayer, TerrainManager.TopologyLayer);
+    public static void InvertLayer() => MapManager.InvertLayer(TerrainManager.CurrentLayerType, TerrainManager.TopologyLayer);
 
     [Shortcut("RustMapEditor/Invert Land")]
     public static void InvertLand() => TerrainManager.InvertHeightMap(TerrainManager.TerrainType.Land);

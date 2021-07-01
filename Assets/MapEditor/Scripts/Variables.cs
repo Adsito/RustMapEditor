@@ -69,10 +69,7 @@
     }
     public struct TopologyLayers
     {
-        public float[,,] Topologies
-        {
-            get; set;
-        }
+        public float[,,] Topologies { get; set; }
     }
     public class Dimensions
     {
@@ -93,13 +90,6 @@
         {
             return new Dimensions(0, TerrainManager.HeightMapRes, 0, TerrainManager.HeightMapRes);
         }
-    }
-    public enum LandLayers
-    {
-        Ground = 0,
-        Biome = 1,
-        Alpha = 2,
-        Topology = 3,
     }
     public enum AlphaTextures
     {
@@ -140,11 +130,6 @@
             Prefabs = 1 << 6,
             Paths = 1 << 7,
         }
-        public enum Terrains
-        {
-            Land = 1 << 0,
-            Water = 1 << 1,
-        }
     }
 
     public class Layers
@@ -152,7 +137,7 @@
         public TerrainSplat.Enum Ground;
         public TerrainBiome.Enum Biome;
         public TerrainTopology.Enum Topologies;
-        public LandLayers LandLayer;
+        public TerrainManager.LayerType Layer;
         public AlphaTextures AlphaTexture;
         public TopologyTextures TopologyTexture;
     }

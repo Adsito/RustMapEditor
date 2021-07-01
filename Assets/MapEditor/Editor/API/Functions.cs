@@ -343,33 +343,33 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             Elements.ToolbarLabel(ToolTips.layerSelect);
-            layers.LandLayer = (LandLayers)Elements.ToolbarEnumPopup(layers.LandLayer);
+            layers.Layer = (LayerType)Elements.ToolbarEnumPopup(layers.Layer);
             Elements.EndToolbarHorizontal();
 
-            switch (layers.LandLayer)
+            switch (layers.Layer)
             {
-                case LandLayers.Ground:
+                case LayerType.Ground:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.textureSelect);
                     layers.Ground = (TerrainSplat.Enum)Elements.ToolbarEnumPopup(layers.Ground);
                     texture = TerrainSplat.TypeToIndex((int)layers.Ground);
                     Elements.EndToolbarHorizontal();
                     break;
-                case LandLayers.Biome:
+                case LayerType.Biome:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.textureSelect);
                     layers.Biome = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(layers.Biome);
                     texture = TerrainBiome.TypeToIndex((int)layers.Biome);
                     Elements.EndToolbarHorizontal();
                     break;
-                case LandLayers.Alpha:
+                case LayerType.Alpha:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.textureSelect);
                     layers.AlphaTexture = (AlphaTextures)Elements.ToolbarEnumPopup(layers.AlphaTexture);
                     texture = (int)layers.AlphaTexture;
                     Elements.EndToolbarHorizontal();
                     break;
-                case LandLayers.Topology:
+                case LayerType.Topology:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.topologyLayerSelect);
                     layers.Topologies = (TerrainTopology.Enum)Elements.ToolbarEnumPopup(layers.Topologies);
@@ -385,7 +385,7 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.paintConditional))
-                MapManager.PaintConditional(layers.LandLayer, texture, cnds, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                MapManager.PaintConditional(layers.Layer, texture, cnds, TerrainTopology.TypeToIndex((int)layers.Topologies));
             Elements.EndToolbarHorizontal();
         }
 
@@ -414,19 +414,19 @@ namespace RustMapEditor.UI
         #endregion
 
         #region LayerTools
-        public static void TextureSelect(LandLayers landLayer, ref Layers layers)
+        public static void TextureSelect(LayerType landLayer, ref Layers layers)
         {
             Elements.MiniBoldLabel(ToolTips.textureSelectLabel);
 
             switch (landLayer)
             {
-                case LandLayers.Ground:
+                case LayerType.Ground:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.textureSelect);
                     layers.Ground = (TerrainSplat.Enum)Elements.ToolbarEnumPopup(layers.Ground);
                     Elements.EndToolbarHorizontal();
                     break;
-                case LandLayers.Biome:
+                case LayerType.Biome:
                     Elements.BeginToolbarHorizontal();
                     Elements.ToolbarLabel(ToolTips.textureSelect);
                     layers.Biome = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(layers.Biome);
@@ -446,10 +446,10 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
 
             if (EditorGUI.EndChangeCheck())
-                ChangeLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                ChangeLayer(LayerType.Topology, TerrainTopology.TypeToIndex((int)layers.Topologies));
         }
 
-        public static void SlopeTools(LandLayers landLayer, int texture, ref SlopesInfo slopeInfo, int erase = 0, int topology = 0)
+        public static void SlopeTools(LayerType landLayer, int texture, ref SlopesInfo slopeInfo, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.slopeToolsLabel);
             slopeInfo = ClampValues(slopeInfo);
@@ -488,7 +488,7 @@ namespace RustMapEditor.UI
             }
         }
 
-        public static void HeightTools(LandLayers landLayer, int texture, ref HeightsInfo heightInfo, int erase = 0, int topology = 0)
+        public static void HeightTools(LayerType landLayer, int texture, ref HeightsInfo heightInfo, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.heightToolsLabel);
             heightInfo = ClampValues(heightInfo);
@@ -557,7 +557,7 @@ namespace RustMapEditor.UI
                 AreaManager.Reset();
         }
 
-        public static void RiverTools(LandLayers landLayer, int texture, ref bool aboveTerrain, int erase = 0, int topology = 0)
+        public static void RiverTools(LayerType landLayer, int texture, ref bool aboveTerrain, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.riverToolsLabel);
 
@@ -581,7 +581,7 @@ namespace RustMapEditor.UI
             }
         }
 
-        public static void RotateTools(LandLayers landLayer, int topology = 0)
+        public static void RotateTools(LayerType landLayer, int topology = 0)
         {
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.rotate90))
@@ -591,7 +591,7 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void LayerTools(LandLayers landLayer, int texture, int erase = 0, int topology = 0)
+        public static void LayerTools(LayerType landLayer, int texture, int erase = 0, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.layerToolsLabel);
 

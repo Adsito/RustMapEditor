@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LayersWindow : EditorWindow
 {
-    int layerIndex = (int)TerrainManager.LandLayer;
+    int layerIndex = (int)TerrainManager.CurrentLayerType;
     bool aboveTerrain = false;
     Vector2 scrollPos = new Vector2(0, 0);
     Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field };
@@ -34,45 +34,45 @@ public class LayersWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
         layerIndex = GUILayout.Toolbar(layerIndex, layersOptionsMenu, EditorStyles.toolbarButton);
         if (EditorGUI.EndChangeCheck())
-            TerrainManager.ChangeLayer((LandLayers)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
+            TerrainManager.ChangeLayer((TerrainManager.LayerType)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
 
-        switch ((LandLayers)layerIndex)
+        switch ((TerrainManager.LayerType)layerIndex)
         {
-            case LandLayers.Ground:
-                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
+            case TerrainManager.LayerType.Ground:
+                Functions.TextureSelect(TerrainManager.CurrentLayerType, ref layers);
                 Functions.AreaSelect();
-                Functions.LayerTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground));
-                Functions.RotateTools(TerrainManager.LandLayer);
-                Functions.RiverTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground), ref aboveTerrain);
-                Functions.SlopeTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground), ref slopesInfo);
-                Functions.HeightTools(TerrainManager.LandLayer, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
+                Functions.LayerTools(TerrainManager.CurrentLayerType, TerrainSplat.TypeToIndex((int)layers.Ground));
+                Functions.RotateTools(TerrainManager.CurrentLayerType);
+                Functions.RiverTools(TerrainManager.CurrentLayerType, TerrainSplat.TypeToIndex((int)layers.Ground), ref aboveTerrain);
+                Functions.SlopeTools(TerrainManager.CurrentLayerType, TerrainSplat.TypeToIndex((int)layers.Ground), ref slopesInfo);
+                Functions.HeightTools(TerrainManager.CurrentLayerType, TerrainSplat.TypeToIndex((int)layers.Ground), ref heightsInfo);
                 break;
-            case LandLayers.Biome:
-                Functions.TextureSelect(TerrainManager.LandLayer, ref layers);
+            case TerrainManager.LayerType.Biome:
+                Functions.TextureSelect(TerrainManager.CurrentLayerType, ref layers);
                 Functions.AreaSelect();
-                Functions.LayerTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome));
-                Functions.RotateTools(TerrainManager.LandLayer);
-                Functions.RiverTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome), ref aboveTerrain);
-                Functions.SlopeTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome), ref slopesInfo);
-                Functions.HeightTools(TerrainManager.LandLayer, TerrainBiome.TypeToIndex((int)layers.Biome), ref heightsInfo);
+                Functions.LayerTools(TerrainManager.CurrentLayerType, TerrainBiome.TypeToIndex((int)layers.Biome));
+                Functions.RotateTools(TerrainManager.CurrentLayerType);
+                Functions.RiverTools(TerrainManager.CurrentLayerType, TerrainBiome.TypeToIndex((int)layers.Biome), ref aboveTerrain);
+                Functions.SlopeTools(TerrainManager.CurrentLayerType, TerrainBiome.TypeToIndex((int)layers.Biome), ref slopesInfo);
+                Functions.HeightTools(TerrainManager.CurrentLayerType, TerrainBiome.TypeToIndex((int)layers.Biome), ref heightsInfo);
                 break;
-            case LandLayers.Alpha:
-                Functions.LayerTools((LandLayers)layerIndex, 0, 1);
+            case TerrainManager.LayerType.Alpha:
+                Functions.LayerTools((TerrainManager.LayerType)layerIndex, 0, 1);
                 Functions.AreaSelect();
-                Functions.RotateTools((LandLayers)layerIndex);
-                Functions.RiverTools((LandLayers)layerIndex, 0, ref aboveTerrain, 1);
-                Functions.SlopeTools((LandLayers)layerIndex, 0, ref slopesInfo, 1);
-                Functions.HeightTools((LandLayers)layerIndex, 0, ref heightsInfo, 1);
+                Functions.RotateTools((TerrainManager.LayerType)layerIndex);
+                Functions.RiverTools((TerrainManager.LayerType)layerIndex, 0, ref aboveTerrain, 1);
+                Functions.SlopeTools((TerrainManager.LayerType)layerIndex, 0, ref slopesInfo, 1);
+                Functions.HeightTools((TerrainManager.LayerType)layerIndex, 0, ref heightsInfo, 1);
                 break;
-            case LandLayers.Topology:
+            case TerrainManager.LayerType.Topology:
                 Functions.TopologyLayerSelect(ref layers);
                 Functions.AreaSelect();
-                Functions.LayerTools(TerrainManager.LandLayer, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                Functions.RotateTools(TerrainManager.LandLayer, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.LayerTools(TerrainManager.CurrentLayerType, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.RotateTools(TerrainManager.CurrentLayerType, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 Functions.TopologyTools();
-                Functions.RiverTools(TerrainManager.LandLayer, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                Functions.SlopeTools(TerrainManager.LandLayer, 0, ref slopesInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-                Functions.HeightTools(TerrainManager.LandLayer, 0, ref heightsInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.RiverTools(TerrainManager.CurrentLayerType, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.SlopeTools(TerrainManager.CurrentLayerType, 0, ref slopesInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.HeightTools(TerrainManager.CurrentLayerType, 0, ref heightsInfo, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 break;
         }
         EditorGUILayout.EndScrollView();
