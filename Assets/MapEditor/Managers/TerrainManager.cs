@@ -343,6 +343,7 @@ public static class TerrainManager
     /// <param name="CW">True = 90°, False = 270°</param>
     public static void RotateHeightMap(bool CW, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
+        RegisterHeightMapUndo(terrain, "Rotate HeightMap");
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.Rotate(GetHeightMap(), CW, dmns));
         else
@@ -354,6 +355,8 @@ public static class TerrainManager
     public static void SetHeightMapHeight(float height, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         height /= 1000f; // Normalises user input to a value between 0 - 1f.
+        RegisterHeightMapUndo(terrain, "Set HeightMap Height");
+
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.SetValues(GetHeightMap(), height, dmns));
         else
@@ -363,6 +366,7 @@ public static class TerrainManager
     /// <summary>Inverts the HeightMap heights.</summary>
     public static void InvertHeightMap(TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
+        RegisterHeightMapUndo(terrain, "Invert HeightMap");
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.Invert(GetHeightMap(), dmns));
         else
@@ -375,6 +379,8 @@ public static class TerrainManager
     public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         normaliseLow /= 1000f; normaliseHigh /= 1000f; // Normalises user input to a value between 0 - 1f.
+        RegisterHeightMapUndo(terrain, "Normalise HeightMap");
+
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.Normalise(GetHeightMap(), normaliseLow, normaliseHigh, dmns));
         else
@@ -387,6 +393,8 @@ public static class TerrainManager
     public static void OffsetHeightMap(float offset, bool clampOffset, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         offset /= 1000f; // Normalises user input to a value between 0 - 1f.
+        RegisterHeightMapUndo(terrain, "Offset HeightMap");
+
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.Offset(GetHeightMap(), offset, clampOffset, dmns));
         else
@@ -399,6 +407,8 @@ public static class TerrainManager
     public static void ClampHeightMap(float minimumHeight, float maximumHeight, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
     {
         minimumHeight /= 1000f; maximumHeight /= 1000f; // Normalises user input to a value between 0 - 1f.
+        RegisterHeightMapUndo(terrain, "Clamp HeightMap");
+
         if (terrain == TerrainType.Land)
             Land.terrainData.SetHeights(0, 0, Array.ClampValues(GetHeightMap(), minimumHeight, maximumHeight, dmns));
         else
@@ -410,6 +420,8 @@ public static class TerrainManager
     /// <param name="interiorCornerWeight">The weight of the terrace effect.</param>
     public static void TerraceErodeHeightMap(float featureSize, float interiorCornerWeight)
     {
+        RegisterHeightMapUndo(TerrainType.Land, "Erode HeightMap");
+
         Material mat = new Material((Shader)AssetDatabase.LoadAssetAtPath("Packages/com.unity.terrain-tools/Shaders/TerraceErosion.shader", typeof(Shader)));
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
@@ -426,6 +438,8 @@ public static class TerrainManager
     /// <param name="blurDirection">The direction the smoothing should preference. Between -1f - 1f.</param>
     public static void SmoothHeightMap(float filterStrength, float blurDirection)
     {
+        RegisterHeightMapUndo(TerrainType.Land, "Smooth HeightMap");
+
         Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
         BrushTransform brushXform = TerrainPaintUtility.CalculateBrushTransform(Land, HeightMapCentre, Land.terrainData.size.x, 0.0f);
         PaintContext paintContext = TerrainPaintUtility.BeginPaintHeightmap(Land, brushXform.GetBrushXYBounds());
@@ -676,6 +690,14 @@ public static class TerrainManager
         EditorApplication.update -= ProjectLoaded;
         FilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
         SetTerrainReferences();
+    }
+
+    /// <summary>Registers changes made to the terrain object after the function is called.</summary>
+    /// <param name="terrain">Terrain object to record.</param>
+    /// <param name="name">Name of the Undo object on the stack.</param>
+    public static void RegisterHeightMapUndo(TerrainType terrain, string name)
+    {
+        Undo.RegisterCompleteObjectUndo(terrain == TerrainType.Land ? Land.terrainData.heightmapTexture : Water.terrainData.heightmapTexture, name);
     }
     #endregion
 }
