@@ -242,7 +242,7 @@ public static class MapManager
             case LayerType.Ground:
             case LayerType.Biome:
             case LayerType.Topology:
-                SetSplatMap(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
+                SetSplatMap(SetValues(GetSplatMap(landLayerToPaint, topology), t), landLayerToPaint, topology);
                 break;
             case LayerType.Alpha:
                 SetAlphaMap(SetValues(GetAlphaMap(), true));
