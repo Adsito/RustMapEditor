@@ -40,8 +40,8 @@ public static class TerrainManager
     /// <summary>Alpha/Transparency value of terrain.</summary>
     /// <value>True = Visible / False = Invisible.</value>
     public static bool[,] Alpha { get; private set; }
-    /// <summary>Topology layers [topology][x, y, texture] and value, use <seealso cref="TerrainTopology.TypeToIndex(int)"/> for topology layer indexes.</summary>
-    /// <value>True = Active / False = Inactive.</value>
+    /// <summary>Topology layers [topology][x, y, texture] use <seealso cref="TerrainTopology.TypeToIndex(int)"/> for topology layer indexes.</summary>
+    /// <value>Texture 0 = Active / Texture 1 = Inactive.</value>
     public static float[][,,] Topology { get; private set; } = new float[TerrainTopology.COUNT][,,];
     /// <summary>Resolution of the splatmap/alphamap.</summary>
     /// <value>Power of ^2, between 512 - 2048.</value>
@@ -135,7 +135,7 @@ public static class TerrainManager
                 break;
         }
 
-        if (CurrentLayerType == layer)
+        if (CurrentLayerType == layer && TopologyLayer == topology)
         {
             if (!GetTerrainLayers().Equals(Land.terrainData.terrainLayers))
                 Land.terrainData.terrainLayers = GetTerrainLayers();
@@ -522,8 +522,6 @@ public static class TerrainManager
         Progress.Report(progressID, .5f, "Loaded: Land");
         SetupTerrain(mapInfo, Water);
         Progress.Report(progressID, .9f, "Loaded: Water");
-        
-        AreaManager.Reset();
         Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
     }
 
@@ -534,6 +532,7 @@ public static class TerrainManager
         IsLoading = true;
         SetTerrain(mapInfo, progressID);
         SetSplatMaps(mapInfo);
+        AreaManager.Reset();
         IsLoading = false;
     }
     #endregion
@@ -631,8 +630,6 @@ public static class TerrainManager
     public static TerrainTopology.Enum TopologyLayerEnum { get; private set; }
     /// <summary>The Topology layer currently being displayed/to be displayed on the terrain when the LayerType is set to topology.</summary>
     public static int TopologyLayer { get => TerrainTopology.TypeToIndex((int)TopologyLayerEnum); }
-    /// <summary>The previously selected topology layer. Used to save the Topology layer before displaying the new one.</summary>
-    public static int LastTopologyLayer { get; private set; } = 0;
     /// <summary>The state of the current layer data.</summary>
     /// <value>True = Layer has been modified and not saved / False = Layer has not been modified since last saved.</value>
     public static bool LayerDirty { get; private set; } = false;
@@ -666,6 +663,7 @@ public static class TerrainManager
 
         SaveLayer();
         CurrentLayerType = layer;
+        TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
         SetSplatMap(GetSplatMap(layer, topology), layer, topology);
         
         Callbacks.OnLayerChanged(layer, topology);

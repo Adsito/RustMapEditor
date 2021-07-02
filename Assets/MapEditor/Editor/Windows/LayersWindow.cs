@@ -36,6 +36,9 @@ public class LayersWindow : EditorWindow
         if (EditorGUI.EndChangeCheck())
             TerrainManager.ChangeLayer((TerrainManager.LayerType)layerIndex, TerrainTopology.TypeToIndex((int)layers.Topologies));
 
+        if (layerIndex != (int)TerrainManager.CurrentLayerType)
+            layerIndex = (int)TerrainManager.CurrentLayerType;
+
         switch ((TerrainManager.LayerType)layerIndex)
         {
             case TerrainManager.LayerType.Ground:
