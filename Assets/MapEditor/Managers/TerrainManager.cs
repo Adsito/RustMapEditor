@@ -23,10 +23,10 @@ public static class TerrainManager
         /// <summary>Called when the Land/Water heightmap is dirtied/updated.</summary>
         public static event HeightMap HeightMapUpdated;
 
-        public static void OnLayerChanged(LayerType layer, int topology) => LayerChanged?.Invoke(layer, topology);
-        public static void OnLayerSaved(LayerType layer, int topology) => LayerSaved?.Invoke(layer, topology);
-        public static void OnLayerUpdated(LayerType layer, int topology) => LayerUpdated?.Invoke(layer, topology);
-        public static void OnHeightMapUpdated(TerrainType terrain) => HeightMapUpdated?.Invoke(terrain);
+        public static void InvokeLayerChanged(LayerType layer, int topology) => LayerChanged?.Invoke(layer, topology);
+        public static void InvokeLayerSaved(LayerType layer, int topology) => LayerSaved?.Invoke(layer, topology);
+        public static void InvokeLayerUpdated(LayerType layer, int topology) => LayerUpdated?.Invoke(layer, topology);
+        public static void InvokeHeightMapUpdated(TerrainType terrain) => HeightMapUpdated?.Invoke(terrain);
     }
 
     #region Splats
@@ -135,8 +135,10 @@ public static class TerrainManager
                 break;
         }
 
-        if (CurrentLayerType == layer && TopologyLayer == topology)
+        if (CurrentLayerType == layer)
         {
+            if (CurrentLayerType == LayerType.Topology && TopologyLayer != topology)
+                return;
             if (!GetTerrainLayers().Equals(Land.terrainData.terrainLayers))
                 Land.terrainData.terrainLayers = GetTerrainLayers();
 
@@ -208,11 +210,11 @@ public static class TerrainManager
             {
                 case "holes":
                     AlphaDirty = true;
-                    Callbacks.OnLayerUpdated(LayerType.Alpha, TopologyLayer);
+                    Callbacks.InvokeLayerUpdated(LayerType.Alpha, TopologyLayer);
                     break;
                 case "alphamap":
                     LayerDirty = true;
-                    Callbacks.OnLayerUpdated(CurrentLayerType, TopologyLayer);
+                    Callbacks.InvokeLayerUpdated(CurrentLayerType, TopologyLayer);
                     break;
             }
         }
@@ -459,7 +461,7 @@ public static class TerrainManager
         if (terrain.Equals(Land))
             ResetHeightCache();
 
-        Callbacks.OnHeightMapUpdated(terrain.Equals(Land) ? TerrainType.Land : TerrainType.Water);
+        Callbacks.InvokeHeightMapUpdated(terrain.Equals(Land) ? TerrainType.Land : TerrainType.Water);
     }
     #endregion
     #endregion
@@ -650,7 +652,7 @@ public static class TerrainManager
     public static void SaveLayer()
     {
         SetSplatMap(GetSplatMap(CurrentLayerType, TopologyLayer), CurrentLayerType, TopologyLayer);
-        Callbacks.OnLayerSaved(CurrentLayerType, TopologyLayer);
+        Callbacks.InvokeLayerSaved(CurrentLayerType, TopologyLayer);
     }
 
     /// <summary>Changes the active Land and Topology Layers.</summary>
@@ -661,12 +663,14 @@ public static class TerrainManager
         if (layer == LayerType.Alpha)
             return;
 
-        SaveLayer();
+        if (LayerDirty)
+            SaveLayer();
+
         CurrentLayerType = layer;
         TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
         SetSplatMap(GetSplatMap(layer, topology), layer, topology);
         
-        Callbacks.OnLayerChanged(layer, topology);
+        Callbacks.InvokeLayerChanged(layer, topology);
     }
 
     /// <summary>Layer count in layer chosen, used for determining the size of the splatmap array.</summary>
