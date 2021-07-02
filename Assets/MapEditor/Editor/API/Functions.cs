@@ -587,7 +587,7 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 
-        public static void LayerTools(LayerType landLayer, int texture, int erase = 0, int topology = 0)
+        public static void LayerTools(LayerType landLayer, int texture, int topology = 0)
         {
             Elements.MiniBoldLabel(ToolTips.layerToolsLabel);
 

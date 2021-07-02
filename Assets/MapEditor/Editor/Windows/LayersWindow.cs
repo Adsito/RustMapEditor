@@ -70,7 +70,7 @@ public class LayersWindow : EditorWindow
             case TerrainManager.LayerType.Topology:
                 Functions.TopologyLayerSelect(ref layers);
                 Functions.AreaSelect();
-                Functions.LayerTools(TerrainManager.CurrentLayerType, 0, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
+                Functions.LayerTools(TerrainManager.CurrentLayerType, 0, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 Functions.RotateTools(TerrainManager.CurrentLayerType, TerrainTopology.TypeToIndex((int)layers.Topologies));
                 Functions.TopologyTools();
                 Functions.RiverTools(TerrainManager.CurrentLayerType, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
