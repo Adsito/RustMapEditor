@@ -4,20 +4,19 @@ namespace RustMapEditor.Variables
 {
     public static class ToolTips
     {
-        public static string EditorVersion = Application.version;
         public static GUIContent cancel = new GUIContent("Cancel", "Cancels the current operation");
         public static GUIContent optionsLabel = new GUIContent("Options");
 
         public static GUIContent editorInfoLabel = new GUIContent("Editor Info", "Info about the current editor, when reporting bugs make sure to include a copy of these values.");
-        public static GUIContent systemOS = new GUIContent("OS: " + SystemInfo.operatingSystem);
-        public static GUIContent systemRAM = new GUIContent("RAM: " + SystemInfo.systemMemorySize / 1000 + "GB");
-        public static GUIContent unityVersion = new GUIContent("Unity Version: " + Application.unityVersion);
-        public static GUIContent editorVersion = new GUIContent("Editor Version: " + EditorVersion);
+        public static GUIContent systemOS = new GUIContent($"OS: {SystemInfo.operatingSystem}");
+        public static GUIContent systemRAM = new GUIContent($"RAM: {SystemInfo.systemMemorySize / 1000} GB");
+        public static GUIContent unityVersion = new GUIContent($"Unity Version: {Application.unityVersion}");
+        public static GUIContent editorVersion = new GUIContent($"Editor Version: {Application.version}");
 
-        public static GUIContent runPreset = new GUIContent("Run Preset", "Run this preset with all it's current nodes.");
-        public static GUIContent deletePreset = new GUIContent("Delete Preset", "Delete this preset from Unity.");
-        public static GUIContent renamePreset = new GUIContent("Rename Preset", "Rename this preset.");
-        public static GUIContent presetWiki = new GUIContent("Wiki", "Opens the wiki at the NodeSystem page.");
+        public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
+        public static GUIContent mapSize { get => new GUIContent($"Size: {TerrainManager.TerrainSize.x}"); }
+        public static GUIContent heightMapRes { get => new GUIContent($"HeightMap: {TerrainManager.HeightMapRes} x {TerrainManager.HeightMapRes}"); }
+        public static GUIContent splatMapRes { get => new GUIContent($"SplatMap: {TerrainManager.AlphaMapRes} x {TerrainManager.AlphaMapRes}"); }
 
         public static GUIContent prefabPreviewLabel = new GUIContent("Preview", "Preview of the prefab to spawn.");
         public static GUIContent prefabDetailsLabel = new GUIContent("Prefab Details", "Information about the prefab.");
@@ -52,11 +51,6 @@ namespace RustMapEditor.Variables
         public static GUIContent loadBundle = new GUIContent("Load", "Loads the Rust asset bundle into memory.");
         public static GUIContent unloadBundle = new GUIContent("Unload", "Unloads the loaded bundle.");
 
-        public static GUIContent presetsLabel = new GUIContent("Node Presets", "List of all the node presets in the project.");
-        public static GUIContent openPreset = new GUIContent("Open", "Opens the Node preset.");
-        public static GUIContent refreshPresets = new GUIContent("Refresh presets list.", "Refreshes the list of all the Node Presets in the project.");
-        public static GUIContent noPresets = new GUIContent("No presets in list.", "Try creating a some presets first.");
-
         public static GUIContent editorLinksLabel = new GUIContent("Links", "Links to discord, wiki and the project GitHub.");
         public static GUIContent reportBug = new GUIContent("Report Bug", "Opens up the editor bug report in GitHub.");
         public static GUIContent requestFeature = new GUIContent("Request Feature", "Opens up the editor feature request in GitHub.");
@@ -71,19 +65,18 @@ namespace RustMapEditor.Variables
         public static GUIContent defaultSettings = new GUIContent("Default", "Sets the settings back to the default.");
         public static GUIContent rustDirectory = new GUIContent("Rust Directory", @"The base install directory of Rust. Normally located at steamapps\common\Rust");
         public static GUIContent browseRustDirectory = new GUIContent("Browse", "Browse and select the base directory of Rust.");
-        public static GUIContent rustDirectoryPath = new GUIContent(SettingsManager.RustDirectory, "The install directory of Rust on the local PC.");
+        public static GUIContent rustDirectoryPath { get => new GUIContent(SettingsManager.RustDirectory, "The install directory of Rust on the local PC."); }
         public static GUIContent renderDistanceLabel = new GUIContent("Render Distance");
         public static GUIContent prefabRenderDistance = new GUIContent("Prefabs", "Changes the distance prefabs can be seen from.");
         public static GUIContent pathRenderDistance = new GUIContent("Paths", "Changes the distance paths can be seen from.");
         public static GUIContent waterTransparency = new GUIContent("Water Transparency", "Controls the transparency of the water terrain.");
         public static GUIContent loadBundleOnProjectLoad = new GUIContent("Load Bundle on Project Load", "Loads the Rust bundles automatically on project load.");
 
-        public static GUIContent mapInfoLabel = new GUIContent("Map Info", "General info about the currently loaded map.");
         public static GUIContent loadMap = new GUIContent("Load", "Opens a file viewer to find and open a Rust .map file.");
         public static GUIContent saveMap = new GUIContent("Save", "Opens a file viewer to find and save a Rust .map file.");
         public static GUIContent createMapLabel = new GUIContent("Create New Map");
         public static GUIContent newMap = new GUIContent("New", "Creates a new map with the selected size.");
-        public static GUIContent mapSize = new GUIContent("Size", "The size to create any new maps. Must be between (1000-6000)");
+        public static GUIContent newMapSize = new GUIContent("Size", "The size to create any new maps. Must be between (1000-6000)");
         public static GUIContent newMapHeight = new GUIContent("Land Height", "The height to set the land to.");
         public static GUIContent newMapGround = new GUIContent("Ground Texture", "The ground texture to set the land to.");
         public static GUIContent newMapBiome = new GUIContent("Biome Texture", "The biome texture to set the land to.");

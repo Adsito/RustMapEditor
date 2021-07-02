@@ -64,9 +64,9 @@ namespace RustMapEditor.UI
             if (Land != null)
             {
                 Elements.BoldLabel(ToolTips.mapInfoLabel);
-                GUILayout.Label("Size: " + Land.terrainData.size.x);
-                GUILayout.Label("HeightMap: " + Land.terrainData.heightmapResolution + "x" + Land.terrainData.heightmapResolution);
-                GUILayout.Label("SplatMap: " + Land.terrainData.alphamapResolution + "x" + Land.terrainData.alphamapResolution);
+                Elements.Label(ToolTips.mapSize);
+                Elements.Label(ToolTips.heightMapRes);
+                Elements.Label(ToolTips.splatMapRes);
             }
         }
 
@@ -106,10 +106,7 @@ namespace RustMapEditor.UI
             if (Elements.ToolbarButton(ToolTips.saveSettings))
                 SettingsManager.SaveSettings();
             if (Elements.ToolbarButton(ToolTips.discardSettings))
-            {
                 SettingsManager.LoadSettings();
-                ToolTips.rustDirectoryPath.text = SettingsManager.RustDirectory;
-            }
             if (Elements.ToolbarButton(ToolTips.defaultSettings))
                 SettingsManager.SetDefaultSettings();
             Elements.EndToolbarHorizontal();
@@ -121,7 +118,6 @@ namespace RustMapEditor.UI
             {
                 var returnDirectory = EditorUtility.OpenFolderPanel("Browse Rust Directory", SettingsManager.RustDirectory, "Rust");
                 SettingsManager.RustDirectory = String.IsNullOrEmpty(returnDirectory) ? SettingsManager.RustDirectory : returnDirectory;
-                ToolTips.rustDirectoryPath.text = SettingsManager.RustDirectory;
             }
             Elements.ToolbarLabel(ToolTips.rustDirectoryPath);
             Elements.EndToolbarHorizontal();
@@ -756,7 +752,7 @@ namespace RustMapEditor.UI
         #region CreateNewMap
         public static void NewMapOptions(ref int mapSize, ref float landHeight, ref Layers layers, CreateMapWindow window) 
         {
-            mapSize = Elements.ToolbarIntSlider(ToolTips.mapSize, mapSize, 1000, 6000);
+            mapSize = Elements.ToolbarIntSlider(ToolTips.newMapSize, mapSize, 1000, 6000);
             landHeight = Elements.ToolbarSlider(ToolTips.newMapHeight, landHeight, 0, 1000);
 
             Elements.BeginToolbarHorizontal();

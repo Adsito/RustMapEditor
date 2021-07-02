@@ -60,7 +60,6 @@ public static class SettingsManager
     public static void SetDefaultSettings()
     {
         RustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust";
-        ToolTips.rustDirectoryPath.text = RustDirectory;
         PrefabRenderDistance = 700f;
         PathRenderDistance = 250f;
         WaterTransparency = 0.2f;
