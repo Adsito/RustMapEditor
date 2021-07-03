@@ -56,7 +56,7 @@ public static class TerrainManager
     /// <summary>Returns the SplatMap at the selected LayerType.</summary>
     /// <param name="layer">The LayerType to return. (Ground, Biome)</param>
     /// <returns>3D float array in Alphamap format. [x, y, Texture]</returns>
-    public static float[,,] GetSplatMap(LayerType layer, int topology = 0)
+    public static float[,,] GetSplatMap(LayerType layer, int topology = -1)
     {
         switch (layer)
         {
@@ -75,6 +75,11 @@ public static class TerrainManager
                 }
                 return Biome;
             case LayerType.Topology:
+                if (topology < 0 || topology >= TerrainTopology.COUNT)
+                {
+                    Debug.LogError($"GetSplatMap({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+                    return null;
+                }
                 if (CurrentLayerType == layer && TopologyLayer == topology && LayerDirty)
                 {
                     Topology[topology] = Land.terrainData.GetAlphamaps(0, 0, SplatMapRes, SplatMapRes);
@@ -100,7 +105,7 @@ public static class TerrainManager
     /// <summary>Sets SplatMap of the selected LayerType.</summary>
     /// <param name="layer">The layer to set the data to.</param>
     /// <param name="topology">The topology layer if layer is topology.</param>
-    public static void SetSplatMap(float[,,] array, LayerType layer, int topology = 0)
+    public static void SetSplatMap(float[,,] array, LayerType layer, int topology = -1)
     {
         if (array == null)
         {
@@ -131,6 +136,11 @@ public static class TerrainManager
                 Biome = array;
                 break;
             case LayerType.Topology:
+                if (topology < 0 || topology >= TerrainTopology.COUNT)
+                {
+                    Debug.LogError($"SetSplatMap({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+                    return;
+                }
                 Topology[topology] = array;
                 break;
         }
@@ -658,10 +668,15 @@ public static class TerrainManager
     /// <summary>Changes the active Land and Topology Layers.</summary>
     /// <param name="layer">The LayerType to change to.</param>
     /// <param name="topology">The Topology layer to change to.</param>
-    public static void ChangeLayer(LayerType layer, int topology = 0)
+    public static void ChangeLayer(LayerType layer, int topology = -1)
     {
         if (layer == LayerType.Alpha)
             return;
+        if (layer == LayerType.Topology && (topology < 0 || topology >= TerrainTopology.COUNT))
+        {
+            Debug.LogError($"ChangeLayer({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+            return;
+        }
 
         if (LayerDirty)
             SaveLayer();
