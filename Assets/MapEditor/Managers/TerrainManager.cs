@@ -46,7 +46,7 @@ public static class TerrainManager
     /// <summary>Resolution of the splatmap/alphamap.</summary>
     /// <value>Power of ^2, between 512 - 2048.</value>
     public static int SplatMapRes { get; private set; }
-    /// <summary>The size of each splat relative to the terrain size it covers.</summary>
+    /// <summary>The world size of each splat relative to the terrain size it covers.</summary>
     public static float SplatSize { get => Land.terrainData.size.x / SplatMapRes; }
 
     public static bool AlphaDirty { get; set; } = true;
@@ -77,7 +77,7 @@ public static class TerrainManager
             case LayerType.Topology:
                 if (topology < 0 || topology >= TerrainTopology.COUNT)
                 {
-                    Debug.LogError($"GetSplatMap({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+                    Debug.LogError($"GetSplatMap({layer}, {topology}) topology parameter out of bounds. Should be between 0 - {TerrainTopology.COUNT - 1}");
                     return null;
                 }
                 if (CurrentLayerType == layer && TopologyLayer == topology && LayerDirty)
@@ -138,7 +138,7 @@ public static class TerrainManager
             case LayerType.Topology:
                 if (topology < 0 || topology >= TerrainTopology.COUNT)
                 {
-                    Debug.LogError($"SetSplatMap({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+                    Debug.LogError($"SetSplatMap({layer}, {topology}) topology parameter out of bounds. Should be between 0 - {TerrainTopology.COUNT - 1}");
                     return;
                 }
                 Topology[topology] = array;
@@ -152,6 +152,7 @@ public static class TerrainManager
             if (!GetTerrainLayers().Equals(Land.terrainData.terrainLayers))
                 Land.terrainData.terrainLayers = GetTerrainLayers();
 
+            RegisterSplatMapUndo($"{layer}");
             Land.terrainData.SetAlphamaps(0, 0, array);
             LayerDirty = false;
         }
@@ -544,6 +545,7 @@ public static class TerrainManager
         IsLoading = true;
         SetTerrain(mapInfo, progressID);
         SetSplatMaps(mapInfo);
+        ClearSplatMapUndo();
         AreaManager.Reset();
         IsLoading = false;
     }
@@ -555,13 +557,6 @@ public static class TerrainManager
     private static TerrainLayer[] GroundLayers = null, BiomeLayers = null, TopologyLayers = null;
 
     #region Methods
-    /// <summary>Clears the alphamap textures currently on the undo heap.</summary>
-    private static void ClearTerrainUndo()
-    {
-        foreach (var item in Land.terrainData.alphamapTextures)
-            Undo.ClearUndo(item);
-    }
-
     /// <summary>Sets the unity terrain references if not already set, and returns the current terrain layers.</summary>
     /// <returns>Array of TerrainLayers currently displayed on the Land Terrain.</returns>
     public static TerrainLayer[] GetTerrainLayers()
@@ -674,7 +669,7 @@ public static class TerrainManager
             return;
         if (layer == LayerType.Topology && (topology < 0 || topology >= TerrainTopology.COUNT))
         {
-            Debug.LogError($"ChangeLayer({layer}, {topology}) requires valid topology parameter. Should be between 0 - {TerrainTopology.COUNT - 1}");
+            Debug.LogError($"ChangeLayer({layer}, {topology}) topology parameter out of bounds. Should be between 0 - {TerrainTopology.COUNT - 1}");
             return;
         }
 
@@ -684,7 +679,8 @@ public static class TerrainManager
         CurrentLayerType = layer;
         TopologyLayerEnum = (TerrainTopology.Enum)TerrainTopology.IndexToType(topology);
         SetSplatMap(GetSplatMap(layer, topology), layer, topology);
-        
+        ClearSplatMapUndo();
+
         Callbacks.InvokeLayerChanged(layer, topology);
     }
 
@@ -729,9 +725,16 @@ public static class TerrainManager
     /// <summary>Registers changes made to the SplatMap after the function is called.</summary>
     /// <param name="terrain">SplatMap to record.</param>
     /// <param name="name">Name of the Undo object on the stack.</param>
-    public static void RegisterSplatMapUndo(TerrainType terrain, string name)
+    public static void RegisterSplatMapUndo(string name)
     {
-        Undo.RegisterCompleteObjectUndo(terrain == TerrainType.Land ? Land.terrainData.heightmapTexture : Water.terrainData.heightmapTexture, name);
+        Undo.RegisterCompleteObjectUndo(Land.terrainData.alphamapTextures, name);
+    }
+
+    /// <summary>Clears all undo operations on the currently displayed SplatMap.</summary>
+    public static void ClearSplatMapUndo()
+    {
+        foreach (var tex in Land.terrainData.alphamapTextures)
+            Undo.ClearUndo(tex);
     }
     #endregion
 }
