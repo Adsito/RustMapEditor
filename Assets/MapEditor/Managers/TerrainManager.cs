@@ -731,10 +731,13 @@ public static class TerrainManager
         /// <summary>Sets up the inputted terrain's terraindata.</summary>
         private static IEnumerator SetupTerrain(MapInfo mapInfo, Terrain terrain)
         {
-            terrain.terrainData.heightmapResolution = mapInfo.terrainRes;
-            terrain.terrainData.size = mapInfo.size;
-            terrain.terrainData.alphamapResolution = mapInfo.splatRes;
-            terrain.terrainData.baseMapResolution = mapInfo.splatRes;
+            if (terrain.terrainData.size != mapInfo.size)
+            {
+                terrain.terrainData.heightmapResolution = mapInfo.terrainRes;
+                terrain.terrainData.size = mapInfo.size;
+                terrain.terrainData.alphamapResolution = mapInfo.splatRes;
+                terrain.terrainData.baseMapResolution = mapInfo.splatRes;
+            }
             terrain.terrainData.SetHeights(0, 0, terrain.Equals(Land) ? mapInfo.land.heights : mapInfo.water.heights);
             yield return null;
         }
