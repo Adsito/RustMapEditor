@@ -1,7 +1,9 @@
 ﻿using UnityEditor;
+using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.TerrainAPI;
+using System.Collections;
 using System.Threading.Tasks;
 using RustMapEditor.Variables;
 using RustMapEditor.Maths;
@@ -199,19 +201,7 @@ public static class TerrainManager
         AlphaDirty = false;
     }
 
-    /// <summary>Sets and initialises the Splat/AlphaMaps of all layers from MapInfo. Called when first loading/creating a map.</summary>
-    private static void SetSplatMaps(MapInfo mapInfo)
-    {
-        SplatMapRes = mapInfo.splatRes;
-
-        SetSplatMap(mapInfo.splatMap, LayerType.Ground);
-        SetSplatMap(mapInfo.biomeMap, LayerType.Biome);
-        SetAlphaMap(mapInfo.alphaMap);
-
-        TopologyData.Set(mapInfo.topology);
-        for (int i = 0; i < TerrainTopology.COUNT; i++)
-            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LayerType.Topology, i);
-    }
+    
 
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
@@ -491,7 +481,7 @@ public static class TerrainManager
     public static Vector3 MapOffset { get => 0.5f * TerrainSize; }
     /// <summary>The condition of the current terrain.</summary>
     /// <value>True = Terrain is loading / False = Terrain is loaded.</value>
-    public static bool IsLoading { get; private set; } = true;
+    public static bool IsLoading { get; private set; } = false;
 
     /// <summary>Enum of the 2 different terrains in scene. (Land, Water). Required to reference the terrain objects across the Editor.</summary>
     public enum TerrainType
@@ -516,38 +506,12 @@ public static class TerrainManager
         WaterMaterial.color = _color;
     }
 
-    /// <summary>Sets up the inputted terrain's terraindata.</summary>
-    private static void SetupTerrain(MapInfo mapInfo, Terrain terrain)
-    {
-        terrain.terrainData.heightmapResolution = mapInfo.terrainRes;
-        terrain.terrainData.size = mapInfo.size;
-        terrain.terrainData.alphamapResolution = mapInfo.splatRes;
-        terrain.terrainData.baseMapResolution = mapInfo.splatRes;
-        terrain.terrainData.SetHeights(0, 0, terrain.Equals(Land) ? mapInfo.land.heights : mapInfo.water.heights);
-    }
-
-    /// <summary>Loads and sets the Land and Water terrain objects.</summary>
-    private static void SetTerrain(MapInfo mapInfo, int progressID)
-    {
-        HeightMapRes = mapInfo.terrainRes;
-
-        SetupTerrain(mapInfo, Land);
-        Progress.Report(progressID, .5f, "Loaded: Land");
-        SetupTerrain(mapInfo, Water);
-        Progress.Report(progressID, .9f, "Loaded: Water");
-        Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
-    }
-
     /// <summary>Loads and sets up the terrain and associated splatmaps.</summary>
     /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
     public static void Load(MapInfo mapInfo, int progressID)
     {
-        IsLoading = true;
-        SetTerrain(mapInfo, progressID);
-        SetSplatMaps(mapInfo);
-        ClearSplatMapUndo();
-        AreaManager.Reset();
-        IsLoading = false;
+        if (!IsLoading)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Load(mapInfo, progressID));
     }
     #endregion
     #endregion
@@ -737,4 +701,63 @@ public static class TerrainManager
             Undo.ClearUndo(tex);
     }
     #endregion
+
+    private class Coroutines
+    {
+        /// <summary>Loads and sets up the terrain and associated splatmaps.</summary>
+        /// <param name="mapInfo">Struct containing all info about the map to initialise.</param>
+        public static IEnumerator Load(MapInfo mapInfo, int progressID)
+        {
+            IsLoading = true;
+            yield return SetTerrains(mapInfo, progressID);
+            yield return SetSplatMaps(mapInfo, progressID);
+            ClearSplatMapUndo();
+            AreaManager.Reset();
+            Progress.Report(progressID, .99f, "Loaded Terrain.");
+            IsLoading = false;
+        }
+
+        /// <summary>Loads and sets the Land and Water terrain objects.</summary>
+        private static IEnumerator SetTerrains(MapInfo mapInfo, int progressID)
+        {
+            HeightMapRes = mapInfo.terrainRes;
+
+            yield return SetupTerrain(mapInfo, Water);
+            Progress.Report(progressID, .2f, "Loaded: Water.");
+            yield return SetupTerrain(mapInfo, Land);
+            Progress.Report(progressID, .5f, "Loaded: Land.");
+        }
+
+        /// <summary>Sets up the inputted terrain's terraindata.</summary>
+        private static IEnumerator SetupTerrain(MapInfo mapInfo, Terrain terrain)
+        {
+            terrain.terrainData.heightmapResolution = mapInfo.terrainRes;
+            terrain.terrainData.size = mapInfo.size;
+            terrain.terrainData.alphamapResolution = mapInfo.splatRes;
+            terrain.terrainData.baseMapResolution = mapInfo.splatRes;
+            terrain.terrainData.SetHeights(0, 0, terrain.Equals(Land) ? mapInfo.land.heights : mapInfo.water.heights);
+            yield return null;
+        }
+
+        /// <summary>Sets and initialises the Splat/AlphaMaps of all layers from MapInfo. Called when first loading/creating a map.</summary>
+        private static IEnumerator SetSplatMaps(MapInfo mapInfo, int progressID)
+        {
+            SplatMapRes = mapInfo.splatRes;
+
+            SetSplatMap(mapInfo.splatMap, LayerType.Ground);
+            SetSplatMap(mapInfo.biomeMap, LayerType.Biome);
+            SetAlphaMap(mapInfo.alphaMap);
+            yield return null;
+            Progress.Report(progressID, .8f, "Loaded: Splats.");
+
+            TopologyData.Set(mapInfo.topology);
+            Parallel.For(0, TerrainTopology.COUNT, i =>
+            {
+                if (CurrentLayerType != LayerType.Topology || TopologyLayer != i)
+                    SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(i)), LayerType.Topology, i);
+            });
+            SetSplatMap(TopologyData.GetTopologyLayer(TerrainTopology.IndexToType(TopologyLayer)), LayerType.Topology, TopologyLayer);
+            Progress.Report(progressID, .9f, "Loaded: Topologies.");
+        }
+    }
 }

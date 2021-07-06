@@ -440,7 +440,7 @@ public static class MapManager
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            while (Progress.GetProgressById(spwPrefab).running)
+            while (Progress.GetProgressById(terrainID).progress < 0.99f || Progress.GetProgressById(spwPrefab).running || Progress.GetProgressById(spwPath).running)
             {
                 if (sw.Elapsed.TotalMilliseconds > 0.05f)
                 {
