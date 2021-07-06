@@ -271,8 +271,6 @@ public static class PrefabManager
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            var sw2 = new System.Diagnostics.Stopwatch();
-            sw2.Start();
             for (int i = 0; i < prefabs.Length; i++)
             {
                 if (sw.Elapsed.TotalSeconds > 4f)
@@ -287,7 +285,6 @@ public static class PrefabManager
             }
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
-            Debug.Log(sw2.Elapsed.TotalMilliseconds);
             IsChangingPrefabs = false;
         }
 
