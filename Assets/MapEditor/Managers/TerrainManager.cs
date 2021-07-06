@@ -201,8 +201,6 @@ public static class TerrainManager
         AlphaDirty = false;
     }
 
-    
-
     private static void SplatMapChanged(Terrain terrain, string textureName, RectInt texelRegion, bool synched)
     {
         if (!IsLoading && Land.Equals(terrain) && Mouse.current.leftButton.isPressed)

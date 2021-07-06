@@ -522,27 +522,12 @@ namespace RustMapEditor.Maths
             return byteArray;
         }
 
-        public static float[,,] SingleToMulti(float[] array, int texturesAmount)
-        {
-            int length = (int)Math.Sqrt(array.Length / texturesAmount);
-            float[,,] multiArray = new float[length, length, texturesAmount];
-            Parallel.For(0, length, i =>
-            {
-                for (int j = 0; j < length; j++)
-                {
-                    for (int k = 0; k < texturesAmount; k++)
-                        multiArray[i, j, k] = array[i * length * texturesAmount + (j * texturesAmount + k)];
-                }
-            });
-            return multiArray;
-        }
-
         public static float[,,] NormaliseMulti(float[,,] array, int texturesAmount)
         {
             int length = (int)Math.Sqrt(array.Length / texturesAmount);
             int arrayLength = array.GetLength(0);
             int channelLength = array.GetLength(2);
-            Parallel.For(0, array.GetLength(0), i =>
+            Parallel.For(0, arrayLength, i =>
             {
                 float[] splatWeights = new float[channelLength];
                 for (int j = 0; j < arrayLength; j++)
@@ -559,33 +544,6 @@ namespace RustMapEditor.Maths
                 }
             });
             return array;
-        }
-
-        public static float[,,] BoolToMulti(bool[,] array)
-        {
-            float[,,] multiArray = new float[array.GetLength(0), array.GetLength(1), 2];
-            int arrayLength = array.GetLength(0);
-            Parallel.For(0, arrayLength, i =>
-            {
-                for (int j = 0; j < arrayLength; j++)
-                {
-                    for (int k = 0; k < 2; k++)
-                        multiArray[i, j, k] = (array[i, j]) ? 1f : 0f;
-                }
-            });
-            return multiArray;
-        }
-
-        public static bool[,] MultiToBool(float[,,] array)
-        {
-            bool[,] boolArray = new bool[array.GetLength(0), array.GetLength(1)];
-            int arrayLength = array.GetLength(0);
-            Parallel.For(0, arrayLength, i =>
-            {
-                for (int j = 0; j < arrayLength; j++)
-                    boolArray[i, j] = (array[i, j, 0] > 0.5f) ? true : false; 
-            });
-            return boolArray;
         }
     }
 }

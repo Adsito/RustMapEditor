@@ -49,17 +49,21 @@ public static class WorldConverter
 
         terrains.splatRes = splatRes;
         terrains.splatMap = new float[splatRes, splatRes, 8];
+        int gndIdx = TerrainSplat.TypeToIndex((int)ground);
         Parallel.For(0, splatRes, i =>
         {
             for (int j = 0; j < splatRes; j++)
-                terrains.splatMap[i, j, TerrainSplat.TypeToIndex((int)ground)] = 1f;
+                terrains.splatMap[i, j, gndIdx] = 1f;
         });
+
         terrains.biomeMap = new float[splatRes, splatRes, 4];
+        int biomeIdx = TerrainBiome.TypeToIndex((int)biome);
         Parallel.For(0, splatRes, i =>
         {
             for (int j = 0; j < splatRes; j++)
-                terrains.biomeMap[i, j, TerrainBiome.TypeToIndex((int)biome)] = 1f;
+                terrains.biomeMap[i, j, biomeIdx] = 1f;
         });
+
         terrains.alphaMap = new bool[splatRes, splatRes];
         Parallel.For(0, splatRes, i =>
         {
