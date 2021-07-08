@@ -100,7 +100,6 @@ public static class WorldConverter
                     for (int k = 0; k < 4; k++)
                         terrains.biomeMap[i, j, k] = BitUtility.Byte2Float(biomeMap[k, i, j]);
             });
-            terrains.biomeMap = NormaliseMulti(terrains.biomeMap, 4);
         });
 
         var alphaTask = Task.Run(() =>
