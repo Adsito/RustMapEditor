@@ -89,7 +89,6 @@ public static class WorldConverter
                     for (int k = 0; k < 8; k++)
                         terrains.splatMap[i, j, k] = BitUtility.Byte2Float(splatMap[k, i, j]);
             });
-            terrains.splatMap = NormaliseMulti(terrains.splatMap, 8);
         });
 
         var biomeTask = Task.Run(() =>
