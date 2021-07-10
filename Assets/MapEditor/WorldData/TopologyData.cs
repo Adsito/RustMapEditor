@@ -36,7 +36,7 @@ public static class TopologyData
     /// <summary>Converts all the Topology Layer arrays back into a single byte array.</summary>
     public static void SaveTopologyLayers()
     {
-        TerrainMap<int> topologyMap = new TerrainMap<int>(top, 1);
+        TerrainMap<int> topologyMap = GetTerrainMap();
         Parallel.For(0, TerrainTopology.COUNT, i =>
         {
             Parallel.For(0, topologyMap.res, j =>
