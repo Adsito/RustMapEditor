@@ -1,17 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Threading.Tasks;
 using static TerrainManager;
 
-[Serializable]
 public static class TopologyData
 {
-    [SerializeField]
-    public static byte[] top;
+    private static byte[] Data;
 
     public static TerrainMap<int> GetTerrainMap()
     {
-        return new TerrainMap<int>(top, 1);
+        return new TerrainMap<int>(Data, 1);
     }
 
     /// <summary>Returns the Splatmap of the selected Topology Layer.</summary>
@@ -51,8 +47,8 @@ public static class TopologyData
                 }
             });
         });
-        top = topologyMap.ToByteArray();
+        Data = topologyMap.ToByteArray();
     }
 
-    public static void Set(TerrainMap<int> topology) => top = topology.ToByteArray();
+    public static void Set(TerrainMap<int> topology) => Data = topology.ToByteArray();
 }
