@@ -67,10 +67,6 @@
         public Dimensions Area;
         public bool CheckArea;
     }
-    public struct TopologyLayers
-    {
-        public float[,,] Topologies { get; set; }
-    }
     public class Dimensions
     {
         public int x0;
