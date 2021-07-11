@@ -7,6 +7,23 @@ using static WorldSerialization;
 
 public static class PathManager
 {
+    #region Init
+    [InitializeOnLoadMethod]
+    public static void Init()
+    {
+        EditorApplication.update += OnProjectLoad;
+    }
+
+    private static void OnProjectLoad()
+    {
+        DefaultPath = Resources.Load<GameObject>("Paths/Path");
+        DefaultNode = Resources.Load<GameObject>("Paths/PathNode");
+        PathParent = GameObject.FindGameObjectWithTag("Paths").transform;
+        if (DefaultPath != null && DefaultNode != null && PathParent != null)
+            EditorApplication.update -= OnProjectLoad;
+    }
+    #endregion
+
     public static GameObject DefaultPath { get; private set; }
     public static GameObject DefaultNode { get; private set; }
     public static Transform PathParent { get; private set; }
@@ -21,20 +38,7 @@ public static class PathManager
         Powerline = 2,
     }
 
-    [InitializeOnLoadMethod]
-    public static void Init()
-    {
-        EditorApplication.update += OnProjectLoad;
-    }
-
-    static void OnProjectLoad()
-    {
-        DefaultPath = Resources.Load<GameObject>("Paths/Path");
-        DefaultNode = Resources.Load<GameObject>("Paths/PathNode");
-        PathParent = GameObject.FindGameObjectWithTag("Paths").transform;
-        if (DefaultPath != null && DefaultNode != null && PathParent != null)
-            EditorApplication.update -= OnProjectLoad;
-    }
+    
 
     public static void SpawnPath(PathData pathData)
     {

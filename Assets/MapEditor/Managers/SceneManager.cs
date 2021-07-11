@@ -7,8 +7,6 @@ using UnityEngine.SceneManagement;
 
 public static class SceneManager
 {
-    public static Scene EditorScene { get; private set; }
-
     #region Init
     [InitializeOnLoadMethod]
     private static void Init()
@@ -29,6 +27,8 @@ public static class SceneManager
         }
     }
     #endregion
+
+    public static Scene EditorScene { get; private set; }
 
     #region Scene Camera
     /// <summary>Sets/Updates the all SceneViews with inputted culling distances.</summary>
