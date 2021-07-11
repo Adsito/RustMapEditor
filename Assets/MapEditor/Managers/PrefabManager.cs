@@ -8,30 +8,7 @@ using System.Linq;
 
 public static class PrefabManager
 {
-    public static class Callbacks
-    {
-        public delegate void PrefabManagerCallback(GameObject prefab);
-
-        /// <summary>Called after prefab is loaded and setup from bundle. </summary>
-        public static event PrefabManagerCallback PrefabLoaded;
-
-        public static void OnPrefabLoaded(GameObject prefab) => PrefabLoaded?.Invoke(prefab);
-    }
-
-    public static GameObject DefaultPrefab { get; private set; }
-    public static Transform PrefabParent { get; private set; }
-    public static GameObject PrefabToSpawn;
-
-    /// <summary>List of prefab names from the asset bundle.</summary>
-    private static List<string> Prefabs;
-
-    /// <summary>Prefabs currently spawned on the map.</summary>
-    public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
-
-    public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
-
-    public static bool IsChangingPrefabs { get; private set; }
-
+    #region Init
     [InitializeOnLoadMethod]
     private static void Init()
     {
@@ -49,6 +26,37 @@ public static class PrefabManager
                 AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
         }
     }
+    #endregion
+
+    public static class Callbacks
+    {
+        public delegate void PrefabManagerCallback(GameObject prefab);
+
+        /// <summary>Called after prefab is loaded and setup from bundle. </summary>
+        public static event PrefabManagerCallback PrefabLoaded;
+        /// <summary>Called after prefab category is renamed.</summary>
+        public static event PrefabManagerCallback PrefabCategoryChanged;
+        /// <summary>Called after prefab ID is changed.</summary>
+        public static event PrefabManagerCallback PrefabIDChanged;
+
+        public static void OnPrefabLoaded(GameObject prefab) => PrefabLoaded?.Invoke(prefab);
+        public static void OnPrefabCategoryChanged(GameObject prefab) => PrefabCategoryChanged?.Invoke(prefab);
+        public static void OnPrefabIDChanged(GameObject prefab) => PrefabIDChanged?.Invoke(prefab);
+    }
+
+    public static GameObject DefaultPrefab { get; private set; }
+    public static Transform PrefabParent { get; private set; }
+    public static GameObject PrefabToSpawn;
+
+    /// <summary>List of prefab names from the asset bundle.</summary>
+    private static List<string> Prefabs;
+
+    /// <summary>Prefabs currently spawned on the map.</summary>
+    public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
+
+    public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
+
+    public static bool IsChangingPrefabs { get; private set; }
 
     /// <summary>Loads, sets up and returns the prefab at the asset path.</summary>
     /// <param name="path">The prefab path in the bundle file.</param>
@@ -61,10 +69,7 @@ public static class PrefabManager
 
     /// <summary>Loads, sets up and returns the prefab at the prefab id.</summary>
     /// <param name="id">The prefab manifest id.</param>
-    public static GameObject Load(uint id)
-    {
-        return Load(AssetManager.ToPath(id));
-    }
+    public static GameObject Load(uint id) => Load(AssetManager.ToPath(id));
 
     /// <summary>Searches through all prefabs found in bundle files, returning matches.</summary>
     /// <returns>List of strings containing the path matching the <paramref name="key"/>.</returns>
@@ -322,6 +327,7 @@ public static class PrefabManager
             for (int i = 0; i < prefabs.Length; i++)
             {
                 prefabs[i].prefabData.category = name;
+                Callbacks.OnPrefabCategoryChanged(prefabs[i].gameObject);
                 if (sw.Elapsed.TotalSeconds > 0.2f)
                 {
                     yield return null;
@@ -345,6 +351,7 @@ public static class PrefabManager
             for (int i = 0; i < prefabs.Length; i++)
             {
                 prefabs[i].prefabData.id = id;
+                Callbacks.OnPrefabIDChanged(prefabs[i].gameObject);
                 if (replace)
                 {
                     prefabs[i].UpdatePrefabData();
