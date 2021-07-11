@@ -475,7 +475,7 @@ public static class AssetManager
 			}
 		}
 
-		static void SetKeyword(Material mat, string keyword, bool state)
+		private static void SetKeyword(Material mat, string keyword, bool state)
 		{
 			if (state)
 				mat.EnableKeyword(keyword);
