@@ -1,8 +1,8 @@
 ﻿using UnityEditor;
-using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.TerrainAPI;
+using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Threading.Tasks;
 using RustMapEditor.Variables;
@@ -11,6 +11,23 @@ using static WorldConverter;
 
 public static class TerrainManager
 {
+    #region Init
+    [InitializeOnLoadMethod]
+    private static void Init()
+    {
+        TerrainCallbacks.heightmapChanged += HeightMapChanged;
+        TerrainCallbacks.textureChanged += SplatMapChanged;
+        EditorApplication.update += OnProjectLoad;
+    }
+
+    private static void OnProjectLoad()
+    {
+        EditorApplication.update -= OnProjectLoad;
+        FilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
+        SetTerrainReferences();
+    }
+    #endregion
+
     public static class Callbacks
     {
         public delegate void Layer(LayerType layer, int? topology = null);
@@ -661,21 +678,6 @@ public static class TerrainManager
     #endregion
 
     #region Other
-    [InitializeOnLoadMethod]
-    private static void Init()
-    {
-        TerrainCallbacks.heightmapChanged += HeightMapChanged;
-        TerrainCallbacks.textureChanged += SplatMapChanged;
-        EditorApplication.update += ProjectLoaded;
-    }
-
-    private static void ProjectLoaded()
-    {
-        EditorApplication.update -= ProjectLoaded;
-        FilterTexture = Resources.Load<Texture>("Textures/Brushes/White128");
-        SetTerrainReferences();
-    }
-
     /// <summary>Registers changes made to the HeightMap after the function is called.</summary>
     /// <param name="terrain">HeightMap to record.</param>
     /// <param name="name">Name of the Undo object on the stack.</param>
@@ -687,10 +689,7 @@ public static class TerrainManager
     /// <summary>Registers changes made to the SplatMap after the function is called.</summary>
     /// <param name="terrain">SplatMap to record.</param>
     /// <param name="name">Name of the Undo object on the stack.</param>
-    public static void RegisterSplatMapUndo(string name)
-    {
-        Undo.RegisterCompleteObjectUndo(Land.terrainData.alphamapTextures, name);
-    }
+    public static void RegisterSplatMapUndo(string name) => Undo.RegisterCompleteObjectUndo(Land.terrainData.alphamapTextures, name);
 
     /// <summary>Clears all undo operations on the currently displayed SplatMap.</summary>
     public static void ClearSplatMapUndo()
