@@ -32,12 +32,11 @@ public class PathDataHolder : MonoBehaviour {
             Instantiate(pathNodeObj, transform);
         else
         {
-            Transform lastNode = transform.GetChild(transform.childCount-1);
-            Transform secondLastNode = transform.GetChild(transform.childCount-2);
+            Transform lastNode = transform.GetChild(transform.childCount - 1);
+            Transform secondLastNode = transform.GetChild(transform.childCount - 2);
 
             Vector3 pos = (lastNode.position - secondLastNode.position) + lastNode.position;
-
-            GameObject newNode = Instantiate(pathNodeObj, pos, Quaternion.identity, transform);
+            Instantiate(pathNodeObj, pos, Quaternion.identity, transform);
         }
     }
 
