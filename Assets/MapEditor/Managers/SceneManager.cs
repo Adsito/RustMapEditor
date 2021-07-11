@@ -9,6 +9,7 @@ public static class SceneManager
 {
     public static Scene EditorScene { get; private set; }
 
+    #region Init
     [InitializeOnLoadMethod]
     private static void Init()
     {
@@ -21,13 +22,24 @@ public static class SceneManager
         EditorScene = EditorSceneManager.GetActiveScene();
         if (EditorScene.IsValid())
         {
-            CentreSceneView(SceneView.lastActiveSceneView);
-            SetCullingDistances(SceneView.GetAllSceneCameras(), SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
-            SetClippingDistances(SceneView.sceneViews);
+            CentreSceneView();
+            SetCullingDistances(SettingsManager.PrefabRenderDistance, SettingsManager.PathRenderDistance);
+            SetClippingDistances();
             EditorApplication.update -= OnProjectLoad;
         }
     }
+    #endregion
 
+    #region Scene Camera
+    /// <summary>Sets/Updates the all SceneViews with inputted culling distances.</summary>
+    /// <param name="prefabDist">Distance to cull prefabs, in meters.</param>
+    /// <param name="pathDist">Distance to cull path nodes, in meters.</param>
+    public static void SetCullingDistances(float prefabDist, float pathDist) => SetCullingDistances(SceneView.GetAllSceneCameras(), prefabDist, pathDist);
+
+    /// <summary>Sets/Updates the selected SceneViews with inputted culling distances.</summary>
+    /// <param name="camera">The Cameras which will have culling distances updated.</param>
+    /// <param name="prefabDist">Distance to cull prefabs, in meters.</param>
+    /// <param name="pathDist">Distance to cull path nodes, in meters.</param>
     public static void SetCullingDistances(Camera[] camera, float prefabDist, float pathDist)
     {
         float[] distances = new float[32];
@@ -42,6 +54,11 @@ public static class SceneManager
         SceneView.RepaintAll();
     }
 
+    /// <summary>Centres the last active SceneView on the terrain object.</summary>
+    public static void CentreSceneView() => CentreSceneView(SceneView.lastActiveSceneView);
+
+    /// <summary>Centres the selected SceneView on the terrain object.</summary>
+    /// <param name="sceneView">SceneView to centre.</param>
     public static void CentreSceneView(SceneView sceneView)
     {
         if (sceneView != null)
@@ -52,16 +69,32 @@ public static class SceneManager
         }
     }
 
+    /// <summary>Centres all open SceneViews on the terrain object.</summary>
+    public static void CentreSceneViews()
+    {
+        foreach (var view in SceneView.sceneViews)
+            CentreSceneView(view as SceneView);
+    }
+
+    /// <summary>Sets/Updates the selected SceneViews with inputted clipping distances.</summary>
+    public static void SetClippingDistances() => SetClippingDistances(SceneView.sceneViews);
+
+    /// <summary>Sets/Updates the selected SceneViews with inputted clipping distances.</summary>
+    /// <param name="sceneViews">The SceneViews which will have culling distances updated.</param>
     public static void SetClippingDistances(ArrayList sceneViews)
     {
         foreach (SceneView item in sceneViews)
             if (item.cameraSettings.nearClip < 0.5f)
                 item.cameraSettings.nearClip = 0.5f;
     }
+    #endregion
 
+    #region Other
+    /// <summary>Gets the currently selected root map prefabs.</summary>
+    /// <returns>Array of PrefabDataHolders attached to currently selected prefabs.</returns>
     public static PrefabDataHolder[] GetSelectedPrefabs()
     {
-        List<PrefabDataHolder> prefabs = new List<PrefabDataHolder>();
+        var prefabs = new List<PrefabDataHolder>();
         foreach (var item in Selection.gameObjects)
         {
             if (item.TryGetComponent(out PrefabDataHolder holder))
@@ -70,6 +103,17 @@ public static class SceneManager
         return prefabs.ToArray();
     }
 
+    /// <summary>Toggles the HideFlags on Scene objects.</summary>
+    /// <param name="enabled">True = Hidden / False = Visible</param>
+    public static void ToggleHideFlags(bool enabled)
+    {
+        foreach (var item in GameObject.FindObjectsOfType<SceneObjectHideFlags>())
+            item.ToggleHideFlags(enabled);
+
+        SceneHierarchyHooks.ReloadAllSceneHierarchies();
+    }
+
+    /// <summary>Called when active scene hierarchy is modified.</summary>
     private static void OnSceneChanged()
     {
         if (EditorScene.rootCount != 4)
@@ -89,12 +133,5 @@ public static class SceneManager
             }
         }
     }
-
-    public static void ToggleHideFlags(bool enabled)
-    {
-        foreach (var item in GameObject.FindObjectsOfType<SceneObjectHideFlags>())
-            item.ToggleHideFlags(enabled);
-
-        SceneHierarchyHooks.ReloadAllSceneHierarchies();
-    }
+    #endregion
 }
