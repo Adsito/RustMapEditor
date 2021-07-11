@@ -13,6 +13,24 @@ using System.Collections;
 
 public static class MapManager
 {
+    #region Init
+    [InitializeOnLoadMethod]
+    private static void Init()
+    {
+        EditorApplication.update += OnProjectLoad;
+    }
+
+    private static void OnProjectLoad()
+    {
+        if (Land != null)
+        {
+            EditorApplication.update -= OnProjectLoad;
+            if (!EditorApplication.isPlaying)
+                CreateMap(1000);
+        }
+    }
+    #endregion
+
     public static class Callbacks
     {
         public delegate void MapManagerCallback(string mapName = "");
@@ -24,23 +42,6 @@ public static class MapManager
 
         public static void OnMapLoaded(string mapName = "") => MapLoaded?.Invoke(mapName);
         public static void OnMapSaved(string mapName = "") => MapSaved?.Invoke(mapName);
-    }
-
-    [InitializeOnLoadMethod]
-    static void Init()
-    {
-        EditorApplication.update += OnProjectLoad;
-    }
-
-    /// <summary>Executes once when the project finished loading.</summary>
-    static void OnProjectLoad()
-    {
-        if (Land != null)
-        {
-            EditorApplication.update -= OnProjectLoad;
-            if (!EditorApplication.isPlaying)
-                CreateMap(1000);
-        }
     }
     
     public static List<int> GetEnumSelection<T>(T enumGroup)
