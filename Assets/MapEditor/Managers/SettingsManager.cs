@@ -2,10 +2,21 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using RustMapEditor.Variables;
 
 public static class SettingsManager
 {
+    #region Init
+    [InitializeOnLoadMethod]
+    private static void Init()
+    {
+        if (!File.Exists(SettingsPath))
+            using (StreamWriter write = new StreamWriter(SettingsPath, false))
+                write.Write(JsonUtility.ToJson(new EditorSettings(), true));
+
+        LoadSettings();
+    }
+    #endregion
+
     public const string SettingsPath = "EditorSettings.json";
     public const string BundlePathExt = @"\Bundles\Bundles";
 
@@ -16,16 +27,6 @@ public static class SettingsManager
     public static bool LoadBundleOnLaunch { get; set; }
     public static bool TerrainTextureSet { get; set; }
     public static string[] PrefabPaths { get; private set; }
-
-    [InitializeOnLoadMethod]
-    private static void Init()
-    {
-        if (!File.Exists(SettingsPath))
-            using (StreamWriter write = new StreamWriter(SettingsPath, false))
-                write.Write(JsonUtility.ToJson(new EditorSettings(), true));
-
-        LoadSettings();
-    }
 
     /// <summary>Saves the current EditorSettings to a JSON file.</summary>
     public static void SaveSettings()
