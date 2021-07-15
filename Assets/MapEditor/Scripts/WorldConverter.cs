@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using UnityEngine;
-using static TerrainManager;
-using static RustMapEditor.Maths.Array;
-using RustMapEditor.Variables;
-using static WorldSerialization;
+﻿using UnityEngine;
 using UnityEditor;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using static RustMapEditor.Maths.Array;
+using static AreaManager;
+using static TerrainManager;
+using static WorldSerialization;
 
 public static class WorldConverter
 {
@@ -44,8 +44,8 @@ public static class WorldConverter
         terrains.terrainRes = Mathf.Clamp(Mathf.NextPowerOfTwo(size), 512, 4096) + 1;
         terrains.size = new Vector3(size, 1000, size);
 
-        terrains.land.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], landHeight / 1000f, new Dimensions(0, terrains.terrainRes, 0, terrains.terrainRes));
-        terrains.water.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], 500f / 1000f, new Dimensions(0, terrains.terrainRes, 0, terrains.terrainRes));
+        terrains.land.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], landHeight / 1000f, new Area(0, terrains.terrainRes, 0, terrains.terrainRes));
+        terrains.water.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], 500f / 1000f, new Area(0, terrains.terrainRes, 0, terrains.terrainRes));
 
         terrains.splatRes = splatRes;
         terrains.splatMap = new float[splatRes, splatRes, 8];

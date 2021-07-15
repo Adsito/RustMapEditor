@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
+using static AreaManager;
 using static TerrainManager;
 
 namespace RustMapEditor.UI
@@ -206,11 +207,11 @@ namespace RustMapEditor.UI
             normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, normaliseHigh);
             normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
             if (EditorGUI.EndChangeCheck() && autoUpdate == true)
-                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Dimensions.HeightMapDimensions());
+                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Area.HeightMapDimensions());
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.normaliseMap))
-                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Dimensions.HeightMapDimensions());
+                NormaliseHeightMap(normaliseLow, normaliseHigh, dmns: Area.HeightMapDimensions());
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
         }
@@ -222,9 +223,9 @@ namespace RustMapEditor.UI
             height = Elements.ToolbarSlider(ToolTips.heightToSet, height, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setLandHeight))
-                SetHeightMapHeight(height, dmns: Dimensions.HeightMapDimensions());
+                SetHeightMapHeight(height, dmns: Area.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setWaterHeight))
-                SetHeightMapHeight(height, TerrainType.Water, Dimensions.HeightMapDimensions());
+                SetHeightMapHeight(height, TerrainType.Water, Area.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -235,9 +236,9 @@ namespace RustMapEditor.UI
             Elements.ToolbarMinMax(ToolTips.minHeight, ToolTips.maxHeight, ref heightLow, ref heightHigh, 0f, 1000f);
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.setMinHeight))
-                ClampHeightMap(heightLow, 1000f, TerrainType.Land, Dimensions.HeightMapDimensions());
+                ClampHeightMap(heightLow, 1000f, TerrainType.Land, Area.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.setMaxHeight))
-                ClampHeightMap(0f, heightHigh, TerrainType.Land, Dimensions.HeightMapDimensions());
+                ClampHeightMap(0f, heightHigh, TerrainType.Land, Area.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -249,9 +250,9 @@ namespace RustMapEditor.UI
             Elements.BeginToolbarHorizontal();
             clampOffset = Elements.ToolbarToggle(ToolTips.clampOffset, clampOffset);
             if (Elements.ToolbarButton(ToolTips.offsetLand))
-                OffsetHeightMap(offset, clampOffset, TerrainType.Land, Dimensions.HeightMapDimensions());
+                OffsetHeightMap(offset, clampOffset, TerrainType.Land, Area.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.offsetWater))
-                OffsetHeightMap(offset, clampOffset, TerrainType.Water, Dimensions.HeightMapDimensions());
+                OffsetHeightMap(offset, clampOffset, TerrainType.Water, Area.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
 
@@ -261,9 +262,9 @@ namespace RustMapEditor.UI
 
             Elements.BeginToolbarHorizontal();
             if (Elements.ToolbarButton(ToolTips.invertLand))
-                InvertHeightMap(dmns: Dimensions.HeightMapDimensions());
+                InvertHeightMap(dmns: Area.HeightMapDimensions());
             if (Elements.ToolbarButton(ToolTips.invertWater))
-                InvertHeightMap(TerrainType.Water, Dimensions.HeightMapDimensions());
+                InvertHeightMap(TerrainType.Water, Area.HeightMapDimensions());
             Elements.EndToolbarHorizontal();
         }
         #endregion
@@ -546,8 +547,8 @@ namespace RustMapEditor.UI
         {
             Elements.MiniBoldLabel(ToolTips.areaSelectLabel);
 
-            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.Area.z0, ref AreaManager.Area.z1, 0, SplatMapRes);
-            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.Area.x0, ref AreaManager.Area.x1, 0, SplatMapRes);
+            Elements.ToolbarMinMaxInt(ToolTips.fromZ, ToolTips.toZ, ref AreaManager.ActiveArea.z0, ref AreaManager.ActiveArea.z1, 0, SplatMapRes);
+            Elements.ToolbarMinMaxInt(ToolTips.fromX, ToolTips.toX, ref AreaManager.ActiveArea.x0, ref AreaManager.ActiveArea.x1, 0, SplatMapRes);
 
             if (Elements.ToolbarButton(ToolTips.resetArea))
                 AreaManager.Reset();

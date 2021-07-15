@@ -5,9 +5,9 @@ using UnityEngine.Experimental.TerrainAPI;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Threading.Tasks;
-using RustMapEditor.Variables;
 using RustMapEditor.Maths;
 using static WorldConverter;
+using static AreaManager;
 
 public static class TerrainManager
 {
@@ -359,7 +359,7 @@ public static class TerrainManager
 
     /// <summary>Rotates the HeightMap 90° Clockwise or Counter Clockwise.</summary>
     /// <param name="CW">True = 90°, False = 270°</param>
-    public static void RotateHeightMap(bool CW, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void RotateHeightMap(bool CW, TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         RegisterHeightMapUndo(terrain, "Rotate HeightMap");
         if (terrain == TerrainType.Land)
@@ -370,7 +370,7 @@ public static class TerrainManager
 
     /// <summary>Sets the HeightMap to the height input.</summary>
     /// <param name="height">The height to set.</param>
-    public static void SetHeightMapHeight(float height, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void SetHeightMapHeight(float height, TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         height /= 1000f; // Normalises user input to a value between 0 - 1f.
         RegisterHeightMapUndo(terrain, "Set HeightMap Height");
@@ -382,7 +382,7 @@ public static class TerrainManager
     }
 
     /// <summary>Inverts the HeightMap heights.</summary>
-    public static void InvertHeightMap(TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void InvertHeightMap(TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         RegisterHeightMapUndo(terrain, "Invert HeightMap");
         if (terrain == TerrainType.Land)
@@ -394,7 +394,7 @@ public static class TerrainManager
     /// <summary> Normalises the HeightMap between two heights.</summary>
     /// <param name="normaliseLow">The lowest height the HeightMap should be.</param>
     /// <param name="normaliseHigh">The highest height the HeightMap should be.</param>
-    public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void NormaliseHeightMap(float normaliseLow, float normaliseHigh, TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         normaliseLow /= 1000f; normaliseHigh /= 1000f; // Normalises user input to a value between 0 - 1f.
         RegisterHeightMapUndo(terrain, "Normalise HeightMap");
@@ -408,7 +408,7 @@ public static class TerrainManager
     /// <summary>Increases or decreases the HeightMap by the offset.</summary>
     /// <param name="offset">The amount to offset by. Negative values offset down.</param>
     /// <param name="clampOffset">Check if offsetting the HeightMap would exceed the min-max values.</param>
-    public static void OffsetHeightMap(float offset, bool clampOffset, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void OffsetHeightMap(float offset, bool clampOffset, TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         offset /= 1000f; // Normalises user input to a value between 0 - 1f.
         RegisterHeightMapUndo(terrain, "Offset HeightMap");
@@ -422,7 +422,7 @@ public static class TerrainManager
     /// <summary>Sets the HeightMap level to the minimum if it's below.</summary>
     /// <param name="minimumHeight">The minimum height to set.</param>
     /// <param name="maximumHeight">The maximum height to set.</param>
-    public static void ClampHeightMap(float minimumHeight, float maximumHeight, TerrainType terrain = TerrainType.Land, Dimensions dmns = null)
+    public static void ClampHeightMap(float minimumHeight, float maximumHeight, TerrainType terrain = TerrainType.Land, Area dmns = null)
     {
         minimumHeight /= 1000f; maximumHeight /= 1000f; // Normalises user input to a value between 0 - 1f.
         RegisterHeightMapUndo(terrain, "Clamp HeightMap");

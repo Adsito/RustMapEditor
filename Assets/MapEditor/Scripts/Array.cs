@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using RustMapEditor.Variables;
-using System.Threading;
+using static AreaManager;
 
 namespace RustMapEditor.Maths
 {
@@ -11,10 +11,10 @@ namespace RustMapEditor.Maths
     {
         /// <summary>Sets all the elements in the selected area of the array to the specified value.</summary>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,] SetValues(float[,] array, float value, Dimensions dmns = null)
+        public static float[,] SetValues(float[,] array, float value, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -24,10 +24,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static float[,,] SetValues(float[,,] array, int channel, Dimensions dmns = null)
+        public static float[,,] SetValues(float[,,] array, int channel, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelLength = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -43,10 +43,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static bool[,] SetValues(bool[,] array, bool value, Dimensions dmns = null)
+        public static bool[,] SetValues(bool[,] array, bool value, Area dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+                dmns = new Area(AreaManager.ActiveArea.x0, AreaManager.ActiveArea.x1 * 2, AreaManager.ActiveArea.z0, AreaManager.ActiveArea.z1 * 2);
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -60,10 +60,10 @@ namespace RustMapEditor.Maths
         /// <param name="range">Array of values to check against the range limits.</param>
         /// <param name="channel">The channel to set the values to.</param>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,,] SetRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        public static float[,,] SetRange(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelCount = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -82,10 +82,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static float[,,] SetRangeBlend(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, float rangeBlendLow, float rangeBlendHigh, Dimensions dmns = null)
+        public static float[,,] SetRangeBlend(float[,,] array, float[,] range, int channel, float rangeLow, float rangeHigh, float rangeBlendLow, float rangeBlendHigh, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelLength = array.GetLength(2);
             for (int i = dmns.x0; i < dmns.x1; i++)
@@ -148,10 +148,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Dimensions dmns = null)
+        public static bool[,] SetRange(bool[,] array, float[,] range, bool value, float rangeLow, float rangeHigh, Area dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+                dmns = new Area(AreaManager.ActiveArea.x0, AreaManager.ActiveArea.x1 * 2, AreaManager.ActiveArea.z0, AreaManager.ActiveArea.z1 * 2);
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -164,10 +164,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static float[,,] SetRiver(float[,,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, int channel, Dimensions dmns = null)
+        public static float[,,] SetRiver(float[,,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, int channel, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelLength = array.GetLength(2);
             if (aboveTerrain)
@@ -205,10 +205,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static bool[,] SetRiver(bool[,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, bool value, Dimensions dmns = null)
+        public static bool[,] SetRiver(bool[,] array, float[,] landHeights, float[,] waterHeights, bool aboveTerrain, bool value, Area dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+                dmns = new Area(AreaManager.ActiveArea.x0, AreaManager.ActiveArea.x1 * 2, AreaManager.ActiveArea.z0, AreaManager.ActiveArea.z1 * 2);
 
             if (aboveTerrain)
             {
@@ -283,10 +283,10 @@ namespace RustMapEditor.Maths
 
         /// <summary>Clamps all the values to within the set range.</summary>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,] ClampValues(float[,] array, float minValue, float maxValue, Dimensions dmns = null)
+        public static float[,] ClampValues(float[,] array, float minValue, float maxValue, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -299,10 +299,10 @@ namespace RustMapEditor.Maths
         /// <summary>Rotates the array CW or CCW.</summary>
         /// <param name="CW">CW = 90°, CCW = 270°</param>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,] Rotate(float[,] array, bool CW, Dimensions dmns = null)
+        public static float[,] Rotate(float[,] array, bool CW, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             float[,] newArray = new float[array.GetLength(0), array.GetLength(1)];
             if (CW)
@@ -324,10 +324,10 @@ namespace RustMapEditor.Maths
             return newArray;
         }
 
-        public static float[,,] Rotate(float[,,] array, bool CW, Dimensions dmns = null)
+        public static float[,,] Rotate(float[,,] array, bool CW, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelLength = array.GetLength(2);
             float[,,] newArray = new float[array.GetLength(0), array.GetLength(1), array.GetLength(2)];
@@ -356,10 +356,10 @@ namespace RustMapEditor.Maths
             return newArray;
         }
 
-        public static bool[,] Rotate(bool[,] array, bool CW, Dimensions dmns = null)
+        public static bool[,] Rotate(bool[,] array, bool CW, Area dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+                dmns = new Area(AreaManager.ActiveArea.x0, AreaManager.ActiveArea.x1 * 2, AreaManager.ActiveArea.z0, AreaManager.ActiveArea.z1 * 2);
 
             bool[,] newArray = new bool[array.GetLength(0), array.GetLength(1)];
             if (CW)
@@ -383,10 +383,10 @@ namespace RustMapEditor.Maths
 
         /// <summary>Flips the values of the array.</summary>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,] Invert(float[,] array, Dimensions dmns = null)
+        public static float[,] Invert(float[,] array, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -396,10 +396,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static float[,,] Invert(float[,,] array, Dimensions dmns = null)
+        public static float[,,] Invert(float[,,] array, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             int channelLength = array.GetLength(2);
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -413,10 +413,10 @@ namespace RustMapEditor.Maths
             return array;
         }
 
-        public static bool[,] Invert(bool[,] array, Dimensions dmns = null)
+        public static bool[,] Invert(bool[,] array, Area dmns = null)
         {
             if (dmns == null)
-                dmns = new Dimensions(AreaManager.Area.x0, AreaManager.Area.x1 * 2, AreaManager.Area.z0, AreaManager.Area.z1 * 2);
+                dmns = new Area(AreaManager.ActiveArea.x0, AreaManager.ActiveArea.x1 * 2, AreaManager.ActiveArea.z0, AreaManager.ActiveArea.z1 * 2);
 
             Parallel.For(dmns.x0, dmns.x1, i =>
             {
@@ -430,10 +430,10 @@ namespace RustMapEditor.Maths
         /// <param name="normaliseLow">Min value of the array.</param>
         /// <param name="normaliseHigh">Max value of the array.</param>
         /// <param name="dmns">The area of the array to perform the operations.</param>
-        public static float[,] Normalise(float[,] array, float normaliseLow, float normaliseHigh, Dimensions dmns = null)
+        public static float[,] Normalise(float[,] array, float normaliseLow, float normaliseHigh, Area dmns = null)
         {
             if (dmns == null)
-                dmns = AreaManager.Area;
+                dmns = AreaManager.ActiveArea;
 
             float highestPoint = 0f, lowestPoint = 1f, heightRange = 0f, normalisedHeightRange = 0f;
             Parallel.For(dmns.x0, dmns.x1, i =>
@@ -460,7 +460,7 @@ namespace RustMapEditor.Maths
         /// <summary>Offsets the values of the array by the specified value.</summary>
         /// <param name="dmns">The area of the array to perform the operations.</param>
         /// <param name="clampOffset">Prevent array values from overflowing.</param>
-        public static float[,] Offset(float[,] array, float offset, bool clampOffset, Dimensions dmns = null)
+        public static float[,] Offset(float[,] array, float offset, bool clampOffset, Area dmns = null)
         {
             float[,] tempArray = array;
             CancellationTokenSource source = new CancellationTokenSource();
@@ -468,7 +468,7 @@ namespace RustMapEditor.Maths
             try
             {
                 if (dmns == null)
-                    dmns = AreaManager.Area;
+                    dmns = AreaManager.ActiveArea;
 
                 Parallel.For(dmns.x0, dmns.x1, options, i =>
                 {

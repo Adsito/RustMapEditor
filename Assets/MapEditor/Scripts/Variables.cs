@@ -64,29 +64,10 @@
     }
     public struct AreaConditions
     {
-        public Dimensions Area;
+        public AreaManager.Area Area;
         public bool CheckArea;
     }
-    public class Dimensions
-    {
-        public int x0;
-        public int x1;
-        public int z0;
-        public int z1;
-
-        public Dimensions(int x0, int x1, int z0, int z1)
-        {
-            this.x0 = x0;
-            this.x1 = x1;
-            this.z0 = z0;
-            this.z1 = z1;
-        }
-
-        public static Dimensions HeightMapDimensions()
-        {
-            return new Dimensions(0, TerrainManager.HeightMapRes, 0, TerrainManager.HeightMapRes);
-        }
-    }
+    
     public enum AlphaTextures
     {
         Visible = 0,
