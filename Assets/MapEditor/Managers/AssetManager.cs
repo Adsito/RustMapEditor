@@ -9,15 +9,30 @@ using UnityEngine;
 
 public static class AssetManager
 {
+	#region Init
+	[InitializeOnLoadMethod]
+	private static void Init()
+	{
+		EditorApplication.update += OnProjectLoad;
+	}
+
+	private static void OnProjectLoad()
+	{
+		EditorApplication.update -= OnProjectLoad;
+		if (!IsInitialised && SettingsManager.LoadBundleOnLaunch)
+			Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
+	}
+	#endregion
+
 	public static class Callbacks
     {
-		public delegate void AssetManagerCallback();
+		public delegate void Bundle();
 
 		/// <summary>Called after Rust Asset Bundles are loaded into the editor. </summary>
-		public static event AssetManagerCallback BundlesLoaded;
+		public static event Bundle BundlesLoaded;
 
 		/// <summary>Called after Rust Asset Bundles are unloaded from the editor. </summary>
-		public static event AssetManagerCallback BundlesDisposed;
+		public static event Bundle BundlesDisposed;
 
 		public static void OnBundlesLoaded() => BundlesLoaded?.Invoke();
 		public static void OnBundlesDisposed() => BundlesDisposed?.Invoke();

@@ -38,8 +38,6 @@ public static class PathManager
         Powerline = 2,
     }
 
-    
-
     public static void SpawnPath(PathData pathData)
     {
         Vector3 averageLocation = Vector3.zero;

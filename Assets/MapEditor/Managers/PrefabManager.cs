@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using static WorldSerialization;
 
 public static class PrefabManager
 {
@@ -20,11 +20,7 @@ public static class PrefabManager
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
         if (DefaultPrefab != null && PrefabParent != null)
-        {
             EditorApplication.update -= OnProjectLoad;
-            if (!AssetManager.IsInitialised && SettingsManager.LoadBundleOnLaunch)
-                AssetManager.Initialise(SettingsManager.RustDirectory + SettingsManager.BundlePathExt);
-        }
     }
     #endregion
 
@@ -245,6 +241,7 @@ public static class PrefabManager
                 }
                 Spawn(Load(prefabs[i].id), prefabs[i], GetParent(prefabs[i].category));
             }
+
             Progress.Report(progressID, 0.99f, "Spawned " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
@@ -267,6 +264,7 @@ public static class PrefabManager
                 }
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
+
             Progress.Report(progressID, 0.99f, "Deleted " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
@@ -288,6 +286,7 @@ public static class PrefabManager
                 Spawn(Load(prefabs[i].prefabData.id), prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
+
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
             IsChangingPrefabs = false;
@@ -310,9 +309,9 @@ public static class PrefabManager
                 Spawn(DefaultPrefab, prefabs[i].prefabData, GetParent(prefabs[i].prefabData.category));
                 GameObject.DestroyImmediate(prefabs[i].gameObject);
             }
+
             Progress.Report(progressID, 0.99f, "Replaced " + prefabs.Length + " prefabs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
-
             IsChangingPrefabs = false;
         }
 
