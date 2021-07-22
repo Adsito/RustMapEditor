@@ -4,6 +4,7 @@
     "pathRenderDistance": 250.0,
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
+    "terrainTextureSet": false,
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
         "assets/bundled/prefabs/bunker_rooms/",
