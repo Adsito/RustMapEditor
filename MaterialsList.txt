@@ -81,3 +81,4 @@ Specular : assets/prefabs/deployable/research table/materials/research_table_len
 Specular : assets/prefabs/deployable/research table/materials/research_table.mat
 Foliage : assets/content/nature/treessource/american_beech/models/materials/beech.mat
 Standard: assets/prefabs/deployable/mixingtable/model/materials/mixingtable_glass.mat
+Specular : assets/content/structures/underwater_labs/models/materials/underwater_lab_glass.mat
