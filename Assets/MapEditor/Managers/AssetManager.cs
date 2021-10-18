@@ -156,7 +156,14 @@ public static class AssetManager
 				var lineSplit = volumes[i].Split(':');
 				lineSplit[0] = lineSplit[0].Trim(' '); // Volume Mesh Type
 				lineSplit[1] = lineSplit[1].Trim(' '); // Prefab Path
-                switch (lineSplit[0])
+
+				if (GetAsset<GameObject>(lineSplit[1]) == null)
+                {
+					Debug.LogWarning($"{lineSplit[1]} is not a valid asset path.");
+					continue;
+				}
+
+				switch (lineSplit[0])
                 {
 					case "Cube":
 						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = cubeMesh;
