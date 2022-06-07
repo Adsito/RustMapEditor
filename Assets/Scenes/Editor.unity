@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.29433808, g: 0.465953, b: 0.5545002, a: 1}
+  m_IndirectSpecularColor: {r: 0.29433948, g: 0.4659552, b: 0.554502, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -502,7 +502,6 @@ Terrain:
   m_DrawHeightmap: 1
   m_DrawInstanced: 1
   m_DrawTreesAndFoliage: 0
-  m_StaticShadowCaster: 0
   m_ReflectionProbeUsage: 0
   m_MaterialTemplate: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}
   m_BakeLightProbesForTrees: 0
@@ -593,7 +592,6 @@ Terrain:
   m_DrawHeightmap: 1
   m_DrawInstanced: 1
   m_DrawTreesAndFoliage: 0
-  m_StaticShadowCaster: 0
   m_ReflectionProbeUsage: 0
   m_MaterialTemplate: {fileID: 2100000, guid: 49df9a9fa69740e4782b406d0c541009, type: 2}
   m_BakeLightProbesForTrees: 0
