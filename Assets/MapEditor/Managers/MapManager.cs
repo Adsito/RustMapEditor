@@ -430,6 +430,7 @@ public static class MapManager
             int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
             int spwPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
             int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
+            yield return null;
 
             PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
             PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);

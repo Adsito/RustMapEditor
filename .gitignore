@@ -17,3 +17,6 @@ Library/*
 *.sln
 AssetDump.txt
 UserSettings/EditorUserSettings.asset
+ProjectSettings/MemorySettings.asset
+UserSettings/Layouts/default-2021.dwlt
+ProjectSettings/SceneTemplateSettings.json
