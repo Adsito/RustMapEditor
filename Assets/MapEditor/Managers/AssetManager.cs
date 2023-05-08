@@ -307,18 +307,20 @@ public static class AssetManager
 			{
 				Progress.Report(ID.bundle, (float)i / bundles.Length, "Loading: " + bundles[i]);
 				var bundlePath = Path.GetDirectoryName(bundleRoot) + Path.DirectorySeparatorChar + bundles[i];
-
-				var asset = AssetBundle.LoadFromFileAsync(bundlePath);
-				while (!asset.isDone)
-					yield return null;
-
-				if (asset == null)
+				if (File.Exists(bundlePath)) 
 				{
-					Debug.LogError("Couldn't load AssetBundle - " + bundlePath);
-					IsInitialising = false;
-					yield break;
-				}
-				BundleCache.Add(bundles[i], asset.assetBundle);
+                    var asset = AssetBundle.LoadFromFileAsync(bundlePath);
+                    while (!asset.isDone)
+                        yield return null;
+
+                    if (asset == null)
+                    {
+                        Debug.LogError("Couldn't load AssetBundle - " + bundlePath);
+                        IsInitialising = false;
+                        yield break;
+                    }
+                    BundleCache.Add(bundles[i], asset.assetBundle);
+                }
 			}
 			rootBundle.Unload(true);
 		}
