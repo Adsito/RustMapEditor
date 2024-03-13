@@ -27,6 +27,7 @@ QualitySettings:
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
     vSyncCount: 0
+    realtimeGICPUUsage: 25
     lodBias: 1
     maximumLODLevel: 0
     streamingMipmapsActive: 1
@@ -63,6 +64,7 @@ QualitySettings:
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
     vSyncCount: 0
+    realtimeGICPUUsage: 25
     lodBias: 2
     maximumLODLevel: 0
     streamingMipmapsActive: 1
@@ -99,6 +101,7 @@ QualitySettings:
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
     vSyncCount: 0
+    realtimeGICPUUsage: 25
     lodBias: 1
     maximumLODLevel: 0
     streamingMipmapsActive: 1
@@ -115,4 +118,5 @@ QualitySettings:
     customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
+    Server: 0
     Standalone: 2
