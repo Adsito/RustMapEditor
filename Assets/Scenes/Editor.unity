@@ -517,6 +517,7 @@ Terrain:
   m_DetailObjectDensity: 0
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 2000
+  m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
@@ -623,6 +624,7 @@ Terrain:
   m_DetailObjectDensity: 0
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 2000
+  m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 0
   m_DrawHeightmap: 1
