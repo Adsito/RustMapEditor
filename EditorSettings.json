@@ -1,6 +1,6 @@
 {
     "rustDirectory": "C:/Program Files (x86)/Steam/steamapps/common/Rust",
-    "prefabRenderDistance": 700.0,
+    "prefabRenderDistance": 750.0,
     "pathRenderDistance": 250.0,
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
