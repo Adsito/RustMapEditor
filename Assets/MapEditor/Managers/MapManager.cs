@@ -129,8 +129,7 @@ public static class MapManager
     /// <param name="topology">The Topology layer, if selected.</param>
     public static void PaintConditional(LayerType landLayerToPaint, int texture, Conditions conditions, int topology = 0)
     {
-        int splatRes = SplatMapRes;
-        bool[,] conditionsMet = new bool[splatRes, splatRes]; // Paints wherever the conditionsmet is false.
+        bool[,] conditionsMet = new bool[SplatMapRes, SplatMapRes]; // Paints wherever the conditionsmet is false.
 
         int progressId = Progress.Start("Conditional Paint");
         for (int i = 0; i < TerrainSplat.COUNT; i++)
@@ -167,9 +166,9 @@ public static class MapManager
             case LayerType.Topology:
                 float[,,] splatMapToPaint = GetSplatMap(landLayerToPaint, topology);
                 int textureCount = LayerCount(landLayerToPaint);
-                Parallel.For(0, splatRes, i =>
+                Parallel.For(0, SplatMapRes, i =>
                 {
-                    for (int j = 0; j < splatRes; j++)
+                    for (int j = 0; j < SplatMapRes; j++)
                         if (conditionsMet[i, j] == false)
                         {
                             for (int k = 0; k < textureCount; k++)
@@ -181,9 +180,9 @@ public static class MapManager
                 break;
             case LayerType.Alpha:
                 bool[,] alphaMapToPaint = GetAlphaMap();
-                Parallel.For(0, splatRes, i =>
+                Parallel.For(0, SplatMapRes, i =>
                 {
-                    for (int j = 0; j < splatRes; j++)
+                    for (int j = 0; j < SplatMapRes; j++)
                         alphaMapToPaint[i, j] = (conditionsMet[i, j] == false) ? conditionsMet[i, j] : alphaMapToPaint[i, j];
                 });
                 SetAlphaMap(alphaMapToPaint);
