@@ -122,10 +122,8 @@ public static class WorldConverter
     /// <param name="world">Serialization of the map file to parse.</param>
     public static MapInfo WorldToTerrain(WorldSerialization world)
     {
-        MapInfo terrains = new MapInfo();
-
+        var terrains = new MapInfo();
         var terrainSize = new Vector3(world.world.size, 1000, world.world.size);
-        var terrainMap = new TerrainMap<short>(world.GetMap("terrain").data, 1);
         var heightMap = new TerrainMap<short>(world.GetMap("height").data, 1);
         var waterMap = new TerrainMap<short>(world.GetMap("water").data, 1);
         var splatMap = new TerrainMap<byte>(world.GetMap("splat").data, 8);
@@ -232,7 +230,6 @@ public static class WorldConverter
         Task.WaitAll(splatTask, biomeTask, alphaTask, topologyTask);
         Progress.Report(ID.terrain, 0.99f, "Saved " + TerrainSize.x + " size map.");
 
-        world.AddMap("terrain", landHeightBytes);
         world.AddMap("height", landHeightBytes);
         world.AddMap("water", waterHeightBytes);
         world.AddMap("splat", splatBytes);
