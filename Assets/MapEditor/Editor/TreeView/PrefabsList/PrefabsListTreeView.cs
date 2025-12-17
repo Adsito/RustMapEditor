@@ -82,7 +82,18 @@ namespace RustMapEditor.UI
             List<PrefabsListElement> prefabsListElements = new List<PrefabsListElement>();
             prefabsListElements.Add(new PrefabsListElement("Root", -1, 0));
 
-            var prefabStrings = showAll ? AssetManager.AssetPaths.Where(x => x.Contains(".prefab")) : AssetManager.AssetPaths.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
+            // Use scene manifest prefab paths if available, otherwise fall back to legacy AssetPaths
+            IEnumerable<string> sourcePaths;
+            if (SceneAssetManager.IsManifestLoaded && SceneAssetManager.ManifestPrefabPaths.Count > 0)
+            {
+                sourcePaths = SceneAssetManager.ManifestPrefabPaths;
+            }
+            else
+            {
+                sourcePaths = AssetManager.AssetPaths;
+            }
+
+            var prefabStrings = showAll ? sourcePaths.Where(x => x.Contains(".prefab")) : sourcePaths.Where(x => SettingsManager.PrefabPaths.Any(y => x.Contains(y) && x.Contains(".prefab")));
             int prefabID = 1, parentID = -1;
             foreach (var manifestString in prefabStrings)
             {

@@ -44,6 +44,7 @@ public static class AssetManager
 	public const string AssetDumpPath = "AssetDump.txt";
 	public const string MaterialsListPath = "MaterialsList.txt";
 	public const string VolumesListPath = "VolumesList.txt";
+	public const string SceneManifestFileName = "AssetSceneManifest.json";
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
@@ -104,19 +105,39 @@ public static class AssetManager
         if (AssetCache.ContainsKey(filePath))
             return AssetCache[filePath] as GameObject;
 
-        else
+        // Play mode: use scene-based loading
+        if (Application.isPlaying && SceneAssetManager.IsManifestLoaded)
         {
-            GameObject val = GetAsset<GameObject>(filePath);
+            GameObject val = SceneAssetManager.GetPrefabFromScene(filePath);
             if (val != null)
             {
-				PrefabManager.Setup(val, filePath);
-				AssetCache.Add(filePath, val);
-				PrefabManager.Callbacks.OnPrefabLoaded(val);
-				return val;
+                PrefabManager.Setup(val, filePath);
+                AssetCache.Add(filePath, val);
+                PrefabManager.Callbacks.OnPrefabLoaded(val);
+                return val;
             }
-            Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
+            Debug.LogWarning("Prefab not loaded from scene: " + filePath);
             return PrefabManager.DefaultPrefab;
         }
+
+        // Edit mode: try legacy bundle loading (fallback)
+        GameObject legacyVal = GetAsset<GameObject>(filePath);
+        if (legacyVal != null)
+        {
+            PrefabManager.Setup(legacyVal, filePath);
+            AssetCache.Add(filePath, legacyVal);
+            PrefabManager.Callbacks.OnPrefabLoaded(legacyVal);
+            return legacyVal;
+        }
+
+        // Edit mode with manifest loaded: return default prefab
+        if (SceneAssetManager.IsManifestLoaded)
+        {
+            return PrefabManager.DefaultPrefab;
+        }
+
+        Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
+        return PrefabManager.DefaultPrefab;
     }
 
 	/// <summary>Returns a preview image of the asset located at the filepath. Caches the results.</summary>
@@ -184,6 +205,28 @@ public static class AssetManager
 				streamWriter.WriteLine(item + " : " + ToID(item));
 	}
 
+	/// <summary>Loads the AssetSceneManifest.json from the Rust directory.</summary>
+	public static void LoadSceneManifest()
+	{
+		string manifestPath = Path.Combine(SettingsManager.RustDirectory, "Bundles", SceneManifestFileName);
+		if (File.Exists(manifestPath))
+		{
+			try
+			{
+				string json = File.ReadAllText(manifestPath);
+				SceneAssetManager.ParseManifest(json);
+			}
+			catch (System.Exception e)
+			{
+				Debug.LogError($"Failed to load AssetSceneManifest: {e.Message}");
+			}
+		}
+		else
+		{
+			Debug.LogWarning($"AssetSceneManifest not found at: {manifestPath}");
+		}
+	}
+
 	public static string ToPath(uint i)
 	{
 		if ((int)i == 0)
@@ -230,16 +273,22 @@ public static class AssetManager
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetBundleReferences((progressID, bundleID)));
 			yield return EditorCoroutineUtility.StartCoroutineOwnerless(SetMaterials(materialID));
 
+			// Load scene manifest for scene-based prefab loading
+			LoadSceneManifest();
+
 			IsInitialised = true; IsInitialising = false;
 			SetVolumeGizmos();
 			Callbacks.OnBundlesLoaded();
 			PrefabManager.ReplaceWithLoaded(PrefabManager.CurrentMapPrefabs, prefabID);
 		}
 
-		public static IEnumerator Dispose() 
+		public static IEnumerator Dispose()
 		{
 			IsInitialising = true;
 			ProgressManager.RemoveProgressBars("Unload Asset Bundles");
+
+			// Dispose scene asset manager first
+			SceneAssetManager.Dispose();
 
 			int progressID = Progress.Start("Unload Asset Bundles", null, Progress.Options.Sticky);
 			int bundleID = Progress.Start("Bundles", null, Progress.Options.Sticky, progressID);

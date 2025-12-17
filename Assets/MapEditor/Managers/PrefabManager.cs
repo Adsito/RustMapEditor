@@ -239,7 +239,22 @@ public static class PrefabManager
                     Progress.Report(progressID, (float)i / prefabs.Length, "Spawning Prefabs: " + i + " / " + prefabs.Length);
                     sw.Restart();
                 }
+
+                string prefabPath = AssetManager.ToPath(prefabs[i].id);
+
+                // Play mode: ensure scene is loaded before accessing prefab
+                if (UnityEngine.Application.isPlaying && SceneAssetManager.IsManifestLoaded)
+                {
+                    yield return SceneAssetManager.EnsurePrefabAvailable(prefabPath);
+                }
+
                 Spawn(Load(prefabs[i].id), prefabs[i], GetParent(prefabs[i].category));
+
+                // Play mode: try to unload unused scenes to save memory
+                if (UnityEngine.Application.isPlaying && SceneAssetManager.IsManifestLoaded)
+                {
+                    yield return SceneAssetManager.TryUnloadUnusedScenes(prefabs, i);
+                }
             }
 
             Progress.Report(progressID, 0.99f, "Spawned " + prefabs.Length + " prefabs.");
