@@ -200,6 +200,14 @@ public static class SceneAssetManager
         return null;
     }
 
+    /// <summary>Checks if a prefab is already cached.</summary>
+    public static bool IsPrefabCached(string prefabPath)
+    {
+        if (string.IsNullOrEmpty(prefabPath))
+            return false;
+        return ScenePrefabCache.ContainsKey(prefabPath);
+    }
+
     /// <summary>Gets a cached prefab from a loaded scene.</summary>
     public static GameObject GetPrefabFromScene(string prefabPath)
     {
@@ -215,38 +223,38 @@ public static class SceneAssetManager
     /// <summary>Tries to unload scenes that are no longer needed.</summary>
     public static IEnumerator TryUnloadUnusedScenes(PrefabData[] allPrefabs, int currentIndex)
     {
-        if (allPrefabs == null || currentIndex < 0)
-            yield break;
+        // if (allPrefabs == null || currentIndex < 0)
+        yield break;
 
-        // Build set of scenes still needed by remaining prefabs
-        HashSet<string> scenesStillNeeded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        for (int i = currentIndex + 1; i < allPrefabs.Length; i++)
-        {
-            string path = AssetManager.ToPath(allPrefabs[i].id);
-            if (!string.IsNullOrEmpty(path) && PrefabToSceneLookup.TryGetValue(path, out string sceneName))
-            {
-                scenesStillNeeded.Add(sceneName);
-            }
-        }
+        // // Build set of scenes still needed by remaining prefabs
+        // HashSet<string> scenesStillNeeded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        // for (int i = currentIndex + 1; i < allPrefabs.Length; i++)
+        // {
+        //     string path = AssetManager.ToPath(allPrefabs[i].id);
+        //     if (!string.IsNullOrEmpty(path) && PrefabToSceneLookup.TryGetValue(path, out string sceneName))
+        //     {
+        //         scenesStillNeeded.Add(sceneName);
+        //     }
+        // }
 
-        // Find scenes that can be unloaded
-        List<string> scenesToUnload = new List<string>();
-        foreach (var kvp in LoadedScenes)
-        {
-            string sceneName = kvp.Key;
-            if (!scenesStillNeeded.Contains(sceneName) &&
-                SceneEntryLookup.TryGetValue(sceneName, out SceneEntry entry) &&
-                entry.CanUnload)
-            {
-                scenesToUnload.Add(sceneName);
-            }
-        }
+        // // Find scenes that can be unloaded
+        // List<string> scenesToUnload = new List<string>();
+        // foreach (var kvp in LoadedScenes)
+        // {
+        //     string sceneName = kvp.Key;
+        //     if (!scenesStillNeeded.Contains(sceneName) &&
+        //         SceneEntryLookup.TryGetValue(sceneName, out SceneEntry entry) &&
+        //         entry.CanUnload)
+        //     {
+        //         scenesToUnload.Add(sceneName);
+        //     }
+        // }
 
-        // Unload the scenes
-        foreach (string sceneName in scenesToUnload)
-        {
-            yield return UnloadScene(sceneName);
-        }
+        // // Unload the scenes
+        // foreach (string sceneName in scenesToUnload)
+        // {
+        //     yield return UnloadScene(sceneName);
+        // }
     }
 
     private static IEnumerator UnloadScene(string sceneName)

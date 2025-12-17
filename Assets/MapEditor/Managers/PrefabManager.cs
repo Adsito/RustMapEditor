@@ -233,27 +233,26 @@ public static class PrefabManager
 
             for (int i = 0; i < prefabs.Length; i++)
             {
-                if (sw.Elapsed.TotalSeconds > 4f)
-                {
-                    yield return null;
-                    Progress.Report(progressID, (float)i / prefabs.Length, "Spawning Prefabs: " + i + " / " + prefabs.Length);
-                    sw.Restart();
-                }
-
                 string prefabPath = AssetManager.ToPath(prefabs[i].id);
 
                 // Play mode: ensure scene is loaded before accessing prefab
+                // Only yield if prefab is not already cached (scene needs loading)
                 if (UnityEngine.Application.isPlaying && SceneAssetManager.IsManifestLoaded)
                 {
-                    yield return SceneAssetManager.EnsurePrefabAvailable(prefabPath);
+                    if (!SceneAssetManager.IsPrefabCached(prefabPath))
+                    {
+                        yield return SceneAssetManager.EnsurePrefabAvailable(prefabPath);
+                    }
                 }
 
                 Spawn(Load(prefabs[i].id), prefabs[i], GetParent(prefabs[i].category));
 
-                // Play mode: try to unload unused scenes to save memory
-                if (UnityEngine.Application.isPlaying && SceneAssetManager.IsManifestLoaded)
+                // Yield periodically for progress reporting (every 8 seconds)
+                if (sw.Elapsed.TotalSeconds > 8f)
                 {
-                    yield return SceneAssetManager.TryUnloadUnusedScenes(prefabs, i);
+                    yield return null;
+                    Progress.Report(progressID, (float)i / prefabs.Length, "Spawning Prefabs: " + i + " / " + prefabs.Length);
+                    sw.Restart();
                 }
             }
 
