@@ -584,7 +584,7 @@ public static class TerrainManager
 
     private static TerrainLayer[] GetBiomeLayers()
     {
-        TerrainLayer[] textures = new TerrainLayer[4];
+        TerrainLayer[] textures = new TerrainLayer[5];
         textures[0] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arid.terrainlayer");
         textures[0].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arid");
         textures[1] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Temperate.terrainlayer");
@@ -593,6 +593,8 @@ public static class TerrainManager
         textures[2].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/tundra");
         textures[3] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Arctic.terrainlayer");
         textures[3].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/arctic");
+        textures[4] = AssetDatabase.LoadAssetAtPath<TerrainLayer>("Assets/Resources/Textures/Biome/Jungle.terrainlayer");
+        textures[4].diffuseTexture = Resources.Load<Texture2D>("Textures/Biome/jungle");
         return textures;
     }
 
@@ -670,7 +672,7 @@ public static class TerrainManager
         return layer switch
         {
             LayerType.Ground => 8,
-            LayerType.Biome => 4,
+            LayerType.Biome => 5,
             _ => 2
         };
     }

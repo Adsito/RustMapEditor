@@ -7,7 +7,7 @@ using LZ4;
 
 public class WorldSerialization
 {
-    public const uint CurrentVersion = 9;
+    public const uint CurrentVersion = 10;
 
     public static uint Version
     {
@@ -78,6 +78,7 @@ public class WorldSerialization
         [ProtoMember(13)] public int splat;
         [ProtoMember(14)] public int topology;
         [ProtoMember(15)] public VectorData[] nodes;
+        [ProtoMember(16)] public int toplogy;
     }
 
     [Serializable]
@@ -146,6 +147,7 @@ public class WorldSerialization
                 using (var binaryWriter = new BinaryWriter(fileStream))
                 {
                     binaryWriter.Write(Version);
+                    binaryWriter.Write((long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
 
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
                         Serializer.Serialize(compressionStream, world);
@@ -167,12 +169,23 @@ public class WorldSerialization
                 using (var binaryReader = new BinaryReader(fileStream))
                 {
                     Version = binaryReader.ReadUInt32();
-
+                    long Timestamp = binaryReader.ReadInt64();
                     if (Version != CurrentVersion)
                         Debug.LogWarning("Map Version is: " + Version + " whilst Rust is on: " + CurrentVersion);
 
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
                         world = Serializer.Deserialize<WorldData>(compressionStream);
+
+                    // Fix null VectorData fields in PrefabData (game uses struct, we use class)
+                    foreach (var prefab in world.prefabs)
+                    {
+                        if (prefab.position == null)
+                            prefab.position = new VectorData(0, 0, 0);
+                        if (prefab.rotation == null)
+                            prefab.rotation = new VectorData(0, 0, 0);
+                        if (prefab.scale == null)
+                            prefab.scale = new VectorData(1, 1, 1);
+                    }
                 }
             }
         }
